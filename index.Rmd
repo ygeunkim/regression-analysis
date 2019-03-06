@@ -7,7 +7,7 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
-description: "This aims at covering materials of linear regression analysis with R programming."
+description: "This aims at covering materials of regression analysis with R programming."
 ---
 
 # Linear Regression Analysis
@@ -19,9 +19,16 @@ data(BioOxyDemand, package = "MPV")
   tbl_df())
 ```
 
+## Relation
+
 We wonder how `x` affects `y`, especially linearly.
 
-$$y = \beta_0 + \beta_1 y$$
+- Functional relation: mathematical equation, $$y = \beta_0 + \beta_1 x$$
+- Statistical relation: embeded with noise
+
+So we try to estimate
+
+$$y = \beta_0 + \beta_1 x + \epsilon$$
 
 ```{r}
 BioOxyDemand %>% 
@@ -29,7 +36,9 @@ BioOxyDemand %>%
   geom_point()
 ```
 
+
 Looking just with the eyes, we can see the linear relationship. Regression analysis estimates the relationship statistically.
+
 
 ```{r}
 BioOxyDemand %>% 
