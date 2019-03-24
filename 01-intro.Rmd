@@ -1,21 +1,414 @@
-# Introduction {#intro}
+# Simple Linear Regression {#simple}
 
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
-
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
-
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
+```{r, echo=FALSE, results='asis'}
+eqn_numbering()
 ```
 
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
 
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(iris, 20), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
+## Model
+
+```{r}
+delv <- MPV::p2.9 %>% tbl_df()
 ```
 
-You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015].
+```{r delivery, fig.cap=fig$cap("delivery", "The Delivery Time Data")}
+delv %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  labs(
+    x = "Number of Cases",
+    y = "Delivery Time"
+  )
+```
+
+
+Given data $(x_1, Y_1), \ldots, (x_n, Y_n)$, we try to fit linear model
+
+$$Y_i = \beta_0 + \beta_1 x_i + \epsilon_i$$
+
+Here $\epsilon_i$ is a error term, which is a random variable.
+
+$$\epsilon \stackrel{iid}{\sim} (0, \sigma^2)$$
+
+It gives the problem of estimating three parameters $(\beta_0, \beta_1, \sigma^2)$. Before estimating these, we set some assumptions.
+
+1. linear relationship
+2. $\epsilon_i$s are independent
+3. $\epsilon_i$s are identically destributed, i.e. *constant variance*
+4. In some setting, $\epsilon_i \sim N$
+
+## Least Squares Estimation
+
+```{r lsefig, echo=FALSE, fig.cap=fig$cap("lsefig", "Idea of the least square estimation")}
+delv %>% 
+  mutate(yhat = predict(lm(y ~ x))) %>% 
+  ggplot(aes(x = x)) +
+  geom_abline(intercept = 10, slope = 1.5, col = I("grey40"), alpha = .7) +
+  geom_abline(intercept = 5, slope = 2, col = I("grey40"), alpha = .7) +
+  geom_line(aes(y = yhat), col = gg_hcl(2)[2], size = 1, alpha = .7) +
+  geom_point(aes(y = y)) +
+  geom_linerange(aes(ymin = y, ymax = yhat), col = gg_hcl(2)[1]) +
+  labs(
+    x = "Number of Cases",
+    y = "Delivery Time"
+  )
+```
+
+We try to find $\beta_0$ and $\beta_1$ that minimize the sum of squares of the vertical distances, i.e.
+
+\begin{equation} \label{eq:ssq}
+  (\beta_0, \beta_1) = \arg\min \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2
+\end{equation}
+
+### Normal equations
+
+Denote that Equation $\eqref{eq:ssq}$ is quadratic. Then we can find its minimum by find the zero point of the first derivative. Set
+
+$$Q(\beta_0, \beta_1) := \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2$$
+
+Then we have
+
+\begin{equation} \label{eq:normbeta0}
+  \frac{\partial Q}{\partial \beta_0} = -2 \sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i) = 0
+\end{equation}
+
+and
+
+\begin{equation} \label{eq:normbeta1}
+  \frac{\partial Q}{\partial \beta_1} = -2 \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)x_i = 0
+\end{equation}
+
+From $\eqref{eq:normbeta0}$,
+
+$$\sum_{i = 1}^n Y_i - n \hat\beta_0 - \hat\beta_1 \sum_{i = 1}^n x_i = 0$$
+
+Thus,
+
+$$\hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x}$$
+
+$\eqref{eq:normbeta1}$ gives
+
+$$\sum_{i = 1}^n x_i (Y_i - \overline{Y} + \hat\beta_1\overline{x} - \hat\beta_1 x_i) = \sum_{i = 1}^n x_i(Y_i - \overline{Y}) - \hat\beta_1\sum_{i = 1}^n x_i (x_i - \overline{x}) = 0$$
+
+Thus,
+
+$$\hat\beta_1 = \frac{\sum\limits_{i = 1}^nx_i(Y_i - \overline{Y})}{\sum\limits_{i = 1}^n x_i (x_i - \overline{x})}$$
+
+```{remark}
+$$\hat\beta_1 = \frac{S_{XY}}{S_{XX}}$$
+
+where $S_{XX} := \sum\limits_{i = 1}^n (x_i - \overline{x})^2$ and $S_{XY} := \sum\limits_{i = 1}^n (x_i - \overline{x})(Y_i - \overline{Y})$
+```
+
+```{proof}
+Note that $\overline{x}^2 = \frac{1}{n^2}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2$. Then we have
+
+\begin{equation} \label{eq:sxx}
+  \begin{split}
+    S_{XX} & = \sum_{i = 1}^n (x_i - \overline{x})^2 \\
+    & = \sum_{i = 1}^n x_i^2 - 2\sum_{i = 1}^n x_i \overline{x} + \sum_{i = 1}^n\overline{x}^2 \\
+    & = \sum_{i = 1}^n x_i^2 - \frac{2}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 + \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 \\
+    & = \sum_{i = 1}^n x_i^2 - \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2
+  \end{split}
+\end{equation}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    \hat\beta_1 & = \frac{\sum x_i(Y_i - \overline{Y})}{\sum x_i (x_i - \overline{x})} \\
+    & = \frac{\sum x_i (Y_i - \overline{Y}) - \overline{x}\sum (Y_i - \overline{Y})}{\sum x_i^2 - \frac{1}{n} (\sum x_i)^2} \qquad \because \sum (Y_i - \overline{Y}) = 0 \\
+    & = \frac{\sum (x_i - \overline{x})(Y_i - \overline{Y})}{\sum x_i^2 - \frac{1}{n} (\sum x_i)^2} \\
+    & = \frac{S_{XY}}{S_{XX}}
+  \end{split}
+\end{equation*}
+```
+
+
+```{r}
+lm(y ~ x, data = delv)
+```
+
+
+### Prediction and Mean response
+
+
+> "Essentially, all models are wrong, but some are useful."
+>
+> ---George Box
+
+
+Recall that we have assumed the **linear assumption** between the predictor and the response variables, i.e. the true model. Estimating $\beta_0$ and $\beta_1$ is same as estimating the *assumed true model*.
+
+```{definition, eyx, name = "Mean response"}
+$$E(Y \mid X = x) = \beta_0 + \beta_1 x$$
+```
+
+We can estimate this mean resonse by
+
+\begin{equation} \label{eq:meanres}
+  \widehat{E(Y \mid x)} = \hat\beta_0 + \hat\beta_1 x
+\end{equation}
+
+However, in practice, the model might not be true, which is included in $\epsilon$ term.
+
+$$Y_i = \beta_0 + \beta_1 x_i + \epsilon_i$$
+
+Our real problem is predicting individual $Y$, not the mean. The *prediction* of response can be done by
+
+\begin{equation} \label{eq:indpred}
+  \hat{Y_i}  = \hat\beta_0 + \hat\beta_1 x_i
+\end{equation}
+
+Observe that the values of Equation $\eqref{eq:meanres}$ and $\eqref{eq:indpred}$ are same. However, due to the **error term in the prediction**, it has larger standard error.
+
+
+### Properties of LSE {#lseprop}
+
+Parameters $\beta_0$ and $\beta_1$ have some properties related to the expectation and variance. We can notice that these lse's are **unbiased linear estimator**. In fact, these are the *best unbiased linear estimator*. This will be covered in the Gauss-Markov theorem.
+
+
+```{lemma, sxy}
+$$S_{XX} = \sum_{i = 1}^n x_i^2 - \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 = \sum_{i = 1}^n x_i(x_i - \overline{x})$$
+
+$$S_{XY} = \sum_{i = 1}^n x_i Y_i - \frac{1}{n}\bigg(\sum_{i = 1}^n x_i\bigg)\bigg(\sum_{i = 1}^n Y_i\bigg) = \sum_{i = 1}^n Y_i(x_i - \overline{x})$$
+```
+
+```{proof}
+We already proven the first part of $S_{XX}$. See the Equation $\eqref{eq:sxx}$. The second part is tivial. Since $\sum (x_i - \overline{x}) = 0$,
+
+$$S_{XX} = \sum_{i = 1}^n (x_i - \overline{x})^2 = \sum_{i = 1}^n (x_i - \overline{x})x_i$$
+
+For the first part of $S_{XY}$,
+
+\begin{equation*}
+  \begin{split}
+    S_{XY} & = \sum_{i = 1}^n (x_i - \overline{x})(Y_i - \overline{Y}) \\
+    & = \sum_{i = 1}^n x_i Y_i - \overline{x} \sum_{i = 1}^n Y_i - \overline{Y} \sum_{i = 1}^n x_i + n \overline{x} \overline{Y} \\
+    & = \sum_{i = 1}^n x_i Y_i - \frac{1}{n}\bigg(\sum_{i = 1}^n x_i\bigg)\bigg(\sum_{i = 1}^n Y_i\bigg)
+  \end{split}
+\end{equation*}
+
+Second part of $S_{XY}$ also can be proven from the definition.
+
+\begin{equation*}
+  \begin{split}
+    S_{XY} & = \sum_{i = 1}^n (x_i - \overline{x})(Y_i - \overline{Y}) \\
+    & = \sum_{i = 1}^n Y_i (x_i - \overline{x}) - \overline{Y} \sum_{i = 1}^n (x_i - \overline{x}) \\
+    & = \sum_{i = 1}^n Y_i (x_i - \overline{x}) \qquad \because \sum_{i = 1}^n (x_i - \overline{x}) = 0
+  \end{split}
+\end{equation*}
+```
+
+```{lemma, linbet, name = "Linearity"}
+Each coefficient is a linear estimator.
+
+$$\hat\beta_1 = \sum_{i = 1}^n\frac{(x_i - \overline{x})}{S_{XX}}Y_i$$
+
+$$\hat\beta_0 = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})}{S_{XX}} \bigg) Y_i$$
+```
+
+```{proof}
+From lemma \@ref(lem:sxy),
+
+\begin{equation*}
+  \begin{split}
+    \hat\beta_1 & = \frac{S_{XY}}{S_{XX}} \\
+    & = \frac{1}{S_{XX}}\sum_{i = 1}^n (x_i - \overline{x}) Y_i
+  \end{split}
+\end{equation*}
+
+It gives that
+
+\begin{equation*}
+  \begin{split}
+    \hat\beta_0 & = \overline{Y} - \hat\beta_1 \overline{x} \\
+    & = \frac{1}{n}\sum_{i = 1}^n Y_i - \overline{x} \sum_{i = 1}^n\frac{(x_i - \overline{x})}{S_{XX}}Y_i \\
+    & = \sum_{i = 1}^n\bigg(\frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)Y_i
+  \end{split}
+\end{equation*}
+```
+
+```{proposition, ue, name = "Unbiasedness"}
+Both coefficients are unbiased.
+
+$\text{(a)}\: E\hat\beta_1 = \beta_1$
+
+$\text{(b)}\: E\hat\beta_0 = \beta_0$
+```
+
+From the model, $Y_1, \ldots, Y_n \stackrel{indep}{\sim} (\beta_0 + \beta_1 x_i, \sigma^2)$.
+
+```{proof}
+From lemma \@ref(lem:sxy),
+
+\begin{equation*}
+  \begin{split}
+    E\hat\beta_1 & = \sum_{i = 1}^n \bigg[ \frac{(x_i - \overline{x})}{S_{XX}} E(Y_i) \bigg] \\
+    & = \sum_{i = 1}^n \frac{(x_i - \overline{x})}{S_{XX}}(\beta_0 + \beta_1 x_i) \\
+    & = \frac{\beta_1 \sum (x_i - \overline{x})x_i}{\sum (x_i - \overline{x})x_i} \qquad \because \sum (x_i - \overline{x}) = 0 \\
+    & = \beta_1
+  \end{split}
+\end{equation*}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    E\hat\beta_0 & = E(\overline{Y} - \hat\beta_1 \overline{x}) \\
+    & = E(\overline{Y}) - \overline{x}E(\hat\beta_1) \\
+    & = E(\beta_0 + \beta_1 \overline{x} + \overline{\epsilon}) - \beta_1 \overline{x} \\
+    & = \beta_0 + \beta_1 \overline{x} - \beta_1 \overline{x} \\
+    & = \beta_0
+  \end{split}
+\end{equation*}
+```
+
+```{proposition, vb, name = "Variances"}
+Variances and covariance of coefficients
+
+$\text{(a)}\: Var\hat\beta_1 = \frac{\sigma^2}{S_{XX}}$
+
+$\text{(b)}\: Var\hat\beta_0 = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2$
+
+$\text{(c)}\: Cov(\hat\beta_0, \hat\beta_1) = - \frac{\overline{x}}{S_{XX}} \sigma^2$
+```
+
+```{proof}
+Proving is just arithmetic.
+
+(a)
+
+\begin{equation*}
+  \begin{split}
+    Var\hat\beta_1 & = \frac{1}{S_{XX}^2}\sum_{i = 1}^n \bigg[ (x_i - \overline{x})^2 Var(Y_i) \bigg] + \frac{1}{S_{XX}^2} \sum_{j \neq k}^n \bigg[ (x_j - \overline{x})(x_k - \overline{x}) Cov(Y_j, Y_k) \bigg] \\
+    & = \frac{\sigma^2}{S_{XX}} \qquad \because Cov(Y_j, Y_k) = 0 \: \text{if} \: j \neq k
+  \end{split}
+\end{equation*}
+
+(b)
+
+\begin{equation*}
+  \begin{split}
+    Var\hat\beta_0 & = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)^2Var(Y_i) + \sum_{j \neq k} \bigg( \frac{1}{n} - \frac{(x_j - \overline{x})\overline{x}}{S_{XX}} \bigg)\bigg( \frac{1}{n} - \frac{(x_k - \overline{x})\overline{x}}{S_{XX}} \bigg) Cov(Y_j, Y_k) \\
+    & = \frac{\sigma^2}{n} - 2 \sigma^2 \frac{\overline{x}}{S_{XX}} \sum_{i = 1}^n (x_i - \overline{x}) + \frac{\sigma^2 \overline{x}^2 \sum (x_i - \overline{x})^2}{S_{XX}^2} \\
+    & = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg) \sigma^2 \qquad \because \sum (x_i - \overline{x}) = 0
+  \end{split}
+\end{equation*}
+
+(c)
+
+\begin{equation*}
+  \begin{split}
+    Cov(\hat\beta_0, \hat\beta_1) & = Cov(\overline{Y} - \hat\beta_1 \overline{x}, \hat\beta_1) \\
+    & = - \overline{x} Var\hat\beta_1 \\
+    & = - \frac{\overline{x}}{S_{XX}} \sigma^2
+  \end{split}
+\end{equation*}
+```
+
+
+### Gauss-Markov Theorem
+
+Chapter \@ref(lseprop) shows that the $\beta_0^{LSE}$ and $\beta_1^{LSE}$ are the **linear unbiased estimators**. Are these good? Good compared to _what estimators_? Here we consider *linear unbiased estimator*. If variances in the proposition \@ref(prp:vb) are lower than any parameters in this parameter family, $\beta_0^{LSE}$ and $\beta_1^{LSE}$ are the **best linear unbiased estimators**.
+
+```{theorem, gmt, name = "Gauss Markov Theorem"}
+$\hat\beta_0$ and $\hat\beta_1$ are BLUE, i.e. the best linear unbiased estimator.
+
+$$Var(\hat\beta_0) \le Var\Big( \sum_{i = 1}^n a_i Y_i \Big) \: \forall a_i \in \mathbb{R} \: \text{s.t.} \: E\Big( \sum_{i = 1}^n a_i Y_i \Big) = \beta_0$$
+
+$$Var(\hat\beta_1) \le Var\Big( \sum_{i = 1}^n b_i Y_i \Big) \: \forall b_i \in \mathbb{R} \: \text{s.t.} \: E\Big( \sum_{i = 1}^n b_i Y_i \Big) = \beta_1$$
+```
+
+
+
+## Maximum Likelihood Estimation
+
+In this section, we add an assumption to an random errors $\epsilon_i$.
+
+$$\epsilon_i \stackrel{iid}{\sim} N(0, \sigma^2)$$
+
+```{example, gmle, name = "Gaussian Likelihood"}
+Note that $Y_i \stackrel{indep}{\sim} N(\beta_0 + \beta_1 x_i, \sigma^2)$. Then the likelihood function is
+
+$$L(\beta_0, \beta_1, \sigma^2) = \prod_{i = 1}^n\bigg( \frac{1}{\sqrt{2\pi\sigma^2}} \exp \bigg(- \frac{(Y_i - \beta_0 - \beta_1 x_i)^2}{2 \sigma^2} \bigg) \bigg)$$
+
+and so the log-likelihood function can be computed as
+
+$$l(\beta_0, \beta_1, \sigma^2) = -\frac{n}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i)^2$$
+```
+
+
+### Likelihood equations
+
+```{definition, mledef, name = "Maximum Likelihood Estimator"}
+$$(\hat\beta_0^{MLE}, \hat\beta_1^{MLE}, \hat\sigma^{2MLE}) := \arg\sup L(\beta_0, \beta_1, \sigma^2)$$
+```
+
+Since $l(\cdot) = \ln L(\cdot)$ is monotone,
+
+```{remark, mlemax}
+$$(\hat\beta_0^{MLE}, \hat\beta_1^{MLE}, \hat\sigma^{2MLE}) = \arg\sup l(\beta_0, \beta_1, \sigma^2)$$
+```
+
+We can find the maximum of this *quadratic* function by making first derivative.
+
+\begin{equation} \label{eq:mlbeta0}
+  \frac{\partial l}{\partial \beta_0} = \frac{1}{\sigma^2} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i) = 0
+\end{equation}
+
+\begin{equation} \label{eq:mlbeta1}
+  \frac{\partial l}{\partial \beta_1} = \frac{1}{\sigma^2} \sum_{i = 1}^n x_i (Y_i - \beta_0 - \beta_1 x_i) = 0
+\end{equation}
+
+\begin{equation} \label{eq:mlsig}
+  \frac{\partial l}{\partial \sigma^2} = - \frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = 0
+\end{equation}
+
+Denote that Equations $\eqref{eq:mlbeta0}$ and $\eqref{eq:mlbeta1}$ given $\hat\sigma^2$ are equivalent to the normal equations. Thus,
+
+$$\hat\beta_0^{MLE} = \hat\beta_0^{LSE}, \quad \hat\beta_1^{MLE} = \hat\beta_1^{LSE}$$
+
+From $\eqref{eq:mlsig}$,
+
+$$\hat\sigma^{2MLE} = \frac{1}{n}\sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i)^2 = \frac{n - 2}{n} \hat\sigma^{2LSE}$$
+
+Recall that $\hat\sigma^{2LSE}$ is an unbiased, i.e. this *MLE is not an unbiased estimator*. Since $\hat\sigma^{2MLE} \approx \hat\sigma^{2LSE}$ for large $n$, howerver, it is *asymptotically unbiased*.
+
+```{theorem, rclb, name = "Rao-Cramer Lower Bound, univariate case"}
+Let $X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta)$. If $\hat\theta$ is an unbiased estimator of $\theta$,
+
+$$Var(\hat\theta) \ge \frac{1}{I_n(\theta)}$$
+
+where $I_n(\theta) = -E\bigg(\frac{\partial^2 l(\theta)}{\partial \theta^2} \bigg)$
+```
+
+To apply this theorem \@(thm:rclb) in the simple linear regression setting, i.e. $(\beta_0, \beta_1)$, we need to look at the *bivariate case*.
+
+```{theorem, rclb2, name = "Rao-Cramer Lower Bound, bivariate case"}
+Let $X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \theta_2)$ and let $\boldsymbol{\theta} = (\theta_1, \theta_2)^T$. If each $\hat\theta_1$, $\hat\theta_2$ is an unbiased estimator of $\theta_1$ and $\theta_2$, then
+
+$$
+Var(\boldsymbol{\theta}) := \begin{bmatrix}
+Var(\hat\theta_1) & Cov(\hat\theta_1, \hat\theta_2) \\
+Cov(\hat\theta_1, \hat\theta_2) & Var(\hat\theta_2)
+\end{bmatrix} \ge I_n^{-1}(\theta_1, \theta_2)
+$$
+
+where
+
+$$
+I_n(\theta_1, \theta_2) = - \begin{bmatrix}
+  E\bigg( \frac{\partial^2 l(\theta_1, \theta_2)}{\partial \theta_1^2} \bigg) & E\bigg( \frac{\partial^2 l(\theta_1, \theta_2)}{\partial \theta_1 \partial \theta_2} \bigg) \\
+  E\bigg( \frac{\partial^2 l(\theta_1, \theta_2)}{\partial \theta_1 \partial \theta_2} \bigg) & E\bigg( \frac{\partial^2 l(\theta_1, \theta_2)}{\partial \theta_2^2} \bigg)
+\end{bmatrix}
+$$
+```
+
+
+
+
+
+
+
+
