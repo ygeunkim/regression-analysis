@@ -142,6 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.3" data-path="simple.html"><a href="simple.html#maximum-likelihood-estimation"><i class="fa fa-check"></i><b>2.3</b> Maximum Likelihood Estimation</a><ul>
 <li class="chapter" data-level="2.3.1" data-path="simple.html"><a href="simple.html#likelihood-equations"><i class="fa fa-check"></i><b>2.3.1</b> Likelihood equations</a></li>
 </ul></li>
+<li class="chapter" data-level="2.4" data-path="simple.html"><a href="simple.html#residuals"><i class="fa fa-check"></i><b>2.4</b> Residuals</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -501,8 +502,41 @@ I_n(\theta_1, \theta_2) = - \begin{bmatrix}
 \]</span>
 </div>
 
-
 </div>
+</div>
+<div id="residuals" class="section level2">
+<h2><span class="header-section-number">2.4</span> Residuals</h2>
+
+<div class="definition">
+<span id="def:res" class="definition"><strong>Definition 2.3  (Residuals)  </strong></span><span class="math display">\[e_i := Y_i - \hat{Y_i}\]</span>
+</div>
+
+<pre class="sourceCode r"><code class="sourceCode r">delv <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">yhat =</span> <span class="kw">predict</span>(<span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_linerange</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> y, <span class="dt">ymax =</span> yhat), <span class="dt">col =</span> <span class="kw">I</span>(<span class="st">&quot;red&quot;</span>), <span class="dt">alpha =</span> <span class="fl">.7</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(
+    <span class="dt">x =</span> <span class="st">&quot;Number of Cases&quot;</span>,
+    <span class="dt">y =</span> <span class="st">&quot;Delivery Time&quot;</span>
+  )</code></pre>
+<div class="figure" style="text-align: center"><span id="fig:regplot"></span>
+<img src="regression-analysis_files/figure-html/regplot-1.png" alt="Fit and residuals\label{fig:regplot}" width="70%" />
+<p class="caption">
+Figure 2.3: Fit and residuals
+</p>
+</div>
+<p>See <span class="math inline">\(\text{Figure }\ref{fig:regplot}\)</span>. Each red line is <span class="math inline">\(e_i\)</span>. As we can see, <span class="math inline">\(e_i\)</span> represents the difference between <em>observed</em> response and <em>predicted</em> response. A large <span class="math inline">\(\lvert e_i \rvert\)</span> indicates a large prediction error. You can call this <span class="math inline">\(e_i\)</span> for each <span class="math inline">\(Y_i\)</span> by <code>lm()$residuals</code> or <code>residuals()</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">delv_fit &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x, <span class="dt">data =</span> delv)
+delv_fit<span class="op">$</span>residuals</code></pre>
+<pre><code>     1      2      3      4      5      6      7      8      9     10 
+-1.874  1.651  2.181  2.855 -2.628 -0.444  0.327 -0.724 10.634  7.298 
+    11     12     13     14     15     16     17     18     19     20 
+ 2.191 -4.082  1.475  3.372  1.094  3.918 -1.028  0.446 -0.349 -5.216 
+    21     22     23     24     25 
+-7.182 -7.581 -4.156 -0.900 -1.275 </code></pre>
+
 </div>
 </div>
             </section>

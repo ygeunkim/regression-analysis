@@ -406,6 +406,66 @@ $$
 ```
 
 
+## Residuals
+
+```{definition, res, name = "Residuals"}
+$$e_i := Y_i - \hat{Y_i}$$
+```
+
+### Prediction error
+
+```{r regplot, fig.cap=fig$cap("regplot", "Fit and residuals")}
+delv %>% 
+  mutate(yhat = predict(lm(y ~ x))) %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point() +
+  geom_linerange(aes(ymin = y, ymax = yhat), col = I("red"), alpha = .7) +
+  labs(
+    x = "Number of Cases",
+    y = "Delivery Time"
+  )
+```
+
+See $`r fig$ref("regplot")`$. Each red line is $e_i$. As we can see, $e_i$ represents the difference between *observed* response and *predicted* response. A large $\lvert e_i \rvert$ indicates a large prediction error. You can call this $e_i$ for each $Y_i$ by `lm()$residuals` or `residuals()`.
+
+```{r}
+delv_fit <- lm(y ~ x, data = delv)
+delv_fit$residuals
+```
+
+$\sum e_i^2$, which has been minimized in the procedure of LSE, can be used to see *overall size of prediction errors*.
+
+```{definition, sse, name = "Error Sums of Squares"}
+$$SSE := \sum_{i = 1}^n e_i^2$$
+```
+
+### Residuals and the variance
+
+$e_i$ contains the information for $\epsilon_i$. $\sum e_i^2$ can give information about $\sigma^2 = Var(\epsilon_i)$. For this, it is expected that $e_i$ and $\epsilon_i$ have similar feature.
+
+```{proposition, resprop, name = "Properties of residuals"}
+Mean and variance of the residual
+
+$\text{(a)}\: E(e_i) = 0$
+
+$\text{(b)}\: Var(e_i) \neq \sigma^2$
+
+$\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0$
+```
+
+
+## Decomposition of Total Variability
+
+
+## Geometric Interpretations
+
+
+
+
+
+
+
 
 
 

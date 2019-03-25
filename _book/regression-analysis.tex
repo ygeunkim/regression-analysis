@@ -126,7 +126,7 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{24 Mar, 2019}
+    \date{25 Mar, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -665,6 +665,85 @@ I_n(\theta_1, \theta_2) = - \begin{bmatrix}
 \end{bmatrix}
 \]
 \EndKnitrBlock{theorem}
+
+\hypertarget{residuals}{%
+\section{Residuals}\label{residuals}}
+
+\BeginKnitrBlock{definition}[Residuals]
+\protect\hypertarget{def:res}{}{\label{def:res} \iffalse (Residuals) \fi{} }\[e_i := Y_i - \hat{Y_i}\]
+\EndKnitrBlock{definition}
+
+\hypertarget{prediction-error}{%
+\subsection{Prediction error}\label{prediction-error}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{delv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{yhat =} \KeywordTok{predict}\NormalTok{(}\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ x, }\DataTypeTok{y =}\NormalTok{ y)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{, }\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_linerange}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin =}\NormalTok{ y, }\DataTypeTok{ymax =}\NormalTok{ yhat), }\DataTypeTok{col =} \KeywordTok{I}\NormalTok{(}\StringTok{"red"}\NormalTok{), }\DataTypeTok{alpha =} \FloatTok{.7}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Number of Cases"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Delivery Time"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/regplot-1} 
+
+}
+
+\caption{Fit and residuals\label{fig:regplot}}\label{fig:regplot}
+\end{figure}
+
+See \(\text{Figure }\ref{fig:regplot}\). Each red line is \(e_i\). As we can see, \(e_i\) represents the difference between \emph{observed} response and \emph{predicted} response. A large \(\lvert e_i \rvert\) indicates a large prediction error. You can call this \(e_i\) for each \(Y_i\) by \texttt{lm()\$residuals} or \texttt{residuals()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{delv_fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ delv)}
+\NormalTok{delv_fit}\OperatorTok{$}\NormalTok{residuals}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+     1      2      3      4      5      6      7      8      9     10 
+-1.874  1.651  2.181  2.855 -2.628 -0.444  0.327 -0.724 10.634  7.298 
+    11     12     13     14     15     16     17     18     19     20 
+ 2.191 -4.082  1.475  3.372  1.094  3.918 -1.028  0.446 -0.349 -5.216 
+    21     22     23     24     25 
+-7.182 -7.581 -4.156 -0.900 -1.275 
+\end{verbatim}
+
+\(\sum e_i^2\), which has been minimized in the procedure of LSE, can be used to see \emph{overall size of prediction errors}.
+
+\BeginKnitrBlock{definition}[Error Sums of Squares]
+\protect\hypertarget{def:sse}{}{\label{def:sse} \iffalse (Error Sums of Squares) \fi{} }\[SSE := \sum_{i = 1}^n e_i^2\]
+\EndKnitrBlock{definition}
+
+\hypertarget{residuals-and-the-variance}{%
+\subsection{Residuals and the variance}\label{residuals-and-the-variance}}
+
+\(e_i\) contains the information for \(\epsilon_i\). \(\sum e_i^2\) can give information about \(\sigma^2 = Var(\epsilon_i)\). For this, it is expected that \(e_i\) and \(\epsilon_i\) have similar feature.
+
+\BeginKnitrBlock{proposition}[Properties of residuals]
+\protect\hypertarget{prp:resprop}{}{\label{prp:resprop} \iffalse (Properties of residuals) \fi{} }Mean and variance of the residual
+
+\(\text{(a)}\: E(e_i) = 0\)
+
+\(\text{(b)}\: Var(e_i) \neq \sigma^2\)
+
+\(\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0\)
+\EndKnitrBlock{proposition}
+
+\hypertarget{decomposition-of-total-variability}{%
+\section{Decomposition of Total Variability}\label{decomposition-of-total-variability}}
+
+\hypertarget{geometric-interpretations}{%
+\section{Geometric Interpretations}\label{geometric-interpretations}}
 
 \hypertarget{references}{%
 \chapter*{References}\label{references}}

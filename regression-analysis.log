@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018) (preloaded format=xelatex 2019.3.16)  24 MAR 2019 23:06
+This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018) (preloaded format=xelatex 2019.3.16)  25 MAR 2019 15:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -699,6 +699,9 @@ LaTeX Warning: Label `fig:delivery' multiply defined.
 
 LaTeX Warning: Label `fig:lsefig' multiply defined.
 
+
+LaTeX Warning: Label `fig:regplot' multiply defined.
+
 )
 \openout1 = `regression-analysis.aux'.
 
@@ -859,27 +862,34 @@ pdf)
 File: regression-analysis_files/figure-latex/lsefig-1.pdf Graphic file (type pd
 f)
 <use regression-analysis_files/figure-latex/lsefig-1.pdf>
-[8] [9] [10] [11] [12] [13] [14] [15] [16
+[8] [9] [10] [11] [12] [13] [14]
+File: regression-analysis_files/figure-latex/regplot-1.pdf Graphic file (type p
+df)
+<use regression-analysis_files/figure-latex/regplot-1.pdf>
+
+Underfull \vbox (badness 3872) has occurred while \output is active []
+
+[15] [16]
+No file regression-analysis.bbl.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 755.
+[17
 
 ]
-No file regression-analysis.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 676.
-[17]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 676.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 755.
 (./regression-analysis.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 676.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 676.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 755.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 755.
 Package rerunfilecheck Info: File `regression-analysis.out' has not changed.
-(rerunfilecheck)             Checksum: 02A90C8F28CD746CD41DF352C6CFDBC3.
+(rerunfilecheck)             Checksum: C6A323F62D9ADF7D5EE8FA170D6CE90B.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 24574 strings out of 492933
- 457305 string characters out of 6133145
- 595996 words of memory out of 5000000
- 28349 multiletter control sequences out of 15000+600000
+ 24587 strings out of 492933
+ 457667 string characters out of 6133145
+ 596703 words of memory out of 5000000
+ 28361 multiletter control sequences out of 15000+600000
  555894 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  45i,19n,68p,816b,446s stack positions out of 5000i,500n,10000p,200000b,80000s
