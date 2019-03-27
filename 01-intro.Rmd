@@ -320,6 +320,166 @@ $$Var(\hat\beta_0) \le Var\Big( \sum_{i = 1}^n a_i Y_i \Big) \: \forall a_i \in 
 $$Var(\hat\beta_1) \le Var\Big( \sum_{i = 1}^n b_i Y_i \Big) \: \forall b_i \in \mathbb{R} \: \text{s.t.} \: E\Big( \sum_{i = 1}^n b_i Y_i \Big) = \beta_1$$
 ```
 
+```{proof, name = "Bestness of beta1"}
+Consider $\Theta := \bigg\{ \sum\limits_{i = 1}^n b_i Y_i \in \mathbb{R} : E\Big( \sum\limits_{i = 1}^n b_i Y_i \Big) = \beta_1 \bigg\}$.
+
+Claim: $Var( \sum b_i Y_i) - Var(\hat\beta_1) \ge 0$
+
+Let $\sum b_i Y_i \in \Theta$. Then $E(\sum b_i Y_i) = \beta_1$.
+
+Since $E(Y_i) = \beta_0 + \beta_1 x_i$,
+
+$$\beta_0 \sum b_i + \beta_1 \sum b_i x_i = \beta_1$$
+
+It gives
+
+\begin{equation} \label{eq:ule}
+  \begin{cases}
+    \sum b_i = 0 \\
+    \sum b_i x_i = 1
+  \end{cases}
+\end{equation}
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    0 \le Var\Big(\sum b_i Y_i - \hat\beta_1\Big) & = Var\Big( \sum b_i Y_i - \sum \frac{(x_i - \bar{x})}{S_{XX}} Y_i \Big) \\
+    & \stackrel{indep}{=} \sum \bigg( b_i - \frac{(x_i - \bar{x})}{S_{XX}} \bigg)^2 \sigma^2 \\
+    & = \sum \bigg( b_i^2 - \frac{2b_i (x_i - \bar{x})}{S_{XX}} + \frac{(x_i - \bar{x})^2}{S_{XX}^2} \bigg) \sigma^2 \\
+    & = \sum b_i^2 \sigma^2 - \frac{2 \sigma^2}{S_{XX}} \sum b_i x_i + \frac{2 \bar{x} \sigma^2}{S_{XX}} \sum b_i + \sigma^2 \frac{\sum (x_i - \bar{x})^2}{S_{XX}^2} \\
+    & = \sum b_i^2 \sigma^2 - \frac{\sigma^2}{S_{XX}} \qquad \because \eqref{eq:ule} \:\text{and}\: S_{XX} = \sum (x_i - \bar{x})^2 \\
+    & = Var(\sum b_i Y_i) - Var(\hat\beta_1)
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$Var(\sum b_i Y_i) \ge Var(\hat\beta_1)$$
+```
+
+
+```{proof, name = "Bestness of beta0"}
+Consider $\Theta := \bigg\{ \sum\limits_{i = 1}^n a_i Y_i \in \mathbb{R} : E\Big( \sum\limits_{i = 1}^n a_i Y_i \Big) = \beta_0 \bigg\}$.
+
+Claim: $Var( \sum a_i Y_i) - Var(\hat\beta_0) \ge 0$
+
+Let $\sum a_i Y_i \in \Theta$. Then $E(\sum a_i Y_i) = \beta_0$.
+
+Since $E(Y_i) = \beta_0 + \beta_1 x_i$,
+
+$$\beta_0 \sum a_i + \beta_1 \sum a_i x_i = \beta_0$$
+
+It gives
+
+\begin{equation} \label{eq:ule0}
+  \begin{cases}
+    \sum a_i = 1 \\
+    \sum a_i x_i = 0
+  \end{cases}
+\end{equation}
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    0 \le Var\Big(\sum a_iY_i - \hat\beta_0 \Big) & = Var\bigg[\sum a_iY_i - \sum\Big( \frac{1}{n} - \frac{(x_k - \bar{x})\bar{x}}{S_{XX}} \Big) Y_k \bigg] \\
+    & = \sum \bigg(a_i - \frac{1}{n} +  \frac{(x_i - \bar{x})\bar{x}}{S_{XX}} \bigg)^2\sigma^2 \\
+    & = \sum \bigg[ a_i^2 - 2a_i\Big( \frac{1}{n} - \frac{(x_i - \bar{x})\bar{x}}{S_{XX}} \Big) + \Big( \frac{1}{n} - \frac{(x_i - \bar{x})\bar{x}}{S_{XX}} \Big)^2 \bigg]\sigma^2 \\
+		& = \sum a_i^2\sigma^2 -\frac{2\sigma^2}{n}\sum a_i + \frac{2\bar{x}\sigma^2\sum a_ix_i}{S_{XX}} - \frac{2\bar{x}^2\sigma^2\sum a_i}{S_{XX}} \\
+		& \qquad + \sigma^2\bigg( \frac{1}{n} - \frac{2\bar{x}}{nS_{XX}} \sum(x_i - \bar{x}) + \frac{\bar{x}^2\sum(x_i - \bar{x})^2}{S_{XX}^2} \bigg) \\
+		& = \sum a_i^2\sigma^2 -\frac{2\sigma^2}{n} - \frac{2\bar{x}^2\sigma^2}{S_{XX}} \qquad \because \eqref{eq:ule0} \\
+		& \qquad + \bigg(\frac{1}{n} + \frac{\bar{x}^2}{S_{XX}} \bigg)\sigma^2 \qquad \because \sum(x_i - \bar{x}) = 0 \: \text{and} \: S_{XX} := \sum (x_i - \bar{x})^2 \\
+		& = \sum a_i^2\sigma^2 - \bigg( \frac{1}{n} + \frac{\bar{x}^2}{S_{XX}} \bigg)\sigma^2 \\
+		& = Var\Big( \sum a_i Y_i \Big) - Var\hat\beta_0
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$Var(\sum a_i Y_i) \ge Var(\hat\beta_0)$$
+```
+
+
+### Estimation of $\sigma^2$
+
+There is the last parameter, $\sigma^2 = Var(Y_i)$. In the *least squares estimation literary*, we estimate $\sigma^2$ by
+
+\begin{equation} \label{eq:siglse}
+  \hat\sigma^2 = \frac{1}{n - 2} \sum_{i = 1}^n (Y_i - \hat\beta_0 - \hat\beta_1 x_i)^2
+\end{equation}
+
+Why $n - 2$? This makes the estimator unbiased.
+
+```{proposition, sigex, name = "Unbiasedness"}
+$$E(\hat\sigma^2) = \sigma^2$$
+```
+
+```{proof}
+Note that
+
+$$(Y_i - \hat\beta_0 - \hat\beta_1 x_i) = (Y_i - \overline{Y}) - \hat\beta_1(x_i - \overline{x})$$
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    E(\hat\sigma^2) & = \frac{1}{n - 2} E \bigg[ \sum (Y_i - \hat\beta_0 - \hat\beta_1 x_i)^2 \bigg] \\
+    & = \frac{1}{n - 2} E \bigg[ \sum (Y_i - \overline{Y})^2 + \hat\beta_1^2 \sum (x_i - \overline{x})^2 -2\hat\beta_1 \sum (Y_i - \overline{Y})(x_i - \overline{x}) \bigg] \\
+    & = \frac{1}{n - 2} E ( S_{YY} + \hat\beta_1^2 S_{XX} - 2 \hat\beta_1 S_{XY}) \\
+    & = \frac{1}{n - 2} E ( S_{YY} - \hat\beta_1^2 S_{XX}) \qquad \because S_{XY} = \hat\beta_1 S_{XX} \\
+    & = \frac{1}{n - 2} \Big(  \underset{(a)}{\underline{ES_{YY}}} - S_{XX} \underset{(b)}{\underline{E\hat\beta_1^2}} \Big)
+  \end{split}
+\end{equation*}
+
+(a)
+
+\begin{equation*}
+  \begin{split}
+    ES_{YY} & = E\Big[ \sum (Y_i - \overline{Y})^2 \Big] \\
+    & = E \Big[ \sum \Big( (\beta_0 + \beta_1 x_i + \epsilon_i) - (\beta_0 + \beta_1 \overline{x} + \overline{\epsilon}) \Big)^2 \Big] \\
+    & = E \Big[ \sum \Big( \beta_1 (x_i - \overline{x}) + (\epsilon_i - \overline{\epsilon}) \Big)^2 \Big] \\
+    & = \beta_1^2 S_{XX} + E\Big( \sum (\epsilon_i - \overline{\epsilon})^2 \Big) + 2\beta_1 \sum (x_i - \overline{x}) E(\epsilon_i - \overline{\epsilon}) \\
+    & = \beta_1^2 S_{XX} + E\Big( \sum (\epsilon_i - \overline{\epsilon})^2 \Big)
+  \end{split}
+\end{equation*}
+
+Since $E(\bar\epsilon) = 0$ and $Var(\bar\epsilon) = \frac{\sigma^2}{n}$,
+
+\begin{equation*}
+  \begin{split}
+    E\Big( \sum (\epsilon_i - \overline{\epsilon})^2 \Big) & = E \Big( \sum (\epsilon_i^2 + \bar\epsilon^2 - 2\epsilon_i \bar\epsilon) \Big) \\
+    & = \sum E(\epsilon_i^2) - n E(\bar\epsilon^2) \qquad \because \sum \epsilon = n \bar\epsilon \\
+    & = \sum (Var(\epsilon_i) + E(\epsilon_i)^2) - n(Var(\bar\epsilon) + E(\bar\epsilon)^2) \\
+    & = n\sigma^2 - \sigma^2 \\
+    & = (n - 1)\sigma^2
+  \end{split}
+\end{equation*}
+
+Thus,
+
+$$ES_{YY} = \beta_1^2 S_{XX} + (n - 1)\sigma^2$$
+
+(b)
+
+\begin{equation*}
+  \begin{split}
+    E\hat\beta_1^2 & = Var\hat\beta_1 + E(\hat\beta_1)^2 \\
+    & = \frac{\sigma^2}{S_{XX}} + \beta_1^2
+  \end{split}
+\end{equation*}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    E(\hat\sigma^2) & = \frac{1}{n - 2} \Big(  \underset{(a)}{\underline{ES_{YY}}} - S_{YY} \underset{(b)}{\underline{E\hat\beta_1^2}} \Big) \\
+    & = \frac{1}{n - 2} \bigg( \Big(\beta_1^2 S_{XX} + (n - 1)\sigma^2 \Big) - S_{XX}\Big(\frac{\sigma^2}{S_{XX}} + \beta_1^2 \Big) \bigg) \\
+    & = \frac{1}{n - 2}((n - 2)\sigma^2) \\
+    & = \sigma^2
+  \end{split}
+\end{equation*}
+```
 
 
 ## Maximum Likelihood Estimation
@@ -405,6 +565,30 @@ I_n(\theta_1, \theta_2) = - \begin{bmatrix}
 $$
 ```
 
+Assume that $\sigma^2$ is **known**. From the Equations $\eqref{eq:mlbeta0}$ and $\eqref{eq:mlbeta1}$,
+
+$$
+\begin{cases}
+  \frac{\partial^2 l}{\partial \beta_0^2} = - \frac{n}{\sigma^2} \\
+  \frac{\partial^2 l}{\partial \beta_1^2} = - \frac{\sum x_i^2}{\sigma^2} \\
+  \frac{\partial^2 l}{\partial \beta_0 \partial \beta_1} = - \frac{\sum x_i}{\sigma^2}
+\end{cases}
+$$
+
+Thus,
+
+$$
+I_n(\beta_0, \beta_1) = \begin{bmatrix}
+  \frac{n}{\sigma^2} & \frac{\sum x_i}{\sigma^2} \\
+  \frac{\sum x_i}{\sigma^2} & \frac{\sum x_i^2}{\sigma^2}
+\end{bmatrix}
+$$
+
+and so
+
+
+
+
 
 ## Residuals
 
@@ -456,6 +640,21 @@ $\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0$
 
 
 ## Decomposition of Total Variability
+
+```{definition, unsst, name = "Uncorrected Total Sum of Squares"}
+$$SST_{uncor} := \sum_{i = 1}^n Y_i^2$$
+```
+
+```{definition, sst, name = "Corrected Total Sum of Squares"}
+$$SST := \sum_{i = 1}^n (Y_i - \overline{Y})^2$$
+```
+
+```{proposition, decom, name = "Decomposition of SST"}
+$$SST = SSR + SSE$$
+
+where $SSR = \sum (\hat{Y_i} - \overline{Y})^2$ and $SSE = \sum (Y_i - \hat{Y_i})$
+```
+
 
 
 ## Geometric Interpretations
