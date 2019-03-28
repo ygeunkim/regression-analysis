@@ -126,7 +126,7 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{25 Mar, 2019}
+    \date{28 Mar, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -661,6 +661,28 @@ Hence,
 \[Var(\sum a_i Y_i) \ge Var(\hat\beta_0)\]
 \EndKnitrBlock{proof}
 
+\BeginKnitrBlock{example}
+\protect\hypertarget{exm:usingnormal}{}{\label{exm:usingnormal} }Show that \(\sum (Y_i - \hat{Y_i}) = 0\), \(\sum x_i (Y_i - \hat{Y_i}) = 0\), and \(\sum \hat{Y_i} (Y_i - \hat{Y_i}) = 0\).
+\EndKnitrBlock{example}
+
+\BeginKnitrBlock{solution}
+\iffalse{} {Solution. } \fi{}Consider the two normal equations \(\eqref{eq:normbeta0}\) and \(\eqref{eq:normbeta1}\). Note that \(\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_i\).
+
+From the Equation \(\eqref{eq:normbeta0}\), we have \(\sum (Y_i - \hat{Y_i}) = 0\).
+
+From the Equation \(\eqref{eq:normbeta1}\), we have \(\sum x_i (Y_i - \hat{Y_i}) = 0\).
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    \sum \hat{Y_i} (Y_i - \hat{Y_i}) & = \sum (\hat\beta_0 + \hat\beta_1 x_i) (Y_i - \hat{Y_i}) \\
+    & = \hat\beta_0 \sum (Y_i - \hat{Y_i}) + \hat\beta_1 \sum x_i (Y_i - \hat{Y_i}) \\
+    & = 0
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{solution}
+
 \hypertarget{estimation-of-sigma2}{%
 \subsection{\texorpdfstring{Estimation of \(\sigma^2\)}{Estimation of \textbackslash{}sigma\^{}2}}\label{estimation-of-sigma2}}
 
@@ -811,7 +833,7 @@ Recall that \(\hat\sigma^{2LSE}\) is an unbiased, i.e.~this \emph{MLE is not an 
 where \(I_n(\theta) = -E\bigg(\frac{\partial^2 l(\theta)}{\partial \theta^2} \bigg)\)
 \EndKnitrBlock{theorem}
 
-To apply this theorem @(thm:rclb) in the simple linear regression setting, i.e.~\((\beta_0, \beta_1)\), we need to look at the \emph{bivariate case}.
+To apply this theorem \ref{thm:rclb} in the simple linear regression setting, i.e.~\((\beta_0, \beta_1)\), we need to look at the \emph{bivariate case}.
 
 \BeginKnitrBlock{theorem}[Rao-Cramer Lower Bound, bivariate case]
 \protect\hypertarget{thm:rclb2}{}{\label{thm:rclb2} \iffalse (Rao-Cramer Lower Bound, bivariate case) \fi{} }Let \(X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \theta_2)\) and let \(\boldsymbol{\theta} = (\theta_1, \theta_2)^T\). If each \(\hat\theta_1\), \(\hat\theta_2\) is an unbiased estimator of \(\theta_1\) and \(\theta_2\), then
@@ -852,7 +874,83 @@ I_n(\beta_0, \beta_1) = \begin{bmatrix}
 \end{bmatrix}
 \]
 
-and so
+Applying gaussian elimination,
+
+\begin{equation*}
+  \begin{split}
+    \left[
+    \begin{array}{cc|cc}
+      \frac{n}{\sigma^2} & \frac{\sum x_i}{\sigma^2} & 1 & 0 \\
+      \frac{\sum x_i}{\sigma^2} & \frac{\sum x_i^2}{\sigma^2} & 0 & 1
+    \end{array}
+    \right] & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      \frac{n}{\sigma^2} & \frac{\sum x_i}{\sigma^2} & 1 & 0 \\
+      \frac{\sum x_i}{\sigma^2}\Big(\frac{n}{\sum x_i} \Big) & \frac{\sum x_i^2}{\sigma^2}\Big(\frac{n}{\sum x_i} \Big) & 0 & \frac{1}{\overline{x}}
+    \end{array}
+    \right] \\
+    & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      \frac{n}{\sigma^2} & \frac{\sum x_i}{\sigma^2} & 1 & 0 \\
+      0 & \frac{\sum x_i^2 - \overline{x}\sum x_i}{\sigma^2\overline{x}} = \frac{S_{XX}}{\sigma^2\overline{x}} & -1 & \frac{1}{\overline{x}}
+    \end{array}
+    \right] \\
+    & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      1 & \overline{x} & \frac{\sigma^2}{n} & 0 \\
+      0 & 1 & -\frac{\overline{x}}{S_{XX}}\sigma^2 & \frac{\sigma^2}{S_{XX}}
+    \end{array}
+    \right] \\
+    & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      1 & 0 & \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 & -\frac{\overline{x}}{S_{XX}}\sigma^2 \\
+      0 & 1 & -\frac{\overline{x}}{S_{XX}}\sigma^2 & \frac{\sigma^2}{S_{XX}}
+    \end{array}
+    \right]
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\[
+I_n^{-1}(\beta_0, \beta_1) = \begin{bmatrix}
+  \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 & -\frac{\overline{x}}{S_{XX}}\sigma^2 \\
+  -\frac{\overline{x}}{S_{XX}}\sigma^2 & \frac{\sigma^2}{S_{XX}}
+\end{bmatrix} = \begin{bmatrix}
+  Var(\hat\beta_0) & Cov(\hat\beta_0, \hat\beta_1) \\
+  Cov(\hat\beta_0, \hat\beta_1) & Var(\hat\beta_1)
+\end{bmatrix}
+\]
+
+Since \(Var(\boldsymbol{\hat\beta}) - I^{-1} = 0\) is non-negative definite, each \(Var(\hat\beta_0) = \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2\) and \(Var(\hat\beta_1) = \frac{\sigma^2}{S_{XX}}\) is a theoretical bound.
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}This says that \(\hat\beta_0^{LSE} = \hat\beta_0^{MLE}\) and \(\hat\beta_1^{LSE} = \hat\beta_1^{MLE}\) have the smallest variance among all unbiased estimator.
+\EndKnitrBlock{remark}
+
+This result is \emph{stronger than Gauss-Markov theorem} \ref{thm:gmt}, where the LSE has the smalleset variance among all \emph{linear unbiased} estimators. It can be simply obtained from the \emph{Lehmann-Scheffe Theorem}: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE \citep{hogg:2018aa}.
+
+\BeginKnitrBlock{remark}[Lehmann and Scheffe for regression coefficients]
+\iffalse{} {Remark (Lehmann and Scheffe for regression coefficients). } \fi{}\(u\Big(\sum Y_i, S_{XY} \Big)\) is CSS in this regression problem, i.e.~known \(\sigma^2\).
+\EndKnitrBlock{remark}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}From the example \ref{exm:gmle},
+
+\begin{equation*}
+  \begin{split}
+    L(\beta_0, \beta_1) & = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \sum(Y_i - \beta_0 - \beta_1 x_i)^2 \bigg] \\
+    & = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \sum \Big(Y_i^2 - (\beta_0 + \beta_1 x_i)Y_i + (\beta_0 + \beta_1 x_i)^2 \Big) \bigg] \\
+    & = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \Big( -\beta_0 \sum Y_i - \beta_1 \sum x_i Y_i \Big) \bigg] \exp\bigg[-\frac{1}{2\sigma^2} \Big( \sum Y_i^2 + (\beta_0 + \beta_1 x_i)^2 \Big) \bigg]
+  \end{split}
+\end{equation*}
+
+By the Factorization theorem, both \(\sum Y_i\) and \(\sum x_i Y_i\) are sufficient statistics. Since \(S_{XY}\) is one-to-one function of \(\sum x_i Y_i\), it is also a sufficient statistic.
+
+Denote that the normal distribution is in exponential family.
+
+Hence, \((\sum Y_i, S_{XY})\) are CSS.
+\EndKnitrBlock{proof}
 
 \hypertarget{residuals}{%
 \section{Residuals}\label{residuals}}
@@ -946,10 +1044,6 @@ where \(SSR = \sum (\hat{Y_i} - \overline{Y})^2\) and \(SSE = \sum (Y_i - \hat{Y
 
 \hypertarget{geometric-interpretations}{%
 \section{Geometric Interpretations}\label{geometric-interpretations}}
-
-\hypertarget{references}{%
-\chapter*{References}\label{references}}
-\addcontentsline{toc}{chapter}{References}
 
 \bibliography{book.bib,packages.bib}
 

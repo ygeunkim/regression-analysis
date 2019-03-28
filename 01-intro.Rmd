@@ -401,6 +401,29 @@ $$Var(\sum a_i Y_i) \ge Var(\hat\beta_0)$$
 ```
 
 
+```{example, usingnormal}
+Show that $\sum (Y_i - \hat{Y_i}) = 0$, $\sum x_i (Y_i - \hat{Y_i}) = 0$, and $\sum \hat{Y_i} (Y_i - \hat{Y_i}) = 0$.
+```
+
+```{solution}
+Consider the two normal equations $\eqref{eq:normbeta0}$ and $\eqref{eq:normbeta1}$. Note that $\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_i$.
+
+From the Equation $\eqref{eq:normbeta0}$, we have $\sum (Y_i - \hat{Y_i}) = 0$.
+
+From the Equation $\eqref{eq:normbeta1}$, we have $\sum x_i (Y_i - \hat{Y_i}) = 0$.
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    \sum \hat{Y_i} (Y_i - \hat{Y_i}) & = \sum (\hat\beta_0 + \hat\beta_1 x_i) (Y_i - \hat{Y_i}) \\
+    & = \hat\beta_0 \sum (Y_i - \hat{Y_i}) + \hat\beta_1 \sum x_i (Y_i - \hat{Y_i}) \\
+    & = 0
+  \end{split}
+\end{equation*}
+```
+
+
 ### Estimation of $\sigma^2$
 
 There is the last parameter, $\sigma^2 = Var(Y_i)$. In the *least squares estimation literary*, we estimate $\sigma^2$ by
@@ -543,7 +566,7 @@ $$Var(\hat\theta) \ge \frac{1}{I_n(\theta)}$$
 where $I_n(\theta) = -E\bigg(\frac{\partial^2 l(\theta)}{\partial \theta^2} \bigg)$
 ```
 
-To apply this theorem \@(thm:rclb) in the simple linear regression setting, i.e. $(\beta_0, \beta_1)$, we need to look at the *bivariate case*.
+To apply this theorem \@ref(thm:rclb) in the simple linear regression setting, i.e. $(\beta_0, \beta_1)$, we need to look at the *bivariate case*.
 
 ```{theorem, rclb2, name = "Rao-Cramer Lower Bound, bivariate case"}
 Let $X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \theta_2)$ and let $\boldsymbol{\theta} = (\theta_1, \theta_2)^T$. If each $\hat\theta_1$, $\hat\theta_2$ is an unbiased estimator of $\theta_1$ and $\theta_2$, then
@@ -584,10 +607,83 @@ I_n(\beta_0, \beta_1) = \begin{bmatrix}
 \end{bmatrix}
 $$
 
-and so
+Applying gaussian elimination,
 
+\begin{equation*}
+  \begin{split}
+    \left[
+    \begin{array}{cc|cc}
+      \frac{n}{\sigma^2} & \frac{\sum x_i}{\sigma^2} & 1 & 0 \\
+      \frac{\sum x_i}{\sigma^2} & \frac{\sum x_i^2}{\sigma^2} & 0 & 1
+    \end{array}
+    \right] & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      \frac{n}{\sigma^2} & \frac{\sum x_i}{\sigma^2} & 1 & 0 \\
+      \frac{\sum x_i}{\sigma^2}\Big(\frac{n}{\sum x_i} \Big) & \frac{\sum x_i^2}{\sigma^2}\Big(\frac{n}{\sum x_i} \Big) & 0 & \frac{1}{\overline{x}}
+    \end{array}
+    \right] \\
+    & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      \frac{n}{\sigma^2} & \frac{\sum x_i}{\sigma^2} & 1 & 0 \\
+      0 & \frac{\sum x_i^2 - \overline{x}\sum x_i}{\sigma^2\overline{x}} = \frac{S_{XX}}{\sigma^2\overline{x}} & -1 & \frac{1}{\overline{x}}
+    \end{array}
+    \right] \\
+    & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      1 & \overline{x} & \frac{\sigma^2}{n} & 0 \\
+      0 & 1 & -\frac{\overline{x}}{S_{XX}}\sigma^2 & \frac{\sigma^2}{S_{XX}}
+    \end{array}
+    \right] \\
+    & \leftrightarrow \left[
+    \begin{array}{cc|cc}
+      1 & 0 & \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 & -\frac{\overline{x}}{S_{XX}}\sigma^2 \\
+      0 & 1 & -\frac{\overline{x}}{S_{XX}}\sigma^2 & \frac{\sigma^2}{S_{XX}}
+    \end{array}
+    \right]
+  \end{split}
+\end{equation*}
 
+Hence,
 
+$$
+I_n^{-1}(\beta_0, \beta_1) = \begin{bmatrix}
+  \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 & -\frac{\overline{x}}{S_{XX}}\sigma^2 \\
+  -\frac{\overline{x}}{S_{XX}}\sigma^2 & \frac{\sigma^2}{S_{XX}}
+\end{bmatrix} = \begin{bmatrix}
+  Var(\hat\beta_0) & Cov(\hat\beta_0, \hat\beta_1) \\
+  Cov(\hat\beta_0, \hat\beta_1) & Var(\hat\beta_1)
+\end{bmatrix}
+$$
+
+Since $Var(\boldsymbol{\hat\beta}) - I^{-1} = 0$ is non-negative definite, each $Var(\hat\beta_0) = \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2$ and $Var(\hat\beta_1) = \frac{\sigma^2}{S_{XX}}$ is a theoretical bound.
+
+```{remark, lsemle}
+This says that $\hat\beta_0^{LSE} = \hat\beta_0^{MLE}$ and $\hat\beta_1^{LSE} = \hat\beta_1^{MLE}$ have the smallest variance among all unbiased estimator.
+```
+
+This result is *stronger than Gauss-Markov theorem* \@ref(thm:gmt), where the LSE has the smalleset variance among all *linear unbiased* estimators. It can be simply obtained from the *Lehmann-Scheffe Theorem*: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE [@hogg:2018aa].
+
+```{remark, regcss, name = "Lehmann and Scheffe for regression coefficients"}
+$u\Big(\sum Y_i, S_{XY} \Big)$ is CSS in this regression problem, i.e. known $\sigma^2$.
+```
+
+```{proof}
+From the example \@ref(exm:gmle),
+
+\begin{equation*}
+  \begin{split}
+    L(\beta_0, \beta_1) & = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \sum(Y_i - \beta_0 - \beta_1 x_i)^2 \bigg] \\
+    & = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \sum \Big(Y_i^2 - (\beta_0 + \beta_1 x_i)Y_i + (\beta_0 + \beta_1 x_i)^2 \Big) \bigg] \\
+    & = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \Big( -\beta_0 \sum Y_i - \beta_1 \sum x_i Y_i \Big) \bigg] \exp\bigg[-\frac{1}{2\sigma^2} \Big( \sum Y_i^2 + (\beta_0 + \beta_1 x_i)^2 \Big) \bigg]
+  \end{split}
+\end{equation*}
+
+By the Factorization theorem, both $\sum Y_i$ and $\sum x_i Y_i$ are sufficient statistics. Since $S_{XY}$ is one-to-one function of $\sum x_i Y_i$, it is also a sufficient statistic.
+
+Denote that the normal distribution is in exponential family.
+
+Hence, $(\sum Y_i, S_{XY})$ are CSS.
+```
 
 
 ## Residuals
@@ -626,7 +722,7 @@ $$SSE := \sum_{i = 1}^n e_i^2$$
 
 ### Residuals and the variance
 
-$e_i$ contains the information for $\epsilon_i$. $\sum e_i^2$ can give information about $\sigma^2 = Var(\epsilon_i)$. For this, it is expected that $e_i$ and $\epsilon_i$ have similar feature.
+$e_i$ is a random quantity, which contains the information for $\epsilon_i$. $\sum e_i^2$ can give information about $\sigma^2 = Var(\epsilon_i)$. For this, it is expected that $e_i$ and $\epsilon_i$ have similar feature.
 
 ```{proposition, resprop, name = "Properties of residuals"}
 Mean and variance of the residual
@@ -637,6 +733,17 @@ $\text{(b)}\: Var(e_i) \neq \sigma^2$
 
 $\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0$
 ```
+
+
+$$
+\begin{equation}
+  \begin{split}
+    Var(\hat{Y_i}) & = Var(\hat\beta_0 + \hat\beta_1 x_i) \\
+    & = Var \bigg[ \overline{Y} + (x_i - \overline{x}) \hat\beta_1 \bigg] \qquad \because \hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x} \\
+    & = Var(\overline{Y}) + (x_i - \overline{x})^2Var(\hat\beta_1) + 2(x_i - \overline{x})Cov(\overline{Y}, \hat\beta_1)
+  \end{split}
+\end{equation}
+$$
 
 
 ## Decomposition of Total Variability
