@@ -661,7 +661,7 @@ Since $Var(\boldsymbol{\hat\beta}) - I^{-1} = 0$ is non-negative definite, each 
 This says that $\hat\beta_0^{LSE} = \hat\beta_0^{MLE}$ and $\hat\beta_1^{LSE} = \hat\beta_1^{MLE}$ have the smallest variance among all unbiased estimator.
 ```
 
-This result is *stronger than Gauss-Markov theorem* \@ref(thm:gmt), where the LSE has the smalleset variance among all *linear unbiased* estimators. It can be simply obtained from the *Lehmann-Scheffe Theorem*: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE [@hogg:2018aa].
+This result is *stronger than Gauss-Markov theorem* \@ref(thm:gmt), where the LSE has the smalleset variance among all *linear unbiased* estimators. It can be simply obtained from the *Lehmann-Scheffe Theorem*: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE [@Hogg:2018aa].
 
 ```{remark, regcss, name = "Lehmann and Scheffe for regression coefficients"}
 $u\Big(\sum Y_i, S_{XY} \Big)$ is CSS in this regression problem, i.e. known $\sigma^2$.

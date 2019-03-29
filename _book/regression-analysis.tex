@@ -150,10 +150,20 @@ Department of Statistics, SKKU\\
 \begin{document}
 \maketitle
 
+\includegraphics{cover}
+\cleardoublepage
+\frontmatter
+
 {
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
+\hypertarget{welcome}{%
+\chapter*{Welcome}\label{welcome}}
+\addcontentsline{toc}{chapter}{Welcome}
+
+This book aims at covering materials of regression analysis. Also, there will be R programming for regression.
+
 \hypertarget{linear-regression-analysis}{%
 \chapter{Linear Regression Analysis}\label{linear-regression-analysis}}
 
@@ -928,7 +938,7 @@ Since \(Var(\boldsymbol{\hat\beta}) - I^{-1} = 0\) is non-negative definite, eac
 \iffalse{} {Remark. } \fi{}This says that \(\hat\beta_0^{LSE} = \hat\beta_0^{MLE}\) and \(\hat\beta_1^{LSE} = \hat\beta_1^{MLE}\) have the smallest variance among all unbiased estimator.
 \EndKnitrBlock{remark}
 
-This result is \emph{stronger than Gauss-Markov theorem} \ref{thm:gmt}, where the LSE has the smalleset variance among all \emph{linear unbiased} estimators. It can be simply obtained from the \emph{Lehmann-Scheffe Theorem}: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE \citep{hogg:2018aa}.
+This result is \emph{stronger than Gauss-Markov theorem} \ref{thm:gmt}, where the LSE has the smalleset variance among all \emph{linear unbiased} estimators. It can be simply obtained from the \emph{Lehmann-Scheffe Theorem}: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE \citep{Hogg:2018aa}.
 
 \BeginKnitrBlock{remark}[Lehmann and Scheffe for regression coefficients]
 \iffalse{} {Remark (Lehmann and Scheffe for regression coefficients). } \fi{}\(u\Big(\sum Y_i, S_{XY} \Big)\) is CSS in this regression problem, i.e.~known \(\sigma^2\).
