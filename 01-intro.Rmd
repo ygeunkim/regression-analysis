@@ -724,6 +724,36 @@ $$SSE := \sum_{i = 1}^n e_i^2$$
 
 $e_i$ is a random quantity, which contains the information for $\epsilon_i$. $\sum e_i^2$ can give information about $\sigma^2 = Var(\epsilon_i)$. For this, it is expected that $e_i$ and $\epsilon_i$ have similar feature.
 
+
+```{lemma, yandbet}
+Covriance between Y and each coefficient
+
+$\text{(a)}\: Cov(\hat\beta_0, Y_i) = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2$
+
+$\text{(b)}\: Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2$
+```
+
+```{proof}
+(a)
+
+\begin{equation*}
+  \begin{split}
+    Cov(\hat\beta_0, Y_i) & = Cov(\sum a_i Y_i, Y_i) \\
+    & = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2
+  \end{split}
+\end{equation*}
+
+(b)
+
+\begin{equation*}
+  \begin{split}
+    Cov(\hat\beta_1, Y_i) & = Cov(\sum b_i Y_i, Y_i) \\
+    & = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2
+  \end{split}
+\end{equation*}
+```
+
+
 ```{proposition, resprop, name = "Properties of residuals"}
 Mean and variance of the residual
 
@@ -734,16 +764,67 @@ $\text{(b)}\: Var(e_i) \neq \sigma^2$
 $\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0$
 ```
 
+```{proof}
+(a) Recall that this is the assumption of the regression model.
 
-$$
-\begin{equation}
+(b) Lemma \@ref(lem:yandbet) implies that
+
+\begin{equation*}
+  \begin{split}
+    Cov(\overline{Y}, \hat\beta_1) & = Cov(\frac{1}{n}\sum Y_i, \hat\beta_1) \\
+    & = \frac{1}{n} \sum_{i = 1}^n \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2 \\
+    & = 0 \qquad \because \sum (x_i - \overline{x}) = 0
+  \end{split}
+\end{equation*}
+
+Then
+
+\begin{equation} \label{eq:predvar}
   \begin{split}
     Var(\hat{Y_i}) & = Var(\hat\beta_0 + \hat\beta_1 x_i) \\
     & = Var \bigg[ \overline{Y} + (x_i - \overline{x}) \hat\beta_1 \bigg] \qquad \because \hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x} \\
-    & = Var(\overline{Y}) + (x_i - \overline{x})^2Var(\hat\beta_1) + 2(x_i - \overline{x})Cov(\overline{Y}, \hat\beta_1)
+    & = Var(\overline{Y}) + (x_i - \overline{x})^2 Var(\hat\beta_1) + 2(x_i - \overline{x}) Cov(\overline{Y}, \hat\beta_1) \\
+    & = \frac{\sigma^2}{n} + (x_i - \overline{x})^2\frac{\sigma^2}{S_{XX}} + 0 \\
+    & = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
   \end{split}
 \end{equation}
-$$
+
+From the same lemma \@ref(lem:yandbet),
+    
+\begin{equation} \label{eq:yyhat}
+  \begin{split}
+    Cov(Y_i, \hat{Y_i}) & = Cov(Y_i, \overline{Y} + (x_i - \overline{x}) \hat\beta_1) \\
+    & = Cov(Y_i, \overline{Y}) + (x_i - \overline{x}) Cov(Y_i, \hat\beta_1) \\
+    & = \frac{\sigma^2}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}}\sigma^2 \qquad \because Cov(Y_i, \hat\beta_1) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2 \\
+    & = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
+  \end{split}
+\end{equation}
+
+These $\eqref{eq:predvar}$ and $\eqref{eq:yyhat}$ give that
+
+\begin{equation*}
+  \begin{split}
+    Var(e_i) & = Var(Y_i) + Var(\hat{Y_i}) -2Cov(Y_i, \hat{Y_i}) \\
+    & = \sigma^2 + \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 - 2 \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
+    & = \bigg(1 - \frac{1}{n} - \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
+    & \neq \sigma^2
+  \end{split}
+\end{equation*}
+
+(c) Let $i \neq j$. Then
+
+\begin{equation*}
+  \begin{split}
+    Cov(e_i, e_j) & = Cov\Big( Y_i - (\hat\beta_0 + \hat\beta_1 x_i), Y_j - (\hat\beta_0 + \hat\beta_1 x_j) \Big) \\
+    & = Cov(Y_i, Y_j) - Cov\Big(Y_i, (\hat\beta_0 + \hat\beta_1 x_j) \Big) - Cov((\hat\beta_0 + \hat\beta_1 x_i), Y_j) + Cov((\hat\beta_0 + \hat\beta_1 x_i), (\hat\beta_0 + \hat\beta_1 x_j)) \\
+    & = 0 - \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2 - \frac{(x_i - \overline{x})x_j}{S_{XX}}\sigma^2 \\
+    & \qquad - \bigg( \frac{1}{n} - \frac{(x_j - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2 - \frac{(x_i - \overline{x})x_i}{S_{XX}}\sigma^2 \\
+    & \qquad + \bigg( \frac{1}{n} + \frac{\overline{x}^2 + x_i x_j - \overline{x}(x_i + x_j)}{S_{XX}} \bigg)\sigma^2 \\
+    & = - \bigg( \frac{1}{n} + \frac{\overline{x}^2 + x_i x_j - \overline{x}(x_i + x_j)}{S_{XX}} \bigg)\sigma^2 \\
+    & \neq 0
+  \end{split}
+\end{equation*}
+```
 
 
 ## Decomposition of Total Variability
@@ -755,6 +836,37 @@ $$SST_{uncor} := \sum_{i = 1}^n Y_i^2$$
 ```{definition, sst, name = "Corrected Total Sum of Squares"}
 $$SST := \sum_{i = 1}^n (Y_i - \overline{Y})^2$$
 ```
+
+What does this total sum of squares mean? To know this, we should know $\overline{Y}$ first.
+
+```{r ybarpred, fig.cap=fig$cap("ybarpred", "Regression without predictor")}
+delv %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_smooth(method = "lm", formula = y ~ 1, se = FALSE) +
+  geom_point() +
+  labs(
+    x = "Number of Cases",
+    y = "Delivery Time"
+  )
+```
+
+See $`r fig$ref("ybarpred")`$. The line represents the closest line when we use only intercept term for the regression model. In other words, *if we use no information for the response*, i.e. no predictor variables, we will get just average of the response variable. Consider
+
+$$Y_i = \beta_0 + \epsilon_i$$
+
+Then we can get only one normal equation
+
+$$\sum (Y_i - \hat\beta_0) = 0$$
+
+Hence,
+
+$$\hat\beta_0 = \frac{1}{n} \sum_{i = 1}^n Y_i \equiv \overline{Y}$$
+
+From this fact, $SST$ implies
+
+
+
+
 
 ```{proposition, decom, name = "Decomposition of SST"}
 $$SST = SSR + SSE$$

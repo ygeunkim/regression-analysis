@@ -126,7 +126,7 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{28 Mar, 2019}
+    \date{29 Mar, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -684,7 +684,7 @@ It follows that
 \EndKnitrBlock{solution}
 
 \hypertarget{estimation-of-sigma2}{%
-\subsection{\texorpdfstring{Estimation of \(\sigma^2\)}{Estimation of \textbackslash{}sigma\^{}2}}\label{estimation-of-sigma2}}
+\subsection{\texorpdfstring{Estimation of \(\sigma^2\)}{Estimation of \textbackslash sigma\^{}2}}\label{estimation-of-sigma2}}
 
 There is the last parameter, \(\sigma^2 = Var(Y_i)\). In the \emph{least squares estimation literary}, we estimate \(\sigma^2\) by
 
@@ -1013,7 +1013,39 @@ See \(\text{Figure }\ref{fig:regplot}\). Each red line is \(e_i\). As we can see
 \hypertarget{residuals-and-the-variance}{%
 \subsection{Residuals and the variance}\label{residuals-and-the-variance}}
 
-\(e_i\) contains the information for \(\epsilon_i\). \(\sum e_i^2\) can give information about \(\sigma^2 = Var(\epsilon_i)\). For this, it is expected that \(e_i\) and \(\epsilon_i\) have similar feature.
+\(e_i\) is a random quantity, which contains the information for \(\epsilon_i\). \(\sum e_i^2\) can give information about \(\sigma^2 = Var(\epsilon_i)\). For this, it is expected that \(e_i\) and \(\epsilon_i\) have similar feature.
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:yandbet}{}{\label{lem:yandbet} }Covriance between Y and each coefficient
+
+\(\text{(a)}\: Cov(\hat\beta_0, Y_i) = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2\)
+
+\(\text{(b)}\: Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2\)
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}(a)
+
+\begin{equation*}
+  \begin{split}
+    Cov(\hat\beta_0, Y_i) & = Cov(\sum a_i Y_i, Y_i) \\
+    & = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2
+  \end{split}
+\end{equation*}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{1}
+\item
+\end{enumerate}
+
+\begin{equation*}
+  \begin{split}
+    Cov(\hat\beta_1, Y_i) & = Cov(\sum b_i Y_i, Y_i) \\
+    & = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
 
 \BeginKnitrBlock{proposition}[Properties of residuals]
 \protect\hypertarget{prp:resprop}{}{\label{prp:resprop} \iffalse (Properties of residuals) \fi{} }Mean and variance of the residual
@@ -1025,6 +1057,80 @@ See \(\text{Figure }\ref{fig:regplot}\). Each red line is \(e_i\). As we can see
 \(\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0\)
 \EndKnitrBlock{proposition}
 
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}(a) Recall that this is the assumption of the regression model.
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Lemma \ref{lem:yandbet} implies that
+\end{enumerate}
+
+\begin{equation*}
+  \begin{split}
+    Cov(\overline{Y}, \hat\beta_1) & = Cov(\frac{1}{n}\sum Y_i, \hat\beta_1) \\
+    & = \frac{1}{n} \sum_{i = 1}^n \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2 \\
+    & = 0 \qquad \because \sum (x_i - \overline{x}) = 0
+  \end{split}
+\end{equation*}
+
+Then
+
+\begin{equation} \label{eq:predvar}
+  \begin{split}
+    Var(\hat{Y_i}) & = Var(\hat\beta_0 + \hat\beta_1 x_i) \\
+    & = Var \bigg[ \overline{Y} + (x_i - \overline{x}) \hat\beta_1 \bigg] \qquad \because \hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x} \\
+    & = Var(\overline{Y}) + (x_i - \overline{x})^2 Var(\hat\beta_1) + 2(x_i - \overline{x}) Cov(\overline{Y}, \hat\beta_1) \\
+    & = \frac{\sigma^2}{n} + (x_i - \overline{x})^2\frac{\sigma^2}{S_{XX}} + 0 \\
+    & = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
+  \end{split}
+\end{equation}
+
+From the same lemma \ref{lem:yandbet},
+
+\begin{equation} \label{eq:yyhat}
+  \begin{split}
+    Cov(Y_i, \hat{Y_i}) & = Cov(Y_i, \overline{Y} + (x_i - \overline{x}) \hat\beta_1) \\
+    & = Cov(Y_i, \overline{Y}) + (x_i - \overline{x}) Cov(Y_i, \hat\beta_1) \\
+    & = \frac{\sigma^2}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}}\sigma^2 \qquad \because Cov(Y_i, \hat\beta_1) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2 \\
+    & = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
+  \end{split}
+\end{equation}
+
+These \(\eqref{eq:predvar}\) and \(\eqref{eq:yyhat}\) give that
+
+\begin{equation*}
+  \begin{split}
+    Var(e_i) & = Var(Y_i) + Var(\hat{Y_i}) -2Cov(Y_i, \hat{Y_i}) \\
+    & = \sigma^2 + \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 - 2 \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
+    & = \bigg(1 - \frac{1}{n} - \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
+    & \neq \sigma^2
+  \end{split}
+\end{equation*}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Let \(i \neq j\). Then
+\end{enumerate}
+
+\begin{equation*}
+  \begin{split}
+    Cov(e_i, e_j) & = Cov\Big( Y_i - (\hat\beta_0 + \hat\beta_1 x_i), Y_j - (\hat\beta_0 + \hat\beta_1 x_j) \Big) \\
+    & = Cov(Y_i, Y_j) - Cov\Big(Y_i, (\hat\beta_0 + \hat\beta_1 x_j) \Big) - Cov((\hat\beta_0 + \hat\beta_1 x_i), Y_j) + Cov((\hat\beta_0 + \hat\beta_1 x_i), (\hat\beta_0 + \hat\beta_1 x_j)) \\
+    & = 0 - \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2 - \frac{(x_i - \overline{x})x_j}{S_{XX}}\sigma^2 \\
+    & \qquad - \bigg( \frac{1}{n} - \frac{(x_j - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2 - \frac{(x_i - \overline{x})x_i}{S_{XX}}\sigma^2 \\
+    & \qquad + \bigg( \frac{1}{n} + \frac{\overline{x}^2 + x_i x_j - \overline{x}(x_i + x_j)}{S_{XX}} \bigg)\sigma^2 \\
+    & = - \bigg( \frac{1}{n} + \frac{\overline{x}^2 + x_i x_j - \overline{x}(x_i + x_j)}{S_{XX}} \bigg)\sigma^2 \\
+    & \neq 0
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
 \hypertarget{decomposition-of-total-variability}{%
 \section{Decomposition of Total Variability}\label{decomposition-of-total-variability}}
 
@@ -1035,6 +1141,44 @@ See \(\text{Figure }\ref{fig:regplot}\). Each red line is \(e_i\). As we can see
 \BeginKnitrBlock{definition}[Corrected Total Sum of Squares]
 \protect\hypertarget{def:sst}{}{\label{def:sst} \iffalse (Corrected Total Sum of Squares) \fi{} }\[SST := \sum_{i = 1}^n (Y_i - \overline{Y})^2\]
 \EndKnitrBlock{definition}
+
+What does this total sum of squares mean? To know this, we should know \(\overline{Y}\) first.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{delv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ x, }\DataTypeTok{y =}\NormalTok{ y)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{, }\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\DecValTok{1}\NormalTok{, }\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Number of Cases"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Delivery Time"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/ybarpred-1} 
+
+}
+
+\caption{Regression without predictor\label{fig:ybarpred}}\label{fig:ybarpred}
+\end{figure}
+
+See \(\text{Figure }\ref{fig:ybarpred}\). The line represents the closest line when we use only intercept term for the regression model. In other words, \emph{if we use no information for the response}, i.e.~no predictor variables, we will get just average of the response variable. Consider
+
+\[Y_i = \beta_0 + \epsilon_i\]
+
+Then we can get only one normal equation
+
+\[\sum (Y_i - \hat\beta_0) = 0\]
+
+Hence,
+
+\[\hat\beta_0 = \frac{1}{n} \sum_{i = 1}^n Y_i \equiv \overline{Y}\]
+
+From this fact, \(SST\) implies
 
 \BeginKnitrBlock{proposition}[Decomposition of SST]
 \protect\hypertarget{prp:decom}{}{\label{prp:decom} \iffalse (Decomposition of SST) \fi{} }\[SST = SSR + SSE\]
