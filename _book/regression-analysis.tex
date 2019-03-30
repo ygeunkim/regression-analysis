@@ -126,10 +126,13 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{29 Mar, 2019}
+    \date{31 Mar, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
+
+\let\oldmaketitle\maketitle
+\AtBeginDocument{\let\maketitle\relax}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -150,9 +153,14 @@ Department of Statistics, SKKU\\
 \begin{document}
 \maketitle
 
-\includegraphics{cover}
-\cleardoublepage
-\frontmatter
+\mainmatter
+\thispagestyle{empty}
+\begin{center}
+  \includegraphics{cover.png}
+\end{center}
+
+\let\maketitle\oldmaketitle
+\maketitle
 
 {
 \setcounter{tocdepth}{1}
@@ -1016,8 +1024,8 @@ See \(\text{Figure }\ref{fig:regplot}\). Each red line is \(e_i\). As we can see
 
 \(\sum e_i^2\), which has been minimized in the procedure of LSE, can be used to see \emph{overall size of prediction errors}.
 
-\BeginKnitrBlock{definition}[Error Sums of Squares]
-\protect\hypertarget{def:sse}{}{\label{def:sse} \iffalse (Error Sums of Squares) \fi{} }\[SSE := \sum_{i = 1}^n e_i^2\]
+\BeginKnitrBlock{definition}[Residual Sum of Squares]
+\protect\hypertarget{def:sse}{}{\label{def:sse} \iffalse (Residual Sum of Squares) \fi{} }\[SSE := \sum_{i = 1}^n e_i^2\]
 \EndKnitrBlock{definition}
 
 \hypertarget{residuals-and-the-variance}{%
@@ -1144,6 +1152,9 @@ These \(\eqref{eq:predvar}\) and \(\eqref{eq:yyhat}\) give that
 \hypertarget{decomposition-of-total-variability}{%
 \section{Decomposition of Total Variability}\label{decomposition-of-total-variability}}
 
+\hypertarget{total-sum-of-squares}{%
+\subsection{Total sum of squares}\label{total-sum-of-squares}}
+
 \BeginKnitrBlock{definition}[Uncorrected Total Sum of Squares]
 \protect\hypertarget{def:unsst}{}{\label{def:unsst} \iffalse (Uncorrected Total Sum of Squares) \fi{} }\[SST_{uncor} := \sum_{i = 1}^n Y_i^2\]
 \EndKnitrBlock{definition}
@@ -1188,16 +1199,287 @@ Hence,
 
 \[\hat\beta_0 = \frac{1}{n} \sum_{i = 1}^n Y_i \equiv \overline{Y}\]
 
-From this fact, \(SST\) implies
+From this fact, \(SST\) implies \textbf{total variance}.
+
+\hypertarget{regression-sum-of-squares}{%
+\subsection{Regression sum of squares}\label{regression-sum-of-squares}}
+
+\BeginKnitrBlock{definition}[Regression Sum of Squares]
+\protect\hypertarget{def:ssr}{}{\label{def:ssr} \iffalse (Regression Sum of Squares) \fi{} }\[SSR := \sum_{i = 1}^n (hat{Y_i} - \overline{Y})^2\]
+\EndKnitrBlock{definition}
+
+This \(SSR\) compares \(\hat{Y_i}\) versus \(\overline{Y}\), computing the sum of squares for difference between predicted values from \emph{regression model} and \emph{model not using predictors}.
+
+\hypertarget{residual-sum-of-squares}{%
+\subsection{Residual sum of squares}\label{residual-sum-of-squares}}
+
+Now consider the \emph{residual sum of squares} \(SSE\) in the definition \ref{def:sse}. As mentioned, this is related to the \emph{prediction errors}, which the regression model could not explain the data.
+
+\hypertarget{decompsst}{%
+\subsection{Decomposition of total sum of squares}\label{decompsst}}
+
+\(SST\) can be decomposed by construction of sum of squares.
 
 \BeginKnitrBlock{proposition}[Decomposition of SST]
 \protect\hypertarget{prp:decom}{}{\label{prp:decom} \iffalse (Decomposition of SST) \fi{} }\[SST = SSR + SSE\]
 
-where \(SSR = \sum (\hat{Y_i} - \overline{Y})^2\) and \(SSE = \sum (Y_i - \hat{Y_i})\)
+where \(SST = \sum (Y_i - \overline{Y})^2\), \(SSR = \sum (\hat{Y_i} - \overline{Y})^2\), and \(SSE = \sum (Y_i - \hat{Y_i})\)
 \EndKnitrBlock{proposition}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}From the Example \ref{exm:usingnormal},
+
+\begin{equation*}
+  \begin{split}
+    \sum_{i = 1}^n (Y_i - \overline{Y})^2 & = \sum_{i = 1}^n (Y_i - \hat{Y_i} + \hat{Y_i} - \overline{Y})^2 \\
+    & = \sum_{i = 1}^n (Y_i - \hat{Y_i})^2 + 2 \sum_{i = 1}^n (Y_i - \hat{Y_i})(\hat{Y_i} - \overline{Y}) + \sum_{i = 1}^n (\hat{Y_i} - \overline{Y})^2 \\
+    & = \sum_{i = 1}^n (Y_i - \hat{Y_i})^2 + \sum_{i = 1}^n (\hat{Y_i} - \overline{Y})^2 \qquad \because \sum (Y_i - \hat{Y_i}) = 0 \: \text{and} \: \sum (Y_i - \hat{Y_i})\hat{Y_i} = 0
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+This represents each \(SSR\) and \(SSE\) divides total variability as following.
+
+\[\overset{SST}{\text{total variability}} = \overset{SSR}{\text{left unexplained by regression}} + \overset{SSE}{\text{explained by regression}}\]
+
+Denote that the total variability \(SST\) is \emph{constant given data set}. If our model is good, \(SSR\) grows and \(SSE\) flattens. Thus the larger \(SSR\) is, the better. The lower \(SSE\) is, the better.
+
+\hypertarget{coefficient-of-determination}{%
+\subsection{Coefficient of determination}\label{coefficient-of-determination}}
+
+We have discussed in the previous section \ref{decompsst} that \(SSR\) and \(SSE\) splits the total variability into \emph{explained part and not-explained part by our regression model}. Our first interest is whether the model works well for the data well, so we can think about the \emph{proportion of explained part to the total variance}. The following measure \(R^2\) computes this kind of value.
+
+\BeginKnitrBlock{definition}[Coefficient of Determination]
+\protect\hypertarget{def:rsq}{}{\label{def:rsq} \iffalse (Coefficient of Determination) \fi{} }\[R^2 := \frac{SSR}{SST} = 1 - \frac{1 - SSE}{SST}\]
+\EndKnitrBlock{definition}
+
+By construction,
+
+\[0 \le R^2 \le 1\]
+
+As \(R^2\) goes to \(0\), the model goes wrong. As \(R^2\) is close to \(1\), large proportion of variability has been explained. So we prefer large values rather than small.
+
+\BeginKnitrBlock{proposition}
+\protect\hypertarget{prp:rsqlin}{}{\label{prp:rsqlin} }\(R^2\) shows the strength of linear relation between two variables \(x\) and \(Y\) in the simple linear regression.
+
+\[R^2 = \hat\rho_{XY}\]
+
+where \(\hat\rho_{XY} := \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\sum (X_i - \overline{X})^2} \sqrt{\sum (Y_i - \overline{Y})^2}}\) is the sample correlation coefficients
+\EndKnitrBlock{proposition}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Note that \(\hat{Y_i} - \overline{Y} = \hat\beta_1 (x_i - \overline{x}) = \frac{S_{XY}}{S_{XX}} (x_i - \overline{x})\). Then
+
+\begin{equation*}
+  \begin{split}
+    \sum (\hat{Y_i} - \overline{Y})^2 & = \frac{S_{XY}^2}{S_{XX}^2} \sum (x_i - \overline{x})^2 \\
+    & = \frac{S_{XY}^2}{S_{XX}}
+  \end{split}
+\end{equation*}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    R^2 & = \frac{\sum (\hat{Y_i} - \overline{Y})^2}{\sum (Y_i - \overline{Y})^2} \\
+    & = \frac{S_{XY}^2}{S_{XX}S_{YY}} \\
+    & =: \hat\rho_{XY}^2
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+In this relation, we can know that \(R^2\) statistic performs as a measure of the linear relationship in the simple linear regression setting.
 
 \hypertarget{geometric-interpretations}{%
 \section{Geometric Interpretations}\label{geometric-interpretations}}
+
+\hypertarget{fundamental-subspaces}{%
+\subsection{Fundamental subspaces}\label{fundamental-subspaces}}
+
+These linear algebra concepts might be more useful for \emph{multiple linear regression}, but let's briefly recap \citep{Leon:2014aa}.
+
+\BeginKnitrBlock{definition}[Fundamental Subspaces]
+\protect\hypertarget{def:subspace}{}{\label{def:subspace} \iffalse (Fundamental Subspaces) \fi{} }Let \(X \in \mathbb{R}^{n \times (p + 1)}\).
+
+Then the Null space is defined by
+
+\[N(X) := \{ \mathbf{b} \in \mathbb{R}^n \mid X\mathbf{b} = \mathbf{0} \}\]
+
+The Row space is defined by
+
+\[Row(X) := sp(\{\mathbf{r}_1, \ldots, \mathbf{r}_{p + 1} \}) \quad \text{where} \: X^T = [\mathbf{r}_1^T, \ldots, \mathbf{r}_{n}^T]\]
+
+The Column space is defined by
+
+\[Col(X) := sp(\{\mathbf{c}_1, \ldots, \mathbf{c}_{n} \}) \quad \text{where} \: X = [\mathbf{c}_1, \ldots, \mathbf{c}_{p + 1}]\]
+
+The Range of \(X\) is defined by
+
+\[R(X) := \{ \mathbf{y} \in \mathbb{R}^n \mid \mathbf{y} = X\mathbf{b} \quad \text{for some} \: \mathbf{b} \in \mathbb{R}^{p + 1} \}\]
+\EndKnitrBlock{definition}
+
+These spaces have some constructional relationship.
+
+\BeginKnitrBlock{theorem}[Fundamental Subspaces Theorem]
+\protect\hypertarget{thm:fundsub}{}{\label{thm:fundsub} \iffalse (Fundamental Subspaces Theorem) \fi{} }Let \(X \in \mathbb{R}^{n \times (p + 1)}\). Then
+
+\[N(X) = R(X^T)^{\perp} = Col(X^T)^{\perp} = Row(X)^{\perp}\]
+
+Transposed matrix also satisfy this.
+
+\[N(X^T) = R(X)^{\perp} = Col(X)^{\perp}\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Let \(\mathbf{a} \in N(X)\). Then \(X\mathbf{a} = \mathbf{0}\).
+
+Let \(\mathbf{y} \in R(X^T)\). Then \(X^T \mathbf{b} = \mathbf{y}\) for some \(\mathbf{b} \in \mathbb{R}^{p + 1}\).
+
+Choose \(\mathbf{b} \in \mathbb{R}^{p + 1}\) such that \(X^T \mathbf{b} = \mathbf{y}\). Then
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{0} & = X\mathbf{a} \\
+    & = \mathbf{b}^T X\mathbf{a} \\
+    & = \mathbf{y}^T \mathbf{a}
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\[N(X) \perp R(X^T)\]
+
+Since
+
+\[X^T \mathbf{b} = \mathbf{c}_1 \mathbf{b} + \cdots + \mathbf{c}_{p + 1} \mathbf{b}\]
+
+it is trivial that \(R(X) = Col(X)\) and \(R(X^T) = Col(X^T)\).
+
+If \(\mathbf{a} \in N(X)\), then
+
+\[
+X\mathbf{a} = \begin{bmatrix}
+  \mathbf{r}_1 \\
+  \mathbf{r}_2 \\
+  \cdots \\
+  \mathbf{r}_n
+\end{bmatrix} \begin{bmatrix}
+  a_1 \\
+  \cdots \\
+  a_{p + 1}
+\end{bmatrix} = \begin{bmatrix}
+  0 \\
+  0 \\
+  \cdots \\
+  0
+\end{bmatrix}
+\]
+
+Thus,
+
+\[\forall i :  \mathbf{a}^T \mathbf{r}_i = 0\]
+
+and so
+
+\[N(X) \subseteq Row(X)^{\perp}\]
+
+Conversely, if \(\mathbf{a} \in Row(X)^{\perp}\), then \(\forall i : \mathbf{a}^T \mathbf{r}_i = 0\). This implies that \(X\mathbf{a} = \mathbf{0}\). Thus,
+
+\[Row(X)^{\perp} \subseteq N(X)\]
+
+and so
+
+\[N(X) = Row(X)^{\perp}\]
+\EndKnitrBlock{proof}
+
+\(N(X^T) = R(X)^{\perp}\) part in Theorem \ref{thm:fundsub} will give the geometric insight to \emph{least squares solution}.
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:perpbasis}{}{\label{thm:perpbasis} }Let \(S\) be a subspace of \(\mathbb{R}^n\). Then
+
+\[dim S + dim S^{\perp} = n\]
+
+If \(\{ \mathbf{x}_1, \ldots, \mathbf{r} \}\) is a basis for \(S\) and \(\{ \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}\) is a basis for \(S^{\perp}\), then \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r, \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}\) is a basis for \(\mathbb{R}^n\).
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:dsum}{}{\label{thm:dsum} }Let \(S\) be a subspace of \(\mathbb{R}^n\). Then
+
+\[\mathbb{R}^n = S \oplus S^{\perp}\]
+\EndKnitrBlock{theorem}
+
+\hypertarget{simple-linear-regression}{%
+\subsection{Simple linear regression}\label{simple-linear-regression}}
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:projection}{}{\label{thm:projection} }Let \(S\) be a subspace of \(\mathbb{R}^n\). For each \(\mathbf{y} \in \mathbf{R}^n\), there exists a unique \(\mathbf{p} \in S\) that is closest to \(\mathbf{y}\), i.e.
+
+\[\Vert \mathbf{y} - \mathbf{p}  \Vert > \Vert \mathbf{y} - \mathbf{\hat{y}} \Vert\]
+
+for any \(\mathbf{p} \neq \mathbf{\hat{y}}\). Furthermore, a given vector \(\mathbf{p} \in S\) will be the closest to a given vector \(\mathbf{y} \in \mathbb{R}^n\) if and only if
+
+\[\mathbf{y} - \mathbf{\hat{y}} \in S^{\perp}\]
+\EndKnitrBlock{theorem}
+
+Least square estimator \((\hat\beta_0, \hat\beta_1)^T\) minimizes
+
+\[\sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = \Vert \mathbf{Y} - (\beta_0 \mathbf{1} + \beta_1 \mathbf{x}) \Vert^2\]
+
+with respect to \((\hat\beta_0, \hat\beta_1)^T \in \mathbb{R}^2\) (where \(\mathbf{1} := (1, 1)^T\)). Recall that the normal equation gives
+
+\[\sum_{i = 1}^n(Y_i - \hat\beta_0 - \hat\beta_1 x_i) = \Big( \mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \Big)^T \mathbf{1} = 0\]
+
+and
+
+\[\sum_{i = 1}^n (Y_i - \hat\beta_0 - \hat\beta_1 x_i)x_i = \Big( \mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \Big)^T \mathbf{x} = 0\]
+
+These two relation give
+
+\[\mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \perp sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}\]
+
+i.e.~\(\mathbf{\hat{Y}} = \hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}\) is the projection of \(\mathbf{Y}\).
+
+Theorem \ref{thm:projection} can give the same result.
+
+\[\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x} \in R([\mathbf{1}, \mathbf{x}])^{\perp} = sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/simpledraw-1} 
+
+}
+
+\caption{Geometric Illustration of Simple Linear Regression\label{fig:simpledraw}}\label{fig:simpledraw}
+\end{figure}
+
+We can see the details from \(\text{Figure }\ref{fig:simpledraw}\). In fact, decomposition of \(SST\) and \(R^2\) are also in here.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/simpledraw2-1} 
+
+}
+
+\caption{Geometric Illustration of Decomposing SST\label{fig:simpledraw2}}\label{fig:simpledraw2}
+\end{figure}
+
+See \(\text{Figure }\ref{fig:simpledraw2}\).
+
+\[
+\begin{cases}
+  SST = \lVert \mathbf{Y} - \overline{Y} \mathbf{1} \rVert^2 \\
+  SSR = \lVert \mathbf{\hat{Y}} - \overline{Y} \mathbf{1} \rVert^2 \\
+  SSE = \lVert \mathbf{Y} - \mathbf{\hat{Y}} \rVert^2
+\end{cases}
+\]
+
+Pythagorean law implies that
+
+\[SST = SSR + SSE\]
+
+Also,
+
+\[R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2\]
 
 \bibliography{book.bib,packages.bib}
 

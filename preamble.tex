@@ -1,2 +1,5 @@
 \usepackage{booktabs}
 \usepackage{float}
+
+\let\oldmaketitle\maketitle
+\AtBeginDocument{\let\maketitle\relax}

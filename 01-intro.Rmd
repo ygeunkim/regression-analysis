@@ -716,7 +716,7 @@ delv_fit$residuals
 
 $\sum e_i^2$, which has been minimized in the procedure of LSE, can be used to see *overall size of prediction errors*.
 
-```{definition, sse, name = "Error Sums of Squares"}
+```{definition, sse, name = "Residual Sum of Squares"}
 $$SSE := \sum_{i = 1}^n e_i^2$$
 ```
 
@@ -829,6 +829,8 @@ These $\eqref{eq:predvar}$ and $\eqref{eq:yyhat}$ give that
 
 ## Decomposition of Total Variability
 
+### Total sum of squares
+
 ```{definition, unsst, name = "Uncorrected Total Sum of Squares"}
 $$SST_{uncor} := \sum_{i = 1}^n Y_i^2$$
 ```
@@ -862,28 +864,323 @@ Hence,
 
 $$\hat\beta_0 = \frac{1}{n} \sum_{i = 1}^n Y_i \equiv \overline{Y}$$
 
-From this fact, $SST$ implies
+From this fact, $SST$ implies **total variance**.
 
+### Regression sum of squares
 
+```{definition, ssr, name = "Regression Sum of Squares"}
+$$SSR := \sum_{i = 1}^n (hat{Y_i} - \overline{Y})^2$$
+```
 
+This $SSR$ compares $\hat{Y_i}$ versus $\overline{Y}$, computing the sum of squares for difference between predicted values from *regression model* and *model not using predictors*.
 
+### Residual sum of squares
+
+Now consider the *residual sum of squares* $SSE$ in the definition \@ref(def:sse). As mentioned, this is related to the *prediction errors*, which the regression model could not explain the data.
+
+### Decomposition of total sum of squares {#decompsst}
+
+$SST$ can be decomposed by construction of sum of squares.
 
 ```{proposition, decom, name = "Decomposition of SST"}
 $$SST = SSR + SSE$$
 
-where $SSR = \sum (\hat{Y_i} - \overline{Y})^2$ and $SSE = \sum (Y_i - \hat{Y_i})$
+where $SST = \sum (Y_i - \overline{Y})^2$, $SSR = \sum (\hat{Y_i} - \overline{Y})^2$, and $SSE = \sum (Y_i - \hat{Y_i})$
 ```
 
+```{proof}
+From the Example \@ref(exm:usingnormal),
+
+\begin{equation*}
+  \begin{split}
+    \sum_{i = 1}^n (Y_i - \overline{Y})^2 & = \sum_{i = 1}^n (Y_i - \hat{Y_i} + \hat{Y_i} - \overline{Y})^2 \\
+    & = \sum_{i = 1}^n (Y_i - \hat{Y_i})^2 + 2 \sum_{i = 1}^n (Y_i - \hat{Y_i})(\hat{Y_i} - \overline{Y}) + \sum_{i = 1}^n (\hat{Y_i} - \overline{Y})^2 \\
+    & = \sum_{i = 1}^n (Y_i - \hat{Y_i})^2 + \sum_{i = 1}^n (\hat{Y_i} - \overline{Y})^2 \qquad \because \sum (Y_i - \hat{Y_i}) = 0 \: \text{and} \: \sum (Y_i - \hat{Y_i})\hat{Y_i} = 0
+  \end{split}
+\end{equation*}
+```
+
+This represents each $SSR$ and $SSE$ divides total variability as following.
+
+$$\overset{SST}{\text{total variability}} = \overset{SSR}{\text{left unexplained by regression}} + \overset{SSE}{\text{explained by regression}}$$
+
+Denote that the total variability $SST$ is *constant given data set*. If our model is good, $SSR$ grows and $SSE$ flattens. Thus the larger $SSR$ is, the better. The lower $SSE$ is, the better.
+
+### Coefficient of determination
+
+We have discussed in the previous section \@ref(decompsst) that $SSR$ and $SSE$ splits the total variability into *explained part and not-explained part by our regression model*. Our first interest is whether the model works well for the data well, so we can think about the *proportion of explained part to the total variance*. The following measure $R^2$ computes this kind of value.
+
+```{definition, rsq, name = "Coefficient of Determination"}
+$$R^2 := \frac{SSR}{SST} = 1 - \frac{1 - SSE}{SST}$$
+```
+
+By construction,
+
+$$0 \le R^2 \le 1$$
+
+As $R^2$ goes to $0$, the model goes wrong. As $R^2$ is close to $1$, large proportion of variability has been explained. So we prefer large values rather than small.
+
+```{proposition, rsqlin}
+$R^2$ shows the strength of linear relation between two variables $x$ and $Y$ in the simple linear regression.
+
+$$R^2 = \hat\rho_{XY}$$
+
+where $\hat\rho_{XY} := \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\sum (X_i - \overline{X})^2} \sqrt{\sum (Y_i - \overline{Y})^2}}$ is the sample correlation coefficients
+```
+
+```{proof}
+Note that $\hat{Y_i} - \overline{Y} = \hat\beta_1 (x_i - \overline{x}) = \frac{S_{XY}}{S_{XX}} (x_i - \overline{x})$. Then
+
+\begin{equation*}
+  \begin{split}
+    \sum (\hat{Y_i} - \overline{Y})^2 & = \frac{S_{XY}^2}{S_{XX}^2} \sum (x_i - \overline{x})^2 \\
+    & = \frac{S_{XY}^2}{S_{XX}}
+  \end{split}
+\end{equation*}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    R^2 & = \frac{\sum (\hat{Y_i} - \overline{Y})^2}{\sum (Y_i - \overline{Y})^2} \\
+    & = \frac{S_{XY}^2}{S_{XX}S_{YY}} \\
+    & =: \hat\rho_{XY}^2
+  \end{split}
+\end{equation*}
+```
+
+In this relation, we can know that $R^2$ statistic performs as a measure of the linear relationship in the simple linear regression setting.
 
 
 ## Geometric Interpretations
 
+### Fundamental subspaces
+
+These linear algebra concepts might be more useful for *multiple linear regression*, but let's briefly recap [@Leon:2014aa].
+
+```{definition, subspace, name = "Fundamental Subspaces"}
+Let $X \in \mathbb{R}^{n \times (p + 1)}$.
+
+Then the Null space is defined by
+
+$$N(X) := \{ \mathbf{b} \in \mathbb{R}^n \mid X\mathbf{b} = \mathbf{0} \}$$
+
+The Row space is defined by
+
+$$Row(X) := sp(\{\mathbf{r}_1, \ldots, \mathbf{r}_{p + 1} \}) \quad \text{where} \: X^T = [\mathbf{r}_1^T, \ldots, \mathbf{r}_{n}^T]$$
+
+The Column space is defined by
+
+$$Col(X) := sp(\{\mathbf{c}_1, \ldots, \mathbf{c}_{n} \}) \quad \text{where} \: X = [\mathbf{c}_1, \ldots, \mathbf{c}_{p + 1}]$$
+
+The Range of $X$ is defined by
+
+$$R(X) := \{ \mathbf{y} \in \mathbb{R}^n \mid \mathbf{y} = X\mathbf{b} \quad \text{for some} \: \mathbf{b} \in \mathbb{R}^{p + 1} \}$$
+```
+
+These spaces have some constructional relationship.
+
+```{theorem, fundsub, name = "Fundamental Subspaces Theorem"}
+Let $X \in \mathbb{R}^{n \times (p + 1)}$. Then
+
+$$N(X) = R(X^T)^{\perp} = Col(X^T)^{\perp} = Row(X)^{\perp}$$
+
+Transposed matrix also satisfy this.
+
+$$N(X^T) = R(X)^{\perp} = Col(X)^{\perp}$$
+```
+
+```{proof}
+Let $\mathbf{a} \in N(X)$. Then $X\mathbf{a} = \mathbf{0}$.
+
+Let $\mathbf{y} \in R(X^T)$. Then $X^T \mathbf{b} = \mathbf{y}$ for some $\mathbf{b} \in \mathbb{R}^{p + 1}$.
+
+Choose $\mathbf{b} \in \mathbb{R}^{p + 1}$ such that $X^T \mathbf{b} = \mathbf{y}$. Then
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{0} & = X\mathbf{a} \\
+    & = \mathbf{b}^T X\mathbf{a} \\
+    & = \mathbf{y}^T \mathbf{a}
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$N(X) \perp R(X^T)$$
+
+Since
+
+$$X^T \mathbf{b} = \mathbf{c}_1 \mathbf{b} + \cdots + \mathbf{c}_{p + 1} \mathbf{b}$$
+
+it is trivial that $R(X) = Col(X)$ and $R(X^T) = Col(X^T)$.
+
+If $\mathbf{a} \in N(X)$, then
+
+$$
+X\mathbf{a} = \begin{bmatrix}
+  \mathbf{r}_1 \\
+  \mathbf{r}_2 \\
+  \cdots \\
+  \mathbf{r}_n
+\end{bmatrix} \begin{bmatrix}
+  a_1 \\
+  \cdots \\
+  a_{p + 1}
+\end{bmatrix} = \begin{bmatrix}
+  0 \\
+  0 \\
+  \cdots \\
+  0
+\end{bmatrix}
+$$
+
+Thus,
+
+$$\forall i :  \mathbf{a}^T \mathbf{r}_i = 0$$
+
+and so
+
+$$N(X) \subseteq Row(X)^{\perp}$$
+
+Conversely, if $\mathbf{a} \in Row(X)^{\perp}$, then $\forall i :  \mathbf{a}^T \mathbf{r}_i = 0$. This implies that $X\mathbf{a} = \mathbf{0}$. Thus,
+
+$$Row(X)^{\perp} \subseteq N(X)$$
+
+and so
+
+$$N(X) = Row(X)^{\perp}$$
+```
+
+$N(X^T) = R(X)^{\perp}$ part in Theorem \@ref(thm:fundsub) will give the geometric insight to *least squares solution*.
+
+```{theorem, perpbasis}
+Let $S$ be a subspace of $\mathbb{R}^n$. Then
+
+$$dim S + dim S^{\perp} = n$$
+
+If $\{ \mathbf{x}_1, \ldots, \mathbf{r} \}$ is a basis for $S$ and $\{ \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}$ is a basis for $S^{\perp}$, then $\{ \mathbf{x}_1, \ldots, \mathbf{x}_r, \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}$ is a basis for $\mathbb{R}^n$.
+```
+
+```{theorem, dsum}
+Let $S$ be a subspace of $\mathbb{R}^n$. Then
+
+$$\mathbb{R}^n = S \oplus S^{\perp}$$
+```
 
 
+### Simple linear regression
+
+```{theorem, projection}
+Let $S$ be a subspace of $\mathbb{R}^n$. For each $\mathbf{y} \in \mathbf{R}^n$, there exists a unique $\mathbf{p} \in S$ that is closest to $\mathbf{y}$, i.e.
+
+$$\Vert \mathbf{y} - \mathbf{p}  \Vert > \Vert \mathbf{y} - \mathbf{\hat{y}} \Vert$$
+
+for any $\mathbf{p} \neq \mathbf{\hat{y}}$. Furthermore, a given vector $\mathbf{p} \in S$ will be the closest to a given vector $\mathbf{y} \in \mathbb{R}^n$ if and only if
+
+$$\mathbf{y} - \mathbf{\hat{y}} \in S^{\perp}$$
+```
+
+Least square estimator $(\hat\beta_0, \hat\beta_1)^T$ minimizes
+
+$$\sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = \Vert \mathbf{Y} - (\beta_0 \mathbf{1} + \beta_1 \mathbf{x}) \Vert^2$$
+
+with respect to $(\hat\beta_0, \hat\beta_1)^T \in \mathbb{R}^2$ (where $\mathbf{1} := (1, 1)^T$). Recall that the normal equation gives
+
+$$\sum_{i = 1}^n(Y_i - \hat\beta_0 - \hat\beta_1 x_i) = \Big( \mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \Big)^T \mathbf{1} = 0$$
+
+and
+
+$$\sum_{i = 1}^n (Y_i - \hat\beta_0 - \hat\beta_1 x_i)x_i = \Big( \mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \Big)^T \mathbf{x} = 0$$
+
+These two relation give
+
+$$\mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \perp sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}$$
+
+i.e. $\mathbf{\hat{Y}} = \hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}$ is the projection of $\mathbf{Y}$.
+
+Theorem \@ref(thm:projection) can give the same result.
+
+$$\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x} \in R([\mathbf{1}, \mathbf{x}])^{\perp} = sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}$$
 
 
+```{r simpledraw, echo=FALSE, fig.cap=fig$cap("simpledraw", "Geometric Illustration of Simple Linear Regression")}
+tibble(
+  z1 = seq(0, 5, length.out = 100),
+  z2 = seq(0, 3, length.out = 100),
+  y = seq(0, 2, length.out = 100)
+) %>% 
+  mutate(z2y = z2, yy = 5/2*y) %>%
+  mutate(yhat = 1/2*y) %>%
+  ggplot() +
+  geom_line(aes(z1, 0), size = 1, arrow = arrow()) +
+  geom_line(aes(z2, z2y), size = .3, arrow = arrow()) +
+  geom_line(aes(y, yy), arrow = arrow()) +
+  geom_line(aes(y, yhat), size = .5, arrow = arrow(), linetype = "dashed", col = I("red")) +
+  geom_segment(aes(x = 2, y = 1, xend = 2, yend = 5), size = .4, linetype = "dashed", col = I("red")) +
+  # geom_segment(aes(x = 1.5, y = 1.5, xend = 2, yend = 5), size = .2, linetype = "dashed", col = I("blue")) +
+  # geom_segment(aes(x = 1.8, y = 0, xend = 2, yend = 5), size = .5, linetype = "dashed", col = I("blue")) +
+  # geom_segment(aes(x = 1.5, y = 1.5, xend = 2, yend = 1), size = .25, linetype = "dashed", col = I("blue")) +
+  # geom_segment(aes(x = 1.8, y = 0, xend = 2, yend = 1), size = .45, linetype = "dashed", col = I("blue")) +
+  annotate("text", x = 5, y = .2, label = "bold(1)", parse = T) +
+  annotate("text", x = 3, y = 3.2, label = "bold(x)[1]", parse = T) +
+  annotate("text", x = 1.8, y = 5, label = "bold(y)", parse = T) +
+  annotate("text", x = 2.7, y = 1, label = "hat(bold(y))^LSE == bar(italic(y))*bold(1) + hat(beta)[0]*bold(1) + hat(beta)[1]*bold(x)[1]", parse = T, col = I("red")) +
+  # annotate("text", x = 1.4, y = 1.6, label = "hat(beta)[2]", parse = T, col = I("blue")) +
+  # annotate("text", x = 2, y = .2, label = "hat(beta)[1]", parse = T, col = I("blue")) +
+  annotate("text", x = 0, y = .3, label = "bar(italic(y))*bold(1)", parse = T) +
+  annotate("text", x = 3.5, y = 2, label = "Col(X)", size = 5) +
+  theme(axis.line = element_blank(), axis.text = element_blank(), axis.title = element_blank())
+```
+
+We can see the details from $`r fig$ref("simpledraw")`$. In fact, decomposition of $SST$ and $R^2$ are also in here.
+
+```{r simpledraw2, echo=FALSE, fig.cap=fig$cap("simpledraw2", "Geometric Illustration of Decomposing SST")}
+tibble(
+  z1 = seq(0, 5, length.out = 100),
+  z2 = seq(0, 3, length.out = 100),
+  y = seq(0, 2, length.out = 100)
+) %>% 
+  mutate(z2y = z2, yy = 5/2*y) %>%
+  mutate(yhat = 1/2*y) %>%
+  ggplot() +
+  geom_line(aes(z1, 0), size = 1, arrow = arrow()) +
+  geom_line(aes(z2, z2y), size = .3, arrow = arrow()) +
+  geom_line(aes(y, yy), arrow = arrow()) +
+  geom_line(aes(y, yhat), size = .5, arrow = arrow(), linetype = "dashed", col = I("red")) +
+  geom_segment(aes(x = 2, y = 1, xend = 2, yend = 5), size = .4, linetype = "dashed", col = I("red")) +
+  annotate("text", x = 5, y = .2, label = "bold(1)", parse = T) +
+  annotate("text", x = 3, y = 3.2, label = "bold(x)[1]", parse = T) +
+  annotate("text", x = 1.8, y = 5, label = "bold(y)", parse = T) +
+  annotate("text", x = 2.7, y = 1, label = "hat(bold(y))^LSE == bar(italic(y))*bold(1) + hat(beta)[0]*bold(1) + hat(beta)[1]*bold(x)[1]", parse = T, col = I("red")) +
+  annotate("text", x = 0, y = .3, label = "bar(italic(y))*bold(1)", parse = T) +
+  annotate("text", x = 3.5, y = 2, label = "Col(X)", size = 5) +
+  annotate("text", x = 1, y = 3, label = "sqrt(SST)", size = 5, parse = T) +
+  annotate("text", x = 1.5, y = 1, label = "sqrt(SSR)", size = 5, parse = T, col = I("red")) +
+  annotate("text", x = 2, y = 3, label = "sqrt(SSE)", size = 5, parse = T, col = I("red")) +
+  theme(axis.line = element_blank(), axis.text = element_blank(), axis.title = element_blank())
+```
+
+See $`r fig$ref("simpledraw2")`$.
+
+$$
+\begin{cases}
+  SST = \lVert \mathbf{Y} - \overline{Y} \mathbf{1} \rVert^2 \\
+  SSR = \lVert \mathbf{\hat{Y}} - \overline{Y} \mathbf{1} \rVert^2 \\
+  SSE = \lVert \mathbf{Y} - \mathbf{\hat{Y}} \rVert^2
+\end{cases}
+$$
+
+Pythagorean law implies that
+
+$$SST = SSR + SSE$$
+
+Also,
+
+$$R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2$$
 
 
+## Distributions
 
 
 
