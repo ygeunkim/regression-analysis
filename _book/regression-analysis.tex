@@ -126,7 +126,7 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{31 Mar, 2019}
+    \date{01 Apr, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -203,7 +203,8 @@ there will be R programming for regression.
 14   142    90
 \end{verbatim}
 
-\section{Relation}\label{relation}
+\section*{Relation}\label{relation}
+\addcontentsline{toc}{section}{Relation}
 
 We wonder how \texttt{x} affects \texttt{y}, especially linearly.
 
@@ -272,7 +273,7 @@ Regression analysis estimates the relationship statistically.
 
 }
 
-\caption{The Delivery Time Data\label{fig:delivery}}\label{fig:delivery}
+\caption{The Delivery Time Data}\label{fig:delivery}
 \end{figure}
 
 Given data \((x_1, Y_1), \ldots, (x_n, Y_n)\), we try to fit linear
@@ -310,7 +311,7 @@ assumptions.
 
 }
 
-\caption{Idea of the least square estimation\label{fig:lsefig}}\label{fig:lsefig}
+\caption{Idea of the least square estimation}\label{fig:lsefig}
 \end{figure}
 
 We try to find \(\beta_0\) and \(\beta_1\) that minimize the sum of
@@ -1080,14 +1081,14 @@ Hence, \((\sum Y_i, S_{XY})\) are CSS.
 
 }
 
-\caption{Fit and residuals\label{fig:regplot}}\label{fig:regplot}
+\caption{Fit and residuals}\label{fig:regplot}
 \end{figure}
 
-See \(\text{Figure }\ref{fig:regplot}\). Each red line is \(e_i\). As we
-can see, \(e_i\) represents the difference between \emph{observed}
-response and \emph{predicted} response. A large \(\lvert e_i \rvert\)
-indicates a large prediction error. You can call this \(e_i\) for each
-\(Y_i\) by \texttt{lm()\$residuals} or \texttt{residuals()}.
+See Figure \ref{fig:regplot}. Each red line is \(e_i\). As we can see,
+\(e_i\) represents the difference between \emph{observed} response and
+\emph{predicted} response. A large \(\lvert e_i \rvert\) indicates a
+large prediction error. You can call this \(e_i\) for each \(Y_i\) by
+\texttt{lm()\$residuals} or \texttt{residuals()}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1277,14 +1278,13 @@ What does this total sum of squares mean? To know this, we should know
 
 }
 
-\caption{Regression without predictor\label{fig:ybarpred}}\label{fig:ybarpred}
+\caption{Regression without predictor}\label{fig:ybarpred}
 \end{figure}
 
-See \(\text{Figure }\ref{fig:ybarpred}\). The line represents the
-closest line when we use only intercept term for the regression model.
-In other words, \emph{if we use no information for the response},
-i.e.~no predictor variables, we will get just average of the response
-variable. Consider
+See Figure \ref{fig:ybarpred}. The line represents the closest line when
+we use only intercept term for the regression model. In other words,
+\emph{if we use no information for the response}, i.e.~no predictor
+variables, we will get just average of the response variable. Consider
 
 \[Y_i = \beta_0 + \epsilon_i\]
 
@@ -1594,11 +1594,11 @@ Theorem \ref{thm:projection} can give the same result.
 
 }
 
-\caption{Geometric Illustration of Simple Linear Regression\label{fig:simpledraw}}\label{fig:simpledraw}
+\caption{Geometric Illustration of Simple Linear Regression}\label{fig:simpledraw}
 \end{figure}
 
-We can see the details from \(\text{Figure }\ref{fig:simpledraw}\). In
-fact, decomposition of \(SST\) and \(R^2\) are also in here.
+We can see the details from Figure \ref{fig:simpledraw}. In fact,
+decomposition of \(SST\) and \(R^2\) are also in here.
 
 \begin{figure}[H]
 
@@ -1606,10 +1606,10 @@ fact, decomposition of \(SST\) and \(R^2\) are also in here.
 
 }
 
-\caption{Geometric Illustration of Decomposing SST\label{fig:simpledraw2}}\label{fig:simpledraw2}
+\caption{Geometric Illustration of Decomposing SST}\label{fig:simpledraw2}
 \end{figure}
 
-See \(\text{Figure }\ref{fig:simpledraw2}\).
+See Figure \ref{fig:simpledraw2}.
 
 \[
 \begin{cases}

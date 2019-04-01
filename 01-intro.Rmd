@@ -11,7 +11,7 @@ eqn_numbering()
 delv <- MPV::p2.9 %>% tbl_df()
 ```
 
-```{r delivery, fig.cap=fig$cap("delivery", "The Delivery Time Data")}
+```{r delivery, fig.cap="The Delivery Time Data"}
 delv %>% 
   ggplot(aes(x = x, y = y)) +
   geom_point() +
@@ -39,7 +39,7 @@ It gives the problem of estimating three parameters $(\beta_0, \beta_1, \sigma^2
 
 ## Least Squares Estimation
 
-```{r lsefig, echo=FALSE, fig.cap=fig$cap("lsefig", "Idea of the least square estimation")}
+```{r lsefig, echo=FALSE, fig.cap="Idea of the least square estimation"}
 delv %>% 
   mutate(yhat = predict(lm(y ~ x))) %>% 
   ggplot(aes(x = x)) +
@@ -694,7 +694,7 @@ $$e_i := Y_i - \hat{Y_i}$$
 
 ### Prediction error
 
-```{r regplot, fig.cap=fig$cap("regplot", "Fit and residuals")}
+```{r regplot, fig.cap="Fit and residuals"}
 delv %>% 
   mutate(yhat = predict(lm(y ~ x))) %>% 
   ggplot(aes(x = x, y = y)) +
@@ -707,7 +707,7 @@ delv %>%
   )
 ```
 
-See $`r fig$ref("regplot")`$. Each red line is $e_i$. As we can see, $e_i$ represents the difference between *observed* response and *predicted* response. A large $\lvert e_i \rvert$ indicates a large prediction error. You can call this $e_i$ for each $Y_i$ by `lm()$residuals` or `residuals()`.
+See Figure \@ref(fig:regplot). Each red line is $e_i$. As we can see, $e_i$ represents the difference between *observed* response and *predicted* response. A large $\lvert e_i \rvert$ indicates a large prediction error. You can call this $e_i$ for each $Y_i$ by `lm()$residuals` or `residuals()`.
 
 ```{r}
 delv_fit <- lm(y ~ x, data = delv)
@@ -841,7 +841,7 @@ $$SST := \sum_{i = 1}^n (Y_i - \overline{Y})^2$$
 
 What does this total sum of squares mean? To know this, we should know $\overline{Y}$ first.
 
-```{r ybarpred, fig.cap=fig$cap("ybarpred", "Regression without predictor")}
+```{r ybarpred, fig.cap="Regression without predictor"}
 delv %>% 
   ggplot(aes(x = x, y = y)) +
   geom_smooth(method = "lm", formula = y ~ 1, se = FALSE) +
@@ -852,7 +852,7 @@ delv %>%
   )
 ```
 
-See $`r fig$ref("ybarpred")`$. The line represents the closest line when we use only intercept term for the regression model. In other words, *if we use no information for the response*, i.e. no predictor variables, we will get just average of the response variable. Consider
+See Figure \@ref(fig:ybarpred). The line represents the closest line when we use only intercept term for the regression model. In other words, *if we use no information for the response*, i.e. no predictor variables, we will get just average of the response variable. Consider
 
 $$Y_i = \beta_0 + \epsilon_i$$
 
@@ -1104,7 +1104,7 @@ Theorem \@ref(thm:projection) can give the same result.
 $$\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x} \in R([\mathbf{1}, \mathbf{x}])^{\perp} = sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}$$
 
 
-```{r simpledraw, echo=FALSE, fig.cap=fig$cap("simpledraw", "Geometric Illustration of Simple Linear Regression")}
+```{r simpledraw, echo=FALSE, fig.cap="Geometric Illustration of Simple Linear Regression"}
 tibble(
   z1 = seq(0, 5, length.out = 100),
   z2 = seq(0, 3, length.out = 100),
@@ -1133,9 +1133,9 @@ tibble(
   theme(axis.line = element_blank(), axis.text = element_blank(), axis.title = element_blank())
 ```
 
-We can see the details from $`r fig$ref("simpledraw")`$. In fact, decomposition of $SST$ and $R^2$ are also in here.
+We can see the details from Figure \@ref(fig:simpledraw). In fact, decomposition of $SST$ and $R^2$ are also in here.
 
-```{r simpledraw2, echo=FALSE, fig.cap=fig$cap("simpledraw2", "Geometric Illustration of Decomposing SST")}
+```{r simpledraw2, echo=FALSE, fig.cap="Geometric Illustration of Decomposing SST"}
 tibble(
   z1 = seq(0, 5, length.out = 100),
   z2 = seq(0, 3, length.out = 100),
@@ -1161,7 +1161,7 @@ tibble(
   theme(axis.line = element_blank(), axis.text = element_blank(), axis.title = element_blank())
 ```
 
-See $`r fig$ref("simpledraw2")`$.
+See Figure \@ref(fig:simpledraw2).
 
 $$
 \begin{cases}

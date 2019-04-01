@@ -27,7 +27,7 @@ data(BioOxyDemand, package = "MPV")
   tbl_df())
 ```
 
-## Relation
+## Relation {-}
 
 We wonder how `x` affects `y`, especially linearly.
 
