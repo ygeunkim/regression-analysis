@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 2 Simple Linear Regression | R Lab for Regression Analysis</title>
+  <title>Chapter 1 Simple Linear Regression | R Lab for Regression Analysis</title>
   <meta name="description" content="This aims at covering materials of regression analysis with R programming.">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Chapter 2 Simple Linear Regression | R Lab for Regression Analysis" />
+  <meta property="og:title" content="Chapter 1 Simple Linear Regression | R Lab for Regression Analysis" />
   <meta property="og:type" content="book" />
   
   <meta property="og:image" content="cover.png" />
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Simple Linear Regression | R Lab for Regression Analysis" />
+  <meta name="twitter:title" content="Chapter 1 Simple Linear Regression | R Lab for Regression Analysis" />
   
   <meta name="twitter:description" content="This aims at covering materials of regression analysis with R programming." />
   <meta name="twitter:image" content="cover.png" />
@@ -49,67 +49,41 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -129,27 +103,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a></li>
-<li class="chapter" data-level="1" data-path="linear-regression-analysis.html"><a href="linear-regression-analysis.html"><i class="fa fa-check"></i><b>1</b> Linear Regression Analysis</a><ul>
-<li class="chapter" data-level="1.1" data-path="linear-regression-analysis.html"><a href="linear-regression-analysis.html#relation"><i class="fa fa-check"></i><b>1.1</b> Relation</a></li>
+<li class="chapter" data-level="" data-path="linear-regression-analysis.html"><a href="linear-regression-analysis.html"><i class="fa fa-check"></i>Linear Regression Analysis</a><ul>
+<li class="chapter" data-level="" data-path="linear-regression-analysis.html"><a href="linear-regression-analysis.html#relation"><i class="fa fa-check"></i>Relation</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="simple.html"><a href="simple.html"><i class="fa fa-check"></i><b>2</b> Simple Linear Regression</a><ul>
-<li class="chapter" data-level="2.1" data-path="simple.html"><a href="simple.html#model"><i class="fa fa-check"></i><b>2.1</b> Model</a></li>
-<li class="chapter" data-level="2.2" data-path="simple.html"><a href="simple.html#least-squares-estimation"><i class="fa fa-check"></i><b>2.2</b> Least Squares Estimation</a><ul>
-<li class="chapter" data-level="2.2.1" data-path="simple.html"><a href="simple.html#normal-equations"><i class="fa fa-check"></i><b>2.2.1</b> Normal equations</a></li>
-<li class="chapter" data-level="2.2.2" data-path="simple.html"><a href="simple.html#prediction-and-mean-response"><i class="fa fa-check"></i><b>2.2.2</b> Prediction and Mean response</a></li>
-<li class="chapter" data-level="2.2.3" data-path="simple.html"><a href="simple.html#lseprop"><i class="fa fa-check"></i><b>2.2.3</b> Properties of LSE</a></li>
-<li class="chapter" data-level="2.2.4" data-path="simple.html"><a href="simple.html#gauss-markov-theorem"><i class="fa fa-check"></i><b>2.2.4</b> Gauss-Markov Theorem</a></li>
-<li class="chapter" data-level="2.2.5" data-path="simple.html"><a href="simple.html#estimation-of-sigma2"><i class="fa fa-check"></i><b>2.2.5</b> Estimation of <span class="math inline">\(\sigma^2\)</span></a></li>
+<li class="chapter" data-level="1" data-path="simple.html"><a href="simple.html"><i class="fa fa-check"></i><b>1</b> Simple Linear Regression</a><ul>
+<li class="chapter" data-level="1.1" data-path="simple.html"><a href="simple.html#model"><i class="fa fa-check"></i><b>1.1</b> Model</a></li>
+<li class="chapter" data-level="1.2" data-path="simple.html"><a href="simple.html#least-squares-estimation"><i class="fa fa-check"></i><b>1.2</b> Least Squares Estimation</a><ul>
+<li class="chapter" data-level="1.2.1" data-path="simple.html"><a href="simple.html#normal-equations"><i class="fa fa-check"></i><b>1.2.1</b> Normal equations</a></li>
+<li class="chapter" data-level="1.2.2" data-path="simple.html"><a href="simple.html#prediction-and-mean-response"><i class="fa fa-check"></i><b>1.2.2</b> Prediction and Mean response</a></li>
+<li class="chapter" data-level="1.2.3" data-path="simple.html"><a href="simple.html#lseprop"><i class="fa fa-check"></i><b>1.2.3</b> Properties of LSE</a></li>
+<li class="chapter" data-level="1.2.4" data-path="simple.html"><a href="simple.html#gauss-markov-theorem"><i class="fa fa-check"></i><b>1.2.4</b> Gauss-Markov Theorem</a></li>
+<li class="chapter" data-level="1.2.5" data-path="simple.html"><a href="simple.html#estimation-of-sigma2"><i class="fa fa-check"></i><b>1.2.5</b> Estimation of <span class="math inline">\(\sigma^2\)</span></a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="simple.html"><a href="simple.html#maximum-likelihood-estimation"><i class="fa fa-check"></i><b>2.3</b> Maximum Likelihood Estimation</a><ul>
-<li class="chapter" data-level="2.3.1" data-path="simple.html"><a href="simple.html#likelihood-equations"><i class="fa fa-check"></i><b>2.3.1</b> Likelihood equations</a></li>
+<li class="chapter" data-level="1.3" data-path="simple.html"><a href="simple.html#maximum-likelihood-estimation"><i class="fa fa-check"></i><b>1.3</b> Maximum Likelihood Estimation</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="simple.html"><a href="simple.html#likelihood-equations"><i class="fa fa-check"></i><b>1.3.1</b> Likelihood equations</a></li>
 </ul></li>
-<li class="chapter" data-level="2.4" data-path="simple.html"><a href="simple.html#residuals"><i class="fa fa-check"></i><b>2.4</b> Residuals</a><ul>
-<li class="chapter" data-level="2.4.1" data-path="simple.html"><a href="simple.html#prediction-error"><i class="fa fa-check"></i><b>2.4.1</b> Prediction error</a></li>
-<li class="chapter" data-level="2.4.2" data-path="simple.html"><a href="simple.html#residuals-and-the-variance"><i class="fa fa-check"></i><b>2.4.2</b> Residuals and the variance</a></li>
+<li class="chapter" data-level="1.4" data-path="simple.html"><a href="simple.html#residuals"><i class="fa fa-check"></i><b>1.4</b> Residuals</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="simple.html"><a href="simple.html#prediction-error"><i class="fa fa-check"></i><b>1.4.1</b> Prediction error</a></li>
+<li class="chapter" data-level="1.4.2" data-path="simple.html"><a href="simple.html#residuals-and-the-variance"><i class="fa fa-check"></i><b>1.4.2</b> Residuals and the variance</a></li>
 </ul></li>
-<li class="chapter" data-level="2.5" data-path="simple.html"><a href="simple.html#decomposition-of-total-variability"><i class="fa fa-check"></i><b>2.5</b> Decomposition of Total Variability</a></li>
-<li class="chapter" data-level="2.6" data-path="simple.html"><a href="simple.html#geometric-interpretations"><i class="fa fa-check"></i><b>2.6</b> Geometric Interpretations</a></li>
+<li class="chapter" data-level="1.5" data-path="simple.html"><a href="simple.html#decomposition-of-total-variability"><i class="fa fa-check"></i><b>1.5</b> Decomposition of Total Variability</a><ul>
+<li class="chapter" data-level="1.5.1" data-path="simple.html"><a href="simple.html#total-sum-of-squares"><i class="fa fa-check"></i><b>1.5.1</b> Total sum of squares</a></li>
+<li class="chapter" data-level="1.5.2" data-path="simple.html"><a href="simple.html#regression-sum-of-squares"><i class="fa fa-check"></i><b>1.5.2</b> Regression sum of squares</a></li>
+<li class="chapter" data-level="1.5.3" data-path="simple.html"><a href="simple.html#residual-sum-of-squares"><i class="fa fa-check"></i><b>1.5.3</b> Residual sum of squares</a></li>
+<li class="chapter" data-level="1.5.4" data-path="simple.html"><a href="simple.html#decompsst"><i class="fa fa-check"></i><b>1.5.4</b> Decomposition of total sum of squares</a></li>
+<li class="chapter" data-level="1.5.5" data-path="simple.html"><a href="simple.html#coefficient-of-determination"><i class="fa fa-check"></i><b>1.5.5</b> Coefficient of determination</a></li>
+</ul></li>
+<li class="chapter" data-level="1.6" data-path="simple.html"><a href="simple.html#geometric-interpretations"><i class="fa fa-check"></i><b>1.6</b> Geometric Interpretations</a><ul>
+<li class="chapter" data-level="1.6.1" data-path="simple.html"><a href="simple.html#fundamental-subspaces"><i class="fa fa-check"></i><b>1.6.1</b> Fundamental subspaces</a></li>
+<li class="chapter" data-level="1.6.2" data-path="simple.html"><a href="simple.html#simple-linear-regression"><i class="fa fa-check"></i><b>1.6.2</b> Simple linear regression</a></li>
+</ul></li>
+<li class="chapter" data-level="1.7" data-path="simple.html"><a href="simple.html#distributions"><i class="fa fa-check"></i><b>1.7</b> Distributions</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/ygeunkim/regression-analysis" target="blank">Published with bookdown</a></li>
@@ -172,26 +156,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="simple" class="section level1">
-<h1><span class="header-section-number">Chapter 2</span> Simple Linear Regression</h1>
+<h1><span class="header-section-number">Chapter 1</span> Simple Linear Regression</h1>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
 <div id="model" class="section level2">
-<h2><span class="header-section-number">2.1</span> Model</h2>
-<pre class="sourceCode r"><code class="sourceCode r">delv &lt;-<span class="st"> </span>MPV<span class="op">::</span>p2<span class="fl">.9</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tbl_df</span>()</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">delv <span class="op">%&gt;%</span><span class="st"> </span>
+<h2><span class="header-section-number">1.1</span> Model</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">delv &lt;-<span class="st"> </span>MPV<span class="op">::</span>p2.<span class="dv">9</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tbl_df</span>()</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">delv <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(
     <span class="dt">x =</span> <span class="st">&quot;Number of Cases&quot;</span>,
     <span class="dt">y =</span> <span class="st">&quot;Delivery Time&quot;</span>
-  )</code></pre>
+  )</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:delivery"></span>
-<img src="regression-analysis_files/figure-html/delivery-1.png" alt="The Delivery Time Data\label{fig:delivery}" width="70%" />
+<img src="regression-analysis_files/figure-html/delivery-1.png" alt="The Delivery Time Data" width="70%" />
 <p class="caption">
-Figure 2.1: The Delivery Time Data
+Figure 1.1: The Delivery Time Data
 </p>
 </div>
 <p>Given data <span class="math inline">\((x_1, Y_1), \ldots, (x_n, Y_n)\)</span>, we try to fit linear model</p>
@@ -202,39 +186,42 @@ Figure 2.1: The Delivery Time Data
 <ol style="list-style-type: decimal">
 <li>linear relationship</li>
 <li><span class="math inline">\(\epsilon_i\)</span>s are independent</li>
-<li><span class="math inline">\(\epsilon_i\)</span>s are identically destributed, i.e. <em>constant variance</em></li>
+<li><span class="math inline">\(\epsilon_i\)</span>s are identically destributed, i.e. <em>constant variance</em></li>
 <li>In some setting, <span class="math inline">\(\epsilon_i \sim N\)</span></li>
 </ol>
 </div>
 <div id="least-squares-estimation" class="section level2">
-<h2><span class="header-section-number">2.2</span> Least Squares Estimation</h2>
+<h2><span class="header-section-number">1.2</span> Least Squares Estimation</h2>
 <div class="figure" style="text-align: center"><span id="fig:lsefig"></span>
-<img src="regression-analysis_files/figure-html/lsefig-1.png" alt="Idea of the least square estimation\label{fig:lsefig}" width="70%" />
+<img src="regression-analysis_files/figure-html/lsefig-1.png" alt="Idea of the least square estimation" width="70%" />
 <p class="caption">
-Figure 2.2: Idea of the least square estimation
+Figure 1.2: Idea of the least square estimation
 </p>
 </div>
 <p>We try to find <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> that minimize the sum of squares of the vertical distances, i.e.</p>
-<p><span class="math display">\[\begin{equation} \label{eq:ssq}
+<span class="math display" id="eq:ssq">\[\begin{equation}
   (\beta_0, \beta_1) = \arg\min \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2
-\end{equation}\]</span></p>
+  \tag{1.1}
+\end{equation}\]</span>
 <div id="normal-equations" class="section level3">
-<h3><span class="header-section-number">2.2.1</span> Normal equations</h3>
-<p>Denote that Equation <span class="math inline">\(\eqref{eq:ssq}\)</span> is quadratic. Then we can find its minimum by find the zero point of the first derivative. Set</p>
+<h3><span class="header-section-number">1.2.1</span> Normal equations</h3>
+<p>Denote that Equation <a href="simple.html#eq:ssq">(1.1)</a> is quadratic. Then we can find its minimum by find the zero point of the first derivative. Set</p>
 <p><span class="math display">\[Q(\beta_0, \beta_1) := \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2\]</span></p>
 <p>Then we have</p>
-<p><span class="math display">\[\begin{equation} \label{eq:normbeta0}
+<span class="math display" id="eq:normbeta0">\[\begin{equation}
   \frac{\partial Q}{\partial \beta_0} = -2 \sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i) = 0
-\end{equation}\]</span></p>
+  \tag{1.2}
+\end{equation}\]</span>
 <p>and</p>
-<p><span class="math display">\[\begin{equation} \label{eq:normbeta1}
+<span class="math display" id="eq:normbeta1">\[\begin{equation}
   \frac{\partial Q}{\partial \beta_1} = -2 \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)x_i = 0
-\end{equation}\]</span></p>
-<p>From <span class="math inline">\(\eqref{eq:normbeta0}\)</span>,</p>
+  \tag{1.3}
+\end{equation}\]</span>
+<p>From Equation <a href="simple.html#eq:normbeta0">(1.2)</a>,</p>
 <p><span class="math display">\[\sum_{i = 1}^n Y_i - n \hat\beta_0 - \hat\beta_1 \sum_{i = 1}^n x_i = 0\]</span></p>
 <p>Thus,</p>
 <p><span class="math display">\[\hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x}\]</span></p>
-<p><span class="math inline">\(\eqref{eq:normbeta1}\)</span> gives</p>
+<p>Equation <a href="simple.html#eq:normbeta1">(1.3)</a> gives</p>
 <p><span class="math display">\[\sum_{i = 1}^n x_i (Y_i - \overline{Y} + \hat\beta_1\overline{x} - \hat\beta_1 x_i) = \sum_{i = 1}^n x_i(Y_i - \overline{Y}) - \hat\beta_1\sum_{i = 1}^n x_i (x_i - \overline{x}) = 0\]</span></p>
 <p>Thus,</p>
 <p><span class="math display">\[\hat\beta_1 = \frac{\sum\limits_{i = 1}^nx_i(Y_i - \overline{Y})}{\sum\limits_{i = 1}^n x_i (x_i - \overline{x})}\]</span></p>
@@ -247,14 +234,15 @@ where <span class="math inline">\(S_{XX} := \sum\limits_{i = 1}^n (x_i - \overli
 
 <div class="proof">
 <p> <span class="proof"><em>Proof. </em></span> Note that <span class="math inline">\(\overline{x}^2 = \frac{1}{n^2}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2\)</span>. Then we have</p>
-<p><span class="math display">\[\begin{equation} \label{eq:sxx}
+<span class="math display" id="eq:sxx">\[\begin{equation}
   \begin{split}
     S_{XX} &amp; = \sum_{i = 1}^n (x_i - \overline{x})^2 \\
     &amp; = \sum_{i = 1}^n x_i^2 - 2\sum_{i = 1}^n x_i \overline{x} + \sum_{i = 1}^n\overline{x}^2 \\
     &amp; = \sum_{i = 1}^n x_i^2 - \frac{2}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 + \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 \\
     &amp; = \sum_{i = 1}^n x_i^2 - \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2
   \end{split}
-\end{equation}\]</span></p>
+  \tag{1.4}
+\end{equation}\]</span>
 <p>It follows that</p>
 <span class="math display">\[\begin{equation*}
   \begin{split}
@@ -266,7 +254,7 @@ where <span class="math inline">\(S_{XX} := \sum\limits_{i = 1}^n (x_i - \overli
 \end{equation*}\]</span>
 </div>
 
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x, <span class="dt">data =</span> delv)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x, <span class="dt">data =</span> delv)</code></pre></div>
 <pre><code>
 Call:
 lm(formula = y ~ x, data = delv)
@@ -276,7 +264,7 @@ Coefficients:
        3.32         2.18  </code></pre>
 </div>
 <div id="prediction-and-mean-response" class="section level3">
-<h3><span class="header-section-number">2.2.2</span> Prediction and Mean response</h3>
+<h3><span class="header-section-number">1.2.2</span> Prediction and Mean response</h3>
 <blockquote>
 <p>“Essentially, all models are wrong, but some are useful.”</p>
 <p>—George Box</p>
@@ -284,42 +272,44 @@ Coefficients:
 <p>Recall that we have assumed the <strong>linear assumption</strong> between the predictor and the response variables, i.e. the true model. Estimating <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> is same as estimating the <em>assumed true model</em>.</p>
 
 <div class="definition">
-<span id="def:eyx" class="definition"><strong>Definition 2.1  (Mean response)  </strong></span><span class="math display">\[E(Y \mid X = x) = \beta_0 + \beta_1 x\]</span>
+<span id="def:eyx" class="definition"><strong>Definition 1.1  (Mean response)  </strong></span><span class="math display">\[E(Y \mid X = x) = \beta_0 + \beta_1 x\]</span>
 </div>
 
 <p>We can estimate this mean resonse by</p>
-<p><span class="math display">\[\begin{equation} \label{eq:meanres}
+<span class="math display" id="eq:meanres">\[\begin{equation}
   \widehat{E(Y \mid x)} = \hat\beta_0 + \hat\beta_1 x
-\end{equation}\]</span></p>
+  \tag{1.5}
+\end{equation}\]</span>
 <p>However, in practice, the model might not be true, which is included in <span class="math inline">\(\epsilon\)</span> term.</p>
 <p><span class="math display">\[Y_i = \beta_0 + \beta_1 x_i + \epsilon_i\]</span></p>
 <p>Our real problem is predicting individual <span class="math inline">\(Y\)</span>, not the mean. The <em>prediction</em> of response can be done by</p>
-<p><span class="math display">\[\begin{equation} \label{eq:indpred}
+<span class="math display" id="eq:indpred">\[\begin{equation}
   \hat{Y_i}  = \hat\beta_0 + \hat\beta_1 x_i
-\end{equation}\]</span></p>
-<p>Observe that the values of Equation <span class="math inline">\(\eqref{eq:meanres}\)</span> and <span class="math inline">\(\eqref{eq:indpred}\)</span> are same. However, due to the <strong>error term in the prediction</strong>, it has larger standard error.</p>
+  \tag{1.6}
+\end{equation}\]</span>
+<p>Observe that the values of Equations <a href="simple.html#eq:meanres">(1.5)</a> and <a href="simple.html#eq:indpred">(1.6)</a> are same. However, due to the <strong>error term in the prediction</strong>, it has larger standard error.</p>
 </div>
 <div id="lseprop" class="section level3">
-<h3><span class="header-section-number">2.2.3</span> Properties of LSE</h3>
+<h3><span class="header-section-number">1.2.3</span> Properties of LSE</h3>
 <p>Parameters <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> have some properties related to the expectation and variance. We can notice that these lse’s are <strong>unbiased linear estimator</strong>. In fact, these are the <em>best unbiased linear estimator</em>. This will be covered in the Gauss-Markov theorem.</p>
 
 <div class="lemma">
-<p><span id="lem:sxy" class="lemma"><strong>Lemma 2.1  </strong></span><span class="math display">\[S_{XX} = \sum_{i = 1}^n x_i^2 - \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 = \sum_{i = 1}^n x_i(x_i - \overline{x})\]</span></p>
+<p><span id="lem:sxy" class="lemma"><strong>Lemma 1.1  </strong></span><span class="math display">\[S_{XX} = \sum_{i = 1}^n x_i^2 - \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 = \sum_{i = 1}^n x_i(x_i - \overline{x})\]</span></p>
 <span class="math display">\[S_{XY} = \sum_{i = 1}^n x_i Y_i - \frac{1}{n}\bigg(\sum_{i = 1}^n x_i\bigg)\bigg(\sum_{i = 1}^n Y_i\bigg) = \sum_{i = 1}^n Y_i(x_i - \overline{x})\]</span>
 </div>
 
 
 <div class="proof">
-<p> <span class="proof"><em>Proof. </em></span> We already proven the first part of <span class="math inline">\(S_{XX}\)</span>. See the Equation <span class="math inline">\(\eqref{eq:sxx}\)</span>. The second part is tivial. Since <span class="math inline">\(\sum (x_i - \overline{x}) = 0\)</span>,</p>
+<p> <span class="proof"><em>Proof. </em></span> We already proven the first part of <span class="math inline">\(S_{XX}\)</span>. See the Equation <a href="simple.html#eq:sxx">(1.4)</a>. The second part is tivial. Since <span class="math inline">\(\sum (x_i - \overline{x}) = 0\)</span>,</p>
 <p><span class="math display">\[S_{XX} = \sum_{i = 1}^n (x_i - \overline{x})^2 = \sum_{i = 1}^n (x_i - \overline{x})x_i\]</span></p>
 <p>For the first part of <span class="math inline">\(S_{XY}\)</span>,</p>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     S_{XY} &amp; = \sum_{i = 1}^n (x_i - \overline{x})(Y_i - \overline{Y}) \\
     &amp; = \sum_{i = 1}^n x_i Y_i - \overline{x} \sum_{i = 1}^n Y_i - \overline{Y} \sum_{i = 1}^n x_i + n \overline{x} \overline{Y} \\
     &amp; = \sum_{i = 1}^n x_i Y_i - \frac{1}{n}\bigg(\sum_{i = 1}^n x_i\bigg)\bigg(\sum_{i = 1}^n Y_i\bigg)
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>Second part of <span class="math inline">\(S_{XY}\)</span> also can be proven from the definition.</p>
 <span class="math display">\[\begin{equation*}
   \begin{split}
@@ -332,20 +322,20 @@ Coefficients:
 
 
 <div class="lemma">
-<p><span id="lem:linbet" class="lemma"><strong>Lemma 2.2  (Linearity)  </strong></span>Each coefficient is a linear estimator.</p>
+<p><span id="lem:linbet" class="lemma"><strong>Lemma 1.2  (Linearity)  </strong></span>Each coefficient is a linear estimator.</p>
 <p><span class="math display">\[\hat\beta_1 = \sum_{i = 1}^n\frac{(x_i - \overline{x})}{S_{XX}}Y_i\]</span></p>
 <span class="math display">\[\hat\beta_0 = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})}{S_{XX}} \bigg) Y_i\]</span>
 </div>
 
 
 <div class="proof">
-<p> <span class="proof"><em>Proof. </em></span> From lemma <a href="simple.html#lem:sxy">2.1</a>,</p>
-<p><span class="math display">\[\begin{equation*}
+<p> <span class="proof"><em>Proof. </em></span> From lemma <a href="simple.html#lem:sxy">1.1</a>,</p>
+<span class="math display">\[\begin{equation*}
   \begin{split}
     \hat\beta_1 &amp; = \frac{S_{XY}}{S_{XX}} \\
     &amp; = \frac{1}{S_{XX}}\sum_{i = 1}^n (x_i - \overline{x}) Y_i
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>It gives that</p>
 <span class="math display">\[\begin{equation*}
   \begin{split}
@@ -358,7 +348,7 @@ Coefficients:
 
 
 <div class="proposition">
-<p><span id="prp:ue" class="proposition"><strong>Proposition 2.1  (Unbiasedness)  </strong></span>Both coefficients are unbiased.</p>
+<p><span id="prp:ue" class="proposition"><strong>Proposition 1.1  (Unbiasedness)  </strong></span>Both coefficients are unbiased.</p>
 <p><span class="math inline">\(\text{(a)}\: E\hat\beta_1 = \beta_1\)</span></p>
 <span class="math inline">\(\text{(b)}\: E\hat\beta_0 = \beta_0\)</span>
 </div>
@@ -366,15 +356,15 @@ Coefficients:
 <p>From the model, <span class="math inline">\(Y_1, \ldots, Y_n \stackrel{indep}{\sim} (\beta_0 + \beta_1 x_i, \sigma^2)\)</span>.</p>
 
 <div class="proof">
-<p> <span class="proof"><em>Proof. </em></span> From lemma <a href="simple.html#lem:sxy">2.1</a>,</p>
-<p><span class="math display">\[\begin{equation*}
+<p> <span class="proof"><em>Proof. </em></span> From lemma <a href="simple.html#lem:sxy">1.1</a>,</p>
+<span class="math display">\[\begin{equation*}
   \begin{split}
     E\hat\beta_1 &amp; = \sum_{i = 1}^n \bigg[ \frac{(x_i - \overline{x})}{S_{XX}} E(Y_i) \bigg] \\
     &amp; = \sum_{i = 1}^n \frac{(x_i - \overline{x})}{S_{XX}}(\beta_0 + \beta_1 x_i) \\
     &amp; = \frac{\beta_1 \sum (x_i - \overline{x})x_i}{\sum (x_i - \overline{x})x_i} \qquad \because \sum (x_i - \overline{x}) = 0 \\
     &amp; = \beta_1
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>It follows that</p>
 <span class="math display">\[\begin{equation*}
   \begin{split}
@@ -389,7 +379,7 @@ Coefficients:
 
 
 <div class="proposition">
-<p><span id="prp:vb" class="proposition"><strong>Proposition 2.2  (Variances)  </strong></span>Variances and covariance of coefficients</p>
+<p><span id="prp:vb" class="proposition"><strong>Proposition 1.2  (Variances)  </strong></span>Variances and covariance of coefficients</p>
 <p><span class="math inline">\(\text{(a)}\: Var\hat\beta_1 = \frac{\sigma^2}{S_{XX}}\)</span></p>
 <p><span class="math inline">\(\text{(b)}\: Var\hat\beta_0 = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2\)</span></p>
 <span class="math inline">\(\text{(c)}\: Cov(\hat\beta_0, \hat\beta_1) = - \frac{\overline{x}}{S_{XX}} \sigma^2\)</span>
@@ -401,22 +391,22 @@ Coefficients:
 <ol style="list-style-type: lower-alpha">
 <li></li>
 </ol>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     Var\hat\beta_1 &amp; = \frac{1}{S_{XX}^2}\sum_{i = 1}^n \bigg[ (x_i - \overline{x})^2 Var(Y_i) \bigg] + \frac{1}{S_{XX}^2} \sum_{j \neq k}^n \bigg[ (x_j - \overline{x})(x_k - \overline{x}) Cov(Y_j, Y_k) \bigg] \\
     &amp; = \frac{\sigma^2}{S_{XX}} \qquad \because Cov(Y_j, Y_k) = 0 \: \text{if} \: j \neq k
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <ol start="2" style="list-style-type: lower-alpha">
 <li></li>
 </ol>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     Var\hat\beta_0 &amp; = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)^2Var(Y_i) + \sum_{j \neq k} \bigg( \frac{1}{n} - \frac{(x_j - \overline{x})\overline{x}}{S_{XX}} \bigg)\bigg( \frac{1}{n} - \frac{(x_k - \overline{x})\overline{x}}{S_{XX}} \bigg) Cov(Y_j, Y_k) \\
     &amp; = \frac{\sigma^2}{n} - 2 \sigma^2 \frac{\overline{x}}{S_{XX}} \sum_{i = 1}^n (x_i - \overline{x}) + \frac{\sigma^2 \overline{x}^2 \sum (x_i - \overline{x})^2}{S_{XX}^2} \\
     &amp; = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg) \sigma^2 \qquad \because \sum (x_i - \overline{x}) = 0
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <ol start="3" style="list-style-type: lower-alpha">
 <li></li>
 </ol>
@@ -431,11 +421,11 @@ Coefficients:
 
 </div>
 <div id="gauss-markov-theorem" class="section level3">
-<h3><span class="header-section-number">2.2.4</span> Gauss-Markov Theorem</h3>
-<p>Chapter <a href="simple.html#lseprop">2.2.3</a> shows that the <span class="math inline">\(\beta_0^{LSE}\)</span> and <span class="math inline">\(\beta_1^{LSE}\)</span> are the <strong>linear unbiased estimators</strong>. Are these good? Good compared to <em>what estimators</em>? Here we consider <em>linear unbiased estimator</em>. If variances in the proposition <a href="simple.html#prp:vb">2.2</a> are lower than any parameters in this parameter family, <span class="math inline">\(\beta_0^{LSE}\)</span> and <span class="math inline">\(\beta_1^{LSE}\)</span> are the <strong>best linear unbiased estimators</strong>.</p>
+<h3><span class="header-section-number">1.2.4</span> Gauss-Markov Theorem</h3>
+<p>Chapter <a href="simple.html#lseprop">1.2.3</a> shows that the <span class="math inline">\(\beta_0^{LSE}\)</span> and <span class="math inline">\(\beta_1^{LSE}\)</span> are the <strong>linear unbiased estimators</strong>. Are these good? Good compared to <em>what estimators</em>? Here we consider <em>linear unbiased estimator</em>. If variances in the proposition <a href="simple.html#prp:vb">1.2</a> are lower than any parameters in this parameter family, <span class="math inline">\(\beta_0^{LSE}\)</span> and <span class="math inline">\(\beta_1^{LSE}\)</span> are the <strong>best linear unbiased estimators</strong>.</p>
 
 <div class="theorem">
-<p><span id="thm:gmt" class="theorem"><strong>Theorem 2.1  (Gauss Markov Theorem)  </strong></span><span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span> are BLUE, i.e. the best linear unbiased estimator.</p>
+<p><span id="thm:gmt" class="theorem"><strong>Theorem 1.1  (Gauss Markov Theorem)  </strong></span><span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span> are BLUE, i.e. the best linear unbiased estimator.</p>
 <p><span class="math display">\[Var(\hat\beta_0) \le Var\Big( \sum_{i = 1}^n a_i Y_i \Big) \: \forall a_i \in \mathbb{R} \: \text{s.t.} \: E\Big( \sum_{i = 1}^n a_i Y_i \Big) = \beta_0\]</span></p>
 <span class="math display">\[Var(\hat\beta_1) \le Var\Big( \sum_{i = 1}^n b_i Y_i \Big) \: \forall b_i \in \mathbb{R} \: \text{s.t.} \: E\Big( \sum_{i = 1}^n b_i Y_i \Big) = \beta_1\]</span>
 </div>
@@ -448,14 +438,14 @@ Coefficients:
 <p>Since <span class="math inline">\(E(Y_i) = \beta_0 + \beta_1 x_i\)</span>,</p>
 <p><span class="math display">\[\beta_0 \sum b_i + \beta_1 \sum b_i x_i = \beta_1\]</span></p>
 <p>It gives</p>
-<p><span class="math display">\[\begin{equation} \label{eq:ule}
+<span class="math display">\[\begin{equation} \label{eq:ule}
   \begin{cases}
     \sum b_i = 0 \\
     \sum b_i x_i = 1
   \end{cases}
-\end{equation}\]</span></p>
+\end{equation}\]</span>
 <p>Then</p>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     0 \le Var\Big(\sum b_i Y_i - \hat\beta_1\Big) &amp; = Var\Big( \sum b_i Y_i - \sum \frac{(x_i - \bar{x})}{S_{XX}} Y_i \Big) \\
     &amp; \stackrel{indep}{=} \sum \bigg( b_i - \frac{(x_i - \bar{x})}{S_{XX}} \bigg)^2 \sigma^2 \\
@@ -464,7 +454,7 @@ Coefficients:
     &amp; = \sum b_i^2 \sigma^2 - \frac{\sigma^2}{S_{XX}} \qquad \because \eqref{eq:ule} \:\text{and}\: S_{XX} = \sum (x_i - \bar{x})^2 \\
     &amp; = Var(\sum b_i Y_i) - Var(\hat\beta_1)
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>Hence,</p>
 <span class="math display">\[Var(\sum b_i Y_i) \ge Var(\hat\beta_1)\]</span>
 </div>
@@ -477,14 +467,14 @@ Coefficients:
 <p>Since <span class="math inline">\(E(Y_i) = \beta_0 + \beta_1 x_i\)</span>,</p>
 <p><span class="math display">\[\beta_0 \sum a_i + \beta_1 \sum a_i x_i = \beta_0\]</span></p>
 <p>It gives</p>
-<p><span class="math display">\[\begin{equation} \label{eq:ule0}
+<span class="math display">\[\begin{equation} \label{eq:ule0}
   \begin{cases}
     \sum a_i = 1 \\
     \sum a_i x_i = 0
   \end{cases}
-\end{equation}\]</span></p>
+\end{equation}\]</span>
 <p>Then</p>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     0 \le Var\Big(\sum a_iY_i - \hat\beta_0 \Big) &amp; = Var\bigg[\sum a_iY_i - \sum\Big( \frac{1}{n} - \frac{(x_k - \bar{x})\bar{x}}{S_{XX}} \Big) Y_k \bigg] \\
     &amp; = \sum \bigg(a_i - \frac{1}{n} +  \frac{(x_i - \bar{x})\bar{x}}{S_{XX}} \bigg)^2\sigma^2 \\
@@ -496,21 +486,21 @@ Coefficients:
         &amp; = \sum a_i^2\sigma^2 - \bigg( \frac{1}{n} + \frac{\bar{x}^2}{S_{XX}} \bigg)\sigma^2 \\
         &amp; = Var\Big( \sum a_i Y_i \Big) - Var\hat\beta_0
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>Hence,</p>
 <span class="math display">\[Var(\sum a_i Y_i) \ge Var(\hat\beta_0)\]</span>
 </div>
 
 
 <div class="example">
-<span id="exm:usingnormal" class="example"><strong>Example 2.1  </strong></span>Show that <span class="math inline">\(\sum (Y_i - \hat{Y_i}) = 0\)</span>, <span class="math inline">\(\sum x_i (Y_i - \hat{Y_i}) = 0\)</span>, and <span class="math inline">\(\sum \hat{Y_i} (Y_i - \hat{Y_i}) = 0\)</span>.
+<span id="exm:usingnormal" class="example"><strong>Example 1.1  </strong></span>Show that <span class="math inline">\(\sum (Y_i - \hat{Y_i}) = 0\)</span>, <span class="math inline">\(\sum x_i (Y_i - \hat{Y_i}) = 0\)</span>, and <span class="math inline">\(\sum \hat{Y_i} (Y_i - \hat{Y_i}) = 0\)</span>.
 </div>
 
 
 <div class="solution">
-<p> <span class="solution"><em>Solution. </em></span> Consider the two normal equations <span class="math inline">\(\eqref{eq:normbeta0}\)</span> and <span class="math inline">\(\eqref{eq:normbeta1}\)</span>. Note that <span class="math inline">\(\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_i\)</span>.</p>
-<p>From the Equation <span class="math inline">\(\eqref{eq:normbeta0}\)</span>, we have <span class="math inline">\(\sum (Y_i - \hat{Y_i}) = 0\)</span>.</p>
-<p>From the Equation <span class="math inline">\(\eqref{eq:normbeta1}\)</span>, we have <span class="math inline">\(\sum x_i (Y_i - \hat{Y_i}) = 0\)</span>.</p>
+<p> <span class="solution"><em>Solution. </em></span> Consider the two normal equations <a href="simple.html#eq:normbeta0">(1.2)</a> and <a href="simple.html#eq:normbeta1">(1.3)</a>. Note that <span class="math inline">\(\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_i\)</span>.</p>
+<p>From the Equation <a href="simple.html#eq:normbeta0">(1.2)</a>, we have <span class="math inline">\(\sum (Y_i - \hat{Y_i}) = 0\)</span>.</p>
+<p>From the Equation <a href="simple.html#eq:normbeta1">(1.3)</a>, we have <span class="math inline">\(\sum x_i (Y_i - \hat{Y_i}) = 0\)</span>.</p>
 <p>It follows that</p>
 <span class="math display">\[\begin{equation*}
   \begin{split}
@@ -523,15 +513,15 @@ Coefficients:
 
 </div>
 <div id="estimation-of-sigma2" class="section level3">
-<h3><span class="header-section-number">2.2.5</span> Estimation of <span class="math inline">\(\sigma^2\)</span></h3>
+<h3><span class="header-section-number">1.2.5</span> Estimation of <span class="math inline">\(\sigma^2\)</span></h3>
 <p>There is the last parameter, <span class="math inline">\(\sigma^2 = Var(Y_i)\)</span>. In the <em>least squares estimation literary</em>, we estimate <span class="math inline">\(\sigma^2\)</span> by</p>
-<p><span class="math display">\[\begin{equation} \label{eq:siglse}
+<span class="math display">\[\begin{equation} \label{eq:siglse}
   \hat\sigma^2 = \frac{1}{n - 2} \sum_{i = 1}^n (Y_i - \hat\beta_0 - \hat\beta_1 x_i)^2
-\end{equation}\]</span></p>
+\end{equation}\]</span>
 <p>Why <span class="math inline">\(n - 2\)</span>? This makes the estimator unbiased.</p>
 
 <div class="proposition">
-<span id="prp:sigex" class="proposition"><strong>Proposition 2.3  (Unbiasedness)  </strong></span><span class="math display">\[E(\hat\sigma^2) = \sigma^2\]</span>
+<span id="prp:sigex" class="proposition"><strong>Proposition 1.3  (Unbiasedness)  </strong></span><span class="math display">\[E(\hat\sigma^2) = \sigma^2\]</span>
 </div>
 
 
@@ -539,7 +529,7 @@ Coefficients:
 <p> <span class="proof"><em>Proof. </em></span> Note that</p>
 <p><span class="math display">\[(Y_i - \hat\beta_0 - \hat\beta_1 x_i) = (Y_i - \overline{Y}) - \hat\beta_1(x_i - \overline{x})\]</span></p>
 <p>Then</p>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     E(\hat\sigma^2) &amp; = \frac{1}{n - 2} E \bigg[ \sum (Y_i - \hat\beta_0 - \hat\beta_1 x_i)^2 \bigg] \\
     &amp; = \frac{1}{n - 2} E \bigg[ \sum (Y_i - \overline{Y})^2 + \hat\beta_1^2 \sum (x_i - \overline{x})^2 -2\hat\beta_1 \sum (Y_i - \overline{Y})(x_i - \overline{x}) \bigg] \\
@@ -547,11 +537,11 @@ Coefficients:
     &amp; = \frac{1}{n - 2} E ( S_{YY} - \hat\beta_1^2 S_{XX}) \qquad \because S_{XY} = \hat\beta_1 S_{XX} \\
     &amp; = \frac{1}{n - 2} \Big(  \underset{(a)}{\underline{ES_{YY}}} - S_{XX} \underset{(b)}{\underline{E\hat\beta_1^2}} \Big)
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <ol style="list-style-type: lower-alpha">
 <li></li>
 </ol>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     ES_{YY} &amp; = E\Big[ \sum (Y_i - \overline{Y})^2 \Big] \\
     &amp; = E \Big[ \sum \Big( (\beta_0 + \beta_1 x_i + \epsilon_i) - (\beta_0 + \beta_1 \overline{x} + \overline{\epsilon}) \Big)^2 \Big] \\
@@ -559,9 +549,9 @@ Coefficients:
     &amp; = \beta_1^2 S_{XX} + E\Big( \sum (\epsilon_i - \overline{\epsilon})^2 \Big) + 2\beta_1 \sum (x_i - \overline{x}) E(\epsilon_i - \overline{\epsilon}) \\
     &amp; = \beta_1^2 S_{XX} + E\Big( \sum (\epsilon_i - \overline{\epsilon})^2 \Big)
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>Since <span class="math inline">\(E(\bar\epsilon) = 0\)</span> and <span class="math inline">\(Var(\bar\epsilon) = \frac{\sigma^2}{n}\)</span>,</p>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     E\Big( \sum (\epsilon_i - \overline{\epsilon})^2 \Big) &amp; = E \Big( \sum (\epsilon_i^2 + \bar\epsilon^2 - 2\epsilon_i \bar\epsilon) \Big) \\
     &amp; = \sum E(\epsilon_i^2) - n E(\bar\epsilon^2) \qquad \because \sum \epsilon = n \bar\epsilon \\
@@ -569,18 +559,18 @@ Coefficients:
     &amp; = n\sigma^2 - \sigma^2 \\
     &amp; = (n - 1)\sigma^2
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>Thus,</p>
 <p><span class="math display">\[ES_{YY} = \beta_1^2 S_{XX} + (n - 1)\sigma^2\]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li></li>
 </ol>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     E\hat\beta_1^2 &amp; = Var\hat\beta_1 + E(\hat\beta_1)^2 \\
     &amp; = \frac{\sigma^2}{S_{XX}} + \beta_1^2
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>It follows that</p>
 <span class="math display">\[\begin{equation*}
   \begin{split}
@@ -595,22 +585,22 @@ Coefficients:
 </div>
 </div>
 <div id="maximum-likelihood-estimation" class="section level2">
-<h2><span class="header-section-number">2.3</span> Maximum Likelihood Estimation</h2>
+<h2><span class="header-section-number">1.3</span> Maximum Likelihood Estimation</h2>
 <p>In this section, we add an assumption to an random errors <span class="math inline">\(\epsilon_i\)</span>.</p>
 <p><span class="math display">\[\epsilon_i \stackrel{iid}{\sim} N(0, \sigma^2)\]</span></p>
 
 <div class="example">
-<p><span id="exm:gmle" class="example"><strong>Example 2.2  (Gaussian Likelihood)  </strong></span>Note that <span class="math inline">\(Y_i \stackrel{indep}{\sim} N(\beta_0 + \beta_1 x_i, \sigma^2)\)</span>. Then the likelihood function is</p>
+<p><span id="exm:gmle" class="example"><strong>Example 1.2  (Gaussian Likelihood)  </strong></span>Note that <span class="math inline">\(Y_i \stackrel{indep}{\sim} N(\beta_0 + \beta_1 x_i, \sigma^2)\)</span>. Then the likelihood function is</p>
 <p><span class="math display">\[L(\beta_0, \beta_1, \sigma^2) = \prod_{i = 1}^n\bigg( \frac{1}{\sqrt{2\pi\sigma^2}} \exp \bigg(- \frac{(Y_i - \beta_0 - \beta_1 x_i)^2}{2 \sigma^2} \bigg) \bigg)\]</span></p>
 <p>and so the log-likelihood function can be computed as</p>
 <span class="math display">\[l(\beta_0, \beta_1, \sigma^2) = -\frac{n}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i)^2\]</span>
 </div>
 
 <div id="likelihood-equations" class="section level3">
-<h3><span class="header-section-number">2.3.1</span> Likelihood equations</h3>
+<h3><span class="header-section-number">1.3.1</span> Likelihood equations</h3>
 
 <div class="definition">
-<span id="def:mledef" class="definition"><strong>Definition 2.2  (Maximum Likelihood Estimator)  </strong></span><span class="math display">\[(\hat\beta_0^{MLE}, \hat\beta_1^{MLE}, \hat\sigma^{2MLE}) := \arg\sup L(\beta_0, \beta_1, \sigma^2)\]</span>
+<span id="def:mledef" class="definition"><strong>Definition 1.2  (Maximum Likelihood Estimator)  </strong></span><span class="math display">\[(\hat\beta_0^{MLE}, \hat\beta_1^{MLE}, \hat\sigma^{2MLE}) := \arg\sup L(\beta_0, \beta_1, \sigma^2)\]</span>
 </div>
 
 <p>Since <span class="math inline">\(l(\cdot) = \ln L(\cdot)\)</span> is monotone,</p>
@@ -620,31 +610,34 @@ Coefficients:
 </div>
 
 <p>We can find the maximum of this <em>quadratic</em> function by making first derivative.</p>
-<p><span class="math display">\[\begin{equation} \label{eq:mlbeta0}
+<span class="math display" id="eq:mlbeta0">\[\begin{equation}
   \frac{\partial l}{\partial \beta_0} = \frac{1}{\sigma^2} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i) = 0
-\end{equation}\]</span></p>
-<p><span class="math display">\[\begin{equation} \label{eq:mlbeta1}
+  \tag{1.7}
+\end{equation}\]</span>
+<span class="math display" id="eq:mlbeta1">\[\begin{equation}
   \frac{\partial l}{\partial \beta_1} = \frac{1}{\sigma^2} \sum_{i = 1}^n x_i (Y_i - \beta_0 - \beta_1 x_i) = 0
-\end{equation}\]</span></p>
-<p><span class="math display">\[\begin{equation} \label{eq:mlsig}
+  \tag{1.8}
+\end{equation}\]</span>
+<span class="math display" id="eq:mlsig">\[\begin{equation}
   \frac{\partial l}{\partial \sigma^2} = - \frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = 0
-\end{equation}\]</span></p>
-<p>Denote that Equations <span class="math inline">\(\eqref{eq:mlbeta0}\)</span> and <span class="math inline">\(\eqref{eq:mlbeta1}\)</span> given <span class="math inline">\(\hat\sigma^2\)</span> are equivalent to the normal equations. Thus,</p>
+  \tag{1.9}
+\end{equation}\]</span>
+<p>Denote that Equations <a href="simple.html#eq:mlbeta0">(1.7)</a> and <a href="simple.html#eq:mlbeta1">(1.8)</a> given <span class="math inline">\(\hat\sigma^2\)</span> are equivalent to the normal equations. Thus,</p>
 <p><span class="math display">\[\hat\beta_0^{MLE} = \hat\beta_0^{LSE}, \quad \hat\beta_1^{MLE} = \hat\beta_1^{LSE}\]</span></p>
-<p>From <span class="math inline">\(\eqref{eq:mlsig}\)</span>,</p>
+<p>From Equation <a href="simple.html#eq:mlsig">(1.9)</a>,</p>
 <p><span class="math display">\[\hat\sigma^{2MLE} = \frac{1}{n}\sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i)^2 = \frac{n - 2}{n} \hat\sigma^{2LSE}\]</span></p>
 <p>Recall that <span class="math inline">\(\hat\sigma^{2LSE}\)</span> is an unbiased, i.e. this <em>MLE is not an unbiased estimator</em>. Since <span class="math inline">\(\hat\sigma^{2MLE} \approx \hat\sigma^{2LSE}\)</span> for large <span class="math inline">\(n\)</span>, howerver, it is <em>asymptotically unbiased</em>.</p>
 
 <div class="theorem">
-<p><span id="thm:rclb" class="theorem"><strong>Theorem 2.2  (Rao-Cramer Lower Bound, univariate case)  </strong></span>Let <span class="math inline">\(X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta)\)</span>. If <span class="math inline">\(\hat\theta\)</span> is an unbiased estimator of <span class="math inline">\(\theta\)</span>,</p>
+<p><span id="thm:rclb" class="theorem"><strong>Theorem 1.2  (Rao-Cramer Lower Bound, univariate case)  </strong></span>Let <span class="math inline">\(X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta)\)</span>. If <span class="math inline">\(\hat\theta\)</span> is an unbiased estimator of <span class="math inline">\(\theta\)</span>,</p>
 <p><span class="math display">\[Var(\hat\theta) \ge \frac{1}{I_n(\theta)}\]</span></p>
 where <span class="math inline">\(I_n(\theta) = -E\bigg(\frac{\partial^2 l(\theta)}{\partial \theta^2} \bigg)\)</span>
 </div>
 
-<p>To apply this theorem <a href="simple.html#thm:rclb">2.2</a> in the simple linear regression setting, i.e. <span class="math inline">\((\beta_0, \beta_1)\)</span>, we need to look at the <em>bivariate case</em>.</p>
+<p>To apply this theorem <a href="simple.html#thm:rclb">1.2</a> in the simple linear regression setting, i.e. <span class="math inline">\((\beta_0, \beta_1)\)</span>, we need to look at the <em>bivariate case</em>.</p>
 
 <div class="theorem">
-<p><span id="thm:rclb2" class="theorem"><strong>Theorem 2.3  (Rao-Cramer Lower Bound, bivariate case)  </strong></span>Let <span class="math inline">\(X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \theta_2)\)</span> and let <span class="math inline">\(\boldsymbol{\theta} = (\theta_1, \theta_2)^T\)</span>. If each <span class="math inline">\(\hat\theta_1\)</span>, <span class="math inline">\(\hat\theta_2\)</span> is an unbiased estimator of <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span>, then</p>
+<p><span id="thm:rclb2" class="theorem"><strong>Theorem 1.3  (Rao-Cramer Lower Bound, bivariate case)  </strong></span>Let <span class="math inline">\(X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \theta_2)\)</span> and let <span class="math inline">\(\boldsymbol{\theta} = (\theta_1, \theta_2)^T\)</span>. If each <span class="math inline">\(\hat\theta_1\)</span>, <span class="math inline">\(\hat\theta_2\)</span> is an unbiased estimator of <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span>, then</p>
 <p><span class="math display">\[
 Var(\boldsymbol{\theta}) := \begin{bmatrix}
 Var(\hat\theta_1) &amp; Cov(\hat\theta_1, \hat\theta_2) \\
@@ -660,7 +653,7 @@ I_n(\theta_1, \theta_2) = - \begin{bmatrix}
 \]</span>
 </div>
 
-<p>Assume that <span class="math inline">\(\sigma^2\)</span> is <strong>known</strong>. From the Equations <span class="math inline">\(\eqref{eq:mlbeta0}\)</span> and <span class="math inline">\(\eqref{eq:mlbeta1}\)</span>,</p>
+<p>Assume that <span class="math inline">\(\sigma^2\)</span> is <strong>known</strong>. From the Equations <a href="simple.html#eq:mlbeta0">(1.7)</a> and <a href="simple.html#eq:mlbeta1">(1.8)</a>,</p>
 <p><span class="math display">\[
 \begin{cases}
   \frac{\partial^2 l}{\partial \beta_0^2} = - \frac{n}{\sigma^2} \\
@@ -676,7 +669,7 @@ I_n(\beta_0, \beta_1) = \begin{bmatrix}
 \end{bmatrix}
 \]</span></p>
 <p>Applying gaussian elimination,</p>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     \left[
     \begin{array}{cc|cc}
@@ -708,7 +701,7 @@ I_n(\beta_0, \beta_1) = \begin{bmatrix}
     \end{array}
     \right]
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>Hence,</p>
 <p><span class="math display">\[
 I_n^{-1}(\beta_0, \beta_1) = \begin{bmatrix}
@@ -725,7 +718,7 @@ I_n^{-1}(\beta_0, \beta_1) = \begin{bmatrix}
  <span class="remark"><em>Remark. </em></span> This says that <span class="math inline">\(\hat\beta_0^{LSE} = \hat\beta_0^{MLE}\)</span> and <span class="math inline">\(\hat\beta_1^{LSE} = \hat\beta_1^{MLE}\)</span> have the smallest variance among all unbiased estimator.
 </div>
 
-<p>This result is <em>stronger than Gauss-Markov theorem</em> <a href="simple.html#thm:gmt">2.1</a>, where the LSE has the smalleset variance among all <em>linear unbiased</em> estimators. It can be simply obtained from the <em>Lehmann-Scheffe Theorem</em>: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE <span class="citation">(Hogg, McKean, and Craig <a href="#ref-Hogg:2018aa" role="doc-biblioref">2018</a>)</span>.</p>
+<p>This result is <em>stronger than Gauss-Markov theorem</em> <a href="simple.html#thm:gmt">1.1</a>, where the LSE has the smalleset variance among all <em>linear unbiased</em> estimators. It can be simply obtained from the <em>Lehmann-Scheffe Theorem</em>: If some unbiased estimator is a function of complete sufficient statistic, then this estimator is the unique MVUE <span class="citation">(Hogg, McKean, and Craig <a href="#ref-Hogg:2018aa">2018</a>)</span>.</p>
 
 <div class="remark">
  <span class="remark"><em>Remark</em> (Lehmann and Scheffe for regression coefficients). </span> <span class="math inline">\(u\Big(\sum Y_i, S_{XY} \Big)\)</span> is CSS in this regression problem, i.e. known <span class="math inline">\(\sigma^2\)</span>.
@@ -733,14 +726,14 @@ I_n^{-1}(\beta_0, \beta_1) = \begin{bmatrix}
 
 
 <div class="proof">
-<p> <span class="proof"><em>Proof. </em></span> From the example <a href="simple.html#exm:gmle">2.2</a>,</p>
-<p><span class="math display">\[\begin{equation*}
+<p> <span class="proof"><em>Proof. </em></span> From the example <a href="simple.html#exm:gmle">1.2</a>,</p>
+<span class="math display">\[\begin{equation*}
   \begin{split}
     L(\beta_0, \beta_1) &amp; = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \sum(Y_i - \beta_0 - \beta_1 x_i)^2 \bigg] \\
     &amp; = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \sum \Big(Y_i^2 - (\beta_0 + \beta_1 x_i)Y_i + (\beta_0 + \beta_1 x_i)^2 \Big) \bigg] \\
     &amp; = (2\pi\sigma^2)^{-\frac{n}{2}}\exp\bigg[-\frac{1}{2\sigma^2} \Big( -\beta_0 \sum Y_i - \beta_1 \sum x_i Y_i \Big) \bigg] \exp\bigg[-\frac{1}{2\sigma^2} \Big( \sum Y_i^2 + (\beta_0 + \beta_1 x_i)^2 \Big) \bigg]
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>By the Factorization theorem, both <span class="math inline">\(\sum Y_i\)</span> and <span class="math inline">\(\sum x_i Y_i\)</span> are sufficient statistics. Since <span class="math inline">\(S_{XY}\)</span> is one-to-one function of <span class="math inline">\(\sum x_i Y_i\)</span>, it is also a sufficient statistic.</p>
 <p>Denote that the normal distribution is in exponential family.</p>
 Hence, <span class="math inline">\((\sum Y_i, S_{XY})\)</span> are CSS.
@@ -749,33 +742,33 @@ Hence, <span class="math inline">\((\sum Y_i, S_{XY})\)</span> are CSS.
 </div>
 </div>
 <div id="residuals" class="section level2">
-<h2><span class="header-section-number">2.4</span> Residuals</h2>
+<h2><span class="header-section-number">1.4</span> Residuals</h2>
 
 <div class="definition">
-<span id="def:res" class="definition"><strong>Definition 2.3  (Residuals)  </strong></span><span class="math display">\[e_i := Y_i - \hat{Y_i}\]</span>
+<span id="def:res" class="definition"><strong>Definition 1.3  (Residuals)  </strong></span><span class="math display">\[e_i := Y_i - \hat{Y_i}\]</span>
 </div>
 
 <div id="prediction-error" class="section level3">
-<h3><span class="header-section-number">2.4.1</span> Prediction error</h3>
-<pre class="sourceCode r"><code class="sourceCode r">delv <span class="op">%&gt;%</span><span class="st"> </span>
+<h3><span class="header-section-number">1.4.1</span> Prediction error</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">delv <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">yhat =</span> <span class="kw">predict</span>(<span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x))) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_linerange</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> y, <span class="dt">ymax =</span> yhat), <span class="dt">col =</span> <span class="kw">I</span>(<span class="st">&quot;red&quot;</span>), <span class="dt">alpha =</span> <span class="fl">.7</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_linerange</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> y, <span class="dt">ymax =</span> yhat), <span class="dt">col =</span> <span class="kw">I</span>(<span class="st">&quot;red&quot;</span>), <span class="dt">alpha =</span> .<span class="dv">7</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(
     <span class="dt">x =</span> <span class="st">&quot;Number of Cases&quot;</span>,
     <span class="dt">y =</span> <span class="st">&quot;Delivery Time&quot;</span>
-  )</code></pre>
+  )</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:regplot"></span>
-<img src="regression-analysis_files/figure-html/regplot-1.png" alt="Fit and residuals\label{fig:regplot}" width="70%" />
+<img src="regression-analysis_files/figure-html/regplot-1.png" alt="Fit and residuals" width="70%" />
 <p class="caption">
-Figure 2.3: Fit and residuals
+Figure 1.3: Fit and residuals
 </p>
 </div>
-<p>See <span class="math inline">\(\text{Figure }\ref{fig:regplot}\)</span>. Each red line is <span class="math inline">\(e_i\)</span>. As we can see, <span class="math inline">\(e_i\)</span> represents the difference between <em>observed</em> response and <em>predicted</em> response. A large <span class="math inline">\(\lvert e_i \rvert\)</span> indicates a large prediction error. You can call this <span class="math inline">\(e_i\)</span> for each <span class="math inline">\(Y_i\)</span> by <code>lm()$residuals</code> or <code>residuals()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">delv_fit &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x, <span class="dt">data =</span> delv)
-delv_fit<span class="op">$</span>residuals</code></pre>
+<p>See Figure <a href="simple.html#fig:regplot">1.3</a>. Each red line is <span class="math inline">\(e_i\)</span>. As we can see, <span class="math inline">\(e_i\)</span> represents the difference between <em>observed</em> response and <em>predicted</em> response. A large <span class="math inline">\(\lvert e_i \rvert\)</span> indicates a large prediction error. You can call this <span class="math inline">\(e_i\)</span> for each <span class="math inline">\(Y_i\)</span> by <code>lm()$residuals</code> or <code>residuals()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">delv_fit &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x, <span class="dt">data =</span> delv)
+delv_fit<span class="op">$</span>residuals</code></pre></div>
 <pre><code>     1      2      3      4      5      6      7      8      9     10 
 -1.874  1.651  2.181  2.855 -2.628 -0.444  0.327 -0.724 10.634  7.298 
     11     12     13     14     15     16     17     18     19     20 
@@ -785,16 +778,16 @@ delv_fit<span class="op">$</span>residuals</code></pre>
 <p><span class="math inline">\(\sum e_i^2\)</span>, which has been minimized in the procedure of LSE, can be used to see <em>overall size of prediction errors</em>.</p>
 
 <div class="definition">
-<span id="def:sse" class="definition"><strong>Definition 2.4  (Error Sums of Squares)  </strong></span><span class="math display">\[SSE := \sum_{i = 1}^n e_i^2\]</span>
+<span id="def:sse" class="definition"><strong>Definition 1.4  (Residual Sum of Squares)  </strong></span><span class="math display">\[SSE := \sum_{i = 1}^n e_i^2\]</span>
 </div>
 
 </div>
 <div id="residuals-and-the-variance" class="section level3">
-<h3><span class="header-section-number">2.4.2</span> Residuals and the variance</h3>
+<h3><span class="header-section-number">1.4.2</span> Residuals and the variance</h3>
 <p><span class="math inline">\(e_i\)</span> is a random quantity, which contains the information for <span class="math inline">\(\epsilon_i\)</span>. <span class="math inline">\(\sum e_i^2\)</span> can give information about <span class="math inline">\(\sigma^2 = Var(\epsilon_i)\)</span>. For this, it is expected that <span class="math inline">\(e_i\)</span> and <span class="math inline">\(\epsilon_i\)</span> have similar feature.</p>
 
 <div class="lemma">
-<p><span id="lem:yandbet" class="lemma"><strong>Lemma 2.3  </strong></span>Covriance between Y and each coefficient</p>
+<p><span id="lem:yandbet" class="lemma"><strong>Lemma 1.3  </strong></span>Covriance between Y and each coefficient</p>
 <p><span class="math inline">\(\text{(a)}\: Cov(\hat\beta_0, Y_i) = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2\)</span></p>
 <span class="math inline">\(\text{(b)}\: Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2\)</span>
 </div>
@@ -802,12 +795,12 @@ delv_fit<span class="op">$</span>residuals</code></pre>
 
 <div class="proof">
 <p> <span class="proof"><em>Proof. </em></span> (a)</p>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     Cov(\hat\beta_0, Y_i) &amp; = Cov(\sum a_i Y_i, Y_i) \\
     &amp; = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <ol start="2" style="list-style-type: lower-alpha">
 <li></li>
 </ol>
@@ -821,7 +814,7 @@ delv_fit<span class="op">$</span>residuals</code></pre>
 
 
 <div class="proposition">
-<p><span id="prp:resprop" class="proposition"><strong>Proposition 2.4  (Properties of residuals)  </strong></span>Mean and variance of the residual</p>
+<p><span id="prp:resprop" class="proposition"><strong>Proposition 1.4  (Properties of residuals)  </strong></span>Mean and variance of the residual</p>
 <p><span class="math inline">\(\text{(a)}\: E(e_i) = 0\)</span></p>
 <p><span class="math inline">\(\text{(b)}\: Var(e_i) \neq \sigma^2\)</span></p>
 <span class="math inline">\(\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0\)</span>
@@ -831,17 +824,17 @@ delv_fit<span class="op">$</span>residuals</code></pre>
 <div class="proof">
 <p> <span class="proof"><em>Proof. </em></span> (a) Recall that this is the assumption of the regression model.</p>
 <ol start="2" style="list-style-type: lower-alpha">
-<li>Lemma <a href="simple.html#lem:yandbet">2.3</a> implies that</li>
+<li>Lemma <a href="simple.html#lem:yandbet">1.3</a> implies that</li>
 </ol>
-<p><span class="math display">\[\begin{equation*}
+<span class="math display">\[\begin{equation*}
   \begin{split}
     Cov(\overline{Y}, \hat\beta_1) &amp; = Cov(\frac{1}{n}\sum Y_i, \hat\beta_1) \\
     &amp; = \frac{1}{n} \sum_{i = 1}^n \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2 \\
     &amp; = 0 \qquad \because \sum (x_i - \overline{x}) = 0
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <p>Then</p>
-<p><span class="math display">\[\begin{equation} \label{eq:predvar}
+<span class="math display" id="eq:predvar">\[\begin{equation}
   \begin{split}
     Var(\hat{Y_i}) &amp; = Var(\hat\beta_0 + \hat\beta_1 x_i) \\
     &amp; = Var \bigg[ \overline{Y} + (x_i - \overline{x}) \hat\beta_1 \bigg] \qquad \because \hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x} \\
@@ -849,25 +842,27 @@ delv_fit<span class="op">$</span>residuals</code></pre>
     &amp; = \frac{\sigma^2}{n} + (x_i - \overline{x})^2\frac{\sigma^2}{S_{XX}} + 0 \\
     &amp; = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
   \end{split}
-\end{equation}\]</span></p>
-<p>From the same lemma <a href="simple.html#lem:yandbet">2.3</a>,</p>
-<p><span class="math display">\[\begin{equation} \label{eq:yyhat}
+  \tag{1.10}
+\end{equation}\]</span>
+<p>From the same lemma <a href="simple.html#lem:yandbet">1.3</a>,</p>
+<span class="math display" id="eq:yyhat">\[\begin{equation}
   \begin{split}
     Cov(Y_i, \hat{Y_i}) &amp; = Cov(Y_i, \overline{Y} + (x_i - \overline{x}) \hat\beta_1) \\
     &amp; = Cov(Y_i, \overline{Y}) + (x_i - \overline{x}) Cov(Y_i, \hat\beta_1) \\
     &amp; = \frac{\sigma^2}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}}\sigma^2 \qquad \because Cov(Y_i, \hat\beta_1) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2 \\
     &amp; = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
   \end{split}
-\end{equation}\]</span></p>
-<p>These <span class="math inline">\(\eqref{eq:predvar}\)</span> and <span class="math inline">\(\eqref{eq:yyhat}\)</span> give that</p>
-<p><span class="math display">\[\begin{equation*}
+  \tag{1.11}
+\end{equation}\]</span>
+<p>These Equations <a href="simple.html#eq:predvar">(1.10)</a> and <a href="simple.html#eq:yyhat">(1.11)</a> give that</p>
+<span class="math display">\[\begin{equation*}
   \begin{split}
     Var(e_i) &amp; = Var(Y_i) + Var(\hat{Y_i}) -2Cov(Y_i, \hat{Y_i}) \\
     &amp; = \sigma^2 + \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 - 2 \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
     &amp; = \bigg(1 - \frac{1}{n} - \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
     &amp; \neq \sigma^2
   \end{split}
-\end{equation*}\]</span></p>
+\end{equation*}\]</span>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Let <span class="math inline">\(i \neq j\)</span>. Then</li>
 </ol>
@@ -887,52 +882,264 @@ delv_fit<span class="op">$</span>residuals</code></pre>
 </div>
 </div>
 <div id="decomposition-of-total-variability" class="section level2">
-<h2><span class="header-section-number">2.5</span> Decomposition of Total Variability</h2>
+<h2><span class="header-section-number">1.5</span> Decomposition of Total Variability</h2>
+<div id="total-sum-of-squares" class="section level3">
+<h3><span class="header-section-number">1.5.1</span> Total sum of squares</h3>
 
 <div class="definition">
-<span id="def:unsst" class="definition"><strong>Definition 2.5  (Uncorrected Total Sum of Squares)  </strong></span><span class="math display">\[SST_{uncor} := \sum_{i = 1}^n Y_i^2\]</span>
+<span id="def:unsst" class="definition"><strong>Definition 1.5  (Uncorrected Total Sum of Squares)  </strong></span><span class="math display">\[SST_{uncor} := \sum_{i = 1}^n Y_i^2\]</span>
 </div>
 
 
 <div class="definition">
-<span id="def:sst" class="definition"><strong>Definition 2.6  (Corrected Total Sum of Squares)  </strong></span><span class="math display">\[SST := \sum_{i = 1}^n (Y_i - \overline{Y})^2\]</span>
+<span id="def:sst" class="definition"><strong>Definition 1.6  (Corrected Total Sum of Squares)  </strong></span><span class="math display">\[SST := \sum_{i = 1}^n (Y_i - \overline{Y})^2\]</span>
 </div>
 
 <p>What does this total sum of squares mean? To know this, we should know <span class="math inline">\(\overline{Y}\)</span> first.</p>
-<pre class="sourceCode r"><code class="sourceCode r">delv <span class="op">%&gt;%</span><span class="st"> </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">delv <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(
     <span class="dt">x =</span> <span class="st">&quot;Number of Cases&quot;</span>,
     <span class="dt">y =</span> <span class="st">&quot;Delivery Time&quot;</span>
-  )</code></pre>
+  )</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:ybarpred"></span>
-<img src="regression-analysis_files/figure-html/ybarpred-1.png" alt="Regression without predictor\label{fig:ybarpred}" width="70%" />
+<img src="regression-analysis_files/figure-html/ybarpred-1.png" alt="Regression without predictor" width="70%" />
 <p class="caption">
-Figure 2.4: Regression without predictor
+Figure 1.4: Regression without predictor
 </p>
 </div>
-<p>See <span class="math inline">\(\text{Figure }\ref{fig:ybarpred}\)</span>. The line represents the closest line when we use only intercept term for the regression model. In other words, <em>if we use no information for the response</em>, i.e. no predictor variables, we will get just average of the response variable. Consider</p>
+<p>See Figure <a href="simple.html#fig:ybarpred">1.4</a>. The line represents the closest line when we use only intercept term for the regression model. In other words, <em>if we use no information for the response</em>, i.e. no predictor variables, we will get just average of the response variable. Consider</p>
 <p><span class="math display">\[Y_i = \beta_0 + \epsilon_i\]</span></p>
 <p>Then we can get only one normal equation</p>
 <p><span class="math display">\[\sum (Y_i - \hat\beta_0) = 0\]</span></p>
 <p>Hence,</p>
 <p><span class="math display">\[\hat\beta_0 = \frac{1}{n} \sum_{i = 1}^n Y_i \equiv \overline{Y}\]</span></p>
-<p>From this fact, <span class="math inline">\(SST\)</span> implies</p>
+<p>From this fact, <span class="math inline">\(SST\)</span> implies <strong>total variance</strong>.</p>
+</div>
+<div id="regression-sum-of-squares" class="section level3">
+<h3><span class="header-section-number">1.5.2</span> Regression sum of squares</h3>
+
+<div class="definition">
+<span id="def:ssr" class="definition"><strong>Definition 1.7  (Regression Sum of Squares)  </strong></span><span class="math display">\[SSR := \sum_{i = 1}^n (hat{Y_i} - \overline{Y})^2\]</span>
+</div>
+
+<p>This <span class="math inline">\(SSR\)</span> compares <span class="math inline">\(\hat{Y_i}\)</span> versus <span class="math inline">\(\overline{Y}\)</span>, computing the sum of squares for difference between predicted values from <em>regression model</em> and <em>model not using predictors</em>.</p>
+</div>
+<div id="residual-sum-of-squares" class="section level3">
+<h3><span class="header-section-number">1.5.3</span> Residual sum of squares</h3>
+<p>Now consider the <em>residual sum of squares</em> <span class="math inline">\(SSE\)</span> in the definition <a href="simple.html#def:sse">1.4</a>. As mentioned, this is related to the <em>prediction errors</em>, which the regression model could not explain the data.</p>
+</div>
+<div id="decompsst" class="section level3">
+<h3><span class="header-section-number">1.5.4</span> Decomposition of total sum of squares</h3>
+<p><span class="math inline">\(SST\)</span> can be decomposed by construction of sum of squares.</p>
 
 <div class="proposition">
-<p><span id="prp:decom" class="proposition"><strong>Proposition 2.5  (Decomposition of SST)  </strong></span><span class="math display">\[SST = SSR + SSE\]</span></p>
-where <span class="math inline">\(SSR = \sum (\hat{Y_i} - \overline{Y})^2\)</span> and <span class="math inline">\(SSE = \sum (Y_i - \hat{Y_i})\)</span>
+<p><span id="prp:decom" class="proposition"><strong>Proposition 1.5  (Decomposition of SST)  </strong></span><span class="math display">\[SST = SSR + SSE\]</span></p>
+where <span class="math inline">\(SST = \sum (Y_i - \overline{Y})^2\)</span>, <span class="math inline">\(SSR = \sum (\hat{Y_i} - \overline{Y})^2\)</span>, and <span class="math inline">\(SSE = \sum (Y_i - \hat{Y_i})\)</span>
+</div>
+
+
+<div class="proof">
+<p> <span class="proof"><em>Proof. </em></span> From the Example <a href="simple.html#exm:usingnormal">1.1</a>,</p>
+<span class="math display">\[\begin{equation*}
+  \begin{split}
+    \sum_{i = 1}^n (Y_i - \overline{Y})^2 &amp; = \sum_{i = 1}^n (Y_i - \hat{Y_i} + \hat{Y_i} - \overline{Y})^2 \\
+    &amp; = \sum_{i = 1}^n (Y_i - \hat{Y_i})^2 + 2 \sum_{i = 1}^n (Y_i - \hat{Y_i})(\hat{Y_i} - \overline{Y}) + \sum_{i = 1}^n (\hat{Y_i} - \overline{Y})^2 \\
+    &amp; = \sum_{i = 1}^n (Y_i - \hat{Y_i})^2 + \sum_{i = 1}^n (\hat{Y_i} - \overline{Y})^2 \qquad \because \sum (Y_i - \hat{Y_i}) = 0 \: \text{and} \: \sum (Y_i - \hat{Y_i})\hat{Y_i} = 0
+  \end{split}
+\end{equation*}\]</span>
+</div>
+
+<p>This represents each <span class="math inline">\(SSR\)</span> and <span class="math inline">\(SSE\)</span> divides total variability as following.</p>
+<p><span class="math display">\[\overset{SST}{\text{total variability}} = \overset{SSR}{\text{left unexplained by regression}} + \overset{SSE}{\text{explained by regression}}\]</span></p>
+<p>Denote that the total variability <span class="math inline">\(SST\)</span> is <em>constant given data set</em>. If our model is good, <span class="math inline">\(SSR\)</span> grows and <span class="math inline">\(SSE\)</span> flattens. Thus the larger <span class="math inline">\(SSR\)</span> is, the better. The lower <span class="math inline">\(SSE\)</span> is, the better.</p>
+</div>
+<div id="coefficient-of-determination" class="section level3">
+<h3><span class="header-section-number">1.5.5</span> Coefficient of determination</h3>
+<p>We have discussed in the previous section <a href="simple.html#decompsst">1.5.4</a> that <span class="math inline">\(SSR\)</span> and <span class="math inline">\(SSE\)</span> splits the total variability into <em>explained part and not-explained part by our regression model</em>. Our first interest is whether the model works well for the data well, so we can think about the <em>proportion of explained part to the total variance</em>. The following measure <span class="math inline">\(R^2\)</span> computes this kind of value.</p>
+
+<div class="definition">
+<span id="def:rsq" class="definition"><strong>Definition 1.8  (Coefficient of Determination)  </strong></span><span class="math display">\[R^2 := \frac{SSR}{SST} = 1 - \frac{1 - SSE}{SST}\]</span>
+</div>
+
+<p>By construction,</p>
+<p><span class="math display">\[0 \le R^2 \le 1\]</span></p>
+<p>As <span class="math inline">\(R^2\)</span> goes to <span class="math inline">\(0\)</span>, the model goes wrong. As <span class="math inline">\(R^2\)</span> is close to <span class="math inline">\(1\)</span>, large proportion of variability has been explained. So we prefer large values rather than small.</p>
+
+<div class="proposition">
+<p><span id="prp:rsqlin" class="proposition"><strong>Proposition 1.6  </strong></span><span class="math inline">\(R^2\)</span> shows the strength of linear relation between two variables <span class="math inline">\(x\)</span> and <span class="math inline">\(Y\)</span> in the simple linear regression.</p>
+<p><span class="math display">\[R^2 = \hat\rho_{XY}\]</span></p>
+where <span class="math inline">\(\hat\rho_{XY} := \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\sum (X_i - \overline{X})^2} \sqrt{\sum (Y_i - \overline{Y})^2}}\)</span> is the sample correlation coefficients
+</div>
+
+
+<div class="proof">
+<p> <span class="proof"><em>Proof. </em></span> Note that <span class="math inline">\(\hat{Y_i} - \overline{Y} = \hat\beta_1 (x_i - \overline{x}) = \frac{S_{XY}}{S_{XX}} (x_i - \overline{x})\)</span>. Then</p>
+<span class="math display">\[\begin{equation*}
+  \begin{split}
+    \sum (\hat{Y_i} - \overline{Y})^2 &amp; = \frac{S_{XY}^2}{S_{XX}^2} \sum (x_i - \overline{x})^2 \\
+    &amp; = \frac{S_{XY}^2}{S_{XX}}
+  \end{split}
+\end{equation*}\]</span>
+<p>It follows that</p>
+<span class="math display">\[\begin{equation*}
+  \begin{split}
+    R^2 &amp; = \frac{\sum (\hat{Y_i} - \overline{Y})^2}{\sum (Y_i - \overline{Y})^2} \\
+    &amp; = \frac{S_{XY}^2}{S_{XX}S_{YY}} \\
+    &amp; =: \hat\rho_{XY}^2
+  \end{split}
+\end{equation*}\]</span>
+</div>
+
+<p>In this relation, we can know that <span class="math inline">\(R^2\)</span> statistic performs as a measure of the linear relationship in the simple linear regression setting.</p>
+</div>
+</div>
+<div id="geometric-interpretations" class="section level2">
+<h2><span class="header-section-number">1.6</span> Geometric Interpretations</h2>
+<div id="fundamental-subspaces" class="section level3">
+<h3><span class="header-section-number">1.6.1</span> Fundamental subspaces</h3>
+<p>These linear algebra concepts might be more useful for <em>multiple linear regression</em>, but let’s briefly recap <span class="citation">(Leon <a href="#ref-Leon:2014aa">2014</a>)</span>.</p>
+
+<div class="definition">
+<p><span id="def:subspace" class="definition"><strong>Definition 1.9  (Fundamental Subspaces)  </strong></span>Let <span class="math inline">\(X \in \mathbb{R}^{n \times (p + 1)}\)</span>.</p>
+<p>Then the Null space is defined by</p>
+<p><span class="math display">\[N(X) := \{ \mathbf{b} \in \mathbb{R}^n \mid X\mathbf{b} = \mathbf{0} \}\]</span></p>
+<p>The Row space is defined by</p>
+<p><span class="math display">\[Row(X) := sp(\{\mathbf{r}_1, \ldots, \mathbf{r}_{p + 1} \}) \quad \text{where} \: X^T = [\mathbf{r}_1^T, \ldots, \mathbf{r}_{n}^T]\]</span></p>
+<p>The Column space is defined by</p>
+<p><span class="math display">\[Col(X) := sp(\{\mathbf{c}_1, \ldots, \mathbf{c}_{n} \}) \quad \text{where} \: X = [\mathbf{c}_1, \ldots, \mathbf{c}_{p + 1}]\]</span></p>
+<p>The Range of <span class="math inline">\(X\)</span> is defined by</p>
+<span class="math display">\[R(X) := \{ \mathbf{y} \in \mathbb{R}^n \mid \mathbf{y} = X\mathbf{b} \quad \text{for some} \: \mathbf{b} \in \mathbb{R}^{p + 1} \}\]</span>
+</div>
+
+<p>These spaces have some constructional relationship.</p>
+
+<div class="theorem">
+<p><span id="thm:fundsub" class="theorem"><strong>Theorem 1.4  (Fundamental Subspaces Theorem)  </strong></span>Let <span class="math inline">\(X \in \mathbb{R}^{n \times (p + 1)}\)</span>. Then</p>
+<p><span class="math display">\[N(X) = R(X^T)^{\perp} = Col(X^T)^{\perp} = Row(X)^{\perp}\]</span></p>
+<p>Transposed matrix also satisfy this.</p>
+<span class="math display">\[N(X^T) = R(X)^{\perp} = Col(X)^{\perp}\]</span>
+</div>
+
+
+<div class="proof">
+<p> <span class="proof"><em>Proof. </em></span> Let <span class="math inline">\(\mathbf{a} \in N(X)\)</span>. Then <span class="math inline">\(X\mathbf{a} = \mathbf{0}\)</span>.</p>
+<p>Let <span class="math inline">\(\mathbf{y} \in R(X^T)\)</span>. Then <span class="math inline">\(X^T \mathbf{b} = \mathbf{y}\)</span> for some <span class="math inline">\(\mathbf{b} \in \mathbb{R}^{p + 1}\)</span>.</p>
+<p>Choose <span class="math inline">\(\mathbf{b} \in \mathbb{R}^{p + 1}\)</span> such that <span class="math inline">\(X^T \mathbf{b} = \mathbf{y}\)</span>. Then</p>
+<span class="math display">\[\begin{equation*}
+  \begin{split}
+    \mathbf{0} &amp; = X\mathbf{a} \\
+    &amp; = \mathbf{b}^T X\mathbf{a} \\
+    &amp; = \mathbf{y}^T \mathbf{a}
+  \end{split}
+\end{equation*}\]</span>
+<p>Hence,</p>
+<p><span class="math display">\[N(X) \perp R(X^T)\]</span></p>
+<p>Since</p>
+<p><span class="math display">\[X^T \mathbf{b} = \mathbf{c}_1 \mathbf{b} + \cdots + \mathbf{c}_{p + 1} \mathbf{b}\]</span></p>
+<p>it is trivial that <span class="math inline">\(R(X) = Col(X)\)</span> and <span class="math inline">\(R(X^T) = Col(X^T)\)</span>.</p>
+<p>If <span class="math inline">\(\mathbf{a} \in N(X)\)</span>, then</p>
+<p><span class="math display">\[
+X\mathbf{a} = \begin{bmatrix}
+  \mathbf{r}_1 \\
+  \mathbf{r}_2 \\
+  \cdots \\
+  \mathbf{r}_n
+\end{bmatrix} \begin{bmatrix}
+  a_1 \\
+  \cdots \\
+  a_{p + 1}
+\end{bmatrix} = \begin{bmatrix}
+  0 \\
+  0 \\
+  \cdots \\
+  0
+\end{bmatrix}
+\]</span></p>
+<p>Thus,</p>
+<p><span class="math display">\[\forall i :  \mathbf{a}^T \mathbf{r}_i = 0\]</span></p>
+<p>and so</p>
+<p><span class="math display">\[N(X) \subseteq Row(X)^{\perp}\]</span></p>
+<p>Conversely, if <span class="math inline">\(\mathbf{a} \in Row(X)^{\perp}\)</span>, then <span class="math inline">\(\forall i : \mathbf{a}^T \mathbf{r}_i = 0\)</span>. This implies that <span class="math inline">\(X\mathbf{a} = \mathbf{0}\)</span>. Thus,</p>
+<p><span class="math display">\[Row(X)^{\perp} \subseteq N(X)\]</span></p>
+<p>and so</p>
+<span class="math display">\[N(X) = Row(X)^{\perp}\]</span>
+</div>
+
+<p><span class="math inline">\(N(X^T) = R(X)^{\perp}\)</span> part in Theorem <a href="simple.html#thm:fundsub">1.4</a> will give the geometric insight to <em>least squares solution</em>.</p>
+
+<div class="theorem">
+<p><span id="thm:perpbasis" class="theorem"><strong>Theorem 1.5  </strong></span>Let <span class="math inline">\(S\)</span> be a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>. Then</p>
+<p><span class="math display">\[dim S + dim S^{\perp} = n\]</span></p>
+If <span class="math inline">\(\{ \mathbf{x}_1, \ldots, \mathbf{r} \}\)</span> is a basis for <span class="math inline">\(S\)</span> and <span class="math inline">\(\{ \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}\)</span> is a basis for <span class="math inline">\(S^{\perp}\)</span>, then <span class="math inline">\(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r, \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}\)</span> is a basis for <span class="math inline">\(\mathbb{R}^n\)</span>.
+</div>
+
+
+<div class="theorem">
+<p><span id="thm:dsum" class="theorem"><strong>Theorem 1.6  </strong></span>Let <span class="math inline">\(S\)</span> be a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>. Then</p>
+<span class="math display">\[\mathbb{R}^n = S \oplus S^{\perp}\]</span>
 </div>
 
 </div>
-<div id="geometric-interpretations" class="section level2">
-<h2><span class="header-section-number">2.6</span> Geometric Interpretations</h2>
+<div id="simple-linear-regression" class="section level3">
+<h3><span class="header-section-number">1.6.2</span> Simple linear regression</h3>
+
+<div class="theorem">
+<p><span id="thm:projection" class="theorem"><strong>Theorem 1.7  </strong></span>Let <span class="math inline">\(S\)</span> be a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>. For each <span class="math inline">\(\mathbf{y} \in \mathbf{R}^n\)</span>, there exists a unique <span class="math inline">\(\mathbf{p} \in S\)</span> that is closest to <span class="math inline">\(\mathbf{y}\)</span>, i.e.</p>
+<p><span class="math display">\[\Vert \mathbf{y} - \mathbf{p}  \Vert &gt; \Vert \mathbf{y} - \mathbf{\hat{y}} \Vert\]</span></p>
+<p>for any <span class="math inline">\(\mathbf{p} \neq \mathbf{\hat{y}}\)</span>. Furthermore, a given vector <span class="math inline">\(\mathbf{p} \in S\)</span> will be the closest to a given vector <span class="math inline">\(\mathbf{y} \in \mathbb{R}^n\)</span> if and only if</p>
+<span class="math display">\[\mathbf{y} - \mathbf{\hat{y}} \in S^{\perp}\]</span>
+</div>
+
+<p>Least square estimator <span class="math inline">\((\hat\beta_0, \hat\beta_1)^T\)</span> minimizes</p>
+<p><span class="math display">\[\sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = \Vert \mathbf{Y} - (\beta_0 \mathbf{1} + \beta_1 \mathbf{x}) \Vert^2\]</span></p>
+<p>with respect to <span class="math inline">\((\hat\beta_0, \hat\beta_1)^T \in \mathbb{R}^2\)</span> (where <span class="math inline">\(\mathbf{1} := (1, 1)^T\)</span>). Recall that the normal equation gives</p>
+<p><span class="math display">\[\sum_{i = 1}^n(Y_i - \hat\beta_0 - \hat\beta_1 x_i) = \Big( \mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \Big)^T \mathbf{1} = 0\]</span></p>
+<p>and</p>
+<p><span class="math display">\[\sum_{i = 1}^n (Y_i - \hat\beta_0 - \hat\beta_1 x_i)x_i = \Big( \mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \Big)^T \mathbf{x} = 0\]</span></p>
+<p>These two relation give</p>
+<p><span class="math display">\[\mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \perp sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}\]</span></p>
+<p>i.e. <span class="math inline">\(\mathbf{\hat{Y}} = \hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}\)</span> is the projection of <span class="math inline">\(\mathbf{Y}\)</span>.</p>
+<p>Theorem <a href="simple.html#thm:projection">1.7</a> can give the same result.</p>
+<p><span class="math display">\[\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x} \in R([\mathbf{1}, \mathbf{x}])^{\perp} = sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}\]</span></p>
+<div class="figure" style="text-align: center"><span id="fig:simpledraw"></span>
+<img src="regression-analysis_files/figure-html/simpledraw-1.png" alt="Geometric Illustration of Simple Linear Regression" width="70%" />
+<p class="caption">
+Figure 1.5: Geometric Illustration of Simple Linear Regression
+</p>
+</div>
+<p>We can see the details from Figure <a href="simple.html#fig:simpledraw">1.5</a>. In fact, decomposition of <span class="math inline">\(SST\)</span> and <span class="math inline">\(R^2\)</span> are also in here.</p>
+<div class="figure" style="text-align: center"><span id="fig:simpledraw2"></span>
+<img src="regression-analysis_files/figure-html/simpledraw2-1.png" alt="Geometric Illustration of Decomposing SST" width="70%" />
+<p class="caption">
+Figure 1.6: Geometric Illustration of Decomposing SST
+</p>
+</div>
+<p>See Figure <a href="simple.html#fig:simpledraw2">1.6</a>.</p>
+<p><span class="math display">\[
+\begin{cases}
+  SST = \lVert \mathbf{Y} - \overline{Y} \mathbf{1} \rVert^2 \\
+  SSR = \lVert \mathbf{\hat{Y}} - \overline{Y} \mathbf{1} \rVert^2 \\
+  SSE = \lVert \mathbf{Y} - \mathbf{\hat{Y}} \rVert^2
+\end{cases}
+\]</span></p>
+<p>Pythagorean law implies that</p>
+<p><span class="math display">\[SST = SSR + SSE\]</span></p>
+<p>Also,</p>
+<p><span class="math display">\[R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2\]</span></p>
+</div>
+</div>
+<div id="distributions" class="section level2">
+<h2><span class="header-section-number">1.7</span> Distributions</h2>
 
 <div id="refs" class="references">
 <div>
 <p>Hogg, Robert V., Joseph W. McKean, and Allen Thornton Craig. 2018. <em>Introduction to Mathematical Statistics</em>. 8th ed. Pearson College Division.</p>
+</div>
+<div>
+<p>Leon, Steve. 2014. <em>Linear Algebra with Applications</em>. Pearson Higher Ed.</p>
 </div>
 </div>
 </div>
@@ -941,6 +1148,9 @@ where <span class="math inline">\(SSR = \sum (\hat{Y_i} - \overline{Y})^2\)</spa
 <div id="refs" class="references">
 <div id="ref-Hogg:2018aa">
 <p>Hogg, Robert V., Joseph W. McKean, and Allen Thornton Craig. 2018. <em>Introduction to Mathematical Statistics</em>. 8th ed. Pearson College Division.</p>
+</div>
+<div id="ref-Leon:2014aa">
+<p>Leon, Steve. 2014. <em>Linear Algebra with Applications</em>. Pearson Higher Ed.</p>
 </div>
 </div>
             </section>
@@ -999,7 +1209,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "true";
+    var src = "";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');

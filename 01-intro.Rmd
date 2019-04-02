@@ -56,29 +56,32 @@ delv %>%
 
 We try to find $\beta_0$ and $\beta_1$ that minimize the sum of squares of the vertical distances, i.e.
 
-\begin{equation} \label{eq:ssq}
+\begin{equation}
   (\beta_0, \beta_1) = \arg\min \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2
+  (\#eq:ssq)
 \end{equation}
 
 ### Normal equations
 
-Denote that Equation $\eqref{eq:ssq}$ is quadratic. Then we can find its minimum by find the zero point of the first derivative. Set
+Denote that Equation \@ref(eq:ssq) is quadratic. Then we can find its minimum by find the zero point of the first derivative. Set
 
 $$Q(\beta_0, \beta_1) := \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2$$
 
 Then we have
 
-\begin{equation} \label{eq:normbeta0}
+\begin{equation}
   \frac{\partial Q}{\partial \beta_0} = -2 \sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i) = 0
+  (\#eq:normbeta0)
 \end{equation}
 
 and
 
-\begin{equation} \label{eq:normbeta1}
+\begin{equation}
   \frac{\partial Q}{\partial \beta_1} = -2 \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)x_i = 0
+  (\#eq:normbeta1)
 \end{equation}
 
-From $\eqref{eq:normbeta0}$,
+From Equation \@ref(eq:normbeta0),
 
 $$\sum_{i = 1}^n Y_i - n \hat\beta_0 - \hat\beta_1 \sum_{i = 1}^n x_i = 0$$
 
@@ -86,7 +89,7 @@ Thus,
 
 $$\hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x}$$
 
-$\eqref{eq:normbeta1}$ gives
+Equation \@ref(eq:normbeta1) gives
 
 $$\sum_{i = 1}^n x_i (Y_i - \overline{Y} + \hat\beta_1\overline{x} - \hat\beta_1 x_i) = \sum_{i = 1}^n x_i(Y_i - \overline{Y}) - \hat\beta_1\sum_{i = 1}^n x_i (x_i - \overline{x}) = 0$$
 
@@ -103,13 +106,14 @@ where $S_{XX} := \sum\limits_{i = 1}^n (x_i - \overline{x})^2$ and $S_{XY} := \s
 ```{proof}
 Note that $\overline{x}^2 = \frac{1}{n^2}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2$. Then we have
 
-\begin{equation} \label{eq:sxx}
+\begin{equation}
   \begin{split}
     S_{XX} & = \sum_{i = 1}^n (x_i - \overline{x})^2 \\
     & = \sum_{i = 1}^n x_i^2 - 2\sum_{i = 1}^n x_i \overline{x} + \sum_{i = 1}^n\overline{x}^2 \\
     & = \sum_{i = 1}^n x_i^2 - \frac{2}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 + \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 \\
     & = \sum_{i = 1}^n x_i^2 - \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2
   \end{split}
+  (\#eq:sxx)
 \end{equation}
 
 It follows that
@@ -146,8 +150,9 @@ $$E(Y \mid X = x) = \beta_0 + \beta_1 x$$
 
 We can estimate this mean resonse by
 
-\begin{equation} \label{eq:meanres}
+\begin{equation}
   \widehat{E(Y \mid x)} = \hat\beta_0 + \hat\beta_1 x
+  (\#eq:meanres)
 \end{equation}
 
 However, in practice, the model might not be true, which is included in $\epsilon$ term.
@@ -156,11 +161,12 @@ $$Y_i = \beta_0 + \beta_1 x_i + \epsilon_i$$
 
 Our real problem is predicting individual $Y$, not the mean. The *prediction* of response can be done by
 
-\begin{equation} \label{eq:indpred}
+\begin{equation}
   \hat{Y_i}  = \hat\beta_0 + \hat\beta_1 x_i
+  (\#eq:indpred)
 \end{equation}
 
-Observe that the values of Equation $\eqref{eq:meanres}$ and $\eqref{eq:indpred}$ are same. However, due to the **error term in the prediction**, it has larger standard error.
+Observe that the values of Equations \@ref(eq:meanres) and \@ref(eq:indpred) are same. However, due to the **error term in the prediction**, it has larger standard error.
 
 
 ### Properties of LSE {#lseprop}
@@ -175,7 +181,7 @@ $$S_{XY} = \sum_{i = 1}^n x_i Y_i - \frac{1}{n}\bigg(\sum_{i = 1}^n x_i\bigg)\bi
 ```
 
 ```{proof}
-We already proven the first part of $S_{XX}$. See the Equation $\eqref{eq:sxx}$. The second part is tivial. Since $\sum (x_i - \overline{x}) = 0$,
+We already proven the first part of $S_{XX}$. See the Equation \@ref(eq:sxx). The second part is tivial. Since $\sum (x_i - \overline{x}) = 0$,
 
 $$S_{XX} = \sum_{i = 1}^n (x_i - \overline{x})^2 = \sum_{i = 1}^n (x_i - \overline{x})x_i$$
 
@@ -406,11 +412,11 @@ Show that $\sum (Y_i - \hat{Y_i}) = 0$, $\sum x_i (Y_i - \hat{Y_i}) = 0$, and $\
 ```
 
 ```{solution}
-Consider the two normal equations $\eqref{eq:normbeta0}$ and $\eqref{eq:normbeta1}$. Note that $\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_i$.
+Consider the two normal equations \@ref(eq:normbeta0) and \@ref(eq:normbeta1). Note that $\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_i$.
 
-From the Equation $\eqref{eq:normbeta0}$, we have $\sum (Y_i - \hat{Y_i}) = 0$.
+From the Equation \@ref(eq:normbeta0), we have $\sum (Y_i - \hat{Y_i}) = 0$.
 
-From the Equation $\eqref{eq:normbeta1}$, we have $\sum x_i (Y_i - \hat{Y_i}) = 0$.
+From the Equation \@ref(eq:normbeta1), we have $\sum x_i (Y_i - \hat{Y_i}) = 0$.
 
 It follows that
 
@@ -536,23 +542,26 @@ $$(\hat\beta_0^{MLE}, \hat\beta_1^{MLE}, \hat\sigma^{2MLE}) = \arg\sup l(\beta_0
 
 We can find the maximum of this *quadratic* function by making first derivative.
 
-\begin{equation} \label{eq:mlbeta0}
+\begin{equation}
   \frac{\partial l}{\partial \beta_0} = \frac{1}{\sigma^2} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i) = 0
+  (\#eq:mlbeta0)
 \end{equation}
 
-\begin{equation} \label{eq:mlbeta1}
+\begin{equation}
   \frac{\partial l}{\partial \beta_1} = \frac{1}{\sigma^2} \sum_{i = 1}^n x_i (Y_i - \beta_0 - \beta_1 x_i) = 0
+  (\#eq:mlbeta1)
 \end{equation}
 
-\begin{equation} \label{eq:mlsig}
+\begin{equation}
   \frac{\partial l}{\partial \sigma^2} = - \frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = 0
+  (\#eq:mlsig)
 \end{equation}
 
-Denote that Equations $\eqref{eq:mlbeta0}$ and $\eqref{eq:mlbeta1}$ given $\hat\sigma^2$ are equivalent to the normal equations. Thus,
+Denote that Equations \@ref(eq:mlbeta0) and \@ref(eq:mlbeta1) given $\hat\sigma^2$ are equivalent to the normal equations. Thus,
 
 $$\hat\beta_0^{MLE} = \hat\beta_0^{LSE}, \quad \hat\beta_1^{MLE} = \hat\beta_1^{LSE}$$
 
-From $\eqref{eq:mlsig}$,
+From Equation \@ref(eq:mlsig),
 
 $$\hat\sigma^{2MLE} = \frac{1}{n}\sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i)^2 = \frac{n - 2}{n} \hat\sigma^{2LSE}$$
 
@@ -588,7 +597,7 @@ I_n(\theta_1, \theta_2) = - \begin{bmatrix}
 $$
 ```
 
-Assume that $\sigma^2$ is **known**. From the Equations $\eqref{eq:mlbeta0}$ and $\eqref{eq:mlbeta1}$,
+Assume that $\sigma^2$ is **known**. From the Equations \@ref(eq:mlbeta0) and \@ref(eq:mlbeta1),
 
 $$
 \begin{cases}
@@ -779,7 +788,7 @@ $\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0$
 
 Then
 
-\begin{equation} \label{eq:predvar}
+\begin{equation}
   \begin{split}
     Var(\hat{Y_i}) & = Var(\hat\beta_0 + \hat\beta_1 x_i) \\
     & = Var \bigg[ \overline{Y} + (x_i - \overline{x}) \hat\beta_1 \bigg] \qquad \because \hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x} \\
@@ -787,20 +796,22 @@ Then
     & = \frac{\sigma^2}{n} + (x_i - \overline{x})^2\frac{\sigma^2}{S_{XX}} + 0 \\
     & = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
   \end{split}
+  (\#eq:predvar)
 \end{equation}
 
 From the same lemma \@ref(lem:yandbet),
     
-\begin{equation} \label{eq:yyhat}
+\begin{equation}
   \begin{split}
     Cov(Y_i, \hat{Y_i}) & = Cov(Y_i, \overline{Y} + (x_i - \overline{x}) \hat\beta_1) \\
     & = Cov(Y_i, \overline{Y}) + (x_i - \overline{x}) Cov(Y_i, \hat\beta_1) \\
     & = \frac{\sigma^2}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}}\sigma^2 \qquad \because Cov(Y_i, \hat\beta_1) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2 \\
     & = \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2
   \end{split}
+  (\#eq:yyhat)
 \end{equation}
 
-These $\eqref{eq:predvar}$ and $\eqref{eq:yyhat}$ give that
+These Equations \@ref(eq:predvar) and \@ref(eq:yyhat) give that
 
 \begin{equation*}
   \begin{split}
