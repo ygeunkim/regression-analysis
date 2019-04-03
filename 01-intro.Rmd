@@ -1193,8 +1193,111 @@ $$R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2$$
 
 ## Distributions
 
+### Mean response and response
+
+We have already look at predicting each mean response and response from equation \@ref(eq:meanres) and \@ref(eq:indpred).
+
+```{theorem, mux, name = "Estimation of the mean response"}
+$$\hat\mu_x \equiv \widehat{E(Y \mid x)} = \hat\beta_0 + \hat\beta_1 x$$
+```
+
+```{theorem, yhatx, name = "(out of sample) Prediction of a response"}
+$$\hat{Y_x}  = \hat\beta_0 + \hat\beta_1 x$$
+```
+
+Recall that predicting \@ref(thm:mux) targets at
+
+$$\mu_x \equiv E(Y \mid x) = \beta_0 + \beta_1 x$$
+
+which have been assumed to be true model. On the other hand, predicting \@ref(thm:yhatx) targets at
+
+$$Y = \beta_0 + \beta_1 + \epsilon_x$$
+
+The linearity is not true in reality. So the errors caused by modeling linear model are included in $\epsilon_x$. This error term makes difference between properties of \@ref(thm:mux) and \@ref(thm:yhatx).
+
+To derive their distribution and see the difference, we additionaly assume Normality, i.e.
+
+$$\epsilon_i \stackrel{iid}{\sim} N(0, \sigma^2)$$
+
+### Regression coefficients
+
+Under Normality, we have
+
+$$Y_i \stackrel{indep}{\sim} N(\beta_0 + \beta_1 x_i, \sigma^2)$$
+
+Then
+
+$$
+\mathbf{Y} = \begin{bmatrix}
+  Y_1 \\
+  Y_2 \\
+  \vdots \\
+  Y_n
+\end{bmatrix} \sim MVN_n\Bigg( \boldsymbol\mu \equiv \begin{bmatrix}
+  \beta_0 + \beta_1 x_1 \\
+  \beta_0 + \beta_1 x_2 \\
+  \vdots \\
+  \beta_0 + \beta_1 x_n
+\end{bmatrix}, \Sigma \equiv \sigma^2 I = \begin{bmatrix}
+  \sigma^2 & 0 & \cdots & 0 \\
+  0 & \sigma^2 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots \\
+  0 & 0 & 0 & \sigma^2
+\end{bmatrix} \Bigg)
+$$
+
+Write $\boldsymbol{\hat\beta} = (\hat\beta_0, \hat\beta_1)^T$. From Lemma \@ref(lem:linbet),
+
+$$\hat\beta_0 = \mathbf{a}^T\mathbf{Y}$$
+
+where $\mathbf{a} = (a_1, \ldots, a_n)^T \in \mathbb{R}^n$ with $a_i = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)$
+
+and
+
+$$\hat\beta_1 = \mathbf{b}^T\mathbf{Y}$$
+
+where $\mathbf{b} = (b_1, \ldots, b_n)^T \in \mathbb{R}^n$ with $b_i = \frac{(x_i - \overline{x})}{S_{XX}}$.
+
+Let
+
+$$A^T = [ \mathbf{a}^T, \mathbf{b}^T ]$$
+
+Then
+
+$$
+\boldsymbol{\hat\beta} = A\mathbf{Y}
+$$
+
+Linearity of the multivariate normal distribution, Proposition \@ref(prp:ue) and \@ref(prp:vb) imply that
+
+\begin{equation}
+  \boldsymbol{\hat\beta} = \begin{bmatrix}
+    \hat\beta_0 \\ \hline
+    \hat\beta_1
+  \end{bmatrix} \sim MVN \bigg( A\boldsymbol\mu = \begin{bmatrix}
+    \beta_0 \\ \hline
+    \beta_1
+  \end{bmatrix},
+  A\Sigma A^T = \sigma^2 AA^T = \begin{bmatrix}
+    \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 & - \frac{\overline{x}}{S_{XX}}\sigma^2 \\ \hline
+    - \frac{\overline{x}}{S_{XX}}\sigma^2 & \frac{\sigma^2}{S_{XX}}
+  \end{bmatrix} \bigg)
+  (\#eq:b01mvn)
+\end{equation}
 
 
+Hence,
 
+\begin{equation}
+  \hat\beta_0 \sim N \bigg( \beta_0, \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 \bigg)
+  (\#eq:b0dist)
+\end{equation}
+
+\begin{equation}
+  \hat\beta_1 \sim N \bigg( \beta_1, \frac{\sigma^2}{S_{XX}} \bigg)
+  (\#eq:b1dist)
+\end{equation}
+
+### Mean response
 
 
