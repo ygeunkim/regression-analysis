@@ -813,14 +813,15 @@ From the same lemma \@ref(lem:yandbet),
 
 These Equations \@ref(eq:predvar) and \@ref(eq:yyhat) give that
 
-\begin{equation*}
+\begin{equation}
   \begin{split}
     Var(e_i) & = Var(Y_i) + Var(\hat{Y_i}) -2Cov(Y_i, \hat{Y_i}) \\
     & = \sigma^2 + \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 - 2 \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
     & = \bigg(1 - \frac{1}{n} - \frac{(x_i - \overline{x})^2}{S_{XX}} \bigg)\sigma^2 \\
     & \neq \sigma^2
   \end{split}
-\end{equation*}
+  (\#eq:residvar)
+\end{equation}
 
 (c) Let $i \neq j$. Then
 
@@ -832,6 +833,7 @@ These Equations \@ref(eq:predvar) and \@ref(eq:yyhat) give that
     & \qquad - \bigg( \frac{1}{n} - \frac{(x_j - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2 - \frac{(x_i - \overline{x})x_i}{S_{XX}}\sigma^2 \\
     & \qquad + \bigg( \frac{1}{n} + \frac{\overline{x}^2 + x_i x_j - \overline{x}(x_i + x_j)}{S_{XX}} \bigg)\sigma^2 \\
     & = - \bigg( \frac{1}{n} + \frac{\overline{x}^2 + x_i x_j - \overline{x}(x_i + x_j)}{S_{XX}} \bigg)\sigma^2 \\
+    & = - \bigg( \frac{1}{n} + \frac{(x_i - \overline{x})(x_j - \overline{x})}{S_{XX}} \bigg)\sigma^2 \\
     & \neq 0
   \end{split}
 \end{equation*}
@@ -1219,7 +1221,7 @@ To derive their distribution and see the difference, we additionaly assume Norma
 
 $$\epsilon_i \stackrel{iid}{\sim} N(0, \sigma^2)$$
 
-### Regression coefficients
+### Regression coefficients {#simplebdist}
 
 Under Normality, we have
 
@@ -1285,19 +1287,215 @@ Linearity of the multivariate normal distribution, Proposition \@ref(prp:ue) and
   (\#eq:b01mvn)
 \end{equation}
 
+Since the joint random vector follows multivariate normal distribution, each *partitioned subset follow normal*. For this theorem, see @Johnson:2013aa. Hence, we finally get the following result.
 
-Hence,
+```{theorem, b01dist, name = "Distributions of regression coefficients"}
+Each regression coefficient follows Normal distribution.
 
-\begin{equation}
-  \hat\beta_0 \sim N \bigg( \beta_0, \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 \bigg)
-  (\#eq:b0dist)
-\end{equation}
+$$\hat\beta_0 \sim N \bigg( \beta_0, \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 \bigg)$$
 
-\begin{equation}
-  \hat\beta_1 \sim N \bigg( \beta_1, \frac{\sigma^2}{S_{XX}} \bigg)
-  (\#eq:b1dist)
-\end{equation}
+$$\hat\beta_1 \sim N \bigg( \beta_1, \frac{\sigma^2}{S_{XX}} \bigg)$$
+```
+
 
 ### Mean response
+
+In simple linear regression setting, we assume $\mu_x = E(Y \mid x) = \beta_0 + \beta_1 x$ is true.
+
+
+```{r smoothline, fig.cap="Mean response and its standard deviation"}
+delv %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_smooth(method = "lm") +
+  geom_point(alpha = .7) +
+  labs(
+    x = "Number of Cases",
+    y = "Delivery Time"
+  )
+```
+
+For example, in the Figure \@ref(fig:smoothline), the blue line indicates $E(Y \mid X = x)$ for each point $x$. Without fitting using `lm()`, `geom_smooth(method = "lm")` let us visualize the fitted line. Since the default method is not the linear regression, the `method` option should be specified.
+
+```{r}
+delv %>% 
+  mutate(eyx = predict(delv_fit, newdata = data.frame(x = x)))
+```
+
+We have already seen in section \@ref(simplebdist) that the estimators $\hat\beta_0$ and $\hat\beta_1$ are random variables. So $\hat\mu_x$ is. In fact, the ribbon of the line in Figure \@ref(fig:smoothline) represents $+ \widehat{SE}(\hat\mu_x)$ and $- \widehat{SE}(\hat\mu_x)$. It can be drawn by default with the option of the `geom_smooth(se = TRUE)`.
+
+
+```{theorem, mrdist, name = "Distribution of mean response estimator"}
+$\hat\mu_x$ is also Normally distributed.
+
+$$\hat\mu_x \sim N\bigg( \mu_x, \sigma^2\bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg) \bigg)$$
+```
+
+```{proof}
+Since $\hat\mu_x = \hat\beta_0 + \hat\beta_1 x$ is the linear combination of $(\hat\beta_0, \hat\beta_1)^T$,
+
+$$\hat\mu_x \sim N\Big(E(\hat\mu_x), Var(\hat\mu_x)\Big)$$
+
+From Theorem \@ref(thm:b01dist),
+
+$$E(\hat\mu_x) = E(\hat\beta_0) + E(\hat\beta_1)x = \beta_0 + \beta_1x \equiv \mu_x$$
+
+and from Proposition \@ref(prp:vb)
+
+\begin{equation*}
+  \begin{split}
+    Var(\hat\mu_x) & = Var(\hat\beta_0 + \hat\beta_1 x) \\
+    & = Var(\hat\beta_0) + x^2Var(\hat\beta_1) + 2xCov(\hat\beta_0, \hat\beta_1) \\
+    & = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2 + \frac{x^2\sigma^2}{S_{XX}} - \frac{2\overline{x}x\sigma^2}{S_{XX}} \\
+    & = \sigma^2\bigg(\frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)
+  \end{split}
+\end{equation*}
+```
+
+```{corollary, mrdiff}
+$$\hat\mu_x - \mu_x \sim N\bigg( 0, \sigma^2\bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg) \bigg)$$
+```
+
+Denote that in both Theorem \@ref(thm:mrdist) and Corollary \@ref(cor:mrdiff), $\sigma^2$ is parameter. So to use $SE(\hat\mu_x) = \sqrt{Var(\hat\mu_x)}$ in practice we plug in its estimator, usually Equation \@ref(eq:siglse).
+
+```{corollary, mrse, name = "Standard error of mean response estimator"}
+$$\widehat{SE}(\hat\mu_x) = \hat\sigma^2\bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)$$
+
+where $\hat\sigma^2 = MSE$
+```
+
+### Response
+
+Our goal is to predict each response at each point, i.e. $Y_x = \beta_0 + \beta_1 x + \epsilon_x$. $\epsilon_x \sim N(0, \sigma^2)$ is independent of the given data ($\epsilon_1, \ldots, \epsilon_n$). In this sense, this prediction is called *out of sample prediction*. This setting makes difference between the *residuals, which are correlated to the data*. See Proposition \@ref(prp:resprop) for this. This is occurred because each $\hat\beta_0$ and $\hat\beta_1$ is linear combination of $Y_1, \ldots, Y_n$, not $Y_x$.
+
+While $Cov(Y_i, \hat{Y_i}) > 0, i = 1, \ldots, n$ (See Equation \@ref(eq:yyhat)), in case of out-of-sample $Y_x$,
+
+$$Cov(Y_x, \hat{Y_x}) = Cov(Y_x, \hat\beta_0 + \hat\beta_1 x) = 0$$
+
+Hence, arithmetically, this *out of sample prediction becomes to have larger standard error*.
+
+
+```{proposition, bepsmvn, name = "Joint distribution of coefficients and error term"}
+$(\hat\beta_0, \hat\beta_1, \epsilon_x)^T$ is Normally distributed.
+```
+
+```{proof}
+Want 1: $(\hat\beta_0, \hat\beta_1)^T \perp\!\!\!\perp \epsilon_x$
+
+We have
+
+\begin{equation}
+  \begin{split}
+    Cov((\hat\beta_0, \hat\beta_1)^T, \epsilon_x) & = \Big[Cov(\hat\beta_i, \epsilon_x) \Big]_{2 \times 1} \\
+    & = \bigg[Cov\bigg(\sum_{i = 1}^n k_i Y_i, \epsilon_x \bigg) \bigg]_{2 \times 1} \qquad k_i = \text{each linear coefficient for}\: \hat\beta_0, \hat\beta_1 \\
+    & = \mathbf{0}
+  \end{split}
+  (\#eq:betaepsind)
+\end{equation}
+
+From Equation \@ref(eq:b01mvn),
+
+$$(\hat\beta_0, \hat\beta_1)^T \sim MVN$$
+
+and from assumption,
+
+$$\epsilon_x \sim N(0, \sigma^2)$$
+
+It follows from Equation \@ref(eq:betaepsind) that (@Johnson:2013aa)
+
+$$(\hat\beta_0, \hat\beta_1)^T \perp\!\!\!\perp \epsilon_x$$
+
+Want 2: $(\hat\beta_0, \hat\beta_1, \epsilon_x)^T \sim MVN$
+
+From independency, we have (@Johnson:2013aa)
+
+$$
+\begin{bmatrix}
+  \hat\beta_0 \\
+  \hat\beta_1 \\ \hline
+  \epsilon_x
+\end{bmatrix} \sim MVN_{2 + 1} \bigg( \begin{bmatrix}
+  \beta_0 \\
+  \beta_1 \\ \hline
+  0
+\end{bmatrix}, \left[
+  \begin{array}{c|c}
+    Cov(\boldsymbol{\hat\beta}) \in \mathbb{R}^{2 \times 2} & \mathbf{0} \in \mathbb{R}^2 \\ \hline
+    \mathbf{0}^T \in \mathbb{R}^{2 \times 1} & \sigma^2
+  \end{array}
+\right] \bigg)
+$$
+```
+
+This proposition gives clue to distribution of prediction error.
+
+```{theorem, preddist, name = "Distribution of out of sample prediction error"}
+Out of sample prediction error $\hat{Y_x} - Y_x$ is Normally distributed
+
+$$\hat{Y_x} - Y_x \sim N\bigg( 0, \sigma^2 \bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg) \bigg)$$
+```
+
+```{proof}
+Note that
+
+\begin{equation*}
+  \begin{split}
+    \hat{Y_x} - Y_x & = (\hat\beta_0 + \hat\beta_1 x) - (\beta_0 + \beta_1 x + \epsilon_x) \\
+    & = [1, x, -1] (\hat\beta_0, \hat\beta_1, \epsilon_x)^T - \beta_0 - \beta_1 x
+  \end{split}
+\end{equation*}
+
+i.e. $\hat{Y_x} - Y_x$ is a linear combination of $(\hat\beta_0, \hat\beta_1, \epsilon_x)^T$. From prosition \@ref(prp:bepsmvn),
+
+\begin{equation}
+  \begin{split}
+    \hat{Y_x} - Y_x & \sim MVN \Bigg( [1, x, -1]\begin{bmatrix}
+    \beta_0 \\
+    \beta_1 \\
+    0
+    \end{bmatrix} - \beta_0 - \beta_1 x,
+    [1, x, -1]
+    \left[
+      \begin{array}{c|c}
+        Cov(\boldsymbol{\hat\beta}) \in \mathbb{R}^{2 \times 2} & \mathbf{0} \in \mathbb{R}^2 \\ \hline
+        \mathbf{0}^T \in \mathbb{R}^{2 \times 1} & \sigma^2
+      \end{array}
+    \right]
+    \begin{bmatrix}
+      1 \\
+      x \\
+      -1
+    \end{bmatrix}
+     \Bigg) \\
+    & \stackrel{d}{=} MVN \bigg( 0, \sigma^2\bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} - 2 \frac{\overline{x}x}{S_{XX}} + \frac{x^2}{S_{XX}} \bigg) + 1 \bigg) \\
+    & \stackrel{d}{=} MVN \bigg( 0, \sigma^2\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg) \bigg)
+  \end{split}
+  (\#eq:prederrmvn)
+\end{equation}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
