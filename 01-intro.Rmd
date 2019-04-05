@@ -326,7 +326,7 @@ $$Var(\hat\beta_0) \le Var\Big( \sum_{i = 1}^n a_i Y_i \Big) \: \forall a_i \in 
 $$Var(\hat\beta_1) \le Var\Big( \sum_{i = 1}^n b_i Y_i \Big) \: \forall b_i \in \mathbb{R} \: \text{s.t.} \: E\Big( \sum_{i = 1}^n b_i Y_i \Big) = \beta_1$$
 ```
 
-```{proof, name = "Bestness of beta1"}
+```{proof, name = "Bestness of $\\beta_1$"}
 Consider $\Theta := \bigg\{ \sum\limits_{i = 1}^n b_i Y_i \in \mathbb{R} : E\Big( \sum\limits_{i = 1}^n b_i Y_i \Big) = \beta_1 \bigg\}$.
 
 Claim: $Var( \sum b_i Y_i) - Var(\hat\beta_1) \ge 0$
@@ -365,7 +365,7 @@ $$Var(\sum b_i Y_i) \ge Var(\hat\beta_1)$$
 ```
 
 
-```{proof, name = "Bestness of beta0"}
+```{proof, name = "Bestness of $\\beta_0$"}
 Consider $\Theta := \bigg\{ \sum\limits_{i = 1}^n a_i Y_i \in \mathbb{R} : E\Big( \sum\limits_{i = 1}^n a_i Y_i \Big) = \beta_0 \bigg\}$.
 
 Claim: $Var( \sum a_i Y_i) - Var(\hat\beta_0) \ge 0$
@@ -1193,7 +1193,7 @@ Also,
 $$R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2$$
 
 
-## Distributions
+## Distributions {#simpledist}
 
 ### Mean response and response
 
@@ -1428,7 +1428,7 @@ $$
 
 This proposition gives clue to distribution of prediction error.
 
-```{theorem, preddist, name = "Distribution of out of sample prediction error"}
+```{theorem, preddist, name = "Distribution of out-of-sample prediction error"}
 Out of sample prediction error $\hat{Y_x} - Y_x$ is Normally distributed
 
 $$\hat{Y_x} - Y_x \sim N\bigg( 0, \sigma^2 \bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg) \bigg)$$
@@ -1473,25 +1473,225 @@ i.e. $\hat{Y_x} - Y_x$ is a linear combination of $(\hat\beta_0, \hat\beta_1, \e
 \end{equation}
 ```
 
+Now we know the standard error of this out-of-sample prediction error.
+
+$$SE(\hat{Y_x} - Y_x) = \sigma^2\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)$$
+
+We can see this standard error is *always larger than of mean response estimator* due to $1$ in the bracket, i.e. $\sigma^2$. As mentioned, this is due to $\epsilon$ term. When we estimate or predict the mean response the model have been assumed to be true. In this out-of-sample prediction setting, however, the model can be wrong. This assumption error is also included in $\epsilon$ term and it is called *irreducible error*, which cannot be reduced anymore.
+
+```{remark}
+$$SE(\hat\mu_x - \mu_x) < SE(\hat{Y_x} - Y_x)$$
+```
+
+It might be more clear if we see the inequality in the above remark. We know the fact that $\hat{Y_x}$ and $Y_x$ are uncorrelated in this out-of-sample setting. $Y_x$ is random variable, while $\mu_x$ is constant. Then we can re-express the inequality as
+
+$$SE(\hat\mu_x) < SE(\hat{Y_x}) + SE(Y_x)$$
+
+Actually, both $\hat\mu_x$ and $\hat{Y_x}$ are estimated as $\hat\beta_0 + \hat\beta_1 x$. Thus, $SE(Y_x) = \sigma^2$ makes out-of-sample more noisy.
+
+To use standard error practically, we use $\hat\sigma^2$ as in corollary \@ref(cor:mrse).
+
+```{corollary, predse, name = "Standard error of out-of-sample prediction error"}
+$$\widehat{SE}(\hat{Y_x} - Y_x) = \hat\sigma^2\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)$$
+
+where $\hat\sigma^2 = MSE$
+```
 
 
+## Statistical Inference
+
+Based on each distribution of estimator in section \@ref(simpledist), we can construct various inferece for each
+
+- $\beta_0$
+- $\beta_1$
+- $\mu_x$
+- $Y_x$
+- $\sigma^2$
+
+We can get the standard error for each coefficient through `summary()` function.
+
+```{r}
+summary(delv_fit)
+```
+
+Or more state-or-art way, `broom:tidy()` function has a method for each model object to make tidy data: `tibble`.
+
+```{r}
+broom::tidy(delv_fit)
+```
 
 
+### Confidence interval
+
+Consider standardization.
+
+$$\frac{\hat\theta - \theta}{\sqrt{SE(\hat\theta)}}$$
+
+Each $SE$ includes $\sigma^2$ as we have already seen. First think about **known** $\sigma^2$ setting. All three estimators follow Normal distribution, and $SE$ is constant by our the setting. Then we can construct each confidence interval as
+
+$$\hat\theta \pm z_{\frac{\alpha}{2}} \sqrt{SE(\hat\theta)}$$
 
 
+```{r estci, echo=FALSE, fig.cap="Confidence Interval when $\\sigma^2$ is known"}
+tibble(x = seq(-5, 5, by = .01)) %>% 
+  mutate(
+    y = dnorm(x),
+    test = ifelse(
+      x >= qnorm(.05 / 2, lower.tail = FALSE) |
+        x <= qnorm(.05 / 2, lower.tail = TRUE),
+      "reject",
+      "accept"
+    )
+  ) %>% 
+  ggplot(aes(x, y)) +
+  geom_path() +
+  geom_ribbon(aes(ymin = 0, ymax = y, fill = test), alpha = .5) +
+  scale_fill_manual(values = c("accept" = "red", "reject" = NA))
+```
 
 
+Now just plug in the results of section \@ref(simpledist). For each regression coefficient,
+
+```{proposition, betaci, name = "Confidence intervals on $\\beta$"}
+With known $\sigma^2$, $(1 - \alpha)100 \%$ confidence intervals on $\beta_0$ and $\beta_1$ are given as
+
+$$\beta_0 : \quad \hat\beta_0 \pm z_{\frac{\alpha}{2}} \sqrt{\bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg) \sigma^2}$$
+
+$$\beta_1 : \quad \hat\beta_1 \pm z_{\frac{\alpha}{2}} \sqrt{\frac{\sigma^2}{S_{XX}}}$$
+```
 
 
+```{proposition, mrci, name = "Confidence interval on $\\hat\\mu_x$"}
+With known $\sigma^2$, $(1 - \alpha)100 \%$ confidence interval on $\hat\mu_x$ is given as
+
+$$\mu_x : \quad \hat\mu_x \pm z_{\frac{\alpha}{2}} \sqrt{\sigma^2 \bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}$$
+```
+
+In practice, however, we do not know $\sigma^2$. In this case, we replace $\sigma^2$ with $\hat\sigma^2 = \frac{1}{n - 2}\sum\limits_{i = 1}^n (\hat{Y_i} - Y_i)^2 = MSE$. Then
+
+$$\frac{\hat\theta - \theta}{\sqrt{\widehat{SE}}} = \frac{\frac{\hat\theta - \theta}{\sqrt{SE = \sigma^2(\cdot)}}}{\sqrt{\frac{\frac{SSE}{\sigma^2}}{n - 2}\bigg( \cdot \bigg)}} =  \frac{\frac{\hat\theta - \theta}{\sqrt{SE = \sigma^2}} \sim N(0, 1)}{\sqrt{\frac{\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)}{n - 2}}} \sim t(n - 2)$$
+
+Thus, we need to replace $z_{\frac{\alpha}{2}}$ with $t_{\frac{\alpha}{2}}(n - 2)$.
+
+```{proposition, betaci2, name = "Confidence intervals on $\\beta$ when unknown $\\sigma^2$"}
+With unknown $\sigma^2$, $(1 - \alpha)100 \%$ confidence intervals on $\beta_0$ and $\beta_1$ are given as
+
+$$\beta_0 : \quad \hat\beta_0 \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg) \hat\sigma^2}$$
+
+$$\beta_1 : \quad \hat\beta_1 \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\frac{\hat\sigma^2}{S_{XX}}}$$
+
+where $\hat\sigma^2 = MSE$
+```
+
+Here we can estimate the intervals. Basically, `confint()` function gives this interval.
+
+```{r}
+confint(delv_fit, level = .95)
+```
 
 
+```{proposition, mrci2, name = "Confidence interval on $\\hat\\mu_x$ when unknown $\\sigma^2$"}
+With unknown $\sigma^2$, $(1 - \alpha)100 \%$ confidence interval on $\hat\mu_x$ is given as
+
+$$\mu_x : \quad \hat\mu_x \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\hat\sigma^2 \bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}$$
+
+where $\hat\sigma^2 = MSE$
+```
+
+`predict()` provides options for this confidence interval. Specify `interval = "confidence"`. This argument has three option.
+
+1. `"none"`: just compute fitted value, by default.
+2. `"confidence"`: confidence interval of mean response
+3. `"prediction"`: prediction interval of out-of-sample prediction
+
+Default `level` is `0.95`.
+
+```{r}
+predict(delv_fit, interval = "confidence", level = .95) %>% tbl_df()
+```
+
+### Prediction interval
+
+One proceeds in a similar way for out-of-sample $Y_x$.
+
+```{proposition, predci, name = "Prediction interval on $\\hat{Y_x}$"}
+With known $\sigma^2$, $(1 - \alpha)100 \%$ confidence interval on $\hat\mu_x$ is given as
+
+$$Y_x : \quad \hat{Y_x} \pm z_{\frac{\alpha}{2}} \sqrt{\sigma^2 \bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}$$
+```
+
+Also, with unknown $\sigma^2$,
+
+```{proposition, predci2, name = "Prediction interval on $\\hat{Y_x}$ when unknown $\\sigma^2$"}
+With unknown $\sigma^2$, $(1 - \alpha)100 \%$ confidence interval on $\hat\mu_x$ is given as
+
+$$Y_x : \quad \hat{Y_x} \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\hat\sigma^2 \bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}$$
+
+where $\hat\sigma^2 = MSE$
+```
+
+Since this is out-of-sample setting, we should also give `newdata` option. Otherwise, we will get warning message. Denote that this argument only receive `data.frame` object with same element names.
+
+```{r}
+predict(delv_fit, newdata = data.frame(x = 31:35), interval = "prediction", level = .95)
+```
 
 
+### Hypothesis testing
+
+Look again the output of `summary.lm()` and `broom::tidy.lm()`.
+
+```{r}
+summary(delv_fit)
+```
+
+We can see `t value` and `Pr(>|t|)`. At the same time, `statistic` and `p.value`. What are these values? These are the results of the following tests.
+
+$$H_0 : \beta_0 = \alpha_0 \qquad \text{vs} \qquad H_1 : \beta_0 \neq \alpha_0$$
+
+\begin{equation}
+  T = \frac{\hat\beta_0 - \alpha_0}{\hat\sigma \sqrt{\bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{xx}} \bigg)}} \stackrel{H_0}{\sim} t(n - 2)
+  (\#eq:b0test)
+\end{equation}
+
+For this test statistic \@ref(eq:b0test),
+
+$$\text{reject}\: H_0 \quad \text{if} \: \lvert T \rvert > t_{\frac{\alpha}{2}}(n - 2)$$
+
+```{r b0rjt, echo=FALSE, fig.cap="Rejection region for $\\beta_0$"}
+tdf <- nrow(delv) - 2
+tibble(x = seq(-5, 5, by = .01)) %>% 
+  mutate(
+    y = dt(x, df = tdf),
+    test = ifelse(
+      x >= qt(.05 / 2, df = tdf, lower.tail = FALSE) |
+        x <= qt(.05 / 2, df = tdf, lower.tail = TRUE),
+      "reject",
+      "accept"
+    ),
+    ymax = ifelse(test == "reject", y, 0)
+  ) %>% 
+  ggplot(aes(x = x)) +
+  geom_path(aes(y = y)) +
+  geom_ribbon(aes(ymin = 0, ymax = ymax), alpha = .5, fill = gg_hcl(1))
+```
 
 
+More importantly, we test $\beta_1$ which means slope
+
+$$H_0 : \beta_1 = \alpha_1 \qquad \text{vs} \qquad H_1 : \beta_1 \neq \alpha_1$$
+
+\begin{equation}
+  T = \frac{\hat\beta_0 - \alpha_0}{\hat\sigma \sqrt{\frac{1}{S_{xx}}}} \stackrel{H_0}{\sim} t(n - 2)
+  (\#eq:b1test)
+\end{equation}
+
+For this test statistic \@ref(eq:b1test),
+
+$$\text{reject}\: H_0 \quad \text{if} \: \lvert T \rvert > t_{\frac{\alpha}{2}}(n - 2)$$
 
 
-
+Looking at these two statistics, we can intuitively know the meaning. As $\lvert \hat\beta_1 - \alpha_1 \rvert$ becomes larger, the data support $H_1$.
 
 
 

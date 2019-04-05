@@ -126,7 +126,7 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{04 Apr, 2019}
+    \date{05 Apr, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -637,8 +637,8 @@ best linear unbiased estimator.
 \[Var(\hat\beta_1) \le Var\Big( \sum_{i = 1}^n b_i Y_i \Big) \: \forall b_i \in \mathbb{R} \: \text{s.t.} \: E\Big( \sum_{i = 1}^n b_i Y_i \Big) = \beta_1\]
 \EndKnitrBlock{theorem}
 
-\BeginKnitrBlock{proof}[Bestness of beta1]
-\iffalse{} {Proof (Bestness of beta1). } \fi{}Consider
+\BeginKnitrBlock{proof}[Bestness of $\beta_1$]
+\iffalse{} {Proof (Bestness of \(\beta_1\)). } \fi{}Consider
 \(\Theta := \bigg\{ \sum\limits_{i = 1}^n b_i Y_i \in \mathbb{R} : E\Big( \sum\limits_{i = 1}^n b_i Y_i \Big) = \beta_1 \bigg\}\).
 
 Claim: \(Var( \sum b_i Y_i) - Var(\hat\beta_1) \ge 0\)
@@ -676,8 +676,8 @@ Hence,
 \[Var(\sum b_i Y_i) \ge Var(\hat\beta_1)\]
 \EndKnitrBlock{proof}
 
-\BeginKnitrBlock{proof}[Bestness of beta0]
-\iffalse{} {Proof (Bestness of beta0). } \fi{}Consider
+\BeginKnitrBlock{proof}[Bestness of $\beta_0$]
+\iffalse{} {Proof (Bestness of \(\beta_0\)). } \fi{}Consider
 \(\Theta := \bigg\{ \sum\limits_{i = 1}^n a_i Y_i \in \mathbb{R} : E\Big( \sum\limits_{i = 1}^n a_i Y_i \Big) = \beta_0 \bigg\}\).
 
 Claim: \(Var( \sum a_i Y_i) - Var(\hat\beta_0) \ge 0\)
@@ -1640,7 +1640,7 @@ Also,
 
 \[R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2\]
 
-\section{Distributions}\label{distributions}
+\section{Distributions}\label{simpledist}
 
 \subsection{Mean response and
 response}\label{mean-response-and-response}
@@ -1953,9 +1953,9 @@ From independency, we have (\citet{Johnson:2013aa})
 
 This proposition gives clue to distribution of prediction error.
 
-\BeginKnitrBlock{theorem}[Distribution of out of sample prediction error]
+\BeginKnitrBlock{theorem}[Distribution of out-of-sample prediction error]
 \protect\hypertarget{thm:preddist}{}{\label{thm:preddist}
-\iffalse (Distribution of out of sample prediction error) \fi{} }Out of
+\iffalse (Distribution of out-of-sample prediction error) \fi{} }Out of
 sample prediction error \(\hat{Y_x} - Y_x\) is Normally distributed
 
 \[\hat{Y_x} - Y_x \sim N\bigg( 0, \sigma^2 \bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg) \bigg)\]
@@ -2001,6 +2001,363 @@ i.e. \(\hat{Y_x} - Y_x\) is a linear combination of
   \label{eq:prederrmvn}
 \end{equation}
 \EndKnitrBlock{proof}
+
+Now we know the standard error of this out-of-sample prediction error.
+
+\[SE(\hat{Y_x} - Y_x) = \sigma^2\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)\]
+
+We can see this standard error is \emph{always larger than of mean
+response estimator} due to \(1\) in the bracket, i.e. \(\sigma^2\). As
+mentioned, this is due to \(\epsilon\) term. When we estimate or predict
+the mean response the model have been assumed to be true. In this
+out-of-sample prediction setting, however, the model can be wrong. This
+assumption error is also included in \(\epsilon\) term and it is called
+\emph{irreducible error}, which cannot be reduced anymore.
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. }
+\fi{}\[SE(\hat\mu_x - \mu_x) < SE(\hat{Y_x} - Y_x)\]
+\EndKnitrBlock{remark}
+
+It might be more clear if we see the inequality in the above remark. We
+know the fact that \(\hat{Y_x}\) and \(Y_x\) are uncorrelated in this
+out-of-sample setting. \(Y_x\) is random variable, while \(\mu_x\) is
+constant. Then we can re-express the inequality as
+
+\[SE(\hat\mu_x) < SE(\hat{Y_x}) + SE(Y_x)\]
+
+Actually, both \(\hat\mu_x\) and \(\hat{Y_x}\) are estimated as
+\(\hat\beta_0 + \hat\beta_1 x\). Thus, \(SE(Y_x) = \sigma^2\) makes
+out-of-sample more noisy.
+
+To use standard error practically, we use \(\hat\sigma^2\) as in
+corollary \ref{cor:mrse}.
+
+\BeginKnitrBlock{corollary}[Standard error of out-of-sample prediction error]
+\protect\hypertarget{cor:predse}{}{\label{cor:predse} \iffalse (Standard
+error of out-of-sample prediction error) \fi{}
+}\[\widehat{SE}(\hat{Y_x} - Y_x) = \hat\sigma^2\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)\]
+
+where \(\hat\sigma^2 = MSE\)
+\EndKnitrBlock{corollary}
+
+\section{Statistical Inference}\label{statistical-inference}
+
+Based on each distribution of estimator in section \ref{simpledist}, we
+can construct various inferece for each
+
+\begin{itemize}
+\tightlist
+\item
+  \(\beta_0\)
+\item
+  \(\beta_1\)
+\item
+  \(\mu_x\)
+\item
+  \(Y_x\)
+\item
+  \(\sigma^2\)
+\end{itemize}
+
+We can get the standard error for each coefficient through
+\texttt{summary()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(delv_fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = y ~ x, data = delv)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-7.581 -1.874 -0.349  2.181 10.634 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    3.321      1.371    2.42    0.024 *  
+x              2.176      0.124   17.55  8.2e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.18 on 23 degrees of freedom
+Multiple R-squared:  0.93,  Adjusted R-squared:  0.927 
+F-statistic:  308 on 1 and 23 DF,  p-value: 8.22e-15
+\end{verbatim}
+
+Or more state-or-art way, \texttt{broom:tidy()} function has a method
+for each model object to make tidy data: \texttt{tibble}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(delv_fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 2 x 5
+  term        estimate std.error statistic  p.value
+  <chr>          <dbl>     <dbl>     <dbl>    <dbl>
+1 (Intercept)     3.32     1.37       2.42 2.37e- 2
+2 x               2.18     0.124     17.5  8.22e-15
+\end{verbatim}
+
+\subsection{Confidence interval}\label{confidence-interval}
+
+Consider standardization.
+
+\[\frac{\hat\theta - \theta}{\sqrt{SE(\hat\theta)}}\]
+
+Each \(SE\) includes \(\sigma^2\) as we have already seen. First think
+about \textbf{known} \(\sigma^2\) setting. All three estimators follow
+Normal distribution, and \(SE\) is constant by our the setting. Then we
+can construct each confidence interval as
+
+\[\hat\theta \pm z_{\frac{\alpha}{2}} \sqrt{SE(\hat\theta)}\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/estci-1} 
+
+}
+
+\caption{Confidence Interval when $\sigma^2$ is known}\label{fig:estci}
+\end{figure}
+
+Now just plug in the results of section \ref{simpledist}. For each
+regression coefficient,
+
+\BeginKnitrBlock{proposition}[Confidence intervals on $\beta$]
+\protect\hypertarget{prp:betaci}{}{\label{prp:betaci} \iffalse (Confidence
+intervals on \(\beta\)) \fi{} }With known \(\sigma^2\),
+\((1 - \alpha)100 \%\) confidence intervals on \(\beta_0\) and
+\(\beta_1\) are given as
+
+\[\beta_0 : \quad \hat\beta_0 \pm z_{\frac{\alpha}{2}} \sqrt{\bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg) \sigma^2}\]
+
+\[\beta_1 : \quad \hat\beta_1 \pm z_{\frac{\alpha}{2}} \sqrt{\frac{\sigma^2}{S_{XX}}}\]
+\EndKnitrBlock{proposition}
+
+\BeginKnitrBlock{proposition}[Confidence interval on $\hat\mu_x$]
+\protect\hypertarget{prp:mrci}{}{\label{prp:mrci} \iffalse (Confidence
+interval on \(\hat\mu_x\)) \fi{} }With known \(\sigma^2\),
+\((1 - \alpha)100 \%\) confidence interval on \(\hat\mu_x\) is given as
+
+\[\mu_x : \quad \hat\mu_x \pm z_{\frac{\alpha}{2}} \sqrt{\sigma^2 \bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}\]
+\EndKnitrBlock{proposition}
+
+In practice, however, we do not know \(\sigma^2\). In this case, we
+replace \(\sigma^2\) with
+\(\hat\sigma^2 = \frac{1}{n - 2}\sum\limits_{i = 1}^n (\hat{Y_i} - Y_i)^2 = MSE\).
+Then
+
+\[\frac{\hat\theta - \theta}{\sqrt{\widehat{SE}}} = \frac{\frac{\hat\theta - \theta}{\sqrt{SE = \sigma^2(\cdot)}}}{\sqrt{\frac{\frac{SSE}{\sigma^2}}{n - 2}\bigg( \cdot \bigg)}} =  \frac{\frac{\hat\theta - \theta}{\sqrt{SE = \sigma^2}} \sim N(0, 1)}{\sqrt{\frac{\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)}{n - 2}}} \sim t(n - 2)\]
+
+Thus, we need to replace \(z_{\frac{\alpha}{2}}\) with
+\(t_{\frac{\alpha}{2}}(n - 2)\).
+
+\BeginKnitrBlock{proposition}[Confidence intervals on $\beta$ when unknown $\sigma^2$]
+\protect\hypertarget{prp:betaci2}{}{\label{prp:betaci2} \iffalse (Confidence
+intervals on \(\beta\) when unknown \(\sigma^2\)) \fi{} }With unknown
+\(\sigma^2\), \((1 - \alpha)100 \%\) confidence intervals on \(\beta_0\)
+and \(\beta_1\) are given as
+
+\[\beta_0 : \quad \hat\beta_0 \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg) \hat\sigma^2}\]
+
+\[\beta_1 : \quad \hat\beta_1 \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\frac{\hat\sigma^2}{S_{XX}}}\]
+
+where \(\hat\sigma^2 = MSE\)
+\EndKnitrBlock{proposition}
+
+Here we can estimate the intervals. Basically, \texttt{confint()}
+function gives this interval.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confint}\NormalTok{(delv_fit, }\DataTypeTok{level =}\NormalTok{ .}\DecValTok{95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            2.5 % 97.5 %
+(Intercept) 0.484   6.16
+x           1.920   2.43
+\end{verbatim}
+
+\BeginKnitrBlock{proposition}[Confidence interval on $\hat\mu_x$ when unknown $\sigma^2$]
+\protect\hypertarget{prp:mrci2}{}{\label{prp:mrci2} \iffalse (Confidence
+interval on \(\hat\mu_x\) when unknown \(\sigma^2\)) \fi{} }With unknown
+\(\sigma^2\), \((1 - \alpha)100 \%\) confidence interval on
+\(\hat\mu_x\) is given as
+
+\[\mu_x : \quad \hat\mu_x \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\hat\sigma^2 \bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}\]
+
+where \(\hat\sigma^2 = MSE\)
+\EndKnitrBlock{proposition}
+
+\texttt{predict()} provides options for this confidence interval.
+Specify \texttt{interval\ =\ "confidence"}. This argument has three
+option.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{"none"}: just compute fitted value, by default.
+\item
+  \texttt{"confidence"}: confidence interval of mean response
+\item
+  \texttt{"prediction"}: prediction interval of out-of-sample prediction
+\end{enumerate}
+
+Default \texttt{level} is \texttt{0.95}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{predict}\NormalTok{(delv_fit, }\DataTypeTok{interval =} \StringTok{"confidence"}\NormalTok{, }\DataTypeTok{level =}\NormalTok{ .}\DecValTok{95}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tbl_df}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 25 x 3
+     fit   lwr   upr
+   <dbl> <dbl> <dbl>
+ 1 18.6  16.8   20.3
+ 2  9.85  7.57  12.1
+ 3  9.85  7.57  12.1
+ 4 12.0   9.91  14.1
+ 5 16.4  14.5   18.2
+ 6 18.6  16.8   20.3
+ 7  7.67  5.22  10.1
+ 8 18.6  16.8   20.3
+ 9 68.6  62.9   74.3
+10 14.2  12.2   16.2
+# ... with 15 more rows
+\end{verbatim}
+
+\subsection{Prediction interval}\label{prediction-interval}
+
+One proceeds in a similar way for out-of-sample \(Y_x\).
+
+\BeginKnitrBlock{proposition}[Prediction interval on $\hat{Y_x}$]
+\protect\hypertarget{prp:predci}{}{\label{prp:predci} \iffalse (Prediction
+interval on \(\hat{Y_x}\)) \fi{} }With known \(\sigma^2\),
+\((1 - \alpha)100 \%\) confidence interval on \(\hat\mu_x\) is given as
+
+\[Y_x : \quad \hat{Y_x} \pm z_{\frac{\alpha}{2}} \sqrt{\sigma^2 \bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}\]
+\EndKnitrBlock{proposition}
+
+Also, with unknown \(\sigma^2\),
+
+\BeginKnitrBlock{proposition}[Prediction interval on $\hat{Y_x}$ when unknown $\sigma^2$]
+\protect\hypertarget{prp:predci2}{}{\label{prp:predci2} \iffalse (Prediction
+interval on \(\hat{Y_x}\) when unknown \(\sigma^2\)) \fi{} }With unknown
+\(\sigma^2\), \((1 - \alpha)100 \%\) confidence interval on
+\(\hat\mu_x\) is given as
+
+\[Y_x : \quad \hat{Y_x} \pm t_{\frac{\alpha}{2}}(n - 2) \sqrt{\hat\sigma^2 \bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{xx}} \bigg)}\]
+
+where \(\hat\sigma^2 = MSE\)
+\EndKnitrBlock{proposition}
+
+Since this is out-of-sample setting, we should also give
+\texttt{newdata} option. Otherwise, we will get warning message. Denote
+that this argument only receive \texttt{data.frame} object with same
+element names.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{predict}\NormalTok{(delv_fit, }\DataTypeTok{newdata =} \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{x =} \DecValTok{31}\OperatorTok{:}\DecValTok{35}\NormalTok{), }\DataTypeTok{interval =} \StringTok{"prediction"}\NormalTok{, }\DataTypeTok{level =}\NormalTok{ .}\DecValTok{95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   fit  lwr  upr
+1 70.8 60.3 81.3
+2 73.0 62.3 83.6
+3 75.1 64.3 85.9
+4 77.3 66.4 88.3
+5 79.5 68.4 90.6
+\end{verbatim}
+
+\subsection{Hypothesis testing}\label{hypothesis-testing}
+
+Look again the output of \texttt{summary.lm()} and
+\texttt{broom::tidy.lm()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(delv_fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = y ~ x, data = delv)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-7.581 -1.874 -0.349  2.181 10.634 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    3.321      1.371    2.42    0.024 *  
+x              2.176      0.124   17.55  8.2e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.18 on 23 degrees of freedom
+Multiple R-squared:  0.93,  Adjusted R-squared:  0.927 
+F-statistic:  308 on 1 and 23 DF,  p-value: 8.22e-15
+\end{verbatim}
+
+We can see \texttt{t\ value} and
+\texttt{Pr(\textgreater{}\textbar{}t\textbar{})}. At the same time,
+\texttt{statistic} and \texttt{p.value}. What are these values? These
+are the results of the following tests.
+
+\[H_0 : \beta_0 = \alpha_0 \qquad \text{vs} \qquad H_1 : \beta_0 \neq \alpha_0\]
+
+\begin{equation}
+  T = \frac{\hat\beta_0 - \alpha_0}{\hat\sigma \sqrt{\bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{xx}} \bigg)}} \stackrel{H_0}{\sim} t(n - 2)
+  \label{eq:b0test}
+\end{equation}
+
+For this test statistic \eqref{eq:b0test},
+
+\[\text{reject}\: H_0 \quad \text{if} \: \lvert T \rvert > t_{\frac{\alpha}{2}}(n - 2)\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/b0rjt-1} 
+
+}
+
+\caption{Rejection region for $\beta_0$}\label{fig:b0rjt}
+\end{figure}
+
+More importantly, we test \(\beta_1\) which means slope
+
+\[H_0 : \beta_1 = \alpha_1 \qquad \text{vs} \qquad H_1 : \beta_1 \neq \alpha_1\]
+
+\begin{equation}
+  T = \frac{\hat\beta_0 - \alpha_0}{\hat\sigma \sqrt{\frac{1}{S_{xx}}}} \stackrel{H_0}{\sim} t(n - 2)
+  \label{eq:b1test}
+\end{equation}
+
+For this test statistic \eqref{eq:b1test},
+
+\[\text{reject}\: H_0 \quad \text{if} \: \lvert T \rvert > t_{\frac{\alpha}{2}}(n - 2)\]
+
+Looking at these two statistics, we can intuitively know the meaning. As
+\(\lvert \hat\beta_1 - \alpha_1 \rvert\) becomes larger, the data
+support \(H_1\).
 
 \bibliography{book.bib,packages.bib}
 
