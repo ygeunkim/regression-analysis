@@ -565,7 +565,7 @@ From Equation \@ref(eq:mlsig),
 
 $$\hat\sigma^{2MLE} = \frac{1}{n}\sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i)^2 = \frac{n - 2}{n} \hat\sigma^{2LSE}$$
 
-Recall that $\hat\sigma^{2LSE}$ is an unbiased, i.e. this *MLE is not an unbiased estimator*. Since $\hat\sigma^{2MLE} \approx \hat\sigma^{2LSE}$ for large $n$, howerver, it is *asymptotically unbiased*.
+While $\hat\sigma^{2LSE}$ is an unbiased, above *MLE is not an unbiased estimator*. Since $\hat\sigma^{2MLE} \approx \hat\sigma^{2LSE}$ for large $n$, howerver, it is *asymptotically unbiased*.
 
 ```{theorem, rclb, name = "Rao-Cramer Lower Bound, univariate case"}
 Let $X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta)$. If $\hat\theta$ is an unbiased estimator of $\theta$,
@@ -882,7 +882,7 @@ From this fact, $SST$ implies **total variance**.
 ### Regression sum of squares
 
 ```{definition, ssr, name = "Regression Sum of Squares"}
-$$SSR := \sum_{i = 1}^n (hat{Y_i} - \overline{Y})^2$$
+$$SSR := \sum_{i = 1}^n (\hat{Y_i} - \overline{Y})^2$$
 ```
 
 This $SSR$ compares $\hat{Y_i}$ versus $\overline{Y}$, computing the sum of squares for difference between predicted values from *regression model* and *model not using predictors*.
@@ -915,7 +915,7 @@ From the Example \@ref(exm:usingnormal),
 
 This represents each $SSR$ and $SSE$ divides total variability as following.
 
-$$\overset{SST}{\text{total variability}} = \overset{SSR}{\text{left unexplained by regression}} + \overset{SSE}{\text{explained by regression}}$$
+$$\overset{SST}{\text{total variability}} = \overset{SSR}{\text{explained by regression}} + \overset{SSE}{\text{left unexplained by regression}}$$
 
 Denote that the total variability $SST$ is *constant given data set*. If our model is good, $SSR$ grows and $SSE$ flattens. Thus the larger $SSR$ is, the better. The lower $SSE$ is, the better.
 
@@ -1192,6 +1192,103 @@ Also,
 
 $$R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2$$
 
+### Projection mapping
+
+Look again Figure \@ref(fig:simpledraw). Let $X \equiv [\mathbf{1}, \mathbf{x}] \in \R^{n \times 2}$ and let $\boldsymbol\beta \equiv (\beta_0, \beta_1)^T$. By the fundamental subspaces theorem \@ref(thm:fundsub),
+
+$$\mathbf{Y} - X\boldsymbol{\hat\beta} \in Col(X)^{\perp} = N(X^T)$$
+
+Thus,
+
+\begin{equation}
+  X^T(\mathbf{Y} - X\boldsymbol{\hat\beta}) = \mathbf{0}
+  (\#eq:projeq)
+\end{equation}
+
+This is the another representation of normal equation. Then we now have
+
+\begin{equation*}
+  \begin{split}
+    & X^T\mathbf{Y} - X^TX\boldsymbol{\hat\beta} = \mathbf{0} \\
+    & \Leftrightarrow X^T\mathbf{Y} = X^TX\boldsymbol{\hat\beta}
+  \end{split}
+\end{equation*}
+
+If $X^TX$ is nonsingular,
+
+$$\boldsymbol{\hat\beta} = (X^TX)^{-1}X^T \mathbf{Y}$$
+
+It follows that
+
+$$\mathbf{\hat{Y}} = X\boldsymbol{\hat\beta} = X(X^TX)^{-1}X^T \mathbf{Y}$$
+
+Combining this equation and our figure, we can know that $X(X^TX)^{-1}X^T$ projects $\mathbf{Y}$ from $\R^n$ onto $Col(X) = R(X)$. This is called projection operator/mapping.
+
+
+```{definition, projop, name = "Projection matrix"}
+Projection operator or mapping from $\R^n$ to $W$ is written by
+
+$$\Pi(\cdot \mid W) := X(X^TX)^{-1}X^T$$
+```
+
+As mentioned, $X^TX$ should be invertible to get the LSE solution.
+
+```{theorem, fullrank}
+Let $\mathbf{Y} = X\boldsymbol\beta$ inconsistent and let $X \in \R^{n \times (p + 1)}$ with $n > p + 1$.
+
+If $rank(X) = p + 1$, i.e. full rank, then $X^T X$ is invertible.
+```
+
+```{proof}
+Suppose that $(X^TX)\mathbf{b} = \mathbf{0}$. Then
+
+$$X^T (X\mathbf{b}) = \mathbf{0}$$
+
+By the fundamental subspaces theorem \@ref(thm:fundsub),
+
+$$X\mathbf{b} \in N(X^T) = Col(X)^{\perp}$$
+
+By construction,
+
+$$X\mathbf{b} \in Col(X) = N(X^T)^{\perp}$$
+
+Then
+
+$$X\mathbf{b} \in N(X^T) \cap N(X^T)^{\perp} = \{ \mathbf{0} \}$$
+
+It follows that
+
+$$X\mathbf{b} = \mathbf{0}$$
+
+If $rank(X) = n$, then the linear equation system has trivial solution $\mathbf{b} = \mathbf{0}$ and so does $X^T (X\mathbf{b}) = \mathbf{0}$. Hence, $X^T X$ is invertible.
+```
+
+Using this projection matrix $\Pi_W$, we can re-express each sum of squares. Recall that when we only use $y_i$ for regression fitting, the result becomes its average. It is because $\mathbf{Y}$ vector has been projected onto $sp(\{ \mathbf{1} \})$ line.
+
+```{remark}
+$$\overline{Y}\mathbf{1} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\mathbf{Y} = \Pi_{\mathbf{1}}\mathbf{Y}$$
+
+$$\mathbf{\hat{Y}} = X(X^TX)^{-1}X^T \mathbf{Y} = \Pi_X \mathbf{Y}$$
+```
+
+Intuitively, every projection matrix is idempotent and symmetric. Once projected, the result is same when projecting it again.
+
+```{corollary, projss, name = "Sum of squares"}
+$\Pi_{\mathbf{1}}$ and $\Pi_X$ can express each $SS$ as following.
+
+(i)
+
+$$SST = \mathbf{Y}^T (I - \Pi_{\mathbf{1}}) \mathbf{Y}$$
+
+(ii)
+
+$$SSR = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y}$$
+
+(iii)
+
+$$SSE = \mathbf{Y}^T (I - \Pi_X) \mathbf{Y}$$
+```
+
 
 ## Distributions {#simpledist}
 
@@ -1202,6 +1299,7 @@ We have already look at predicting each mean response and response from equation
 ```{theorem, mux, name = "Estimation of the mean response"}
 $$\hat\mu_x \equiv \widehat{E(Y \mid x)} = \hat\beta_0 + \hat\beta_1 x$$
 ```
+
 
 ```{theorem, yhatx, name = "(out of sample) Prediction of a response"}
 $$\hat{Y_x}  = \hat\beta_0 + \hat\beta_1 x$$
@@ -1321,7 +1419,7 @@ delv %>%
   mutate(eyx = predict(delv_fit, newdata = data.frame(x = x)))
 ```
 
-We have already seen in section \@ref(simplebdist) that the estimators $\hat\beta_0$ and $\hat\beta_1$ are random variables. So $\hat\mu_x$ is. In fact, the ribbon of the line in Figure \@ref(fig:smoothline) represents $+ \widehat{SE}(\hat\mu_x)$ and $- \widehat{SE}(\hat\mu_x)$. It can be drawn by default with the option of the `geom_smooth(se = TRUE)`.
+We have already seen in section \@ref(simplebdist) that the estimators $\hat\beta_0$ and $\hat\beta_1$ are random variables. So $\hat\mu_x$ is. In fact, the ribbon of the line in Figure \@ref(fig:smoothline) represents upper and lower confidence limits on mean response. In the later section, we get to know that it is $+ t(n - 2)\widehat{SE}(\hat\mu_x)$ and $- t(n - 2) \widehat{SE}(\hat\mu_x)$. It can be drawn by default with the option of the `geom_smooth(se = TRUE)`.
 
 
 ```{theorem, mrdist, name = "Distribution of mean response estimator"}
@@ -1690,12 +1788,506 @@ For this test statistic \@ref(eq:b1test),
 
 $$\text{reject}\: H_0 \quad \text{if} \: \lvert T \rvert > t_{\frac{\alpha}{2}}(n - 2)$$
 
-
 Looking at these two statistics, we can intuitively know the meaning. As $\lvert \hat\beta_1 - \alpha_1 \rvert$ becomes larger, the data support $H_1$.
 
 
+## Analysis of Variance
+
+### Useful distributions
+
+In linear regression setting, we usually assume $\epsilon_i \iid N(0, \sigma^2)$. There are some useful distributions around Normal.
+
+```{proposition, chisq, name = "$\\chi^2$-distribution"}
+Square of standard normal follows $\chi^2$-distribution.
+
+If $Z \sim N(0, 1)$, then $Z^2 \sim \chi^2(1)$
+
+If $Z_i \indep N(0, 1)$, then $Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n)$
+```
+
+```{proposition, tdist, name = "t-distribution"}
+Let $Z \sim N(0, 1) \ind V \sim \chi^2(m)$. Then
+
+$$T = \frac{Z}{\sqrt{V / m}} \sim t(m)$$
+```
+
+```{proposition, fdist, name = "F-distribution"}
+Let $V \sim \chi^2(m) \ind W \sim \chi^2(n)$. Then
+
+$$F = \frac{V / m}{W / n} \sim F(m, n)$$
+```
+
+Also, there is *non-central analogue* of these three distributions, i.e. starting from $Z \sim N(\mu, 1)$.
+
+```{proposition, nonchi, name = "Noncentral $\\chi^2$-distribution"}
+Square of scaled normal follows non-central $\chi^2$-distribution.
+
+If $Z_i \indep N(\mu_i, 1)$, then $Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n, \sum\limits_{i = 1}^n \mu_i^2)$
+
+$\sum\limits_{i = 1}^n \mu_i^2$ is called a non-central parameter.
+```
+
+```{proposition, nontdist, name = "Noncentral t-distribution"}
+Let $X \sim N(\mu, 1) \ind V \sim \chi^2(m)$. Then
+
+$$T = \frac{Z}{\sqrt{V / m}} \sim t(m, \mu)$$
+
+$\mu$ is called a non-central parameter.
+```
+
+```{proposition, nonfdist, name = "Noncentral F-distribution"}
+Let $V \sim \chi^2(m, \delta) \ind W \sim \chi^2(n)$. Then
+
+$$F = \frac{V / m}{W / n} \sim F(m, n, \delta)$$
+
+$\delta$ is called a non-central parameter.
+```
+
+### Quadratic form
+
+Now we can determine the distributions of various quadratic forms. The reason we are taking care of this is ANOVA deals with sum of squares, i.e. quadratic form.
+
+```{theorem, idem, name = "Idempotent and symmetric"}
+Let $A \in \R^{k \times k}$ be idempotent and symmetric. Then
+
+$\text{(a)}\: A^n$ is also idempotent
+
+$\text{(b)}\: I - A$ is also idempotent
+
+$\text{(c)}\:$ Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$
+```
+
+```{proof}
+(a) and (b) are trivial.
+
+$$(A^n)^2 = (A^2)^n = A^n$$
+
+$$(I - A)^2 = I - 2A + A^2 = I - A$$
+
+(c)
+
+Fix $\lambda$ an eigenvalue of $A$. Let $\mathbf{v} \neq \mathbf{0}$ be the corresponding eigenvector.
+
+By definition,
+
+$$A\mathbf{v} = \lambda \mathbf{v}$$
+
+Then
+
+$$A^2\mathbf{v} = \lambda(A\mathbf{v}) = \lambda^2\mathbf{v}$$
+
+and so $\lambda^2$ is eigenvalue of $A^2$.
+
+Since $A^2 = A$,
+
+$$\lambda = \lambda^2$$
+
+Hence,
+
+$$\lambda = 0 \:\text{or}\: 1$$
+
+Note that for every matrix and its eigenvalues $\lambda_j$
+
+$$tr(X) = \sum_{j = 1}^p \lambda_j, \quad rank(X) = \text{the number of non-zero}\: \lambda_j$$
+
+Since $\lambda = 0, 1$ of A,
+
+$$tr(A) = rank(A)$$
+```
+
+```{proposition, quadmvn, name = "Independence"}
+Assume $\mathbf{Y} \sim MVN(\mathbf\mu, \Sigma)$. Then
+
+(i) If $A$ and $B$ are symmetric,
+
+$$Y^T AY \ind Y^T BY \Leftrightarrow A\Sigma B = 0$$
+
+(ii) If $A$ is symmetric,
+
+$$Y^T AY \ind BY \Leftrightarrow B\Sigma A = 0$$
+```
+
+```{theorem, quaddist, name = "Distribution of quadratic form"}
+Assume that $\mathbf{Y} \sim MVN(\mathbf\mu, \Sigma)$ and that $A$ is symmetric and idempotent. Then
+
+$$Y^T AT \sim \chi^2(K, \delta)$$
+
+where $K = rank(A)$ and $\delta = \boldsymbol\mu^T A \boldsymbol\mu$. Furthermore,
+
+$$
+\begin{cases}
+  E(Y^T AT) = K + \delta \\
+  Var(Y^T AT) = 2(K + 2\delta)
+\end{cases}
+$$
+```
+
+```{corollary, mvnchi, name = "Inner product of standard normal vector"}
+Let $\mathbf{Z} = (Z_1, \ldots, Z_n)^T \sim MVN(\mathbf{0}, I_n)$. Then
+
+$$\mathbf{Z}^T\mathbf{Z} = \sum_{i = 1}^n Z_i^2 \sim \chi^2(n)$$
+```
+
+```{proof}
+From Theorem \@ref(thm:quaddist) point of view,
+
+$$\mathbf{Z}^T\mathbf{Z} = \mathbf{Z}^T I_n \mathbf{Z}$$
+
+Thus,
+
+$$K = rank(I_n) = n$$
+
+$$\delta = \mathbf{0}$$
+```
+
+Using the above facts, we can now show distributions of sums of squares. First recall that
+
+$$\mathbf{Y} \sim MVN(X\boldsymbol\beta, \sigma^2 I)$$
+
+```{proposition, ssedist, name = "Distribution of SSE"}
+$$\frac{SSE}{\sigma^2} \sim \chi^2(n - 2, 0)$$
+```
+
+```{proof}
+From Corollary \@ref(cor:projss), write
+
+$$\frac{SSE}{\sigma^2} = \bigg(\frac{\mathbf{Y}}{\sigma}\bigg)^T (I - \Pi_X) \bigg(\frac{\mathbf{Y}}{\sigma}\bigg)$$
+
+Note that
+
+$$\frac{\mathbf{Y}}{\sigma} \sim MVN(\frac{1}{\sigma}X\boldsymbol\beta, I)$$
+
+Since $I - \Pi_X$ is idempotent and symmetric,
+
+$$K = rank(I - \Pi_X) = tr(I - \Pi_X) = n - rank(\Pi_X) = n - 2$$
+
+\begin{equation} \label{eq:delta1}
+  \begin{split}
+    \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (I - \Pi_X) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \\
+    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{(\boldsymbol\beta^TX^T)X(X^TX)^{-1}X^T(X\boldsymbol\beta)}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} \\
+    & = 0
+  \end{split}
+\end{equation}
+
+Hence,
+
+$$\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)$$
+```
+
+```{proposition, ssrdist, name = "Distribution of SSR"}
+$$\frac{SSR}{\sigma^2} \sim \chi^2(1, \delta)$$
+
+where $\delta = \sum\limits_{i = 1}^n (x_i - \overline{x})^2 \beta_1^2 = \frac{S_{xx}\beta_1^2}{\sigma^2}$
+```
+
+```{proof}
+From Corollary \@ref(cor:projss), write
+
+$$\frac{SSR}{\sigma^2} = \bigg(\frac{\mathbf{Y}}{\sigma}\bigg)^T (\Pi_X - \Pi_{\mathbf{1}}) \bigg(\frac{\mathbf{Y}}{\sigma}\bigg)$$
+
+Note that $\Pi_X - \Pi_{\mathbf{1}}$ is symmetric idempotent. One proceeds in a similar way.
+
+$$K = rank(\Pi_X - \Pi_{\mathbf{1}}) = tr(\Pi_X - \Pi_{\mathbf{1}}) = rank(\Pi_X) - rank(\Pi_{\mathbf{1}}) = 2 - 1 = 1$$
+
+\begin{equation*}
+  \begin{split}
+    \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (\Pi_X - \Pi_{\mathbf{1}}) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \qquad \because \frac{\mathbf{Y}}{\sigma} \sim MVN(\frac{1}{\sigma}X\boldsymbol\beta, I) \\
+    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{\boldsymbol\beta^TX^T\Pi_{\mathbf{1}}X\boldsymbol\beta}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T(X^TX - X^T \Pi_{\mathbf{1}}X)\boldsymbol\beta}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T \Big\{ X^T(I - \Pi_{\mathbf{1}})X \Big\} \boldsymbol\beta }{\sigma^2}
+  \end{split}
+\end{equation*}
+
+Since $\mathbf{1} \in sp(\{ \mathbf{1} \})$,
+
+$$\Pi_{\mathbf{1}} \mathbf{1} = \mathbf{1}$$
+
+It gives that
+
+$$\mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = 0$$
+
+If $\mathbf{x} \neq \mathbf{1}$, then we have
+
+$$\mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum_{i = 1}^n (x_i - \overline{x})^2 = S_{xx}$$
+
+Recall that
+
+$$\overline{x}\mathbf{1} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\mathbf{x} = \Pi_{\mathbf{1}}\mathbf{x}$$
+
+Then we have
+
+$$\mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum x_i - n \overline{x} = 0$$
+
+Similarly,
+
+$$\mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = n \overline{x} - \sum x_i = 0$$
+
+Hence by partitioning $X = [\mathbf{1} \mid \mathbf{x}]$,
+
+\begin{equation} \label{eq:delta2}
+  \begin{split}
+    \delta & = \frac{\boldsymbol\beta^T \Big\{ [\mathbf{1} \mid \mathbf{x}]^T(I - \Pi_{\mathbf{1}})[\mathbf{1} \mid \mathbf{x}] \Big\} \boldsymbol\beta }{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T \begin{bmatrix} 0 & 0 \\ 0 & S_{xx} \end{bmatrix} \boldsymbol\beta}{\sigma^2} \\
+    & = \frac{S_{xx}\beta_1^2}{\sigma^2}
+  \end{split}
+\end{equation}
+```
+
+```{proposition, ssind, name = "Independence"}
+SSE and SSR are independent, i.e.
+
+$$SSE \ind SSR$$
+```
+
+```{proof}
+Note that both $SSE$ and $SSR$ are quadratic forms of $\mathbf{Y} \sim MVN(X\boldsymbol\beta, \sigma^2 I)$ and that each $I - \Pi_X$ and $\Pi_X - \Pi_{\mathbf{1}}$ is symmetric. Then from Proposition \@ref(prp:quadmvn),
+
+Claim: $(I - \Pi_X)(\sigma^2I)(\Pi_X - \Pi_{\mathbf{1}}) = 0$, i.e. $(I - \Pi_X)(\Pi_X - \Pi_{\mathbf{1}}) = 0$
+
+It is obvious that
+
+$$\Pi_X\Pi_{\mathbf{1}} = \Pi_{\mathbf{1}}$$
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    (I - \Pi_X)(\Pi_X - \Pi_{\mathbf{1}}) & = \Pi_X - \Pi_{\mathbf{1}} - \Pi_X^2 + \Pi_X\Pi_{\mathbf{1}} \\
+    & = \Pi_X - \Pi_{\mathbf{1}} - \Pi_X + \Pi_{\mathbf{1}} \qquad \because \text{idempotent} \\
+    & = 0
+  \end{split}
+\end{equation*}
+
+This completes the proof.
+```
+
+```{proposition, ssbind, name = "Independence"}
+SSE and $(\hat\beta_0, \hat\beta_1)$ are independent, i.e.
+
+$$SSE \ind (\hat\beta_0, \hat\beta_1)^T$$
+```
+
+```{proof}
+Note that
+
+$$\boldsymbol{\hat\beta}= (\hat\beta_0, \hat\beta_1)^T = (X^TX)^{-1}X^T\mathbf{Y}$$
+
+Since $I - \Pi_X$ of $SSE$ is symmetric, from Proposition \@ref(prp:quadmvn),
+
+Claim: $((X^TX)^{-1}X^T)(\sigma^2I)(I - \Pi_X) = 0$, i.e. $((X^TX)^{-1}X^T)(I - \Pi_X) = 0$
+
+Since $\Pi_X = X(X^TX)^{-1}X^T$,
+
+\begin{equation*}
+  \begin{split}
+    ((X^TX)^{-1}X^T)(I - \Pi_X) & = (X^TX)^{-1}X^T - (X^TX)^{-1}X^TX(X^TX)^{-1}X^T \\
+    & = (X^TX)^{-1}X^T - (X^TX)^{-1}X^T \\
+    & = 0
+  \end{split}
+\end{equation*}
+
+This completes the proof.
+```
+
+```{proposition, sstdist, name = "Distribution of SST"}
+$$\frac{SST}{\sigma^2} \sim \chi^2(n - 1, \delta)$$
+
+where $\delta = \sum\limits_{i = 1}^n (x_i - \overline{x})^2 \beta_1^2 = \frac{S_{xx}\beta_1^2}{\sigma^2}$
+```
+
+```{proof}
+It proceedes in a similary way from Corollary \@ref(cor:projss)
+
+$$\frac{SST}{\sigma^2} = \bigg(\frac{\mathbf{Y}}{\sigma}\bigg)^T (I - \Pi_{\mathbf{1}}) \bigg(\frac{\mathbf{Y}}{\sigma}\bigg)$$
+
+Since $I - \Pi_{\mathbf{1}}$ is symmetric idempotent,
+
+$$K = rank(I - \Pi_{\mathbf{1}}) = tr(I - \Pi_{\mathbf{1}}) = n - rank(\Pi_{\mathbf{1}}) = n - 1$$
+
+\begin{equation*}
+  \begin{split}
+    \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (I - \Pi_{\mathbf{1}}) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \\
+    & = \frac{S_{xx}\beta_1^2}{\sigma^2} \qquad \because \eqref{eq:delta1} \:\text{and}\: \eqref{eq:delta2} 
+  \end{split}
+\end{equation*}
+```
 
 
+### ANOVA for testing significance of regression
 
+Recall that
 
+$$SST = SSR + SSE$$
+
+- $SST$: the variation of a response itself
+- $SSR$: the variation of a response *explained by the model*
+- $SSE$: the variation of a response that *cannot be explained by the model*
+
+As mentioned in section \@ref(decompsst), whether the model is useful or not can depend on the proportion of $SSR$ versus $SSE$ in constant $SST$. When $SSR$ is large compared to $SSE$, we can say that the model is good. On the other hand, when $SSR$ is not large, the model might be poor. This is what $R^2$ measures intuitively.
+
+However, this direct comparison somtimes does not work in many times. Both $SSR$ and $SSE$ comes from different distribution, which have different degrees of freedom. So we *compare standardized versions*, i.e. divided by the degrees of freedom.
+
+```{definition, dof, name = "Degrees of freedom"}
+Degrees of freedom of each sum of squares is
+
+$$df = \text{the number of deviation} - \text{the number of linear constraints}$$
+```
+
+```{corollary, dfss, name = "df of SS"}
+$df$ of each sum of square is computed as
+
+$\text{(a)}\: df(SST) = n - 1$
+
+$\text{(b)}\: df(SSR) = 1$
+
+$\text{(c)}\: df(SSE) = n - 2$
+```
+
+```{proof}
+(a)
+
+Since $\sum (Y_i - \overline{Y}) = 0$, we have $1$ linear constraints. Thus,
+
+$$df(SST) = n - 1$$
+
+(b)
+
+Note that $\hat{Y_i} - \overline{Y} = \hat\beta_1(x_i - \overline{x})$
+
+where $\sum (x_i - \overline{x}) = 0$.
+
+Thus,
+
+$$df(SSR) = n - (n - 1) = 1$$
+
+(c)
+
+From Example \@ref(exm:usingnormal), $\sum (Y_i - \hat{Y_i}) = 0$ and $\sum x_i (Y_i - \hat{Y_i}) = 0$.
+
+Thus,
+
+$$df(SSE) = n - 2$$
+```
+
+Dividing sum of squares in $df$, we can standardize it.
+
+```{definition, ms, name = "Mean square"}
+Mean square is a sum of square $SS$ divided by its degree of freedom $df$
+
+$$MS := \frac{SS}{df}$$
+```
+
+Using the values of corollary \@ref(cor:dfss) we can define each mean square for $SSR$ and $SSE$.
+
+```{definition, msr, name = "Regression mean square"}
+$$MSR := \frac{SSR}{1} = SSR$$
+```
+
+From Proposition \@ref(prp:ssrdist), the following corollary can be drawn.
+
+```{corollary, msrdist, name = "Distribution of MSR"}
+Under $H_0: \beta_1 = 0$,
+
+$$\frac{SSR}{\sigma^2} \stackrel{H_0}{\sim} \chi^2(1)$$
+```
+
+Now standardize residual sum of square.
+
+```{definition, mse, name = "Residual mean square"}
+$$MSE := \frac{SSE}{n - 2}$$
+```
+
+From Proposition \@ref(prp:ssrdist), we can construct same statistic. In fact, $\frac{SSE}{\sigma^2}$ follows $\chi^2(n - 2)$ whether or not $\beta_1$ is zero. Its $\delta = 0$.
+
+```{corollary, msedist, name = "Distribution of MSE"}
+$$\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)$$
+```
+
+Finally, we can now use Proposition \@ref(prp:fdist) so that
+
+$$
+F \equiv \frac{MSR}{MSE} = \frac{\frac{SSE / \sigma^2 \sim \chi^2(1)}{1}}{\frac{SSR / \sigma^2 \hsim \chi^2(n - 2)}{n - 2}} \hsim F(1, n - 2)
+$$
+
+By construction, this test statistic is used for
+
+$$H_0: \beta_1 = 0$$
+
+which means that the predictor does not explain the response anything. In other words, we are testing that
+
+\begin{equation}
+  H_0: \text{Model is not useful at all} \qquad \text{vs} \qquad H_1: \text{Model can explain data}
+  (\#eq:goodfit)
+\end{equation}
+
+```{remark, name = "F statistic on testing significance"}
+Null hypothesis \@ref(eq:goodfit) can be tested with $F$-statistic.
+
+$$F_0 = \frac{MSR}{MSE} = \frac{SSR / df(SSR)}{SSE / df(SSE)} \hsim F(df(SSR), df(SSE))$$
+```
+
+Then we reject $H_0$ if
+
+$$F_0 > F_\alpha\bigg( df(SSR), df(SSE) \bigg)$$
+
+```{r goodfitfig, echo=FALSE, fig.cap="Rejection region for significance testing"}
+dfr <- 1
+dfe <- nrow(delv) - 2
+tibble(x = seq(0, 10, by = .01)) %>% 
+  mutate(
+    y = df(x, df1 = dfr, df2 = dfe),
+    test = ifelse(
+      x <= qf(.05, df1 = dfr, df2 = dfe, lower.tail = FALSE),
+      "accept",
+      "reject"
+    )
+  ) %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_path() +
+  geom_ribbon(aes(ymin = 0, ymax = y, fill = test), alpha = .5) +
+  scale_fill_manual(values = c("accept" = NA, "reject" = "red")) +
+  ylim(0, 1)
+```
+
+```{r}
+summary(delv_fit)
+```
+
+This statistic is `F-statistic` included in `summary.lm()` output. This is saved as `$fstatistic`.
+
+```{r}
+summary(delv_fit)$fstatistic
+```
+
+We usually summarize these statistic in table form, so called *ANOVA table*.
+
+|Source|SS|df|MS|F|p-value|  
+|:----:|:--:|:--:|:--:|:--:|:--:|  
+|Model| $SSR$ | $1$ | $MSR$ | $F_0$ | p-value |  
+|Error| $SSE$ | $n - 2$ | $MSE$ | | |  
+|Total| $SST$ | $n - 1$ | | | |  
+
+To get this table, just use `anova()` for `lm` object.
+
+```{r}
+anova(delv_fit)
+```
+
+Since the last `Total` row is just sum of the model and error, the function does not give it. To use this table as `data.frame` more easily, just implement `broom::tidy` as before.
+
+```{r}
+anova(delv_fit) %>% 
+  broom::tidy()
+```
+
+Denote that here *simple linear regression setting* $F$-statistic and $t$-statistic of Equation \@ref(eq:b1test) perform exactly same thing, $H_0 : \beta_1 = 0$. In fact, we know that
+
+$$F(1, k) \stackrel{d}{=} T_k^2$$
+
+```{remark}
+In the simple linear regression setting, $F$-test for significance and $t$-test for no slope are equivalent, i.e. under $H_0 : \beta_1 = 0$
+
+$$F_0 = \frac{\hat\beta_1 S_{xx}}{\sigma^2} = \bigg( \frac{\hat\beta_1}{\sigma / \sqrt{S_xx}} \bigg) = T_0^2$$
+```
 

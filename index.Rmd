@@ -18,7 +18,13 @@ description: "This aims at covering materials of regression analysis with R prog
 
 <img src="cover.png" width="250" height="375" alt="Cover image" align="right" style="margin: 0 1em 0 1em" /></a> This book aims at covering materials of regression analysis. Also, there will be R programming for regression.
 
-# Linear Regression Analysis {-}
+```{r, eval=FALSE}
+library(tidyverse)
+```
+
+`tidyverse` package will be used in every chapter, so loading step will be hidden.
+
+## Linear Regression Analysis {-}
 
 ```{r}
 data(BioOxyDemand, package = "MPV")
@@ -27,7 +33,7 @@ data(BioOxyDemand, package = "MPV")
   tbl_df())
 ```
 
-## Relation {-}
+### Relation {-}
 
 We wonder how `x` affects `y`, especially linearly.
 
