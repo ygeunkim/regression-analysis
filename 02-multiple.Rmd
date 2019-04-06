@@ -154,6 +154,30 @@ is the projection of $\mathbf{a}_{k + 1}$ onto $sp(\{ \mathbf{u}_1, \ldots, \mat
 Hence, we get $\{ \mathbf{u}_1, \ldots, \mathbf{u}_m \}$ is an orthonormal basis for $V$.
 ```
 
+This *orthonormal basis* gives some useful facts with least squares problem [@Leon:2014aa].
+
+```{theorem, orthonormal}
+Let $Col(X)$ be a subspace of $\R^n$, let $\mathbf{Y} \in \R^n$, and let $\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}$ be an orthonormal basis for $Col(X)$. If
+
+$$\mathbf{\hat{Y}} = \sum_{j = 0}^p \hat\beta_j \mathbf{u}_j$$
+
+where
+
+$$\hat\beta_j = \Pi(\mathbf{Y} \mid R(\mathbf{u}_j)) \quad \text{for each} \: i$$
+
+then $\mathbf{\hat{Y}} - \mathbf{Y} \in Col(X)^{\perp}$.
+```
+
+```{theorem, orthonormalproj}
+Under the hypothesis of Theorem \@ref(thm:orthonormal), $\mathbf{\hat{Y}} \in Col(X)$ is the closest to $\mathbf{Y}$ amongst its any element $\mathbf{p}$, i.e.
+
+$$\Vert \mathbf{p} - \mathbf{Y} \Vert > \Vert \mathbf{\hat{Y}} - \mathbf{Y} \Vert$$
+
+for any $\mathbf{p} \neq \mathbf{\hat{Y}}$ in $Col(X)$
+```
+
+In other words, projection of $\mathbf{Y}$ onto $Col(X)$, $\mathbf{\hat{Y}}$ can be *represented as sum of projections of* $\mathbf{Y}$ *onto each (orthogonal) individual variable*. Before looking at individual basis, consider two-block space.
+
 Write
 
 $$
@@ -187,7 +211,59 @@ $$R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$
 $$\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))$$
 ```
 
+Write
 
+$$\mathbb{X}_{A, \perp} := \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A$$
+
+Note that
+
+$$\Pi_{\mathbf{1}} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T = \frac{1}{n}\mathbf{1}\mathbf{1}^T$$
+
+Then
+
+\begin{equation}
+  \begin{split}
+    X\boldsymbol{\hat\beta} & = \hat\beta_0\mathbf{1} + \mathbb{X}_A\boldsymbol{\hat\beta}_A \\
+    & = \hat\beta_0\mathbf{1} + (\mathbb{X}_{A, \perp} + \Pi_{\mathbf{1}}\mathbb{X}_A)\boldsymbol{\hat\beta}_A \\
+    & = \Big(\hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \Big)\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A \qquad \because \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \in \R
+  \end{split}
+  (\#eq:blockfit)
+\end{equation}
+
+From (ii) of Theorem \@ref(thm:orthdecomp),
+
+\begin{equation}
+  \begin{split}
+    \Pi(\mathbf{Y} \mid R(X)) & = \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \Pi(\mathbf{Y} \mid R(\mathbb{X}_{A,\perp})) \\
+    & = \overline{Y}\mathbf{1} + \mathbb{X}_{A,\perp}(\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
+  \end{split}
+  (\#eq:decompfit)
+\end{equation}
+
+Equations \@ref(eq:blockfit) and \@ref(eq:decompfit) give that
+
+$$
+\begin{cases}
+  \hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}\mathbb{X}_A\boldsymbol{\hat\beta}_A \\
+  \boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
+\end{cases}
+$$
+
+```{r illdecomp, echo=FALSE, fig.cap="Orthogonal decomposition of the column space and LSE"}
+knitr::include_graphics("images/multiple-orthogonal.png")
+```
+
+See Figure \@ref(fig:illdecomp). Two are orthogonal, so sum of projections onto them become LSE. In fact, *each projection indicate each regression coefficient*. When we do not have orthogonal basis, however, each projection is nothing.
+
+```{r illdecomp2, echo=FALSE, fig.cap="Non-orthongality"}
+knitr::include_graphics("images/multiple-nonorth.png")
+```
+
+In this situation, we have to do orthogonalization.
+
+$$\tilde{\mathbb{X}}_A = \Pi_{\mathbf{1}}\mathbb{X}_A + (\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$
+
+### Gram-Schmidt QR factorization
 
 
 

@@ -1076,9 +1076,9 @@ If $\{ \mathbf{x}_1, \ldots, \mathbf{x}_r \}$ is a basis for $S$ and $\{ \mathbf
 ```
 
 ```{theorem, dsum}
-Let $S$ be a subspace of $\mathbb{R}^n$. Then
+Let $S$ be a subspace of $\R^n$. Then
 
-$$\mathbb{R}^n = S \oplus S^{\perp}$$
+$$\R^n = S \oplus S^{\perp}$$
 ```
 
 

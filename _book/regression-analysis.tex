@@ -1432,9 +1432,9 @@ If \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r \}\) is a basis for \(S\) and \(\{ \m
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{theorem}
-\protect\hypertarget{thm:dsum}{}{\label{thm:dsum} }Let \(S\) be a subspace of \(\mathbb{R}^n\). Then
+\protect\hypertarget{thm:dsum}{}{\label{thm:dsum} }Let \(S\) be a subspace of \(\R^n\). Then
 
-\[\mathbb{R}^n = S \oplus S^{\perp}\]
+\[\R^n = S \oplus S^{\perp}\]
 \EndKnitrBlock{theorem}
 
 \hypertarget{simple-linear-regression}{%
@@ -3007,6 +3007,30 @@ is the projection of \(\mathbf{a}_{k + 1}\) onto \(sp(\{ \mathbf{u}_1, \ldots, \
 Hence, we get \(\{ \mathbf{u}_1, \ldots, \mathbf{u}_m \}\) is an orthonormal basis for \(V\).
 \EndKnitrBlock{theorem}
 
+This \emph{orthonormal basis} gives some useful facts with least squares problem \citep{Leon:2014aa}.
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:orthonormal}{}{\label{thm:orthonormal} }Let \(Col(X)\) be a subspace of \(\R^n\), let \(\mathbf{Y} \in \R^n\), and let \(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\) be an orthonormal basis for \(Col(X)\). If
+
+\[\mathbf{\hat{Y}} = \sum_{j = 0}^p \hat\beta_j \mathbf{u}_j\]
+
+where
+
+\[\hat\beta_j = \Pi(\mathbf{Y} \mid R(\mathbf{u}_j)) \quad \text{for each} \: i\]
+
+then \(\mathbf{\hat{Y}} - \mathbf{Y} \in Col(X)^{\perp}\).
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:orthonormalproj}{}{\label{thm:orthonormalproj} }Under the hypothesis of Theorem \ref{thm:orthonormal}, \(\mathbf{\hat{Y}} \in Col(X)\) is the closest to \(\mathbf{Y}\) amongst its any element \(\mathbf{p}\), i.e.
+
+\[\Vert \mathbf{p} - \mathbf{Y} \Vert > \Vert \mathbf{\hat{Y}} - \mathbf{Y} \Vert\]
+
+for any \(\mathbf{p} \neq \mathbf{\hat{Y}}\) in \(Col(X)\)
+\EndKnitrBlock{theorem}
+
+In other words, projection of \(\mathbf{Y}\) onto \(Col(X)\), \(\mathbf{\hat{Y}}\) can be \emph{represented as sum of projections of} \(\mathbf{Y}\) \emph{onto each (orthogonal) individual variable}. Before looking at individual basis, consider two-block space.
+
 Write
 
 \[
@@ -3046,6 +3070,71 @@ Theorem \ref{thm:dsum} implies that
 
 \[\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))\]
 \EndKnitrBlock{theorem}
+
+Write
+
+\[\mathbb{X}_{A, \perp} := \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\]
+
+Note that
+
+\[\Pi_{\mathbf{1}} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T = \frac{1}{n}\mathbf{1}\mathbf{1}^T\]
+
+Then
+
+\begin{equation}
+  \begin{split}
+    X\boldsymbol{\hat\beta} & = \hat\beta_0\mathbf{1} + \mathbb{X}_A\boldsymbol{\hat\beta}_A \\
+    & = \hat\beta_0\mathbf{1} + (\mathbb{X}_{A, \perp} + \Pi_{\mathbf{1}}\mathbb{X}_A)\boldsymbol{\hat\beta}_A \\
+    & = \Big(\hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \Big)\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A \qquad \because \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \in \R
+  \end{split}
+  \label{eq:blockfit}
+\end{equation}
+
+From (ii) of Theorem \ref{thm:orthdecomp},
+
+\begin{equation}
+  \begin{split}
+    \Pi(\mathbf{Y} \mid R(X)) & = \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \Pi(\mathbf{Y} \mid R(\mathbb{X}_{A,\perp})) \\
+    & = \overline{Y}\mathbf{1} + \mathbb{X}_{A,\perp}(\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
+  \end{split}
+  \label{eq:decompfit}
+\end{equation}
+
+Equations \eqref{eq:blockfit} and \eqref{eq:decompfit} give that
+
+\[
+\begin{cases}
+  \hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}\mathbb{X}_A\boldsymbol{\hat\beta}_A \\
+  \boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
+\end{cases}
+\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/multiple-orthogonal} 
+
+}
+
+\caption{Orthogonal decomposition of the column space and LSE}\label{fig:illdecomp}
+\end{figure}
+
+See Figure \ref{fig:illdecomp}. Two are orthogonal, so sum of projections onto them become LSE. In fact, \emph{each projection indicate each regression coefficient}. When we do not have orthogonal basis, however, each projection is nothing.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/multiple-nonorth} 
+
+}
+
+\caption{Non-orthongality}\label{fig:illdecomp2}
+\end{figure}
+
+In this situation, we have to do orthogonalization.
+
+\[\tilde{\mathbb{X}}_A = \Pi_{\mathbf{1}}\mathbb{X}_A + (\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)\]
+
+\hypertarget{gram-schmidt-qr-factorization}{%
+\subsection{Gram-Schmidt QR factorization}\label{gram-schmidt-qr-factorization}}
 
 \bibliography{book.bib,packages.bib}
 
