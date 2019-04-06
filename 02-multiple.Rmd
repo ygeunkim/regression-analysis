@@ -1,3 +1,199 @@
 # Multiple Linear Regression {#multiple}
 
+## Model
+
+```{r}
+(cem <- MPV::cement %>% tbl_df())
+```
+
+Above is a data set about cement and concerning four ingredients from the @Montgomery:2015aa textbook.
+
+- `y`: heat evolved in calories per gram of cement
+- `x1`: tricalcium aluminate
+- `x2`: tricalcium silicate
+- `x3`: tetracalcium alumino ferrite
+- `x4`: dicalcium silicate
+
+Given data $(x_{11}, x_{12}, \ldots, x_{1p}, Y_1), \ldots, (x_{n1}, x_{n2}, \ldots, x_{np}, Y_n)$ ($p = 4$), we try to fit linear regression model
+
+$$Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}$$
+
+with
+
+$$\epsilon_i \iid (0, \sigma^2)$$
+
+Compared to simple linear regression problem \@ref(simple), we have more parameters for coefficients
+
+$$(\beta_0, \beta_1, \ldots, \beta_p, \sigma^2)$$
+
+Each $\beta_j$ is a change of $Y$ when each predictor variable $x_j$ increases in 1 unit while the others fixed. In this part, we use *matrix notation*. Extending our former matrix work \@ref(matnot),
+
+$$
+\underset{\substack{\\ \\ \\ \\ \huge \mathbf{Y}}}{\begin{bmatrix}
+  Y_1 \\
+  Y_2 \\
+  \vdots \\
+  Y_n
+\end{bmatrix}} = \underset{\substack{\\ \\ \\ \\ \huge X}}{\begin{bmatrix}
+  1 & x_{11} & \cdots & x_{1p} \\
+  1 & x_{21} & \cdots & x_{2p} \\
+  \vdots & \vdots & \vdots & \vdots \\
+  1 & x_{n1} & \cdots & x_{np}
+\end{bmatrix}} \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\beta}}{\begin{bmatrix}
+  \beta_0 \\
+  \vdots \\
+  \beta_p
+\end{bmatrix}} + \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\epsilon}}{\begin{bmatrix}
+  \epsilon_1 \\
+  \epsilon_2 \\
+  \vdots \\
+  \epsilon_n
+\end{bmatrix}}
+$$
+
+where $\epsilon_i$ are i.i.d., and
+
+$$E\boldsymbol\epsilon = \mathbf{0}$$
+
+$$Var\boldsymbol\epsilon = \sigma^2 I$$
+
+
+## Least Square Estimation
+
+Write $\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \R^{p + 1}$. Extend Equation \@ref(eq:qmatrix).
+
+\begin{equation}
+  \begin{split}
+    \boldsymbol{\hat\beta} & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+  \end{split}
+  (\#eq:qmultiple)
+\end{equation}
+
+As discussed, the solution $\boldsymbol{\hat\beta}$ is related to the projection. $X\boldsymbol{\hat\beta}$ is a projection of $\mathbf{Y}$ onto $Col(X)$.
+
+### Normal equation
+
+Now recap the section \@ref(solproj). Fundamental subspaces theorem \@ref(thm:fundsub) implies that
+
+$$\mathbf{Y} - X\boldsymbol{\hat\beta} \in Col(X)^{\perp} = N(X^T)$$
+
+From the second part of subset, i.e. $N(X^T)$, we now have *Normal equation*
+
+\begin{equation}
+  X^T(\mathbf{Y} - X\boldsymbol{\hat\beta}) = \mathbf{0}
+  (\#eq:multeq)
+\end{equation}
+
+This is equivalent to
+
+$$X^T\mathbf{Y} = X^TX\boldsymbol{\hat\beta}$$
+
+Hence, if $X^T X$ is invertible, the equation gives unique solution
+
+$$\boldsymbol{\hat\beta} = (X^TX)^{-1}X^T \mathbf{Y}$$
+
+Our first question is when $X^T X$ is invertible, and Theorem \@ref(thm:fullrank) have said that it is when the model matrix $X$ is full rank.
+
+```{lemma, modelnnd}
+Let $X \in \R^{n \times (p + 1)}$ be any model matrix. Then $X^T X$ is always non-negative definite.
+
+$$\forall \mathbf{v} \in \R^{p + 1} : \mathbf{v}^T(X^T X)\mathbf{v} \ge 0$$
+```
+
+```{proof}
+Let $\mathbf{v} \in \R^{p + 1}$. Then
+
+$$\mathbf{v}^T(X^T X)\mathbf{v} = (X\mathbf{v})^T (X\mathbf{v}) = \lVert X\mathbf{v} \rVert^2 \ge 0$$
+```
+
+This lemma can also prove our Theorem \@ref(thm:fullrank).
+
+```{theorem, fullrank2}
+Let $\mathbf{Y} = X\boldsymbol\beta$ inconsistent and let $X \in \R^{n \times (p + 1)}$ with $n > p + 1$.
+
+If $rank(X) = p + 1$, i.e. full rank, then $X^T X$ is invertible.
+```
+
+```{proof}
+Let $\mathbf{c} \in \R^{(p + 1)}$
+
+Suppose that $X^T X$ is positive definite.
+
+\begin{equation*}
+  \begin{split}
+    & \Leftrightarrow \mathbf{c}^TX^T X \mathbf{c} = 0 \quad \text{implies} \quad \mathbf{c} = \mathbf{0} \\
+    & \Leftrightarrow X\mathbf{c} = \mathbf{0} \quad \text{implies} \quad \mathbf{c} = \mathbf{0} \\
+    & \Leftrightarrow \text{columns of}\: X \:\text{linearly independent} \\
+    & \Leftrightarrow rank(X) = p + 1
+  \end{split}
+\end{equation*}
+```
+
+
+### Orthogonal decomposition
+
+Let's briefly look at orthogonalization process.
+
+```{theorem, gs, name = "Gram-Schmidt Process"}
+Let $\{ \mathbf{a}_1, \ldots, \mathbf{a}_m \}$ be a basis for the inner product space $V$. Let
+
+$$\mathbf{u}_1 = \bigg( \frac{1}{\lVert \mathbf{a}_1 \rVert} \bigg) \mathbf{a}_1$$
+
+and define next $\mathbf{u}_2, \ldots, \mathbf{u}_m$ recursively by
+
+$$\mathbf{u}_{k + 1} = \frac{1}{\lVert \mathbf{a}_{k + 1} - \mathbf{p}_k \rVert}(\mathbf{a}_{k + 1} - \mathbf{p}_k)$$
+
+for $k = 1, \ldots, m - 1$, where
+
+$$\mathbf{p}_k = <\mathbf{a}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{a}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u} > \mathbf{u}_k$$
+
+is the projection of $\mathbf{a}_{k + 1}$ onto $sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})$.
+
+Hence, we get $\{ \mathbf{u}_1, \ldots, \mathbf{u}_m \}$ is an orthonormal basis for $V$.
+```
+
+Write
+
+$$
+X = \left[\begin{array}{c|ccc}
+  1 & x_{11} & \cdots & x_{1p} \\
+  1 & x_{21} & \cdots & x_{2p} \\
+  \vdots & \vdots & \vdots & \vdots \\
+  1 & x_{n1} & \cdots & x_{np}
+\end{array}\right] = [\mathbf{1}, \mathbb{X}_A]
+$$
+
+Consider $R(X)$, $R(\mathbf{1})$, and $R(\mathbb{X}_A)$.
+
+To decompose subspace $R(X)$, we try to orthogonalize $\mathbf{1}$ and $\mathbb{X}_A$ applying G-S process \@ref(thm:gs).
+
+$$\mathbf{1} \perp \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A$$
+
+Theorem \@ref(thm:dsum) implies that
+
+$$R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$
+
+```{theorem, orthdecomp, name = "Orthogonal decomposition"}
+Let $X = [\mathbf{1}, \mathbb{X}_A]$. Then
+
+(i)
+
+$$R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$
+
+(ii)
+
+$$\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))$$
+```
+
+
+
+
+
+
+
+
+
+
 

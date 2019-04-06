@@ -137,6 +137,7 @@ Department of Statistics, SKKU\\
 \newcommand{\hsim}{\stackrel{H_0}{\sim}}
 \newcommand{\ind}{\perp\!\!\!\perp}
 \newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator*{\argmin}{argmin}
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
@@ -1318,8 +1319,8 @@ It follows that
 
 In this relation, we can know that \(R^2\) statistic performs as a measure of the linear relationship in the simple linear regression setting.
 
-\hypertarget{geometric-interpretations}{%
-\section{Geometric Interpretations}\label{geometric-interpretations}}
+\hypertarget{matnot}{%
+\section{Geometric Interpretations}\label{matnot}}
 
 \hypertarget{fundamental-subspaces}{%
 \subsection{Fundamental subspaces}\label{fundamental-subspaces}}
@@ -1427,7 +1428,7 @@ and so
 
 \[dim S + dim S^{\perp} = n\]
 
-If \(\{ \mathbf{x}_1, \ldots, \mathbf{r} \}\) is a basis for \(S\) and \(\{ \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}\) is a basis for \(S^{\perp}\), then \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r, \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}\) is a basis for \(\mathbb{R}^n\).
+If \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r \}\) is a basis for \(S\) and \(\{ \mathbf{x}_{r + 1}, \ldots, \mathbf{x}_n \}\) is a basis for \(S^{\perp}\), then \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r, \mathbf{x}_{r + 1}, \ldots, \mathbf{x}_n \}\) is a basis for \(\mathbb{R}^n\).
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{theorem}
@@ -1451,7 +1452,10 @@ for any \(\mathbf{p} \neq \mathbf{\hat{y}}\). Furthermore, a given vector \(\mat
 
 Least square estimator \((\hat\beta_0, \hat\beta_1)^T\) minimizes
 
-\[\sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = \Vert \mathbf{Y} - (\beta_0 \mathbf{1} + \beta_1 \mathbf{x}) \Vert^2\]
+\begin{equation}
+  \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = \Vert \mathbf{Y} - (\beta_0 \mathbf{1} + \beta_1 \mathbf{x}) \Vert^2
+  \label{eq:qmatrix}
+\end{equation}
 
 with respect to \((\hat\beta_0, \hat\beta_1)^T \in \mathbb{R}^2\) (where \(\mathbf{1} := (1, 1)^T\)). Recall that the normal equation gives
 
@@ -1509,8 +1513,8 @@ Also,
 
 \[R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2\]
 
-\hypertarget{projection-mapping}{%
-\subsection{Projection mapping}\label{projection-mapping}}
+\hypertarget{solproj}{%
+\subsection{Projection mapping}\label{solproj}}
 
 Look again Figure \ref{fig:simpledraw}. Let \(X \equiv [\mathbf{1}, \mathbf{x}] \in \R^{n \times 2}\) and let \(\boldsymbol\beta \equiv (\beta_0, \beta_1)^T\). By the fundamental subspaces theorem \ref{thm:fundsub},
 
@@ -1580,7 +1584,7 @@ It follows that
 If \(rank(X) = n\), then the linear equation system has trivial solution \(\mathbf{b} = \mathbf{0}\) and so does \(X^T (X\mathbf{b}) = \mathbf{0}\). Hence, \(X^T X\) is invertible.
 \EndKnitrBlock{proof}
 
-Using this projection matrix \(\Pi_W\), we can re-express each sum of squares. Recall that when we only use \(y_i\) for regression fitting, the result becomes its average. It is because \(\mathbf{Y}\) vector has been projected onto \(sp(\{ \mathbf{1} \})\) line.
+Using projection matrix \(\Pi_W\), we can re-express each sum of squares. Recall that when we only use \(y_i\) for regression fitting, the result becomes its average. It is because \(\mathbf{Y}\) vector has been projected onto \(sp(\{ \mathbf{1} \})\) line.
 
 \BeginKnitrBlock{remark}
 \iffalse{} {Remark. } \fi{}\[\overline{Y}\mathbf{1} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\mathbf{Y} = \Pi_{\mathbf{1}}\mathbf{Y}\]
@@ -2817,6 +2821,231 @@ Denote that here \emph{simple linear regression setting} \(F\)-statistic and \(t
 
 \hypertarget{multiple}{%
 \chapter{Multiple Linear Regression}\label{multiple}}
+
+\hypertarget{model-1}{%
+\section{Model}\label{model-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(cem <-}\StringTok{ }\NormalTok{MPV}\OperatorTok{::}\NormalTok{cement }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tbl_df}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 13 x 5
+       y    x1    x2    x3    x4
+   <dbl> <dbl> <dbl> <dbl> <dbl>
+ 1  78.5     7    26     6    60
+ 2  74.3     1    29    15    52
+ 3 104.     11    56     8    20
+ 4  87.6    11    31     8    47
+ 5  95.9     7    52     6    33
+ 6 109.     11    55     9    22
+ 7 103.      3    71    17     6
+ 8  72.5     1    31    22    44
+ 9  93.1     2    54    18    22
+10 116.     21    47     4    26
+11  83.8     1    40    23    34
+12 113.     11    66     9    12
+13 109.     10    68     8    12
+\end{verbatim}
+
+Above is a data set about cement and concerning four ingredients from the \citet{Montgomery:2015aa} textbook.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{y}: heat evolved in calories per gram of cement
+\item
+  \texttt{x1}: tricalcium aluminate
+\item
+  \texttt{x2}: tricalcium silicate
+\item
+  \texttt{x3}: tetracalcium alumino ferrite
+\item
+  \texttt{x4}: dicalcium silicate
+\end{itemize}
+
+Given data \((x_{11}, x_{12}, \ldots, x_{1p}, Y_1), \ldots, (x_{n1}, x_{n2}, \ldots, x_{np}, Y_n)\) (\(p = 4\)), we try to fit linear regression model
+
+\[Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}\]
+
+with
+
+\[\epsilon_i \iid (0, \sigma^2)\]
+
+Compared to simple linear regression problem \ref{simple}, we have more parameters for coefficients
+
+\[(\beta_0, \beta_1, \ldots, \beta_p, \sigma^2)\]
+
+Each \(\beta_j\) is a change of \(Y\) when each predictor variable \(x_j\) increases in 1 unit while the others fixed. In this part, we use \emph{matrix notation}. Extending our former matrix work \ref{matnot},
+
+\[
+\underset{\substack{\\ \\ \\ \\ \huge \mathbf{Y}}}{\begin{bmatrix}
+  Y_1 \\
+  Y_2 \\
+  \vdots \\
+  Y_n
+\end{bmatrix}} = \underset{\substack{\\ \\ \\ \\ \huge X}}{\begin{bmatrix}
+  1 & x_{11} & \cdots & x_{1p} \\
+  1 & x_{21} & \cdots & x_{2p} \\
+  \vdots & \vdots & \vdots & \vdots \\
+  1 & x_{n1} & \cdots & x_{np}
+\end{bmatrix}} \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\beta}}{\begin{bmatrix}
+  \beta_0 \\
+  \vdots \\
+  \beta_p
+\end{bmatrix}} + \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\epsilon}}{\begin{bmatrix}
+  \epsilon_1 \\
+  \epsilon_2 \\
+  \vdots \\
+  \epsilon_n
+\end{bmatrix}}
+\]
+
+where \(\epsilon_i\) are i.i.d., and
+
+\[E\boldsymbol\epsilon = \mathbf{0}\]
+
+\[Var\boldsymbol\epsilon = \sigma^2 I\]
+
+\hypertarget{least-square-estimation}{%
+\section{Least Square Estimation}\label{least-square-estimation}}
+
+Write \(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \R^{p + 1}\). Extend Equation \eqref{eq:qmatrix}.
+
+\begin{equation}
+  \begin{split}
+    \boldsymbol{\hat\beta} & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+  \end{split}
+  \label{eq:qmultiple}
+\end{equation}
+
+As discussed, the solution \(\boldsymbol{\hat\beta}\) is related to the projection. \(X\boldsymbol{\hat\beta}\) is a projection of \(\mathbf{Y}\) onto \(Col(X)\).
+
+\hypertarget{normal-equation}{%
+\subsection{Normal equation}\label{normal-equation}}
+
+Now recap the section \ref{solproj}. Fundamental subspaces theorem \ref{thm:fundsub} implies that
+
+\[\mathbf{Y} - X\boldsymbol{\hat\beta} \in Col(X)^{\perp} = N(X^T)\]
+
+From the second part of subset, i.e.~\(N(X^T)\), we now have \emph{Normal equation}
+
+\begin{equation}
+  X^T(\mathbf{Y} - X\boldsymbol{\hat\beta}) = \mathbf{0}
+  \label{eq:multeq}
+\end{equation}
+
+This is equivalent to
+
+\[X^T\mathbf{Y} = X^TX\boldsymbol{\hat\beta}\]
+
+Hence, if \(X^T X\) is invertible, the equation gives unique solution
+
+\[\boldsymbol{\hat\beta} = (X^TX)^{-1}X^T \mathbf{Y}\]
+
+Our first question is when \(X^T X\) is invertible, and Theorem \ref{thm:fullrank} have said that it is when the model matrix \(X\) is full rank.
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:modelnnd}{}{\label{lem:modelnnd} }Let \(X \in \R^{n \times (p + 1)}\) be any model matrix. Then \(X^T X\) is always non-negative definite.
+
+\[\forall \mathbf{v} \in \R^{p + 1} : \mathbf{v}^T(X^T X)\mathbf{v} \ge 0\]
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Let \(\mathbf{v} \in \R^{p + 1}\). Then
+
+\[\mathbf{v}^T(X^T X)\mathbf{v} = (X\mathbf{v})^T (X\mathbf{v}) = \lVert X\mathbf{v} \rVert^2 \ge 0\]
+\EndKnitrBlock{proof}
+
+This lemma can also prove our Theorem \ref{thm:fullrank}.
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:fullrank2}{}{\label{thm:fullrank2} }Let \(\mathbf{Y} = X\boldsymbol\beta\) inconsistent and let \(X \in \R^{n \times (p + 1)}\) with \(n > p + 1\).
+
+If \(rank(X) = p + 1\), i.e.~full rank, then \(X^T X\) is invertible.
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Let \(\mathbf{c} \in \R^{(p + 1)}\)
+
+Suppose that \(X^T X\) is positive definite.
+
+\begin{equation*}
+  \begin{split}
+    & \Leftrightarrow \mathbf{c}^TX^T X \mathbf{c} = 0 \quad \text{implies} \quad \mathbf{c} = \mathbf{0} \\
+    & \Leftrightarrow X\mathbf{c} = \mathbf{0} \quad \text{implies} \quad \mathbf{c} = \mathbf{0} \\
+    & \Leftrightarrow \text{columns of}\: X \:\text{linearly independent} \\
+    & \Leftrightarrow rank(X) = p + 1
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+\hypertarget{orthogonal-decomposition}{%
+\subsection{Orthogonal decomposition}\label{orthogonal-decomposition}}
+
+Let's briefly look at orthogonalization process.
+
+\BeginKnitrBlock{theorem}[Gram-Schmidt Process]
+\protect\hypertarget{thm:gs}{}{\label{thm:gs} \iffalse (Gram-Schmidt Process) \fi{} }Let \(\{ \mathbf{a}_1, \ldots, \mathbf{a}_m \}\) be a basis for the inner product space \(V\). Let
+
+\[\mathbf{u}_1 = \bigg( \frac{1}{\lVert \mathbf{a}_1 \rVert} \bigg) \mathbf{a}_1\]
+
+and define next \(\mathbf{u}_2, \ldots, \mathbf{u}_m\) recursively by
+
+\[\mathbf{u}_{k + 1} = \frac{1}{\lVert \mathbf{a}_{k + 1} - \mathbf{p}_k \rVert}(\mathbf{a}_{k + 1} - \mathbf{p}_k)\]
+
+for \(k = 1, \ldots, m - 1\), where
+
+\[\mathbf{p}_k = <\mathbf{a}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{a}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u} > \mathbf{u}_k\]
+
+is the projection of \(\mathbf{a}_{k + 1}\) onto \(sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})\).
+
+Hence, we get \(\{ \mathbf{u}_1, \ldots, \mathbf{u}_m \}\) is an orthonormal basis for \(V\).
+\EndKnitrBlock{theorem}
+
+Write
+
+\[
+X = \left[\begin{array}{c|ccc}
+  1 & x_{11} & \cdots & x_{1p} \\
+  1 & x_{21} & \cdots & x_{2p} \\
+  \vdots & \vdots & \vdots & \vdots \\
+  1 & x_{n1} & \cdots & x_{np}
+\end{array}\right] = [\mathbf{1}, \mathbb{X}_A]
+\]
+
+Consider \(R(X)\), \(R(\mathbf{1})\), and \(R(\mathbb{X}_A)\).
+
+To decompose subspace \(R(X)\), we try to orthogonalize \(\mathbf{1}\) and \(\mathbb{X}_A\) applying G-S process \ref{thm:gs}.
+
+\[\mathbf{1} \perp \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\]
+
+Theorem \ref{thm:dsum} implies that
+
+\[R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)\]
+
+\BeginKnitrBlock{theorem}[Orthogonal decomposition]
+\protect\hypertarget{thm:orthdecomp}{}{\label{thm:orthdecomp} \iffalse (Orthogonal decomposition) \fi{} }Let \(X = [\mathbf{1}, \mathbb{X}_A]\). Then
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\item
+\end{enumerate}
+
+\[R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)\]
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{1}
+\item
+\end{enumerate}
+
+\[\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))\]
+\EndKnitrBlock{theorem}
 
 \bibliography{book.bib,packages.bib}
 

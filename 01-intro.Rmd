@@ -965,7 +965,7 @@ It follows that
 In this relation, we can know that $R^2$ statistic performs as a measure of the linear relationship in the simple linear regression setting.
 
 
-## Geometric Interpretations
+## Geometric Interpretations {#matnot}
 
 ### Fundamental subspaces
 
@@ -1072,7 +1072,7 @@ Let $S$ be a subspace of $\mathbb{R}^n$. Then
 
 $$dim S + dim S^{\perp} = n$$
 
-If $\{ \mathbf{x}_1, \ldots, \mathbf{r} \}$ is a basis for $S$ and $\{ \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}$ is a basis for $S^{\perp}$, then $\{ \mathbf{x}_1, \ldots, \mathbf{x}_r, \mathbf{x}_{r + 1}, \ldots, \mathbf{n} \}$ is a basis for $\mathbb{R}^n$.
+If $\{ \mathbf{x}_1, \ldots, \mathbf{x}_r \}$ is a basis for $S$ and $\{ \mathbf{x}_{r + 1}, \ldots, \mathbf{x}_n \}$ is a basis for $S^{\perp}$, then $\{ \mathbf{x}_1, \ldots, \mathbf{x}_r, \mathbf{x}_{r + 1}, \ldots, \mathbf{x}_n \}$ is a basis for $\mathbb{R}^n$.
 ```
 
 ```{theorem, dsum}
@@ -1096,7 +1096,10 @@ $$\mathbf{y} - \mathbf{\hat{y}} \in S^{\perp}$$
 
 Least square estimator $(\hat\beta_0, \hat\beta_1)^T$ minimizes
 
-$$\sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = \Vert \mathbf{Y} - (\beta_0 \mathbf{1} + \beta_1 \mathbf{x}) \Vert^2$$
+\begin{equation}
+  \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2 = \Vert \mathbf{Y} - (\beta_0 \mathbf{1} + \beta_1 \mathbf{x}) \Vert^2
+  (\#eq:qmatrix)
+\end{equation}
 
 with respect to $(\hat\beta_0, \hat\beta_1)^T \in \mathbb{R}^2$ (where $\mathbf{1} := (1, 1)^T$). Recall that the normal equation gives
 
@@ -1192,7 +1195,7 @@ Also,
 
 $$R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2$$
 
-### Projection mapping
+### Projection mapping {#solproj}
 
 Look again Figure \@ref(fig:simpledraw). Let $X \equiv [\mathbf{1}, \mathbf{x}] \in \R^{n \times 2}$ and let $\boldsymbol\beta \equiv (\beta_0, \beta_1)^T$. By the fundamental subspaces theorem \@ref(thm:fundsub),
 
@@ -1263,7 +1266,7 @@ $$X\mathbf{b} = \mathbf{0}$$
 If $rank(X) = n$, then the linear equation system has trivial solution $\mathbf{b} = \mathbf{0}$ and so does $X^T (X\mathbf{b}) = \mathbf{0}$. Hence, $X^T X$ is invertible.
 ```
 
-Using this projection matrix $\Pi_W$, we can re-express each sum of squares. Recall that when we only use $y_i$ for regression fitting, the result becomes its average. It is because $\mathbf{Y}$ vector has been projected onto $sp(\{ \mathbf{1} \})$ line.
+Using projection matrix $\Pi_W$, we can re-express each sum of squares. Recall that when we only use $y_i$ for regression fitting, the result becomes its average. It is because $\mathbf{Y}$ vector has been projected onto $sp(\{ \mathbf{1} \})$ line.
 
 ```{remark}
 $$\overline{Y}\mathbf{1} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\mathbf{Y} = \Pi_{\mathbf{1}}\mathbf{Y}$$
