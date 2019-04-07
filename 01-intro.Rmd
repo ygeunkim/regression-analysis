@@ -434,8 +434,9 @@ It follows that
 
 There is the last parameter, $\sigma^2 = Var(Y_i)$. In the *least squares estimation literary*, we estimate $\sigma^2$ by
 
-\begin{equation} \label{eq:siglse}
+\begin{equation}
   \hat\sigma^2 = \frac{1}{n - 2} \sum_{i = 1}^n (Y_i - \hat\beta_0 - \hat\beta_1 x_i)^2
+  (\#eq:siglse)
 \end{equation}
 
 Why $n - 2$? This makes the estimator unbiased.
