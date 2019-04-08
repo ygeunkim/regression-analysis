@@ -240,7 +240,7 @@ From (ii) of Theorem \@ref(thm:orthdecomp),
   (\#eq:decompfit)
 \end{equation}
 
-Equations \@ref(eq:blockfit) and \@ref(eq:decompfit) give that
+Since $\mathbf{1} \perp \mathbb{X}_{A, \perp}$, Equations \@ref(eq:blockfit) and \@ref(eq:decompfit) imply that
 
 $$
 \begin{cases}
