@@ -1,10 +1,5 @@
 # Simple Linear Regression {#simple}
 
-```{r, echo=FALSE, results='asis'}
-eqn_numbering()
-```
-
-
 ## Model
 
 ```{r}

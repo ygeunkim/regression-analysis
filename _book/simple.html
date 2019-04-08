@@ -208,11 +208,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="simple" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Simple Linear Regression</h1>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
 <div id="model" class="section level2">
 <h2><span class="header-section-number">1.1</span> Model</h2>
 <pre class="sourceCode r"><code class="sourceCode r">delv &lt;-<span class="st"> </span>MPV<span class="op">::</span>p2<span class="fl">.9</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tbl_df</span>()</code></pre>
@@ -1132,8 +1127,8 @@ If <span class="math inline">\(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r \}\)</span>
 
 
 <div class="theorem">
-<p><span id="thm:dsum" class="theorem"><strong>Theorem 1.6  </strong></span>Let <span class="math inline">\(S\)</span> be a subspace of <span class="math inline">\(\R^n\)</span>. Then</p>
-<span class="math display">\[\R^n = S \oplus S^{\perp}\]</span>
+<p><span id="thm:dsum" class="theorem"><strong>Theorem 1.6  </strong></span>Let <span class="math inline">\(S\)</span> be a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>. Then</p>
+<span class="math display">\[\mathbb{R}^n = S \oplus S^{\perp}\]</span>
 </div>
 
 </div>
@@ -1189,7 +1184,7 @@ Figure 1.6: Geometric Illustration of Decomposing SST
 </div>
 <div id="solproj" class="section level3">
 <h3><span class="header-section-number">1.6.3</span> Projection mapping</h3>
-<p>Look again Figure <a href="simple.html#fig:simpledraw">1.5</a>. Let <span class="math inline">\(X \equiv [\mathbf{1}, \mathbf{x}] \in \R^{n \times 2}\)</span> and let <span class="math inline">\(\boldsymbol\beta \equiv (\beta_0, \beta_1)^T\)</span>. By the fundamental subspaces theorem <a href="simple.html#thm:fundsub">1.4</a>,</p>
+<p>Look again Figure <a href="simple.html#fig:simpledraw">1.5</a>. Let <span class="math inline">\(X \equiv [\mathbf{1}, \mathbf{x}] \in \mathbb{R}^{n \times 2}\)</span> and let <span class="math inline">\(\boldsymbol\beta \equiv (\beta_0, \beta_1)^T\)</span>. By the fundamental subspaces theorem <a href="simple.html#thm:fundsub">1.4</a>,</p>
 <p><span class="math display">\[\mathbf{Y} - X\boldsymbol{\hat\beta} \in Col(X)^{\perp} = N(X^T)\]</span></p>
 <p>Thus,</p>
 <p><span class="math display" id="eq:projeq">\[\begin{equation}
@@ -1207,17 +1202,17 @@ Figure 1.6: Geometric Illustration of Decomposing SST
 <p><span class="math display">\[\boldsymbol{\hat\beta} = (X^TX)^{-1}X^T \mathbf{Y}\]</span></p>
 <p>It follows that</p>
 <p><span class="math display">\[\mathbf{\hat{Y}} = X\boldsymbol{\hat\beta} = X(X^TX)^{-1}X^T \mathbf{Y}\]</span></p>
-<p>Combining this equation and our figure, we can know that <span class="math inline">\(X(X^TX)^{-1}X^T\)</span> projects <span class="math inline">\(\mathbf{Y}\)</span> from <span class="math inline">\(\R^n\)</span> onto <span class="math inline">\(Col(X) = R(X)\)</span>. This is called projection operator/mapping.</p>
+<p>Combining this equation and our figure, we can know that <span class="math inline">\(X(X^TX)^{-1}X^T\)</span> projects <span class="math inline">\(\mathbf{Y}\)</span> from <span class="math inline">\(\mathbb{R}^n\)</span> onto <span class="math inline">\(Col(X) = R(X)\)</span>. This is called projection operator/mapping.</p>
 
 <div class="definition">
-<p><span id="def:projop" class="definition"><strong>Definition 1.10  (Projection matrix)  </strong></span>Projection operator or mapping from <span class="math inline">\(\R^n\)</span> to <span class="math inline">\(W\)</span> is written by</p>
+<p><span id="def:projop" class="definition"><strong>Definition 1.10  (Projection matrix)  </strong></span>Projection operator or mapping from <span class="math inline">\(\mathbb{R}^n\)</span> to <span class="math inline">\(W\)</span> is written by</p>
 <span class="math display">\[\Pi(\cdot \mid W) := X(X^TX)^{-1}X^T\]</span>
 </div>
 
 <p>As mentioned, <span class="math inline">\(X^TX\)</span> should be invertible to get the LSE solution.</p>
 
 <div class="theorem">
-<p><span id="thm:fullrank" class="theorem"><strong>Theorem 1.8  </strong></span>Let <span class="math inline">\(\mathbf{Y} = X\boldsymbol\beta\)</span> inconsistent and let <span class="math inline">\(X \in \R^{n \times (p + 1)}\)</span> with <span class="math inline">\(n &gt; p + 1\)</span>.</p>
+<p><span id="thm:fullrank" class="theorem"><strong>Theorem 1.8  </strong></span>Let <span class="math inline">\(\mathbf{Y} = X\boldsymbol\beta\)</span> inconsistent and let <span class="math inline">\(X \in \mathbb{R}^{n \times (p + 1)}\)</span> with <span class="math inline">\(n &gt; p + 1\)</span>.</p>
 If <span class="math inline">\(rank(X) = p + 1\)</span>, i.e. full rank, then <span class="math inline">\(X^T X\)</span> is invertible.
 </div>
 
@@ -1715,23 +1710,23 @@ Figure 1.9: Rejection region for <span class="math inline">\(\beta_0\)</span>
 <h2><span class="header-section-number">1.9</span> Analysis of Variance</h2>
 <div id="useful-distributions" class="section level3">
 <h3><span class="header-section-number">1.9.1</span> Useful distributions</h3>
-<p>In linear regression setting, we usually assume <span class="math inline">\(\epsilon_i \iid N(0, \sigma^2)\)</span>. There are some useful distributions around Normal.</p>
+<p>In linear regression setting, we usually assume <span class="math inline">\(\epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\)</span>. There are some useful distributions around Normal.</p>
 
 <div class="proposition">
 <p><span id="prp:chisq" class="proposition"><strong>Proposition 1.14  (<span class="math inline">\(\chi^2\)</span>-distribution)  </strong></span>Square of standard normal follows <span class="math inline">\(\chi^2\)</span>-distribution.</p>
 <p>If <span class="math inline">\(Z \sim N(0, 1)\)</span>, then <span class="math inline">\(Z^2 \sim \chi^2(1)\)</span></p>
-If <span class="math inline">\(Z_i \indep N(0, 1)\)</span>, then <span class="math inline">\(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n)\)</span>
+If <span class="math inline">\(Z_i \stackrel{indep}{\sim}N(0, 1)\)</span>, then <span class="math inline">\(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n)\)</span>
 </div>
 
 
 <div class="proposition">
-<p><span id="prp:tdist" class="proposition"><strong>Proposition 1.15  (t-distribution)  </strong></span>Let <span class="math inline">\(Z \sim N(0, 1) \ind V \sim \chi^2(m)\)</span>. Then</p>
+<p><span id="prp:tdist" class="proposition"><strong>Proposition 1.15  (t-distribution)  </strong></span>Let <span class="math inline">\(Z \sim N(0, 1) \perp\!\!\!\perp V \sim \chi^2(m)\)</span>. Then</p>
 <span class="math display">\[T = \frac{Z}{\sqrt{V / m}} \sim t(m)\]</span>
 </div>
 
 
 <div class="proposition">
-<p><span id="prp:fdist" class="proposition"><strong>Proposition 1.16  (F-distribution)  </strong></span>Let <span class="math inline">\(V \sim \chi^2(m) \ind W \sim \chi^2(n)\)</span>. Then</p>
+<p><span id="prp:fdist" class="proposition"><strong>Proposition 1.16  (F-distribution)  </strong></span>Let <span class="math inline">\(V \sim \chi^2(m) \perp\!\!\!\perp W \sim \chi^2(n)\)</span>. Then</p>
 <span class="math display">\[F = \frac{V / m}{W / n} \sim F(m, n)\]</span>
 </div>
 
@@ -1739,20 +1734,20 @@ If <span class="math inline">\(Z_i \indep N(0, 1)\)</span>, then <span class="ma
 
 <div class="proposition">
 <p><span id="prp:nonchi" class="proposition"><strong>Proposition 1.17  (Noncentral <span class="math inline">\(\chi^2\)</span>-distribution)  </strong></span>Square of scaled normal follows non-central <span class="math inline">\(\chi^2\)</span>-distribution.</p>
-<p>If <span class="math inline">\(Z_i \indep N(\mu_i, 1)\)</span>, then <span class="math inline">\(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n, \sum\limits_{i = 1}^n \mu_i^2)\)</span></p>
+<p>If <span class="math inline">\(Z_i \stackrel{indep}{\sim}N(\mu_i, 1)\)</span>, then <span class="math inline">\(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n, \sum\limits_{i = 1}^n \mu_i^2)\)</span></p>
 <span class="math inline">\(\sum\limits_{i = 1}^n \mu_i^2\)</span> is called a non-central parameter.
 </div>
 
 
 <div class="proposition">
-<p><span id="prp:nontdist" class="proposition"><strong>Proposition 1.18  (Noncentral t-distribution)  </strong></span>Let <span class="math inline">\(X \sim N(\mu, 1) \ind V \sim \chi^2(m)\)</span>. Then</p>
+<p><span id="prp:nontdist" class="proposition"><strong>Proposition 1.18  (Noncentral t-distribution)  </strong></span>Let <span class="math inline">\(X \sim N(\mu, 1) \perp\!\!\!\perp V \sim \chi^2(m)\)</span>. Then</p>
 <p><span class="math display">\[T = \frac{Z}{\sqrt{V / m}} \sim t(m, \mu)\]</span></p>
 <span class="math inline">\(\mu\)</span> is called a non-central parameter.
 </div>
 
 
 <div class="proposition">
-<p><span id="prp:nonfdist" class="proposition"><strong>Proposition 1.19  (Noncentral F-distribution)  </strong></span>Let <span class="math inline">\(V \sim \chi^2(m, \delta) \ind W \sim \chi^2(n)\)</span>. Then</p>
+<p><span id="prp:nonfdist" class="proposition"><strong>Proposition 1.19  (Noncentral F-distribution)  </strong></span>Let <span class="math inline">\(V \sim \chi^2(m, \delta) \perp\!\!\!\perp W \sim \chi^2(n)\)</span>. Then</p>
 <p><span class="math display">\[F = \frac{V / m}{W / n} \sim F(m, n, \delta)\]</span></p>
 <span class="math inline">\(\delta\)</span> is called a non-central parameter.
 </div>
@@ -1763,7 +1758,7 @@ If <span class="math inline">\(Z_i \indep N(0, 1)\)</span>, then <span class="ma
 <p>Now we can determine the distributions of various quadratic forms. The reason we are taking care of this is ANOVA deals with sum of squares, i.e. quadratic form.</p>
 
 <div class="theorem">
-<p><span id="thm:idem" class="theorem"><strong>Theorem 1.14  (Idempotent and symmetric)  </strong></span>Let <span class="math inline">\(A \in \R^{k \times k}\)</span> be idempotent and symmetric. Then</p>
+<p><span id="thm:idem" class="theorem"><strong>Theorem 1.14  (Idempotent and symmetric)  </strong></span>Let <span class="math inline">\(A \in \mathbb{R}^{k \times k}\)</span> be idempotent and symmetric. Then</p>
 <p><span class="math inline">\(\text{(a)}\: A^n\)</span> is also idempotent</p>
 <p><span class="math inline">\(\text{(b)}\: I - A\)</span> is also idempotent</p>
 <span class="math inline">\(\text{(c)}\:\)</span> Every eigenvalue of <span class="math inline">\(A\)</span> is either <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span> so that <span class="math inline">\(tr(A) = rank(A)\)</span>
@@ -1799,11 +1794,11 @@ If <span class="math inline">\(Z_i \indep N(0, 1)\)</span>, then <span class="ma
 <ol style="list-style-type: lower-roman">
 <li>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are symmetric,</li>
 </ol>
-<p><span class="math display">\[Y^T AY \ind Y^T BY \Leftrightarrow A\Sigma B = 0\]</span></p>
+<p><span class="math display">\[Y^T AY \perp\!\!\!\perp Y^T BY \Leftrightarrow A\Sigma B = 0\]</span></p>
 <ol start="2" style="list-style-type: lower-roman">
 <li>If <span class="math inline">\(A\)</span> is symmetric,</li>
 </ol>
-<span class="math display">\[Y^T AY \ind BY \Leftrightarrow B\Sigma A = 0\]</span>
+<span class="math display">\[Y^T AY \perp\!\!\!\perp BY \Leftrightarrow B\Sigma A = 0\]</span>
 </div>
 
 
@@ -1906,7 +1901,7 @@ where <span class="math inline">\(\delta = \sum\limits_{i = 1}^n (x_i - \overlin
 
 <div class="proposition">
 <p><span id="prp:ssind" class="proposition"><strong>Proposition 1.23  (Independence)  </strong></span>SSE and SSR are independent, i.e.</p>
-<span class="math display">\[SSE \ind SSR\]</span>
+<span class="math display">\[SSE \perp\!\!\!\perp SSR\]</span>
 </div>
 
 
@@ -1929,7 +1924,7 @@ This completes the proof.
 
 <div class="proposition">
 <p><span id="prp:ssbind" class="proposition"><strong>Proposition 1.24  (Independence)  </strong></span>SSE and <span class="math inline">\((\hat\beta_0, \hat\beta_1)\)</span> are independent, i.e.</p>
-<span class="math display">\[SSE \ind (\hat\beta_0, \hat\beta_1)^T\]</span>
+<span class="math display">\[SSE \perp\!\!\!\perp(\hat\beta_0, \hat\beta_1)^T\]</span>
 </div>
 
 
@@ -2049,7 +2044,7 @@ where <span class="math inline">\(\delta = \sum\limits_{i = 1}^n (x_i - \overlin
 
 <p>Finally, we can now use Proposition <a href="simple.html#prp:fdist">1.16</a> so that</p>
 <p><span class="math display">\[
-F \equiv \frac{MSR}{MSE} = \frac{\frac{SSE / \sigma^2 \sim \chi^2(1)}{1}}{\frac{SSR / \sigma^2 \hsim \chi^2(n - 2)}{n - 2}} \hsim F(1, n - 2)
+F \equiv \frac{MSR}{MSE} = \frac{\frac{SSE / \sigma^2 \sim \chi^2(1)}{1}}{\frac{SSR / \sigma^2 \stackrel{H_0}{\sim}\chi^2(n - 2)}{n - 2}} \stackrel{H_0}{\sim}F(1, n - 2)
 \]</span></p>
 <p>By construction, this test statistic is used for</p>
 <p><span class="math display">\[H_0: \beta_1 = 0\]</span></p>
@@ -2061,7 +2056,7 @@ F \equiv \frac{MSR}{MSE} = \frac{\frac{SSE / \sigma^2 \sim \chi^2(1)}{1}}{\frac{
 
 <div class="remark">
 <p> <span class="remark"><em>Remark</em> (F statistic on testing significance). </span> Null hypothesis <a href="simple.html#eq:goodfit">(1.21)</a> can be tested with <span class="math inline">\(F\)</span>-statistic.</p>
-<span class="math display">\[F_0 = \frac{MSR}{MSE} = \frac{SSR / df(SSR)}{SSE / df(SSE)} \hsim F(df(SSR), df(SSE))\]</span>
+<span class="math display">\[F_0 = \frac{MSR}{MSE} = \frac{SSR / df(SSR)}{SSE / df(SSE)} \stackrel{H_0}{\sim}F(df(SSR), df(SSE))\]</span>
 </div>
 
 <p>Then we reject <span class="math inline">\(H_0\)</span> if</p>

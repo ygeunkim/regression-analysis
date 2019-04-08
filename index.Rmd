@@ -5,6 +5,13 @@ author: |
   | Department of Statistics, SKKU
   | \href{mailto: dudrms33@g.skku.edu}{dudrms33@g.skku.edu}
 date: "`r format(Sys.time(), '%d %b, %Y')`"
+header-includes:
+  - \newcommand{\iid}{\stackrel{iid}{\sim}}
+  - \newcommand{\indep}{\stackrel{indep}{\sim}}
+  - \newcommand{\hsim}{\stackrel{H_0}{\sim}}
+  - \newcommand{\ind}{\perp\!\!\!\perp}
+  - \newcommand{\R}{\mathbb{R}}
+  - \DeclareMathOperator*{\argmin}{argmin}
 cover-image: cover.png
 site: bookdown::bookdown_site
 documentclass: book
@@ -13,6 +20,10 @@ biblio-style: apalike
 link-citations: yes
 description: "This aims at covering materials of regression analysis with R programming."
 ---
+
+```{r, echo=FALSE, results='asis'}
+eqn_numbering()
+```
 
 # Welcome {-}
 

@@ -238,7 +238,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Given data <span class="math inline">\((x_{11}, x_{12}, \ldots, x_{1p}, Y_1), \ldots, (x_{n1}, x_{n2}, \ldots, x_{np}, Y_n)\)</span> (<span class="math inline">\(p = 4\)</span>), we try to fit linear regression model</p>
 <p><span class="math display">\[Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}\]</span></p>
 <p>with</p>
-<p><span class="math display">\[\epsilon_i \iid (0, \sigma^2)\]</span></p>
+<p><span class="math display">\[\epsilon_i \stackrel{iid}{\sim}(0, \sigma^2)\]</span></p>
 <p>Compared to simple linear regression problem <a href="simple.html#simple">1</a>, we have more parameters for coefficients</p>
 <p><span class="math display">\[(\beta_0, \beta_1, \ldots, \beta_p, \sigma^2)\]</span></p>
 <p>Each <span class="math inline">\(\beta_j\)</span> is a change of <span class="math inline">\(Y\)</span> when each predictor variable <span class="math inline">\(x_j\)</span> increases in 1 unit while the others fixed. In this part, we use <em>matrix notation</em>. Extending our former matrix work <a href="simple.html#matnot">1.6</a>,</p>
@@ -270,12 +270,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="least-square-estimation" class="section level2">
 <h2><span class="header-section-number">2.2</span> Least Square Estimation</h2>
-<p>Write <span class="math inline">\(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \R^{p + 1}\)</span>. Extend Equation <a href="simple.html#eq:qmatrix">(1.14)</a>.</p>
+<p>Write <span class="math inline">\(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \mathbb{R}^{p + 1}\)</span>. Extend Equation <a href="simple.html#eq:qmatrix">(1.14)</a>.</p>
 <p><span class="math display" id="eq:qmultiple">\[\begin{equation}
   \begin{split}
-    \boldsymbol{\hat\beta} &amp; = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
-    &amp; = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
-    &amp; = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+    \boldsymbol{\hat\beta} &amp; = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    &amp; = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    &amp; = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
   \end{split}
   \tag{2.1}
 \end{equation}\]</span></p>
@@ -296,26 +296,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Our first question is when <span class="math inline">\(X^T X\)</span> is invertible, and Theorem <a href="simple.html#thm:fullrank">1.8</a> have said that it is when the model matrix <span class="math inline">\(X\)</span> is full rank.</p>
 
 <div class="lemma">
-<p><span id="lem:modelnnd" class="lemma"><strong>Lemma 2.1  </strong></span>Let <span class="math inline">\(X \in \R^{n \times (p + 1)}\)</span> be any model matrix. Then <span class="math inline">\(X^T X\)</span> is always non-negative definite.</p>
-<span class="math display">\[\forall \mathbf{v} \in \R^{p + 1} : \mathbf{v}^T(X^T X)\mathbf{v} \ge 0\]</span>
+<p><span id="lem:modelnnd" class="lemma"><strong>Lemma 2.1  </strong></span>Let <span class="math inline">\(X \in \mathbb{R}^{n \times (p + 1)}\)</span> be any model matrix. Then <span class="math inline">\(X^T X\)</span> is always non-negative definite.</p>
+<span class="math display">\[\forall \mathbf{v} \in \mathbb{R}^{p + 1} : \mathbf{v}^T(X^T X)\mathbf{v} \ge 0\]</span>
 </div>
 
 
 <div class="proof">
-<p> <span class="proof"><em>Proof. </em></span> Let <span class="math inline">\(\mathbf{v} \in \R^{p + 1}\)</span>. Then</p>
+<p> <span class="proof"><em>Proof. </em></span> Let <span class="math inline">\(\mathbf{v} \in \mathbb{R}^{p + 1}\)</span>. Then</p>
 <span class="math display">\[\mathbf{v}^T(X^T X)\mathbf{v} = (X\mathbf{v})^T (X\mathbf{v}) = \lVert X\mathbf{v} \rVert^2 \ge 0\]</span>
 </div>
 
 <p>This lemma can also prove our Theorem <a href="simple.html#thm:fullrank">1.8</a>.</p>
 
 <div class="theorem">
-<p><span id="thm:fullrank2" class="theorem"><strong>Theorem 2.1  </strong></span>Let <span class="math inline">\(\mathbf{Y} = X\boldsymbol\beta\)</span> inconsistent and let <span class="math inline">\(X \in \R^{n \times (p + 1)}\)</span> with <span class="math inline">\(n &gt; p + 1\)</span>.</p>
+<p><span id="thm:fullrank2" class="theorem"><strong>Theorem 2.1  </strong></span>Let <span class="math inline">\(\mathbf{Y} = X\boldsymbol\beta\)</span> inconsistent and let <span class="math inline">\(X \in \mathbb{R}^{n \times (p + 1)}\)</span> with <span class="math inline">\(n &gt; p + 1\)</span>.</p>
 If <span class="math inline">\(rank(X) = p + 1\)</span>, i.e. full rank, then <span class="math inline">\(X^T X\)</span> is invertible.
 </div>
 
 
 <div class="proof">
-<p> <span class="proof"><em>Proof. </em></span> Let <span class="math inline">\(\mathbf{c} \in \R^{(p + 1)}\)</span></p>
+<p> <span class="proof"><em>Proof. </em></span> Let <span class="math inline">\(\mathbf{c} \in \mathbb{R}^{(p + 1)}\)</span></p>
 <p>Suppose that <span class="math inline">\(X^T X\)</span> is positive definite.</p>
 <span class="math display">\[\begin{equation*}
   \begin{split}
@@ -346,7 +346,7 @@ Hence, we get <span class="math inline">\(\{ \mathbf{u}_1, \ldots, \mathbf{u}_m 
 <p>This <em>orthonormal basis</em> gives some useful facts with least squares problem <span class="citation">(Leon <a href="#ref-Leon:2014aa" role="doc-biblioref">2014</a>)</span>.</p>
 
 <div class="theorem">
-<p><span id="thm:orthonormal" class="theorem"><strong>Theorem 2.3  </strong></span>Let <span class="math inline">\(Col(X)\)</span> be a subspace of <span class="math inline">\(\R^n\)</span>, let <span class="math inline">\(\mathbf{Y} \in \R^n\)</span>, and let <span class="math inline">\(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\)</span> be an orthonormal basis for <span class="math inline">\(Col(X)\)</span>. If</p>
+<p><span id="thm:orthonormal" class="theorem"><strong>Theorem 2.3  </strong></span>Let <span class="math inline">\(Col(X)\)</span> be a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>, let <span class="math inline">\(\mathbf{Y} \in \mathbb{R}^n\)</span>, and let <span class="math inline">\(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\)</span> be an orthonormal basis for <span class="math inline">\(Col(X)\)</span>. If</p>
 <p><span class="math display">\[\mathbf{\hat{Y}} = \sum_{j = 0}^p \hat\beta_j \mathbf{u}_j\]</span></p>
 <p>where</p>
 <p><span class="math display">\[\hat\beta_j = \Pi(\mathbf{Y} \mid R(\mathbf{u}_j)) \quad \text{for each} \: i\]</span></p>
@@ -397,7 +397,7 @@ X = \left[\begin{array}{c|ccc}
   \begin{split}
     X\boldsymbol{\hat\beta} &amp; = \hat\beta_0\mathbf{1} + \mathbb{X}_A\boldsymbol{\hat\beta}_A \\
     &amp; = \hat\beta_0\mathbf{1} + (\mathbb{X}_{A, \perp} + \Pi_{\mathbf{1}}\mathbb{X}_A)\boldsymbol{\hat\beta}_A \\
-    &amp; = \Big(\hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \Big)\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A \qquad \because \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \in \R
+    &amp; = \Big(\hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \Big)\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A \qquad \because \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \in \mathbb{R}
   \end{split}
   \tag{2.3}
 \end{equation}\]</span></p>

@@ -126,18 +126,11 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{07 Apr, 2019}
+    \date{08 Apr, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{pdfpages}
-
-\newcommand{\iid}{\stackrel{iid}{\sim}}
-\newcommand{\indep}{\stackrel{indep}{\sim}}
-\newcommand{\hsim}{\stackrel{H_0}{\sim}}
-\newcommand{\ind}{\perp\!\!\!\perp}
-\newcommand{\R}{\mathbb{R}}
-\DeclareMathOperator*{\argmin}{argmin}
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
@@ -245,7 +238,7 @@ So we try to estimate
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-4-1} \end{center}
+\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-5-1} \end{center}
 
 Looking just with the eyes, we can see the linear relationship. Regression analysis estimates the relationship statistically.
 
@@ -258,7 +251,7 @@ Looking just with the eyes, we can see the linear relationship. Regression analy
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-5-1} \end{center}
+\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-6-1} \end{center}
 
 \hypertarget{simple}{%
 \chapter{Simple Linear Regression}\label{simple}}
@@ -1433,9 +1426,9 @@ If \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_r \}\) is a basis for \(S\) and \(\{ \m
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{theorem}
-\protect\hypertarget{thm:dsum}{}{\label{thm:dsum} }Let \(S\) be a subspace of \(\R^n\). Then
+\protect\hypertarget{thm:dsum}{}{\label{thm:dsum} }Let \(S\) be a subspace of \(\mathbb{R}^n\). Then
 
-\[\R^n = S \oplus S^{\perp}\]
+\[\mathbb{R}^n = S \oplus S^{\perp}\]
 \EndKnitrBlock{theorem}
 
 \hypertarget{simple-linear-regression}{%
@@ -1517,7 +1510,7 @@ Also,
 \hypertarget{solproj}{%
 \subsection{Projection mapping}\label{solproj}}
 
-Look again Figure \ref{fig:simpledraw}. Let \(X \equiv [\mathbf{1}, \mathbf{x}] \in \R^{n \times 2}\) and let \(\boldsymbol\beta \equiv (\beta_0, \beta_1)^T\). By the fundamental subspaces theorem \ref{thm:fundsub},
+Look again Figure \ref{fig:simpledraw}. Let \(X \equiv [\mathbf{1}, \mathbf{x}] \in \mathbb{R}^{n \times 2}\) and let \(\boldsymbol\beta \equiv (\beta_0, \beta_1)^T\). By the fundamental subspaces theorem \ref{thm:fundsub},
 
 \[\mathbf{Y} - X\boldsymbol{\hat\beta} \in Col(X)^{\perp} = N(X^T)\]
 
@@ -1545,10 +1538,10 @@ It follows that
 
 \[\mathbf{\hat{Y}} = X\boldsymbol{\hat\beta} = X(X^TX)^{-1}X^T \mathbf{Y}\]
 
-Combining this equation and our figure, we can know that \(X(X^TX)^{-1}X^T\) projects \(\mathbf{Y}\) from \(\R^n\) onto \(Col(X) = R(X)\). This is called projection operator/mapping.
+Combining this equation and our figure, we can know that \(X(X^TX)^{-1}X^T\) projects \(\mathbf{Y}\) from \(\mathbb{R}^n\) onto \(Col(X) = R(X)\). This is called projection operator/mapping.
 
 \BeginKnitrBlock{definition}[Projection matrix]
-\protect\hypertarget{def:projop}{}{\label{def:projop} \iffalse (Projection matrix) \fi{} }Projection operator or mapping from \(\R^n\) to \(W\) is written by
+\protect\hypertarget{def:projop}{}{\label{def:projop} \iffalse (Projection matrix) \fi{} }Projection operator or mapping from \(\mathbb{R}^n\) to \(W\) is written by
 
 \[\Pi(\cdot \mid W) := X(X^TX)^{-1}X^T\]
 \EndKnitrBlock{definition}
@@ -1556,7 +1549,7 @@ Combining this equation and our figure, we can know that \(X(X^TX)^{-1}X^T\) pro
 As mentioned, \(X^TX\) should be invertible to get the LSE solution.
 
 \BeginKnitrBlock{theorem}
-\protect\hypertarget{thm:fullrank}{}{\label{thm:fullrank} }Let \(\mathbf{Y} = X\boldsymbol\beta\) inconsistent and let \(X \in \R^{n \times (p + 1)}\) with \(n > p + 1\).
+\protect\hypertarget{thm:fullrank}{}{\label{thm:fullrank} }Let \(\mathbf{Y} = X\boldsymbol\beta\) inconsistent and let \(X \in \mathbb{R}^{n \times (p + 1)}\) with \(n > p + 1\).
 
 If \(rank(X) = p + 1\), i.e.~full rank, then \(X^T X\) is invertible.
 \EndKnitrBlock{theorem}
@@ -2246,24 +2239,24 @@ Looking at these two statistics, we can intuitively know the meaning. As \(\lver
 \hypertarget{useful-distributions}{%
 \subsection{Useful distributions}\label{useful-distributions}}
 
-In linear regression setting, we usually assume \(\epsilon_i \iid N(0, \sigma^2)\). There are some useful distributions around Normal.
+In linear regression setting, we usually assume \(\epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\). There are some useful distributions around Normal.
 
 \BeginKnitrBlock{proposition}[$\chi^2$-distribution]
 \protect\hypertarget{prp:chisq}{}{\label{prp:chisq} \iffalse (\(\chi^2\)-distribution) \fi{} }Square of standard normal follows \(\chi^2\)-distribution.
 
 If \(Z \sim N(0, 1)\), then \(Z^2 \sim \chi^2(1)\)
 
-If \(Z_i \indep N(0, 1)\), then \(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n)\)
+If \(Z_i \stackrel{indep}{\sim}N(0, 1)\), then \(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n)\)
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proposition}[t-distribution]
-\protect\hypertarget{prp:tdist}{}{\label{prp:tdist} \iffalse (t-distribution) \fi{} }Let \(Z \sim N(0, 1) \ind V \sim \chi^2(m)\). Then
+\protect\hypertarget{prp:tdist}{}{\label{prp:tdist} \iffalse (t-distribution) \fi{} }Let \(Z \sim N(0, 1) \perp\!\!\!\perp V \sim \chi^2(m)\). Then
 
 \[T = \frac{Z}{\sqrt{V / m}} \sim t(m)\]
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proposition}[F-distribution]
-\protect\hypertarget{prp:fdist}{}{\label{prp:fdist} \iffalse (F-distribution) \fi{} }Let \(V \sim \chi^2(m) \ind W \sim \chi^2(n)\). Then
+\protect\hypertarget{prp:fdist}{}{\label{prp:fdist} \iffalse (F-distribution) \fi{} }Let \(V \sim \chi^2(m) \perp\!\!\!\perp W \sim \chi^2(n)\). Then
 
 \[F = \frac{V / m}{W / n} \sim F(m, n)\]
 \EndKnitrBlock{proposition}
@@ -2273,13 +2266,13 @@ Also, there is \emph{non-central analogue} of these three distributions, i.e.~st
 \BeginKnitrBlock{proposition}[Noncentral $\chi^2$-distribution]
 \protect\hypertarget{prp:nonchi}{}{\label{prp:nonchi} \iffalse (Noncentral \(\chi^2\)-distribution) \fi{} }Square of scaled normal follows non-central \(\chi^2\)-distribution.
 
-If \(Z_i \indep N(\mu_i, 1)\), then \(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n, \sum\limits_{i = 1}^n \mu_i^2)\)
+If \(Z_i \stackrel{indep}{\sim}N(\mu_i, 1)\), then \(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n, \sum\limits_{i = 1}^n \mu_i^2)\)
 
 \(\sum\limits_{i = 1}^n \mu_i^2\) is called a non-central parameter.
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proposition}[Noncentral t-distribution]
-\protect\hypertarget{prp:nontdist}{}{\label{prp:nontdist} \iffalse (Noncentral t-distribution) \fi{} }Let \(X \sim N(\mu, 1) \ind V \sim \chi^2(m)\). Then
+\protect\hypertarget{prp:nontdist}{}{\label{prp:nontdist} \iffalse (Noncentral t-distribution) \fi{} }Let \(X \sim N(\mu, 1) \perp\!\!\!\perp V \sim \chi^2(m)\). Then
 
 \[T = \frac{Z}{\sqrt{V / m}} \sim t(m, \mu)\]
 
@@ -2287,7 +2280,7 @@ If \(Z_i \indep N(\mu_i, 1)\), then \(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n, \sum
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proposition}[Noncentral F-distribution]
-\protect\hypertarget{prp:nonfdist}{}{\label{prp:nonfdist} \iffalse (Noncentral F-distribution) \fi{} }Let \(V \sim \chi^2(m, \delta) \ind W \sim \chi^2(n)\). Then
+\protect\hypertarget{prp:nonfdist}{}{\label{prp:nonfdist} \iffalse (Noncentral F-distribution) \fi{} }Let \(V \sim \chi^2(m, \delta) \perp\!\!\!\perp W \sim \chi^2(n)\). Then
 
 \[F = \frac{V / m}{W / n} \sim F(m, n, \delta)\]
 
@@ -2300,7 +2293,7 @@ If \(Z_i \indep N(\mu_i, 1)\), then \(Z_1^2 + \cdots + Z_n^2 \sim \chi^2(n, \sum
 Now we can determine the distributions of various quadratic forms. The reason we are taking care of this is ANOVA deals with sum of squares, i.e.~quadratic form.
 
 \BeginKnitrBlock{theorem}[Idempotent and symmetric]
-\protect\hypertarget{thm:idem}{}{\label{thm:idem} \iffalse (Idempotent and symmetric) \fi{} }Let \(A \in \R^{k \times k}\) be idempotent and symmetric. Then
+\protect\hypertarget{thm:idem}{}{\label{thm:idem} \iffalse (Idempotent and symmetric) \fi{} }Let \(A \in \mathbb{R}^{k \times k}\) be idempotent and symmetric. Then
 
 \(\text{(a)}\: A^n\) is also idempotent
 
@@ -2361,7 +2354,7 @@ Since \(\lambda = 0, 1\) of A,
   If \(A\) and \(B\) are symmetric,
 \end{enumerate}
 
-\[Y^T AY \ind Y^T BY \Leftrightarrow A\Sigma B = 0\]
+\[Y^T AY \perp\!\!\!\perp Y^T BY \Leftrightarrow A\Sigma B = 0\]
 
 \begin{enumerate}
 \def\labelenumi{(\roman{enumi})}
@@ -2371,7 +2364,7 @@ Since \(\lambda = 0, 1\) of A,
   If \(A\) is symmetric,
 \end{enumerate}
 
-\[Y^T AY \ind BY \Leftrightarrow B\Sigma A = 0\]
+\[Y^T AY \perp\!\!\!\perp BY \Leftrightarrow B\Sigma A = 0\]
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{theorem}[Distribution of quadratic form]
@@ -2504,7 +2497,7 @@ Hence by partitioning \(X = [\mathbf{1} \mid \mathbf{x}]\),
 \BeginKnitrBlock{proposition}[Independence]
 \protect\hypertarget{prp:ssind}{}{\label{prp:ssind} \iffalse (Independence) \fi{} }SSE and SSR are independent, i.e.
 
-\[SSE \ind SSR\]
+\[SSE \perp\!\!\!\perp SSR\]
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proof}
@@ -2532,7 +2525,7 @@ This completes the proof.
 \BeginKnitrBlock{proposition}[Independence]
 \protect\hypertarget{prp:ssbind}{}{\label{prp:ssbind} \iffalse (Independence) \fi{} }SSE and \((\hat\beta_0, \hat\beta_1)\) are independent, i.e.
 
-\[SSE \ind (\hat\beta_0, \hat\beta_1)^T\]
+\[SSE \perp\!\!\!\perp(\hat\beta_0, \hat\beta_1)^T\]
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proof}
@@ -2688,7 +2681,7 @@ From Proposition \ref{prp:ssrdist}, we can construct same statistic. In fact, \(
 Finally, we can now use Proposition \ref{prp:fdist} so that
 
 \[
-F \equiv \frac{MSR}{MSE} = \frac{\frac{SSE / \sigma^2 \sim \chi^2(1)}{1}}{\frac{SSR / \sigma^2 \hsim \chi^2(n - 2)}{n - 2}} \hsim F(1, n - 2)
+F \equiv \frac{MSR}{MSE} = \frac{\frac{SSE / \sigma^2 \sim \chi^2(1)}{1}}{\frac{SSR / \sigma^2 \stackrel{H_0}{\sim}\chi^2(n - 2)}{n - 2}} \stackrel{H_0}{\sim}F(1, n - 2)
 \]
 
 By construction, this test statistic is used for
@@ -2705,7 +2698,7 @@ which means that the predictor does not explain the response anything. In other 
 \BeginKnitrBlock{remark}[F statistic on testing significance]
 \iffalse{} {Remark (F statistic on testing significance). } \fi{}Null hypothesis \eqref{eq:goodfit} can be tested with \(F\)-statistic.
 
-\[F_0 = \frac{MSR}{MSE} = \frac{SSR / df(SSR)}{SSE / df(SSE)} \hsim F(df(SSR), df(SSE))\]
+\[F_0 = \frac{MSR}{MSE} = \frac{SSR / df(SSR)}{SSE / df(SSE)} \stackrel{H_0}{\sim}F(df(SSR), df(SSE))\]
 \EndKnitrBlock{remark}
 
 Then we reject \(H_0\) if
@@ -2873,7 +2866,7 @@ Given data \((x_{11}, x_{12}, \ldots, x_{1p}, Y_1), \ldots, (x_{n1}, x_{n2}, \ld
 
 with
 
-\[\epsilon_i \iid (0, \sigma^2)\]
+\[\epsilon_i \stackrel{iid}{\sim}(0, \sigma^2)\]
 
 Compared to simple linear regression problem \ref{simple}, we have more parameters for coefficients
 
@@ -2913,13 +2906,13 @@ where \(\epsilon_i\) are i.i.d., and
 \hypertarget{least-square-estimation}{%
 \section{Least Square Estimation}\label{least-square-estimation}}
 
-Write \(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \R^{p + 1}\). Extend Equation \eqref{eq:qmatrix}.
+Write \(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \mathbb{R}^{p + 1}\). Extend Equation \eqref{eq:qmatrix}.
 
 \begin{equation}
   \begin{split}
-    \boldsymbol{\hat\beta} & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
-    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
-    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+    \boldsymbol{\hat\beta} & = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    & = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    & = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
   \end{split}
   \label{eq:qmultiple}
 \end{equation}
@@ -2951,13 +2944,13 @@ Hence, if \(X^T X\) is invertible, the equation gives unique solution
 Our first question is when \(X^T X\) is invertible, and Theorem \ref{thm:fullrank} have said that it is when the model matrix \(X\) is full rank.
 
 \BeginKnitrBlock{lemma}
-\protect\hypertarget{lem:modelnnd}{}{\label{lem:modelnnd} }Let \(X \in \R^{n \times (p + 1)}\) be any model matrix. Then \(X^T X\) is always non-negative definite.
+\protect\hypertarget{lem:modelnnd}{}{\label{lem:modelnnd} }Let \(X \in \mathbb{R}^{n \times (p + 1)}\) be any model matrix. Then \(X^T X\) is always non-negative definite.
 
-\[\forall \mathbf{v} \in \R^{p + 1} : \mathbf{v}^T(X^T X)\mathbf{v} \ge 0\]
+\[\forall \mathbf{v} \in \mathbb{R}^{p + 1} : \mathbf{v}^T(X^T X)\mathbf{v} \ge 0\]
 \EndKnitrBlock{lemma}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}Let \(\mathbf{v} \in \R^{p + 1}\). Then
+\iffalse{} {Proof. } \fi{}Let \(\mathbf{v} \in \mathbb{R}^{p + 1}\). Then
 
 \[\mathbf{v}^T(X^T X)\mathbf{v} = (X\mathbf{v})^T (X\mathbf{v}) = \lVert X\mathbf{v} \rVert^2 \ge 0\]
 \EndKnitrBlock{proof}
@@ -2965,13 +2958,13 @@ Our first question is when \(X^T X\) is invertible, and Theorem \ref{thm:fullran
 This lemma can also prove our Theorem \ref{thm:fullrank}.
 
 \BeginKnitrBlock{theorem}
-\protect\hypertarget{thm:fullrank2}{}{\label{thm:fullrank2} }Let \(\mathbf{Y} = X\boldsymbol\beta\) inconsistent and let \(X \in \R^{n \times (p + 1)}\) with \(n > p + 1\).
+\protect\hypertarget{thm:fullrank2}{}{\label{thm:fullrank2} }Let \(\mathbf{Y} = X\boldsymbol\beta\) inconsistent and let \(X \in \mathbb{R}^{n \times (p + 1)}\) with \(n > p + 1\).
 
 If \(rank(X) = p + 1\), i.e.~full rank, then \(X^T X\) is invertible.
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}Let \(\mathbf{c} \in \R^{(p + 1)}\)
+\iffalse{} {Proof. } \fi{}Let \(\mathbf{c} \in \mathbb{R}^{(p + 1)}\)
 
 Suppose that \(X^T X\) is positive definite.
 
@@ -3011,7 +3004,7 @@ Hence, we get \(\{ \mathbf{u}_1, \ldots, \mathbf{u}_m \}\) is an orthonormal bas
 This \emph{orthonormal basis} gives some useful facts with least squares problem \citep{Leon:2014aa}.
 
 \BeginKnitrBlock{theorem}
-\protect\hypertarget{thm:orthonormal}{}{\label{thm:orthonormal} }Let \(Col(X)\) be a subspace of \(\R^n\), let \(\mathbf{Y} \in \R^n\), and let \(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\) be an orthonormal basis for \(Col(X)\). If
+\protect\hypertarget{thm:orthonormal}{}{\label{thm:orthonormal} }Let \(Col(X)\) be a subspace of \(\mathbb{R}^n\), let \(\mathbf{Y} \in \mathbb{R}^n\), and let \(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\) be an orthonormal basis for \(Col(X)\). If
 
 \[\mathbf{\hat{Y}} = \sum_{j = 0}^p \hat\beta_j \mathbf{u}_j\]
 
@@ -3086,7 +3079,7 @@ Then
   \begin{split}
     X\boldsymbol{\hat\beta} & = \hat\beta_0\mathbf{1} + \mathbb{X}_A\boldsymbol{\hat\beta}_A \\
     & = \hat\beta_0\mathbf{1} + (\mathbb{X}_{A, \perp} + \Pi_{\mathbf{1}}\mathbb{X}_A)\boldsymbol{\hat\beta}_A \\
-    & = \Big(\hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \Big)\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A \qquad \because \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \in \R
+    & = \Big(\hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \Big)\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A \qquad \because \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \in \mathbb{R}
   \end{split}
   \label{eq:blockfit}
 \end{equation}
