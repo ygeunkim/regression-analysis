@@ -455,7 +455,11 @@ knitr::include_graphics("images/multiple-qr1.png")
 knitr::include_graphics("images/multiple-qr2.png")
 ```
 
-See Figure \@ref(fig:qrpng). By construbtion, projection onto each basis is same as $\hat\beta_0$ and $\hat\beta_1$. In Figure \@ref(fig:qrpng2), however, each projection is not regression coefficient.
+See Figure \@ref(fig:qrpng). By construbtion, projection onto each basis is same as $\hat\beta_0$ and $\hat\beta_1$. In Figure \@ref(fig:qrpng2), however, each projection is not regression coefficient. Recap Figure \@ref(fig:simpledraw2).
+
+```{r simpledraw3, echo=FALSE, fig.cap="QR decomposition for model matrix"}
+knitr::include_graphics("images/multiple-qr3.png")
+```
 
 
 
