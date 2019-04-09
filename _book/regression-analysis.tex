@@ -2298,7 +2298,17 @@ If \(Z_i \stackrel{indep}{\sim}N(\mu_i, 1)\), then \(Z_1^2 + \cdots + Z_n^2 \sim
 \hypertarget{quadratic-form}{%
 \subsection{Quadratic form}\label{quadratic-form}}
 
-Now we can determine the distributions of various quadratic forms. The reason we are taking care of this is ANOVA deals with sum of squares, i.e.~quadratic form.
+Now we can determine the distributions of various quadratic forms. The reason we are taking care of this is ANOVA deals with sum of squares, i.e.~quadratic form. See Corollary \ref{cor:projss} for this.
+
+\begin{itemize}
+\tightlist
+\item
+  \(SST = \mathbf{Y}^T(I - \Pi_{\mathbf{1}})\mathbf{Y}\)
+\item
+  \(SSR = \mathbf{Y}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{Y}\)
+\item
+  \(SSE = \mathbf{Y}^T(I - \Pi_X)\mathbf{Y}\)
+\end{itemize}
 
 \BeginKnitrBlock{theorem}[Idempotent and symmetric]
 \protect\hypertarget{thm:idem}{}{\label{thm:idem} \iffalse (Idempotent and symmetric) \fi{} }Let \(A \in \mathbb{R}^{k \times k}\) be idempotent and symmetric. Then
@@ -2378,14 +2388,14 @@ Since \(\lambda = 0, 1\) of A,
 \BeginKnitrBlock{theorem}[Distribution of quadratic form]
 \protect\hypertarget{thm:quaddist}{}{\label{thm:quaddist} \iffalse (Distribution of quadratic form) \fi{} }Assume that \(\mathbf{Y} \sim MVN(\mathbf\mu, I)\) and that \(A\) is symmetric and idempotent. Then
 
-\[Y^T AT \sim \chi^2(K, \delta)\]
+\[Y^T AY \sim \chi^2(K, \delta)\]
 
 where \(K = rank(A)\) and \(\delta = \boldsymbol\mu^T A \boldsymbol\mu\). Furthermore,
 
 \[
 \begin{cases}
-  E(Y^T AT) = K + \delta \\
-  Var(Y^T AT) = 2(K + 2\delta)
+  E(Y^T AY) = K + \delta \\
+  Var(Y^T AY) = 2(K + 2\delta)
 \end{cases}
 \]
 \EndKnitrBlock{theorem}
@@ -2440,13 +2450,15 @@ Since \(I - \Pi_X\) is idempotent and symmetric,
 
 Hence,
 
-\[\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)\]
+\[\frac{SSE}{\sigma^2} \sim \chi^2(n - 2, 0)\]
 \EndKnitrBlock{proof}
+
+In case of \(SSE\), it always follows \(\chi^2(n - 2)\) no matter what \(H_0\) is. However, \(SSR\) and \(SST\) depend on \(\beta_1\) that we want to test.
 
 \BeginKnitrBlock{proposition}[Distribution of SSR]
 \protect\hypertarget{prp:ssrdist}{}{\label{prp:ssrdist} \iffalse (Distribution of SSR) \fi{} }\[\frac{SSR}{\sigma^2} \sim \chi^2(1, \delta)\]
 
-where \(\delta = \sum\limits_{i = 1}^n (x_i - \overline{x})^2 \beta_1^2 = \frac{S_{xx}\beta_1^2}{\sigma^2}\)
+where \(\delta = \frac{1}{\sigma^2}\sum\limits_{i = 1}^n (x_i - \overline{x})^2 \beta_1^2 = \frac{S_{xx}\beta_1^2}{\sigma^2}\)
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proof}
@@ -2473,11 +2485,15 @@ Since \(\mathbf{1} \in sp(\{ \mathbf{1} \})\),
 
 It gives that
 
-\[\mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = 0\]
+\begin{equation} \label{eq:ssrquad1}
+  \mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = 0
+\end{equation}
 
 If \(\mathbf{x} \neq \mathbf{1}\), then we have
 
-\[\mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum_{i = 1}^n (x_i - \overline{x})^2 = S_{xx}\]
+\begin{equation} \label{eq:ssrquad2}
+  \mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum_{i = 1}^n (x_i - \overline{x})^2 = S_{xx}
+\end{equation}
 
 Recall that
 
@@ -2485,17 +2501,22 @@ Recall that
 
 Then we have
 
-\[\mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum x_i - n \overline{x} = 0\]
+\begin{equation} \label{eq:ssrquad3}
+  \mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum x_i - n \overline{x} = 0
+\end{equation}
 
-Similarly,
+By symmetry,
 
-\[\mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = n \overline{x} - \sum x_i = 0\]
+\begin{equation} \label{eq:ssrquad4}
+  \mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = n \overline{x} - \sum x_i = 0
+\end{equation}
 
 Hence by partitioning \(X = [\mathbf{1} \mid \mathbf{x}]\),
 
 \begin{equation} \label{eq:delta2}
   \begin{split}
     \delta & = \frac{\boldsymbol\beta^T \Big\{ [\mathbf{1} \mid \mathbf{x}]^T(I - \Pi_{\mathbf{1}})[\mathbf{1} \mid \mathbf{x}] \Big\} \boldsymbol\beta }{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T \begin{bmatrix} \eqref{eq:ssrquad1} & \eqref{eq:ssrquad3} \\ \eqref{eq:ssrquad4} & \eqref{eq:ssrquad2} \end{bmatrix} \boldsymbol\beta}{\sigma^2} \\
     & = \frac{\boldsymbol\beta^T \begin{bmatrix} 0 & 0 \\ 0 & S_{xx} \end{bmatrix} \boldsymbol\beta}{\sigma^2} \\
     & = \frac{S_{xx}\beta_1^2}{\sigma^2}
   \end{split}
@@ -3111,7 +3132,7 @@ See Figure \ref{fig:illdecomp}. Two are orthogonal, so sum of projections onto t
 \caption{Non-orthongality}\label{fig:illdecomp2}
 \end{figure}
 
-In this situation, we have to do orthogonalization.
+So what we have done is orthogonalization.
 
 \[\tilde{\mathbb{X}}_A = \Pi_{\mathbf{1}}\mathbb{X}_A + (\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)\]
 
@@ -3366,7 +3387,7 @@ By default and only way, \texttt{lm()} fits the model using \(QR\) factorization
 \caption{Non-orthogonal basis}\label{fig:qrpng2}
 \end{figure}
 
-See Figure \ref{fig:qrpng}. By construbtion, projection onto each basis is same as \(\hat\beta_0\) and \(\hat\beta_1\). In Figure \ref{fig:qrpng2}, however, each projection is not regression coefficient. Recap Figure \ref{fig:simpledraw2}.
+See Figure \ref{fig:qrpng}. By construbtion, projection onto each basis is same as \(\hat\beta_0\) and \(\hat\beta_1\). In Figure \ref{fig:qrpng2}, however, each projection is not regression coefficient.
 
 \begin{figure}[H]
 
@@ -3376,6 +3397,8 @@ See Figure \ref{fig:qrpng}. By construbtion, projection onto each basis is same 
 
 \caption{QR decomposition for model matrix}\label{fig:simpledraw3}
 \end{figure}
+
+Regress \(\mathbf{x}\) onto \(\mathbf{1}\). Its residual can be a new orthogonalized predictor.
 
 \bibliography{book.bib,packages.bib}
 

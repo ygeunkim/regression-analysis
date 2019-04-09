@@ -239,7 +239,7 @@ See Figure \@ref(fig:illdecomp). Two are orthogonal, so sum of projections onto 
 knitr::include_graphics("images/multiple-nonorth.png")
 ```
 
-In this situation, we have to do orthogonalization.
+So what we have done is orthogonalization.
 
 $$\tilde{\mathbb{X}}_A = \Pi_{\mathbf{1}}\mathbb{X}_A + (\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$
 
@@ -455,13 +455,13 @@ knitr::include_graphics("images/multiple-qr1.png")
 knitr::include_graphics("images/multiple-qr2.png")
 ```
 
-See Figure \@ref(fig:qrpng). By construbtion, projection onto each basis is same as $\hat\beta_0$ and $\hat\beta_1$. In Figure \@ref(fig:qrpng2), however, each projection is not regression coefficient. Recap Figure \@ref(fig:simpledraw2).
+See Figure \@ref(fig:qrpng). By construbtion, projection onto each basis is same as $\hat\beta_0$ and $\hat\beta_1$. In Figure \@ref(fig:qrpng2), however, each projection is not regression coefficient.
 
 ```{r simpledraw3, echo=FALSE, fig.cap="QR decomposition for model matrix"}
 knitr::include_graphics("images/multiple-qr3.png")
 ```
 
-
+Regress $\mathbf{x}$ onto $\mathbf{1}$. Its residual can be a new orthogonalized predictor.
 
 
 

@@ -1844,7 +1844,11 @@ $\delta$ is called a non-central parameter.
 
 ### Quadratic form
 
-Now we can determine the distributions of various quadratic forms. The reason we are taking care of this is ANOVA deals with sum of squares, i.e. quadratic form.
+Now we can determine the distributions of various quadratic forms. The reason we are taking care of this is ANOVA deals with sum of squares, i.e. quadratic form. See Corollary \@ref(cor:projss) for this.
+
+- $SST = \mathbf{Y}^T(I - \Pi_{\mathbf{1}})\mathbf{Y}$
+- $SSR = \mathbf{Y}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{Y}$
+- $SSE = \mathbf{Y}^T(I - \Pi_X)\mathbf{Y}$
 
 ```{theorem, idem, name = "Idempotent and symmetric"}
 Let $A \in \R^{k \times k}$ be idempotent and symmetric. Then
@@ -1909,14 +1913,14 @@ $$Y^T AY \ind BY \Leftrightarrow B\Sigma A = 0$$
 ```{theorem, quaddist, name = "Distribution of quadratic form"}
 Assume that $\mathbf{Y} \sim MVN(\mathbf\mu, I)$ and that $A$ is symmetric and idempotent. Then
 
-$$Y^T AT \sim \chi^2(K, \delta)$$
+$$Y^T AY \sim \chi^2(K, \delta)$$
 
 where $K = rank(A)$ and $\delta = \boldsymbol\mu^T A \boldsymbol\mu$. Furthermore,
 
 $$
 \begin{cases}
-  E(Y^T AT) = K + \delta \\
-  Var(Y^T AT) = 2(K + 2\delta)
+  E(Y^T AY) = K + \delta \\
+  Var(Y^T AY) = 2(K + 2\delta)
 \end{cases}
 $$
 ```
@@ -1971,13 +1975,15 @@ $$K = rank(I - \Pi_X) = tr(I - \Pi_X) = n - rank(\Pi_X) = n - 2$$
 
 Hence,
 
-$$\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)$$
+$$\frac{SSE}{\sigma^2} \sim \chi^2(n - 2, 0)$$
 ```
+
+In case of $SSE$, it always follows $\chi^2(n - 2)$ no matter what $H_0$ is. However, $SSR$ and $SST$ depend on $\beta_1$ that we want to test.
 
 ```{proposition, ssrdist, name = "Distribution of SSR"}
 $$\frac{SSR}{\sigma^2} \sim \chi^2(1, \delta)$$
 
-where $\delta = \sum\limits_{i = 1}^n (x_i - \overline{x})^2 \beta_1^2 = \frac{S_{xx}\beta_1^2}{\sigma^2}$
+where $\delta = \frac{1}{\sigma^2}\sum\limits_{i = 1}^n (x_i - \overline{x})^2 \beta_1^2 = \frac{S_{xx}\beta_1^2}{\sigma^2}$
 ```
 
 ```{proof}
@@ -2004,11 +2010,15 @@ $$\Pi_{\mathbf{1}} \mathbf{1} = \mathbf{1}$$
 
 It gives that
 
-$$\mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = 0$$
+\begin{equation} \label{eq:ssrquad1}
+  \mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = 0
+\end{equation}
 
 If $\mathbf{x} \neq \mathbf{1}$, then we have
 
-$$\mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum_{i = 1}^n (x_i - \overline{x})^2 = S_{xx}$$
+\begin{equation} \label{eq:ssrquad2}
+  \mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum_{i = 1}^n (x_i - \overline{x})^2 = S_{xx}
+\end{equation}
 
 Recall that
 
@@ -2016,17 +2026,22 @@ $$\overline{x}\mathbf{1} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\m
 
 Then we have
 
-$$\mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum x_i - n \overline{x} = 0$$
+\begin{equation} \label{eq:ssrquad3}
+  \mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum x_i - n \overline{x} = 0
+\end{equation}
 
-Similarly,
+By symmetry,
 
-$$\mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = n \overline{x} - \sum x_i = 0$$
+\begin{equation} \label{eq:ssrquad4}
+  \mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = n \overline{x} - \sum x_i = 0
+\end{equation}
 
 Hence by partitioning $X = [\mathbf{1} \mid \mathbf{x}]$,
 
 \begin{equation} \label{eq:delta2}
   \begin{split}
     \delta & = \frac{\boldsymbol\beta^T \Big\{ [\mathbf{1} \mid \mathbf{x}]^T(I - \Pi_{\mathbf{1}})[\mathbf{1} \mid \mathbf{x}] \Big\} \boldsymbol\beta }{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T \begin{bmatrix} \eqref{eq:ssrquad1} & \eqref{eq:ssrquad3} \\ \eqref{eq:ssrquad4} & \eqref{eq:ssrquad2} \end{bmatrix} \boldsymbol\beta}{\sigma^2} \\
     & = \frac{\boldsymbol\beta^T \begin{bmatrix} 0 & 0 \\ 0 & S_{xx} \end{bmatrix} \boldsymbol\beta}{\sigma^2} \\
     & = \frac{S_{xx}\beta_1^2}{\sigma^2}
   \end{split}
