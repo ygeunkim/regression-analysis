@@ -126,11 +126,12 @@ Department of Statistics, SKKU\\
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{08 Apr, 2019}
+    \date{09 Apr, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{pdfpages}
+\usepackage[linesnumbered]{algorithm2e}
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
@@ -2981,28 +2982,6 @@ Suppose that \(X^T X\) is positive definite.
 \hypertarget{orthogonal-decomposition}{%
 \subsection{Orthogonal decomposition}\label{orthogonal-decomposition}}
 
-Let's briefly look at orthogonalization process.
-
-\BeginKnitrBlock{theorem}[Gram-Schmidt Process]
-\protect\hypertarget{thm:gs}{}{\label{thm:gs} \iffalse (Gram-Schmidt Process) \fi{} }Let \(\{ \mathbf{a}_1, \ldots, \mathbf{a}_m \}\) be a basis for the inner product space \(V\). Let
-
-\[\mathbf{u}_1 = \bigg( \frac{1}{\lVert \mathbf{a}_1 \rVert} \bigg) \mathbf{a}_1\]
-
-and define next \(\mathbf{u}_2, \ldots, \mathbf{u}_m\) recursively by
-
-\[\mathbf{u}_{k + 1} = \frac{1}{\lVert \mathbf{a}_{k + 1} - \mathbf{p}_k \rVert}(\mathbf{a}_{k + 1} - \mathbf{p}_k)\]
-
-for \(k = 1, \ldots, m - 1\), where
-
-\[\mathbf{p}_k = <\mathbf{a}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{a}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u} > \mathbf{u}_k\]
-
-is the projection of \(\mathbf{a}_{k + 1}\) onto \(sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})\).
-
-Hence, we get \(\{ \mathbf{u}_1, \ldots, \mathbf{u}_m \}\) is an orthonormal basis for \(V\).
-\EndKnitrBlock{theorem}
-
-This \emph{orthonormal basis} gives some useful facts with least squares problem \citep{Leon:2014aa}.
-
 \BeginKnitrBlock{theorem}
 \protect\hypertarget{thm:orthonormal}{}{\label{thm:orthonormal} }Let \(Col(X)\) be a subspace of \(\mathbb{R}^n\), let \(\mathbf{Y} \in \mathbb{R}^n\), and let \(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\) be an orthonormal basis for \(Col(X)\). If
 
@@ -3038,9 +3017,11 @@ X = \left[\begin{array}{c|ccc}
 
 Consider \(R(X)\), \(R(\mathbf{1})\), and \(R(\mathbb{X}_A)\).
 
-To decompose subspace \(R(X)\), we try to orthogonalize \(\mathbf{1}\) and \(\mathbb{X}_A\) applying G-S process \ref{thm:gs}.
+To decompose subspace \(R(X)\), we try to orthogonalize \(\mathbf{1}\) and \(\mathbb{X}_A\). By Theorem \ref{thm:orthonormal}, we have
 
 \[\mathbf{1} \perp \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\]
+
+In fact, the right one \(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\) is the \emph{residual after simple linear regression} \(\mathbb{X}_A\) onto \(\mathbf{1}\). We have seen in Figure \ref{fig:simpledraw2} of section \ref{matnot} that the \emph{residual is orthogonal to predictor vector}. In this procedure, we choose residual as new predictor instead of response in simple linear regression, i.e.~\(\mathbb{X}_A\). If this is done to individual predictor variables, it is called \emph{successive orthogonalization} and it will be coved next section with QR decomposition.
 
 Theorem \ref{thm:dsum} implies that
 
@@ -3129,6 +3110,256 @@ In this situation, we have to do orthogonalization.
 
 \hypertarget{gram-schmidt-qr-factorization}{%
 \subsection{Gram-Schmidt QR factorization}\label{gram-schmidt-qr-factorization}}
+
+Let's briefly look at orthogonalization process. From Theorem \ref{thm:orthonormal}, we can derive following \emph{orthonormalization process}.
+
+\BeginKnitrBlock{theorem}[Gram-Schmidt Process]
+\protect\hypertarget{thm:gs}{}{\label{thm:gs} \iffalse (Gram-Schmidt Process) \fi{} }Let \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_{p + 1} \}\) be a basis for the inner product space \(V\). Let
+
+\[\mathbf{u}_1 = \bigg( \frac{1}{\lVert \mathbf{x}_1 \rVert} \bigg) \mathbf{x}_1\]
+
+and define next \(\mathbf{u}_2, \ldots, \mathbf{u}_{p + 1}\) recursively by
+
+\[\mathbf{u}_{k + 1} = \frac{1}{\lVert \mathbf{x}_{k + 1} - \mathbf{r}_k^{*} \rVert}(\mathbf{x}_{k + 1} - \mathbf{r}_k^{*})\]
+
+for \(k = 1, \ldots, p\), where
+
+\[\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{a}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u} > \mathbf{u}_k\]
+
+is the projection of \(\mathbf{x}_{k + 1}\) onto \(sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})\).
+
+Hence, we get \(\{ \mathbf{u}_1, \ldots, \mathbf{u}_{p + 1} \}\) is an orthonormal basis for \(V\).
+\EndKnitrBlock{theorem}
+
+Our interest is \(Col(X)\), and we can factorizae this model matrix so that it represents orthonormalization process \ref{thm:gs}.
+
+\BeginKnitrBlock{theorem}[Gram-Schmidt QR factorization]
+\protect\hypertarget{thm:gsqr}{}{\label{thm:gsqr} \iffalse (Gram-Schmidt QR factorization) \fi{} }Let \(X \in \mathbb{R}^{n \times (p + 1)}\). Then \(X\) can be factored into
+
+\[X = QR\]
+
+where \(Q \in \mathbb{R}^{n \times (p + 1)}\) is an orthogonal matrix, i.e.~its column vectors are orthonormal and \(R \in \mathbb{R}^{(p + 1) \times (p + 1)}\) is an upper triangular matrix whose diagonal entries are all positive.
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Denote that this is just the representation of Gram-schmidt orthogonalization. Then it gives
+
+\[\mathbf{u}_1 = \frac{\mathbf{x}_1}{\lVert \mathbf{x}_1 \rVert} \Rightarrow \mathbf{x}_1 = \lVert \mathbf{x}_1 \rVert \mathbf{u}_1\]
+
+\begin{equation*}
+  \begin{split}
+    & \mathbf{v}_2 = \mathbf{x}_2 - <\mathbf{x}_2, \mathbf{u}_1> \mathbf{u}_1, \quad \mathbf{u}_2 = \frac{\mathbf{v}_2}{\lVert \mathbf{v}_2 \rVert} \\
+    & \Rightarrow \mathbf{x}_2 = <\mathbf{x}_2, \mathbf{u}_1>\mathbf{u}_1 + \lVert \mathbf{v}_2 \rVert \mathbf{u}_2 \\
+    & \Rightarrow \mathbf{x}_2 = \left[\begin{array}{c|c}
+      \mathbf{u}_1 & \mathbf{u}_2
+    \end{array}\right] \begin{bmatrix}
+      <\mathbf{x}_2, \mathbf{u}_1> \\
+      \lVert \mathbf{v}_2 \rVert
+    \end{bmatrix}
+  \end{split}
+\end{equation*}
+
+It procees in a simlar way to the others. Hence,
+
+\begin{equation}
+  \begin{split}
+    X & = \begin{bmatrix} \mathbf{x}_1 & \cdots & \mathbf{x}_{p+1} \end{bmatrix} \\
+    & = \begin{bmatrix}
+      \mathbf{u}_1 & \mathbf{u}_2 & \cdots & \mathbf{u}_{p + 1}
+    \end{bmatrix} \begin{bmatrix}
+      \lVert \mathbf{v}_1 \rVert & < \mathbf{x}_2, \mathbf{u}_1> & < \mathbf{x}_3, \mathbf{u}_1> & \cdots & < \mathbf{x}_{p + 1}, \mathbf{u}_1> \\
+      0 & \lVert \mathbf{v}_2 \rVert & < \mathbf{x}_3, \mathbf{u}_2> & \cdots & < \mathbf{x}_{p + 1}, \mathbf{u}_2> \\
+      0 & 0 & \lVert \mathbf{v}_3 \rVert & \cdots & < \mathbf{x}_{p + 1}, \mathbf{u}_3> \\
+      \vdots & \vdots & \vdots & \vdots & \vdots \\
+      0 & 0 & 0 & 0 & \lVert \mathbf{v}_{p + 1} \rVert
+    \end{bmatrix} \\
+    & \equiv QR
+  \end{split}
+  \label{eq:qrrep}
+\end{equation}
+\EndKnitrBlock{proof}
+
+Look again the equation in Theorem \ref{thm:gs}. In each process \(k\), the projection is done to the \((k - 1)\)-dimensional space. In other words, as process goes through, dimension increases. So we try to project each vector only in 1-dimension each step.
+
+\BeginKnitrBlock{theorem}[Modified Gram-Schmidt Process]
+\protect\hypertarget{thm:modgs}{}{\label{thm:modgs} \iffalse (Modified Gram-Schmidt Process) \fi{} }Let \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_{p + 1} \}\) be a basis for the inner product space \(V\) and let \(\{ \mathbf{q}_1, \ldots, \mathbf{q}_{p + 1} \}\) be an orthonormal basis.
+
+Set \(\mathbf{q}_1 = \frac{\mathbf{x}_1}{\lVert \mathbf{x}_1 \rVert}\). Then consider \(sp(\{ \mathbf{q}_1 \})\).
+
+In the first step, make every \(\{ \mathbf{x}_2, \ldots, \mathbf{x}_{p + 1} \}\) orthogonal to \(\mathbf{q}_1\).
+
+\[\mathbf{x}_k^{(1)} = \mathbf{x}_k - (\mathbf{q}_1^T \mathbf{x}_k)\mathbf{q}_1, \quad k = 2, \ldots, p + 1\]
+
+So we get orthogonal set \(\{ \mathbf{q}_1, \mathbf{x}_2^{(1)}, \ldots, \mathbf{x}_{p + 1}^{(1)} \}\). Next, set \(\mathbf{q}_2 = \frac{\mathbf{x}^{(1)}}{\lVert \mathbf{x}_2^{(2)} \rVert}\). Consider \(sp(\{ \mathbf{q}_2 \})\). Since we have \(\mathbf{q}_1 \perp \mathbf{q}_2\),
+
+\[\mathbf{x}_k^{(2)} = \mathbf{x}_k^{(1)} - (\mathbf{q}_2^T \mathbf{x}_k^{(1)})\mathbf{q}_2 \perp \mathbf{q}_2 , \quad k = 3, \ldots, p + 1\]
+
+Thus, get \(\{ \mathbf{q}_1, \mathbf{q}_2, \mathbf{x}_3^{(2)}, \ldots, \mathbf{x}_{p + 1}^{(2)} \}\). \(\mathbf{q}_3, \ldots, \mathbf{q}_{p + 1}\) are successively determined in a similary way.
+
+At the last step, set
+
+\[\mathbf{q}_{p + 1} = \frac{\mathbf{x}_{p + 1}^{(p)}}{\lVert \mathbf{x}_{p + 1}^{(p)} \rVert}\]
+\EndKnitrBlock{theorem}
+
+Since each projection is done in 1-dimension, the algorithm becomes more understandable. Consider
+
+\[
+Q = \begin{bmatrix}
+  \mathbf{q}_1 & \mathbf{q}_2 & \cdots \mathbf{q}_{p + 1}
+\end{bmatrix} \in \mathbb{R}^{n \times (p + 1)} \quad \text{orthogonal}
+\]
+
+and
+
+\[
+R = [r_{kj}] = \begin{bmatrix}
+  r_{11} & r_{12} & \cdots & r_{1,p+1} \\
+  0 & r_{22} & \cdots & r_{2, p+1} \\
+  0 & 0 & \cdots & r_{3,p+1} \\
+  \vdots & \vdots & \vdots & \vdots \\
+  0 & 0 & 0 & r_{p+1, p+1}
+\end{bmatrix} \in \mathbb{R}^{(p+1) \times (p + 1)}
+\]
+
+We can perform \(QR\) factorization by following step.
+
+\begin{algorithm}
+  \SetAlgoLined
+  \For{$k \leftarrow 1$ \KwTo $(p + 1)$}{
+    $r_{kk} = \lVert \mathbf{x}_{k} \rVert$\;
+    $\mathbf{q}_k = \frac{\mathbf{x}_k}{r_{kk}}$\;
+    \For{$j \leftarrow 1$ \KwTo $(p + 1)$}{
+      $r_{kj} = \mathbf{q}_k^T\mathbf{x}_j$\;
+      $\mathbf{x}_j = \mathbf{x}_j - r_{kj}\mathbf{q}_k$\;
+    }
+  }
+  \caption{QR decomposition for modified G-S process}
+\end{algorithm}
+
+This \emph{orthonormal basis} gives some useful facts with least squares problem \citep{Leon:2014aa}.
+
+\hypertarget{successive-orthogonalization}{%
+\subsection{Successive orthogonalization}\label{successive-orthogonalization}}
+
+In fact, G-S process \ref{thm:gs} is equivalent to succesive orthogonalization, i.e.~regress(project) \(\mathbf{x}_j\) onto the others \citep{Hastie:2013aa}.
+
+\begin{algorithm}
+  \SetAlgoLined
+  Initialize $\mathbf{v}_0 = \mathbf{1}$\;
+  \For{$k \leftarrow 1$ \KwTo $p$}{
+    Regress $\mathbf{x}_k$ on $\mathbf{q}_0, \ldots, \mathbf{q}_{k - 1}$\;
+    $\hat\beta_{lk} = \frac{<\mathbf{v}_l, \mathbf{x}_k>}{< \mathbf{v}_l, \mathbf{v}_l>}, l = 0, \ldots, k - 1$\;
+    Residual $\mathbf{v}_k = \mathbf{x}_k - \sum\limits_{l = 0}^{k - 1}\hat\beta_{lk}\mathbf{v}_k$\;
+  }
+  Regress $\mathbf{Y}$ on $\mathbf{v}_p$
+  \caption{Successive orthogonalization}
+\end{algorithm}
+
+Now we can solve least squares problem using QR decomposition. Recall that
+
+\[X = QR\]
+
+as specified in Theorem \ref{thm:gsqr}. Then normal equation implies that
+
+\begin{equation}
+  \begin{split}
+    & (X^TX)\boldsymbol{\hat\beta} = X^T\mathbf{Y} \\
+    & \Leftrightarrow R^TQ^TQR \boldsymbol{\hat\beta} = R^TQ^T \mathbf{Y} \\
+    & \Leftrightarrow R^TR \boldsymbol{\hat\beta} = R^TQ^T \mathbf{Y} \qquad \because Q^TQ = I \\
+    & \Leftrightarrow R \boldsymbol{\hat\beta} = Q^T \mathbf{Y} \qquad \text{if}\: R \:\text{is invertible}
+  \end{split}
+  \label{eq:qrbeta}
+\end{equation}
+
+Hence,
+
+\begin{equation}
+  \boldsymbol{\hat\beta} = R^{-1}Q^T\mathbf{Y}
+  \label{eq:qrhat}
+\end{equation}
+
+It follows that
+
+\begin{equation}
+  \mathbf{\hat{Y}} = (QR)\boldsymbol{\hat\beta} = QQ^T\mathbf{Y}
+  \label{eq:qrfit}
+\end{equation}
+
+Let's compare the result. Base function \texttt{qr()} give the QR factorization. Given this object, we can get each \(Q\) and \(R\) by \texttt{qr.Q()} and \texttt{qr.R()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cem_qr <-}
+\StringTok{  }\NormalTok{cem }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{model.matrix}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{qr}\NormalTok{()}
+\NormalTok{cem_q <-}\StringTok{ }\KeywordTok{qr.Q}\NormalTok{(cem_qr)}
+\NormalTok{cem_r <-}\StringTok{ }\KeywordTok{qr.R}\NormalTok{(cem_qr)}
+\end{Highlighting}
+\end{Shaded}
+
+Using Equation \eqref{eq:qrhat}, we get each coefficient as follow.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{solve}\NormalTok{(cem_r) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(cem_q) }\OperatorTok{%*%}\StringTok{ }\NormalTok{cem}\OperatorTok{$}\NormalTok{y}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+              [,1]
+(Intercept) 62.405
+x1           1.551
+x2           0.510
+x3           0.102
+x4          -0.144
+\end{verbatim}
+
+On the other hand, \texttt{lm()} gives the following result.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ cem)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = y ~ ., data = cem)
+
+Coefficients:
+(Intercept)           x1           x2           x3           x4  
+     62.405        1.551        0.510        0.102       -0.144  
+\end{verbatim}
+
+We can check the result is same. In fact, \texttt{lm()} fits the model by default \texttt{method\ =\ "qr"}.
+
+\begin{quote}
+the method to be used; for fitting, currently only method = ``qr'' is supported; method = ``model.frame'' returns the model frame (the same as with model = TRUE, see below).
+\end{quote}
+
+By default and only way, \texttt{lm()} fits the model using \(QR\) factorization. What does this orthogonal basis mean? For simplicity, consider simple linear regression problem.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/multiple-qr1} 
+
+}
+
+\caption{Orthogonalized basis}\label{fig:qrpng}
+\end{figure}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/multiple-qr2} 
+
+}
+
+\caption{Non-orthogonal basis}\label{fig:qrpng2}
+\end{figure}
+
+See Figure \ref{fig:qrpng}. By construbtion, projection onto each basis is same as \(\hat\beta_0\) and \(\hat\beta_1\). In Figure \ref{fig:qrpng2}, however, each projection is not regression coefficient.
 
 \bibliography{book.bib,packages.bib}
 
