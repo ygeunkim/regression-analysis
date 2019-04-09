@@ -119,9 +119,9 @@
   \title{R Lab for Regression Analysis}
     \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-    \author{Young-geun Kim\\
-Department of Statistics, SKKU\\
-\href{mailto: dudrms33@g.skku.edu}{dudrms33@g.skku.edu}}
+    \author{\href{https://github.com/ygeunkim}{Young-geun Kim}\\
+\href{https://stat.skku.edu/stat/index.jsp}{Department of Statistics}, \href{https://www.skku.edu/skku/index.do}{SKKU}\\
+\href{mailto:dudrms33@g.skku.edu}{\nolinkurl{dudrms33@g.skku.edu}}}
     \preauthor{\centering\large\emph}
   \postauthor{\par}
       \predate{\centering\large\emph}
@@ -132,6 +132,13 @@ Department of Statistics, SKKU\\
 \usepackage{float}
 \usepackage{pdfpages}
 \usepackage[linesnumbered]{algorithm2e}
+
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+\newcommand{\hsim}{\stackrel{H_0}{\sim}}
+\newcommand{\ind}{\perp\!\!\!\perp}
+\newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator*{\argmin}{argmin}
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
@@ -2369,7 +2376,7 @@ Since \(\lambda = 0, 1\) of A,
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{theorem}[Distribution of quadratic form]
-\protect\hypertarget{thm:quaddist}{}{\label{thm:quaddist} \iffalse (Distribution of quadratic form) \fi{} }Assume that \(\mathbf{Y} \sim MVN(\mathbf\mu, \Sigma)\) and that \(A\) is symmetric and idempotent. Then
+\protect\hypertarget{thm:quaddist}{}{\label{thm:quaddist} \iffalse (Distribution of quadratic form) \fi{} }Assume that \(\mathbf{Y} \sim MVN(\mathbf\mu, I)\) and that \(A\) is symmetric and idempotent. Then
 
 \[Y^T AT \sim \chi^2(K, \delta)\]
 
@@ -2911,9 +2918,9 @@ Write \(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \mathbb{R}^{p +
 
 \begin{equation}
   \begin{split}
-    \boldsymbol{\hat\beta} & = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
-    & = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
-    & = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+    \boldsymbol{\hat\beta} & = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    & = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    & = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
   \end{split}
   \label{eq:qmultiple}
 \end{equation}

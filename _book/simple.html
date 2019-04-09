@@ -184,6 +184,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2.1" data-path="multiple.html"><a href="multiple.html#normal-equation"><i class="fa fa-check"></i><b>2.2.1</b> Normal equation</a></li>
 <li class="chapter" data-level="2.2.2" data-path="multiple.html"><a href="multiple.html#orthogonal-decomposition"><i class="fa fa-check"></i><b>2.2.2</b> Orthogonal decomposition</a></li>
 <li class="chapter" data-level="2.2.3" data-path="multiple.html"><a href="multiple.html#gram-schmidt-qr-factorization"><i class="fa fa-check"></i><b>2.2.3</b> Gram-Schmidt QR factorization</a></li>
+<li class="chapter" data-level="2.2.4" data-path="multiple.html"><a href="multiple.html#successive-orthogonalization"><i class="fa fa-check"></i><b>2.2.4</b> Successive orthogonalization</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -206,6 +207,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
+
+
+
+
+
+<span class="math inline">\(\DeclareMathOperator*{\argmin}{argmin}\)</span>
 <div id="simple" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Simple Linear Regression</h1>
 <div id="model" class="section level2">
@@ -1803,7 +1810,7 @@ If <span class="math inline">\(Z_i \stackrel{indep}{\sim}N(0, 1)\)</span>, then 
 
 
 <div class="theorem">
-<p><span id="thm:quaddist" class="theorem"><strong>Theorem 1.15  (Distribution of quadratic form)  </strong></span>Assume that <span class="math inline">\(\mathbf{Y} \sim MVN(\mathbf\mu, \Sigma)\)</span> and that <span class="math inline">\(A\)</span> is symmetric and idempotent. Then</p>
+<p><span id="thm:quaddist" class="theorem"><strong>Theorem 1.15  (Distribution of quadratic form)  </strong></span>Assume that <span class="math inline">\(\mathbf{Y} \sim MVN(\mathbf\mu, I)\)</span> and that <span class="math inline">\(A\)</span> is symmetric and idempotent. Then</p>
 <p><span class="math display">\[Y^T AT \sim \chi^2(K, \delta)\]</span></p>
 <p>where <span class="math inline">\(K = rank(A)\)</span> and <span class="math inline">\(\delta = \boldsymbol\mu^T A \boldsymbol\mu\)</span>. Furthermore,</p>
 <span class="math display">\[

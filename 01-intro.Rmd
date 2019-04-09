@@ -1907,7 +1907,7 @@ $$Y^T AY \ind BY \Leftrightarrow B\Sigma A = 0$$
 ```
 
 ```{theorem, quaddist, name = "Distribution of quadratic form"}
-Assume that $\mathbf{Y} \sim MVN(\mathbf\mu, \Sigma)$ and that $A$ is symmetric and idempotent. Then
+Assume that $\mathbf{Y} \sim MVN(\mathbf\mu, I)$ and that $A$ is symmetric and idempotent. Then
 
 $$Y^T AT \sim \chi^2(K, \delta)$$
 

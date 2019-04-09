@@ -184,6 +184,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2.1" data-path="multiple.html"><a href="multiple.html#normal-equation"><i class="fa fa-check"></i><b>2.2.1</b> Normal equation</a></li>
 <li class="chapter" data-level="2.2.2" data-path="multiple.html"><a href="multiple.html#orthogonal-decomposition"><i class="fa fa-check"></i><b>2.2.2</b> Orthogonal decomposition</a></li>
 <li class="chapter" data-level="2.2.3" data-path="multiple.html"><a href="multiple.html#gram-schmidt-qr-factorization"><i class="fa fa-check"></i><b>2.2.3</b> Gram-Schmidt QR factorization</a></li>
+<li class="chapter" data-level="2.2.4" data-path="multiple.html"><a href="multiple.html#successive-orthogonalization"><i class="fa fa-check"></i><b>2.2.4</b> Successive orthogonalization</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -206,6 +207,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
+
+
+
+
+
+<span class="math inline">\(\DeclareMathOperator*{\argmin}{argmin}\)</span>
 <div id="multiple" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> Multiple Linear Regression</h1>
 <div id="model-1" class="section level2">
@@ -273,9 +280,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Write <span class="math inline">\(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \mathbb{R}^{p + 1}\)</span>. Extend Equation <a href="simple.html#eq:qmatrix">(1.14)</a>.</p>
 <p><span class="math display" id="eq:qmultiple">\[\begin{equation}
   \begin{split}
-    \boldsymbol{\hat\beta} &amp; = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
-    &amp; = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
-    &amp; = \mathop\mathrm{argmin}_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+    \boldsymbol{\hat\beta} &amp; = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    &amp; = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    &amp; = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
   \end{split}
   \tag{2.1}
 \end{equation}\]</span></p>
@@ -330,23 +337,9 @@ If <span class="math inline">\(rank(X) = p + 1\)</span>, i.e. full rank, then <
 </div>
 <div id="orthogonal-decomposition" class="section level3">
 <h3><span class="header-section-number">2.2.2</span> Orthogonal decomposition</h3>
-<p>Let’s briefly look at orthogonalization process.</p>
 
 <div class="theorem">
-<p><span id="thm:gs" class="theorem"><strong>Theorem 2.2  (Gram-Schmidt Process)  </strong></span>Let <span class="math inline">\(\{ \mathbf{a}_1, \ldots, \mathbf{a}_m \}\)</span> be a basis for the inner product space <span class="math inline">\(V\)</span>. Let</p>
-<p><span class="math display">\[\mathbf{u}_1 = \bigg( \frac{1}{\lVert \mathbf{a}_1 \rVert} \bigg) \mathbf{a}_1\]</span></p>
-<p>and define next <span class="math inline">\(\mathbf{u}_2, \ldots, \mathbf{u}_m\)</span> recursively by</p>
-<p><span class="math display">\[\mathbf{u}_{k + 1} = \frac{1}{\lVert \mathbf{a}_{k + 1} - \mathbf{p}_k \rVert}(\mathbf{a}_{k + 1} - \mathbf{p}_k)\]</span></p>
-<p>for <span class="math inline">\(k = 1, \ldots, m - 1\)</span>, where</p>
-<p><span class="math display">\[\mathbf{p}_k = &lt;\mathbf{a}_{k + 1}, \mathbf{u}_1&gt; \mathbf{u}_1 + &lt;\mathbf{a}_{k + 1}, \mathbf{u}_2 &gt;\mathbf{u}_2 + \cdots + &lt; \mathbf{a}_{k + 1}, \mathbf{u} &gt; \mathbf{u}_k\]</span></p>
-<p>is the projection of <span class="math inline">\(\mathbf{a}_{k + 1}\)</span> onto <span class="math inline">\(sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})\)</span>.</p>
-Hence, we get <span class="math inline">\(\{ \mathbf{u}_1, \ldots, \mathbf{u}_m \}\)</span> is an orthonormal basis for <span class="math inline">\(V\)</span>.
-</div>
-
-<p>This <em>orthonormal basis</em> gives some useful facts with least squares problem <span class="citation">(Leon <a href="#ref-Leon:2014aa" role="doc-biblioref">2014</a>)</span>.</p>
-
-<div class="theorem">
-<p><span id="thm:orthonormal" class="theorem"><strong>Theorem 2.3  </strong></span>Let <span class="math inline">\(Col(X)\)</span> be a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>, let <span class="math inline">\(\mathbf{Y} \in \mathbb{R}^n\)</span>, and let <span class="math inline">\(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\)</span> be an orthonormal basis for <span class="math inline">\(Col(X)\)</span>. If</p>
+<p><span id="thm:orthonormal" class="theorem"><strong>Theorem 2.2  </strong></span>Let <span class="math inline">\(Col(X)\)</span> be a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>, let <span class="math inline">\(\mathbf{Y} \in \mathbb{R}^n\)</span>, and let <span class="math inline">\(\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}\)</span> be an orthonormal basis for <span class="math inline">\(Col(X)\)</span>. If</p>
 <p><span class="math display">\[\mathbf{\hat{Y}} = \sum_{j = 0}^p \hat\beta_j \mathbf{u}_j\]</span></p>
 <p>where</p>
 <p><span class="math display">\[\hat\beta_j = \Pi(\mathbf{Y} \mid R(\mathbf{u}_j)) \quad \text{for each} \: i\]</span></p>
@@ -355,7 +348,7 @@ then <span class="math inline">\(\mathbf{\hat{Y}} - \mathbf{Y} \in Col(X)^{\perp
 
 
 <div class="theorem">
-<p><span id="thm:orthonormalproj" class="theorem"><strong>Theorem 2.4  </strong></span>Under the hypothesis of Theorem <a href="multiple.html#thm:orthonormal">2.3</a>, <span class="math inline">\(\mathbf{\hat{Y}} \in Col(X)\)</span> is the closest to <span class="math inline">\(\mathbf{Y}\)</span> amongst its any element <span class="math inline">\(\mathbf{p}\)</span>, i.e.</p>
+<p><span id="thm:orthonormalproj" class="theorem"><strong>Theorem 2.3  </strong></span>Under the hypothesis of Theorem <a href="multiple.html#thm:orthonormal">2.2</a>, <span class="math inline">\(\mathbf{\hat{Y}} \in Col(X)\)</span> is the closest to <span class="math inline">\(\mathbf{Y}\)</span> amongst its any element <span class="math inline">\(\mathbf{p}\)</span>, i.e.</p>
 <p><span class="math display">\[\Vert \mathbf{p} - \mathbf{Y} \Vert &gt; \Vert \mathbf{\hat{Y}} - \mathbf{Y} \Vert\]</span></p>
 for any <span class="math inline">\(\mathbf{p} \neq \mathbf{\hat{Y}}\)</span> in <span class="math inline">\(Col(X)\)</span>
 </div>
@@ -371,13 +364,14 @@ X = \left[\begin{array}{c|ccc}
 \end{array}\right] = [\mathbf{1}, \mathbb{X}_A]
 \]</span></p>
 <p>Consider <span class="math inline">\(R(X)\)</span>, <span class="math inline">\(R(\mathbf{1})\)</span>, and <span class="math inline">\(R(\mathbb{X}_A)\)</span>.</p>
-<p>To decompose subspace <span class="math inline">\(R(X)\)</span>, we try to orthogonalize <span class="math inline">\(\mathbf{1}\)</span> and <span class="math inline">\(\mathbb{X}_A\)</span> applying G-S process <a href="multiple.html#thm:gs">2.2</a>.</p>
+<p>To decompose subspace <span class="math inline">\(R(X)\)</span>, we try to orthogonalize <span class="math inline">\(\mathbf{1}\)</span> and <span class="math inline">\(\mathbb{X}_A\)</span>. By Theorem <a href="multiple.html#thm:orthonormal">2.2</a>, we have</p>
 <p><span class="math display">\[\mathbf{1} \perp \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\]</span></p>
+<p>In fact, the right one <span class="math inline">\(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\)</span> is the <em>residual after simple linear regression</em> <span class="math inline">\(\mathbb{X}_A\)</span> onto <span class="math inline">\(\mathbf{1}\)</span>. We have seen in Figure <a href="simple.html#fig:simpledraw2">1.6</a> of section <a href="simple.html#matnot">1.6</a> that the <em>residual is orthogonal to predictor vector</em>. In this procedure, we choose residual as new predictor instead of response in simple linear regression, i.e. <span class="math inline">\(\mathbb{X}_A\)</span>. If this is done to individual predictor variables, it is called <em>successive orthogonalization</em> and it will be coved next section with QR decomposition.</p>
 <p>Theorem <a href="simple.html#thm:dsum">1.6</a> implies that</p>
 <p><span class="math display">\[R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)\]</span></p>
 
 <div class="theorem">
-<p><span id="thm:orthdecomp" class="theorem"><strong>Theorem 2.5  (Orthogonal decomposition)  </strong></span>Let <span class="math inline">\(X = [\mathbf{1}, \mathbb{X}_A]\)</span>. Then</p>
+<p><span id="thm:orthdecomp" class="theorem"><strong>Theorem 2.4  (Orthogonal decomposition)  </strong></span>Let <span class="math inline">\(X = [\mathbf{1}, \mathbb{X}_A]\)</span>. Then</p>
 <ol style="list-style-type: lower-roman">
 <li></li>
 </ol>
@@ -401,7 +395,7 @@ X = \left[\begin{array}{c|ccc}
   \end{split}
   \tag{2.3}
 \end{equation}\]</span></p>
-<p>From (ii) of Theorem <a href="multiple.html#thm:orthdecomp">2.5</a>,</p>
+<p>From (ii) of Theorem <a href="multiple.html#thm:orthdecomp">2.4</a>,</p>
 <p><span class="math display" id="eq:decompfit">\[\begin{equation}
   \begin{split}
     \Pi(\mathbf{Y} \mid R(X)) &amp; = \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \Pi(\mathbf{Y} \mid R(\mathbb{X}_{A,\perp})) \\
@@ -409,7 +403,7 @@ X = \left[\begin{array}{c|ccc}
   \end{split}
   \tag{2.4}
 \end{equation}\]</span></p>
-<p>Equations <a href="multiple.html#eq:blockfit">(2.3)</a> and <a href="multiple.html#eq:decompfit">(2.4)</a> give that</p>
+<p>Since <span class="math inline">\(\mathbf{1} \perp \mathbb{X}_{A, \perp}\)</span>, Equations <a href="multiple.html#eq:blockfit">(2.3)</a> and <a href="multiple.html#eq:decompfit">(2.4)</a> imply that</p>
 <p><span class="math display">\[
 \begin{cases}
   \hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}\mathbb{X}_A\boldsymbol{\hat\beta}_A \\
@@ -434,8 +428,175 @@ Figure 2.2: Non-orthongality
 </div>
 <div id="gram-schmidt-qr-factorization" class="section level3">
 <h3><span class="header-section-number">2.2.3</span> Gram-Schmidt QR factorization</h3>
+<p>Let’s briefly look at orthogonalization process. From Theorem <a href="multiple.html#thm:orthonormal">2.2</a>, we can derive following <em>orthonormalization process</em>.</p>
+
+<div class="theorem">
+<p><span id="thm:gs" class="theorem"><strong>Theorem 2.5  (Gram-Schmidt Process)  </strong></span>Let <span class="math inline">\(\{ \mathbf{x}_1, \ldots, \mathbf{x}_{p + 1} \}\)</span> be a basis for the inner product space <span class="math inline">\(V\)</span>. Let</p>
+<p><span class="math display">\[\mathbf{u}_1 = \bigg( \frac{1}{\lVert \mathbf{x}_1 \rVert} \bigg) \mathbf{x}_1\]</span></p>
+<p>and define next <span class="math inline">\(\mathbf{u}_2, \ldots, \mathbf{u}_{p + 1}\)</span> recursively by</p>
+<p><span class="math display">\[\mathbf{u}_{k + 1} = \frac{1}{\lVert \mathbf{x}_{k + 1} - \mathbf{r}_k^{*} \rVert}(\mathbf{x}_{k + 1} - \mathbf{r}_k^{*})\]</span></p>
+<p>for <span class="math inline">\(k = 1, \ldots, p\)</span>, where</p>
+<p><span class="math display">\[\mathbf{r}_k^{*} = &lt;\mathbf{x}_{k + 1}, \mathbf{u}_1&gt; \mathbf{u}_1 + &lt;\mathbf{a}_{k + 1}, \mathbf{u}_2 &gt;\mathbf{u}_2 + \cdots + &lt; \mathbf{a}_{k + 1}, \mathbf{u} &gt; \mathbf{u}_k\]</span></p>
+<p>is the projection of <span class="math inline">\(\mathbf{x}_{k + 1}\)</span> onto <span class="math inline">\(sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})\)</span>.</p>
+Hence, we get <span class="math inline">\(\{ \mathbf{u}_1, \ldots, \mathbf{u}_{p + 1} \}\)</span> is an orthonormal basis for <span class="math inline">\(V\)</span>.
+</div>
+
+<p>Our interest is <span class="math inline">\(Col(X)\)</span>, and we can factorizae this model matrix so that it represents orthonormalization process <a href="multiple.html#thm:gs">2.5</a>.</p>
+
+<div class="theorem">
+<p><span id="thm:gsqr" class="theorem"><strong>Theorem 2.6  (Gram-Schmidt QR factorization)  </strong></span>Let <span class="math inline">\(X \in \mathbb{R}^{n \times (p + 1)}\)</span>. Then <span class="math inline">\(X\)</span> can be factored into</p>
+<p><span class="math display">\[X = QR\]</span></p>
+where <span class="math inline">\(Q \in \mathbb{R}^{n \times (p + 1)}\)</span> is an orthogonal matrix, i.e. its column vectors are orthonormal and <span class="math inline">\(R \in \mathbb{R}^{(p + 1) \times (p + 1)}\)</span> is an upper triangular matrix whose diagonal entries are all positive.
+</div>
+
+
+<div class="proof">
+<p> <span class="proof"><em>Proof. </em></span> Denote that this is just the representation of Gram-schmidt orthogonalization. Then it gives</p>
+<p><span class="math display">\[\mathbf{u}_1 = \frac{\mathbf{x}_1}{\lVert \mathbf{x}_1 \rVert} \Rightarrow \mathbf{x}_1 = \lVert \mathbf{x}_1 \rVert \mathbf{u}_1\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+  \begin{split}
+    &amp; \mathbf{v}_2 = \mathbf{x}_2 - &lt;\mathbf{x}_2, \mathbf{u}_1&gt; \mathbf{u}_1, \quad \mathbf{u}_2 = \frac{\mathbf{v}_2}{\lVert \mathbf{v}_2 \rVert} \\
+    &amp; \Rightarrow \mathbf{x}_2 = &lt;\mathbf{x}_2, \mathbf{u}_1&gt;\mathbf{u}_1 + \lVert \mathbf{v}_2 \rVert \mathbf{u}_2 \\
+    &amp; \Rightarrow \mathbf{x}_2 = \left[\begin{array}{c|c}
+      \mathbf{u}_1 &amp; \mathbf{u}_2
+    \end{array}\right] \begin{bmatrix}
+      &lt;\mathbf{x}_2, \mathbf{u}_1&gt; \\
+      \lVert \mathbf{v}_2 \rVert
+    \end{bmatrix}
+  \end{split}
+\end{equation*}\]</span></p>
+<p>It procees in a simlar way to the others. Hence,</p>
+<span class="math display" id="eq:qrrep">\[\begin{equation}
+  \begin{split}
+    X &amp; = \begin{bmatrix} \mathbf{x}_1 &amp; \cdots &amp; \mathbf{x}_{p+1} \end{bmatrix} \\
+    &amp; = \begin{bmatrix}
+      \mathbf{u}_1 &amp; \mathbf{u}_2 &amp; \cdots &amp; \mathbf{u}_{p + 1}
+    \end{bmatrix} \begin{bmatrix}
+      \lVert \mathbf{v}_1 \rVert &amp; &lt; \mathbf{x}_2, \mathbf{u}_1&gt; &amp; &lt; \mathbf{x}_3, \mathbf{u}_1&gt; &amp; \cdots &amp; &lt; \mathbf{x}_{p + 1}, \mathbf{u}_1&gt; \\
+      0 &amp; \lVert \mathbf{v}_2 \rVert &amp; &lt; \mathbf{x}_3, \mathbf{u}_2&gt; &amp; \cdots &amp; &lt; \mathbf{x}_{p + 1}, \mathbf{u}_2&gt; \\
+      0 &amp; 0 &amp; \lVert \mathbf{v}_3 \rVert &amp; \cdots &amp; &lt; \mathbf{x}_{p + 1}, \mathbf{u}_3&gt; \\
+      \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+      0 &amp; 0 &amp; 0 &amp; 0 &amp; \lVert \mathbf{v}_{p + 1} \rVert
+    \end{bmatrix} \\
+    &amp; \equiv QR
+  \end{split}
+  \tag{2.5}
+\end{equation}\]</span>
+</div>
+
+<p>Look again the equation in Theorem <a href="multiple.html#thm:gs">2.5</a>. In each process <span class="math inline">\(k\)</span>, the projection is done to the <span class="math inline">\((k - 1)\)</span>-dimensional space. In other words, as process goes through, dimension increases. So we try to project each vector only in 1-dimension each step.</p>
+
+<div class="theorem">
+<p><span id="thm:modgs" class="theorem"><strong>Theorem 2.7  (Modified Gram-Schmidt Process)  </strong></span>Let <span class="math inline">\(\{ \mathbf{x}_1, \ldots, \mathbf{x}_{p + 1} \}\)</span> be a basis for the inner product space <span class="math inline">\(V\)</span> and let <span class="math inline">\(\{ \mathbf{q}_1, \ldots, \mathbf{q}_{p + 1} \}\)</span> be an orthonormal basis.</p>
+<p>Set <span class="math inline">\(\mathbf{q}_1 = \frac{\mathbf{x}_1}{\lVert \mathbf{x}_1 \rVert}\)</span>. Then consider <span class="math inline">\(sp(\{ \mathbf{q}_1 \})\)</span>.</p>
+<p>In the first step, make every <span class="math inline">\(\{ \mathbf{x}_2, \ldots, \mathbf{x}_{p + 1} \}\)</span> orthogonal to <span class="math inline">\(\mathbf{q}_1\)</span>.</p>
+<p><span class="math display">\[\mathbf{x}_k^{(1)} = \mathbf{x}_k - (\mathbf{q}_1^T \mathbf{x}_k)\mathbf{q}_1, \quad k = 2, \ldots, p + 1\]</span></p>
+<p>So we get orthogonal set <span class="math inline">\(\{ \mathbf{q}_1, \mathbf{x}_2^{(1)}, \ldots, \mathbf{x}_{p + 1}^{(1)} \}\)</span>. Next, set <span class="math inline">\(\mathbf{q}_2 = \frac{\mathbf{x}^{(1)}}{\lVert \mathbf{x}_2^{(2)} \rVert}\)</span>. Consider <span class="math inline">\(sp(\{ \mathbf{q}_2 \})\)</span>. Since we have <span class="math inline">\(\mathbf{q}_1 \perp \mathbf{q}_2\)</span>,</p>
+<p><span class="math display">\[\mathbf{x}_k^{(2)} = \mathbf{x}_k^{(1)} - (\mathbf{q}_2^T \mathbf{x}_k^{(1)})\mathbf{q}_2 \perp \mathbf{q}_2 , \quad k = 3, \ldots, p + 1\]</span></p>
+<p>Thus, get <span class="math inline">\(\{ \mathbf{q}_1, \mathbf{q}_2, \mathbf{x}_3^{(2)}, \ldots, \mathbf{x}_{p + 1}^{(2)} \}\)</span>. <span class="math inline">\(\mathbf{q}_3, \ldots, \mathbf{q}_{p + 1}\)</span> are successively determined in a similary way.</p>
+<p>At the last step, set</p>
+<span class="math display">\[\mathbf{q}_{p + 1} = \frac{\mathbf{x}_{p + 1}^{(p)}}{\lVert \mathbf{x}_{p + 1}^{(p)} \rVert}\]</span>
+</div>
+
+<p>Since each projection is done in 1-dimension, the algorithm becomes more understandable. Consider</p>
+<p><span class="math display">\[
+Q = \begin{bmatrix}
+  \mathbf{q}_1 &amp; \mathbf{q}_2 &amp; \cdots \mathbf{q}_{p + 1}
+\end{bmatrix} \in \mathbb{R}^{n \times (p + 1)} \quad \text{orthogonal}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+R = [r_{kj}] = \begin{bmatrix}
+  r_{11} &amp; r_{12} &amp; \cdots &amp; r_{1,p+1} \\
+  0 &amp; r_{22} &amp; \cdots &amp; r_{2, p+1} \\
+  0 &amp; 0 &amp; \cdots &amp; r_{3,p+1} \\
+  \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+  0 &amp; 0 &amp; 0 &amp; r_{p+1, p+1}
+\end{bmatrix} \in \mathbb{R}^{(p+1) \times (p + 1)}
+\]</span></p>
+<p>We can perform <span class="math inline">\(QR\)</span> factorization by following step.</p>
+
+<p>This <em>orthonormal basis</em> gives some useful facts with least squares problem <span class="citation">(Leon <a href="#ref-Leon:2014aa" role="doc-biblioref">2014</a>)</span>.</p>
+</div>
+<div id="successive-orthogonalization" class="section level3">
+<h3><span class="header-section-number">2.2.4</span> Successive orthogonalization</h3>
+<p>In fact, G-S process <a href="multiple.html#thm:gs">2.5</a> is equivalent to succesive orthogonalization, i.e. regress(project) <span class="math inline">\(\mathbf{x}_j\)</span> onto the others <span class="citation">(Hastie, Tibshirani, and Friedman <a href="#ref-Hastie:2013aa" role="doc-biblioref">2013</a>)</span>.</p>
+
+<p>Now we can solve least squares problem using QR decomposition. Recall that</p>
+<p><span class="math display">\[X = QR\]</span></p>
+<p>as specified in Theorem <a href="multiple.html#thm:gsqr">2.6</a>. Then normal equation implies that</p>
+<p><span class="math display" id="eq:qrbeta">\[\begin{equation}
+  \begin{split}
+    &amp; (X^TX)\boldsymbol{\hat\beta} = X^T\mathbf{Y} \\
+    &amp; \Leftrightarrow R^TQ^TQR \boldsymbol{\hat\beta} = R^TQ^T \mathbf{Y} \\
+    &amp; \Leftrightarrow R^TR \boldsymbol{\hat\beta} = R^TQ^T \mathbf{Y} \qquad \because Q^TQ = I \\
+    &amp; \Leftrightarrow R \boldsymbol{\hat\beta} = Q^T \mathbf{Y} \qquad \text{if}\: R \:\text{is invertible}
+  \end{split}
+  \tag{2.6}
+\end{equation}\]</span></p>
+<p>Hence,</p>
+<p><span class="math display" id="eq:qrhat">\[\begin{equation}
+  \boldsymbol{\hat\beta} = R^{-1}Q^T\mathbf{Y}
+  \tag{2.7}
+\end{equation}\]</span></p>
+<p>It follows that</p>
+<p><span class="math display" id="eq:qrfit">\[\begin{equation}
+  \mathbf{\hat{Y}} = (QR)\boldsymbol{\hat\beta} = QQ^T\mathbf{Y}
+  \tag{2.8}
+\end{equation}\]</span></p>
+<p>Let’s compare the result. Base function <code>qr()</code> give the QR factorization. Given this object, we can get each <span class="math inline">\(Q\)</span> and <span class="math inline">\(R\)</span> by <code>qr.Q()</code> and <code>qr.R()</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">cem_qr &lt;-
+<span class="st">  </span>cem <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">model.matrix</span>(y <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> .) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">qr</span>()
+cem_q &lt;-<span class="st"> </span><span class="kw">qr.Q</span>(cem_qr)
+cem_r &lt;-<span class="st"> </span><span class="kw">qr.R</span>(cem_qr)</code></pre>
+<p>Using Equation <a href="multiple.html#eq:qrhat">(2.7)</a>, we get each coefficient as follow.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">solve</span>(cem_r) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(cem_q) <span class="op">%*%</span><span class="st"> </span>cem<span class="op">$</span>y</code></pre>
+<pre><code>              [,1]
+(Intercept) 62.405
+x1           1.551
+x2           0.510
+x3           0.102
+x4          -0.144</code></pre>
+<p>On the other hand, <code>lm()</code> gives the following result.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> cem)</code></pre>
+<pre><code>
+Call:
+lm(formula = y ~ ., data = cem)
+
+Coefficients:
+(Intercept)           x1           x2           x3           x4  
+     62.405        1.551        0.510        0.102       -0.144  </code></pre>
+<p>We can check the result is same. In fact, <code>lm()</code> fits the model by default <code>method = "qr"</code>.</p>
+<blockquote>
+<p>the method to be used; for fitting, currently only method = “qr” is supported; method = “model.frame” returns the model frame (the same as with model = TRUE, see below).</p>
+</blockquote>
+<p>By default and only way, <code>lm()</code> fits the model using <span class="math inline">\(QR\)</span> factorization. What does this orthogonal basis mean? For simplicity, consider simple linear regression problem.</p>
+<div class="figure" style="text-align: center"><span id="fig:qrpng"></span>
+<img src="images/multiple-qr1.png" alt="Orthogonalized basis" width="70%" />
+<p class="caption">
+Figure 2.3: Orthogonalized basis
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:qrpng2"></span>
+<img src="images/multiple-qr2.png" alt="Non-orthogonal basis" width="70%" />
+<p class="caption">
+Figure 2.4: Non-orthogonal basis
+</p>
+</div>
+<p>See Figure <a href="multiple.html#fig:qrpng">2.3</a>. By construbtion, projection onto each basis is same as <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span>. In Figure <a href="multiple.html#fig:qrpng2">2.4</a>, however, each projection is not regression coefficient. Recap Figure <a href="simple.html#fig:simpledraw2">1.6</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:simpledraw3"></span>
+<img src="images/multiple-qr3.png" alt="QR decomposition for model matrix" width="70%" />
+<p class="caption">
+Figure 2.5: QR decomposition for model matrix
+</p>
+</div>
 
 <div id="refs" class="references">
+<div>
+<p>Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2013. <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>. Springer Science &amp; Business Media.</p>
+</div>
 <div>
 <p>Hogg, Robert V., Joseph W. McKean, and Allen Thornton Craig. 2018. <em>Introduction to Mathematical Statistics</em>. 8th ed. Pearson College Division.</p>
 </div>
@@ -459,6 +620,9 @@ Figure 2.2: Non-orthongality
 </div>
 <div id="ref-Leon:2014aa">
 <p>Leon, Steve. 2014. <em>Linear Algebra with Applications</em>. Pearson Higher Ed.</p>
+</div>
+<div id="ref-Hastie:2013aa">
+<p>Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2013. <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>. Springer Science &amp; Business Media.</p>
 </div>
 </div>
             </section>

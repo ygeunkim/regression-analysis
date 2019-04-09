@@ -1,17 +1,17 @@
 --- 
 title: "R Lab for Regression Analysis"
 author: |
-  | Young-geun Kim
-  | Department of Statistics, SKKU
-  | \href{mailto: dudrms33@g.skku.edu}{dudrms33@g.skku.edu}
+  | [Young-geun Kim](https://github.com/ygeunkim)
+  | [Department of Statistics](https://stat.skku.edu/stat/index.jsp), [SKKU](https://www.skku.edu/skku/index.do)
+  | [dudrms33@g.skku.edu](mailto:dudrms33@g.skku.edu)
 date: "`r format(Sys.time(), '%d %b, %Y')`"
-header-includes:
+include-before:
   - \newcommand{\iid}{\stackrel{iid}{\sim}}
   - \newcommand{\indep}{\stackrel{indep}{\sim}}
   - \newcommand{\hsim}{\stackrel{H_0}{\sim}}
   - \newcommand{\ind}{\perp\!\!\!\perp}
   - \newcommand{\R}{\mathbb{R}}
-  - \DeclareMathOperator*{\argmin}{argmin}
+  - $\DeclareMathOperator*{\argmin}{argmin}$
 cover-image: cover.png
 site: bookdown::bookdown_site
 documentclass: book
