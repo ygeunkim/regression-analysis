@@ -1455,7 +1455,7 @@ $$\hat\mu_x - \mu_x \sim N\bigg( 0, \sigma^2\bigg( \frac{1}{n} + \frac{(x - \ove
 Denote that in both Theorem \@ref(thm:mrdist) and Corollary \@ref(cor:mrdiff), $\sigma^2$ is parameter. So to use $SE(\hat\mu_x) = \sqrt{Var(\hat\mu_x)}$ in practice we plug in its estimator, usually Equation \@ref(eq:siglse).
 
 ```{corollary, mrse, name = "Standard error of mean response estimator"}
-$$\widehat{SE}(\hat\mu_x) = \hat\sigma^2\bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)$$
+$$\widehat{SE}(\hat\mu_x) = \hat\sigma \sqrt{\bigg( \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)}$$
 
 where $\hat\sigma^2 = MSE$
 ```
@@ -1572,7 +1572,7 @@ i.e. $\hat{Y_x} - Y_x$ is a linear combination of $(\hat\beta_0, \hat\beta_1, \e
 
 Now we know the standard error of this out-of-sample prediction error.
 
-$$SE(\hat{Y_x} - Y_x) = \sigma^2\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)$$
+$$SE(\hat{Y_x} - Y_x) = \sigma \sqrt{\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)}$$
 
 We can see this standard error is *always larger than of mean response estimator* due to $1$ in the bracket, i.e. $\sigma^2$. As mentioned, this is due to $\epsilon$ term. When we estimate or predict the mean response the model have been assumed to be true. In this out-of-sample prediction setting, however, the model can be wrong. This assumption error is also included in $\epsilon$ term and it is called *irreducible error*, which cannot be reduced anymore.
 
@@ -1589,7 +1589,7 @@ Actually, both $\hat\mu_x$ and $\hat{Y_x}$ are estimated as $\hat\beta_0 + \hat\
 To use standard error practically, we use $\hat\sigma^2$ as in corollary \@ref(cor:mrse).
 
 ```{corollary, predse, name = "Standard error of out-of-sample prediction error"}
-$$\widehat{SE}(\hat{Y_x} - Y_x) = \hat\sigma^2\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)$$
+$$\widehat{SE}(\hat{Y_x} - Y_x) = \hat\sigma \sqrt{\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)}$$
 
 where $\hat\sigma^2 = MSE$
 ```
@@ -1622,11 +1622,11 @@ broom::tidy(delv_fit)
 
 Consider standardization.
 
-$$\frac{\hat\theta - \theta}{\sqrt{SE(\hat\theta)}}$$
+$$\frac{\hat\theta - \theta}{SE(\hat\theta)}$$
 
 Each $SE$ includes $\sigma^2$ as we have already seen. First think about **known** $\sigma^2$ setting. All three estimators follow Normal distribution, and $SE$ is constant by our the setting. Then we can construct each confidence interval as
 
-$$\hat\theta \pm z_{\frac{\alpha}{2}} \sqrt{SE(\hat\theta)}$$
+$$\hat\theta \pm z_{\frac{\alpha}{2}} SE(\hat\theta)$$
 
 
 ```{r estci, echo=FALSE, fig.cap="Confidence Interval when $\\sigma^2$ is known"}
@@ -1666,7 +1666,7 @@ $$\mu_x : \quad \hat\mu_x \pm z_{\frac{\alpha}{2}} \sqrt{\sigma^2 \bigg( \frac{1
 
 In practice, however, we do not know $\sigma^2$. In this case, we replace $\sigma^2$ with $\hat\sigma^2 = \frac{1}{n - 2}\sum\limits_{i = 1}^n (\hat{Y_i} - Y_i)^2 = MSE$. Then
 
-$$\frac{\hat\theta - \theta}{\sqrt{\widehat{SE}}} = \frac{\frac{\hat\theta - \theta}{\sqrt{SE = \sigma^2(\cdot)}}}{\sqrt{\frac{\frac{SSE}{\sigma^2}}{n - 2}\bigg( \cdot \bigg)}} =  \frac{\frac{\hat\theta - \theta}{\sqrt{SE = \sigma^2}} \sim N(0, 1)}{\sqrt{\frac{\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)}{n - 2}}} \sim t(n - 2)$$
+$$\frac{\hat\theta - \theta}{\widehat{SE}} = \frac{\frac{\hat\theta - \theta}{\sqrt{Var = \sigma^2(\cdot)}}}{\sqrt{\frac{\frac{SSE}{\sigma^2}}{n - 2}\bigg( \cdot \bigg)}} =  \frac{\frac{\hat\theta - \theta}{\sqrt{Var = \sigma^2}} \sim N(0, 1)}{\sqrt{\frac{\frac{SSE}{\sigma^2} \sim \chi^2(n - 2)}{n - 2}}} \sim t(n - 2)$$
 
 Thus, we need to replace $z_{\frac{\alpha}{2}}$ with $t_{\frac{\alpha}{2}}(n - 2)$.
 
