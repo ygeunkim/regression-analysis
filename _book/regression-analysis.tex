@@ -130,6 +130,7 @@
 
 \usepackage{booktabs}
 \usepackage{float}
+\usepackage{hyperref}
 \usepackage{pdfpages}
 \usepackage[linesnumbered]{algorithm2e}
 
@@ -3152,12 +3153,26 @@ and define next \(\mathbf{u}_2, \ldots, \mathbf{u}_{p + 1}\) recursively by
 
 for \(k = 1, \ldots, p\), where
 
-\[\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{a}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u} > \mathbf{u}_k\]
+\[\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{a}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u}_k > \mathbf{u}_k\]
 
 is the projection of \(\mathbf{x}_{k + 1}\) onto \(sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})\).
 
 Hence, we get \(\{ \mathbf{u}_1, \ldots, \mathbf{u}_{p + 1} \}\) is an orthonormal basis for \(V\).
 \EndKnitrBlock{theorem}
+
+\begin{algorithm} \label{alg:alggs}
+  \SetAlgoLined
+  \SetKwInOut{Input}{input}
+  \Input{basis $\{ \mathbf{x}_0, \ldots, \mathbf{x}_p \}$}
+  Initialize $\mathbf{v}_0 = \mathbf{x}_0$\;
+  \For{$k \leftarrow 1$ \KwTo $p$}{
+    $\mathbf{u}_{k - 1} = \frac{\mathbf{v}_{k - 1}}{\lVert \mathbf{v}_{k - 1} \rVert}$\;
+    $\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_0> \mathbf{u}_0 + <\mathbf{a}_{k + 1}, \mathbf{u}_1 >\mathbf{u}_1 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u}_k > \mathbf{u}_k$\;
+    $\mathbf{v}_{k + 1} = \mathbf{x}_{k + 1} - \mathbf{r}_k^{*}$
+  }
+  $\mathbf{u}_p = \frac{\mathbf{v}_p}{\lVert \mathbf{v}_p \rVert}$
+  \caption{Gram-schmidt process}
+\end{algorithm}
 
 Our interest is \(Col(X)\), and we can factorizae this model matrix so that it represents orthonormalization process \ref{thm:gs}.
 
@@ -3251,7 +3266,7 @@ R = [r_{kj}] = \begin{bmatrix}
 
 We can perform \(QR\) factorization by following step.
 
-\begin{algorithm}
+\begin{algorithm} \label{alg:algqr}
   \SetAlgoLined
   \For{$k \leftarrow 1$ \KwTo $(p + 1)$}{
     $r_{kk} = \lVert \mathbf{x}_{k} \rVert$\;
@@ -3269,9 +3284,9 @@ This \emph{orthonormal basis} gives some useful facts with least squares problem
 \hypertarget{successive-orthogonalization}{%
 \subsection{Successive orthogonalization}\label{successive-orthogonalization}}
 
-In fact, G-S process \ref{thm:gs} is equivalent to succesive orthogonalization, i.e.~regress(project) \(\mathbf{x}_j\) onto the others \citep{Hastie:2013aa}.
+In fact, G-S process \(\ref{alg:alggs}\) is equivalent to succesive orthogonalization, i.e.~regress(project) \(\mathbf{x}_j\) onto the others \citep{Hastie:2013aa}.
 
-\begin{algorithm}
+\begin{algorithm} \label{alg:algorth}
   \SetAlgoLined
   Initialize $\mathbf{v}_0 = \mathbf{1}$\;
   \For{$k \leftarrow 1$ \KwTo $p$}{
