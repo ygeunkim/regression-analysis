@@ -478,6 +478,215 @@ knitr::include_graphics("images/multiple-qr3.png")
 Regress $\mathbf{x}$ onto $\mathbf{1}$. Its residual can be a new orthogonalized predictor.
 
 
+### Properties of LSE
+
+We have seen how we extend point estimator $\boldsymbol{\hat\beta}$. In turn, we can check this is unbiased, and BLUE.
+
+```{proposition, multbmoment, name = "Expectation and Variance"}
+$\boldsymbol{\hat\beta}$ is unbiased.
+
+\begin{enumerate}
+  \item $E\boldsymbol{\hat\beta} = \boldsymbol\beta$
+  \item $Var\boldsymbol{\hat\beta} = \sigma^2(X^TX)^{-1}$
+\end{enumerate}
+```
+
+```{proof}
+\begin{equation*}
+  \begin{split}
+    E\boldsymbol{\hat\beta} & = E\bigg( (X^TX)^{-1}X^T\mathbf{Y} \bigg) \\
+    & = (X^TX)^{-1}X^T E\mathbf{Y} \\
+    & = (X^TX)^{-1}X^T X\boldsymbol\beta \\
+    & = \boldsymbol\beta
+  \end{split}
+\end{equation*}
+
+Hence, $\boldsymbol{\hat\beta}$ is unbiased.
+
+\begin{equation*}
+  \begin{split}
+    Var\boldsymbol{\hat\beta} & = Var\bigg( (X^TX)^{-1}X^T\mathbf{Y} \bigg) \\
+    & = (X^TX)^{-1}X^T Var(\mathbf{Y}) X(X^TX)^{-1} \\
+    & = (X^TX)^{-1}X^T(\sigma^2 I)X(X^TX)^{-1} \\
+    & = \sigma^2 (X^TX)^{-1}
+  \end{split}
+\end{equation*}
+```
+
+Since the variance of LSE have been revealed, now we want to know if this is the lowest one among estimators. Gauss-Markov theorem states that LSE has the lowest variance among linear unbiased estimators for $\boldsymbol\beta$, so called the **best linear unbiased estimator (BLUE)**.
+
+```{theorem, multgm, name = "Gauss-Markov Theorem"}
+$\boldsymbol{\hat\beta} = (X^TX)^{-1}X^T\mathbf{Y}$ is BLUE, i.e.
+
+For any $\tilde{\boldsymbol\beta} \in \Omega \equiv \{ \tilde{\boldsymbol\beta} : \tilde{\boldsymbol\beta} = C\mathbf{Y} , E\tilde{\boldsymbol\beta} = \boldsymbol\beta \}$,
+
+$$Var(\boldsymbol{\hat\beta}) \le Var(\tilde{\boldsymbol\beta})$$
+```
+
+```{proof}
+Let $\tilde{\boldsymbol\beta} \in \Omega \equiv \{ \tilde{\boldsymbol\beta} : \tilde{\boldsymbol\beta} = C\mathbf{Y} , E\tilde{\boldsymbol\beta} = \boldsymbol\beta \}$
+
+Claim: $Var(\tilde{\boldsymbol\beta}) - Var(\boldsymbol{\hat\beta})$ is non-negative definite.
+
+Note that $\boldsymbol{\hat\beta}$ is the one with $C = (X^TX)^{-1}X^T$.
+
+Set $D := C - (X^TX)^{-1}X^T$. From unbiasedness,
+
+\begin{equation*}
+  \begin{split}
+    E\tilde{\boldsymbol\beta} & = CE\mathbf{Y} \\
+    & = CX\boldsymbol\beta \\
+    & = \Big( (X^TX)^{-1}X^T + D \Big)X\boldsymbol\beta \\
+    & = \boldsymbol\beta + DX\boldsymbol\beta \\
+    & = \boldsymbol\beta
+  \end{split}
+\end{equation*}
+
+Since $\boldsymbol\beta \neq \mathbf{0}$,
+
+\begin{equation} \label{eq:prgm}
+  DX = 0
+\end{equation}
+
+\begin{equation*}
+  \begin{split}
+    Var\tilde{\boldsymbol\beta} & = Var(C\mathbf{Y}) \\
+    & = \sigma^2CC^T \\
+    & = \sigma^2\Big( (X^TX)^{-1}X^T + D \Big) \Big( (X^TX)^{-1}X^T + D \Big)^T \\
+    & = \sigma^2\Big( (X^TX)^{-1} + DX(X^TX)^{-1} + (X^TX)^{-1}X^TD^T + DD^T \Big) \\
+    & = \sigma^2\Big( (X^TX)^{-1} + DD^T \Big) \qquad \because \eqref{eq:prgm} \\
+    & = Var\boldsymbol{\hat\beta} + \sigma^2DD^T
+  \end{split}
+\end{equation*}
+
+Note that $DD^T$ is non-negative definite. Hence,
+
+$$Var\tilde{\boldsymbol\beta} - Var\boldsymbol{\hat\beta} = \sigma^2DD^T$$
+
+is non-negative definite. This completes the proof.
+```
+
+As in simple linear regression setting, we define *residuals* and explain $\sigma^2$.
+
+```{definition, multres, name = "Residuals"}
+Let $\hat{\mathbf{Y}} = (\hat{Y_1}, \ldots, \hat{Y_n})^T$ with $\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_{i1} + \cdots + \hat\beta_px_{ip}$. Then the residual is defined by
+
+$$\mathbf{e} := (\ldots,Y_i - \hat\beta_0 - \hat\beta_1 x_{i1} - \cdots - \hat\beta_px_{ip}, \ldots)^T = \mathbf{Y} - \hat{\mathbf{Y}} \in \R^n$$
+```
+
+Extending the simple setting, we estimate $\sigma^2$ with inner product of residuals divided by its degrees of freedom, i.e. *MSE*. The degrees of freedom becomes $n - \text{the number of coefficients}$. Thus, $n - (p + 1) = n - p - 1$.
+
+```{proposition, multsigma, name = "Estimation of $\\sigma^2$"}
+Let $\mathbf{e} = \mathbf{Y} - \hat{\mathbf{Y}}$ be residuals as in Definition \@ref(def:multres). Then
+
+$$\hat\sigma^2 = \frac{\lVert \mathbf{e} \rVert}{n - p - 1}$$
+```
+
+The reason we divide with degrees of freedom is to make $\hat\sigma^2$ unbiased.
+
+```{proposition, multsigmean, name = "Mean of $\\hat\\sigma^2$"}
+$\hat\sigma^2$ is unbiased, i.e.
+
+$$E\bigg( \lVert \mathbf{Y} - \hat{\mathbf{Y}} \rVert^2 \bigg) = (n - p - 1)\sigma^2$$
+```
+
+```{proof}
+Since $\mathbf{Y} = \Pi_X\mathbf{Y}$,
+
+\begin{equation*}
+  \begin{split}
+    \lVert \mathbf{Y} - \hat{\mathbf{Y}} \rVert^2 & = \lVert (I - \Pi_X)\mathbf{Y} \rVert^2 \\
+    & = \mathbf{Y}^T(I - \Pi_X)^T(I - \Pi_X)\mathbf{Y} \\
+    & = \mathbf{Y}^T (I - \Pi_X)\mathbf{Y} \qquad \because (I - \Pi_X): \text{symmetric idempotent}
+  \end{split}
+\end{equation*}
+
+Since $\mathbf{Y}^T (I - \Pi_X)\mathbf{Y} \in \R$,
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{Y}^T (I - \Pi_X)\mathbf{Y} & = tr\bigg( \mathbf{Y}^T (I - \Pi_X)\mathbf{Y} \bigg) \\
+    & = tr\bigg( (I - \Pi_X)\mathbf{Y} \mathbf{Y}^T \bigg)
+  \end{split}
+\end{equation*}
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    E\lVert \mathbf{Y} - \hat{\mathbf{Y}} \rVert^2 & = E\Big[ \mathbf{Y}^T (I - \Pi_X)\mathbf{Y} \Big] \\
+    & = E\bigg[ tr\Big( (I - \Pi_X)\mathbf{Y} \mathbf{Y}^T \Big) \bigg] \\
+    & = tr\bigg( (I - \Pi_X) \underset{(\ast)}{\underline{E\Big[ \mathbf{Y} \mathbf{Y}^T \Big]}} \bigg)
+  \end{split}
+\end{equation*}
+
+Consider $(\ast)$.
+
+\begin{equation*}
+  \begin{split}
+    E(\mathbf{Y}\mathbf{Y}^T) & = Var\mathbf{Y} + (E\mathbf{Y})(E\mathbf{Y})^T \\
+    & = \sigma^2 I + X\boldsymbol\beta\boldsymbol\beta^T X^T
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\begin{equation*}
+  \begin{split}
+    E\lVert \mathbf{Y} - \hat{\mathbf{Y}} \rVert^2 & = tr\bigg( (I - \Pi_X) E\Big[ \mathbf{Y} \mathbf{Y}^T \Big] \bigg) \\
+    & = tr\bigg((I - \Pi_X)\sigma^2 + (I - \Pi_X)X\boldsymbol\beta\boldsymbol\beta^T X^T \bigg) \\
+    & = tr\bigg( (I - \Pi_X)\sigma^2 \bigg) + tr\bigg( \boldsymbol\beta^T X^T(I - \Pi_X)X\boldsymbol\beta \bigg) \qquad \because (I - \Pi_X)X\boldsymbol\beta = X\boldsymbol\beta - X\boldsymbol\beta = 0 \\
+    & = tr\bigg( (I - \Pi_X)\sigma^2 \bigg) \\
+    & = (n - p - 1)\sigma^2 \qquad \because \begin{cases} tr(I) = n \\ tr(\Pi_X) = p + 1 \end{cases}
+  \end{split}
+\end{equation*}
+```
+
+
+In this proposition, we have used model matrix directly. Instead, we can use Equation \@ref(eq:qrhat) for simplicity.
+
+```{proposition, qrmoment, name = "Variance using QR decomposition"}
+Let $X = QR$. Then $\boldsymbol{\hat\beta} = R^{-1}Q^T\mathbf{Y}$. It follows that
+
+$$Var\boldsymbol{\hat\beta} = \sigma^2(R^TR)^{-1}$$
+```
+
+```{proof}
+It proceeds in a similar way for $\boldsymbol{\hat\beta} = R^{-1}Q^T\mathbf{Y}$.
+
+\begin{equation*}
+  \begin{split}
+    Var\boldsymbol{\hat\beta} & = Var\bigg( R^{-1}Q^T\mathbf{Y} \bigg) \\
+    & = R^{-1}Q^T Var(\mathbf{Y}) Q(R^T)^{-1} \\
+    & = R^{-1}Q^T (\sigma^2 I) Q(R^T)^{-1} \\
+    & = \sigma^2 (R^TR)^{-1} \qquad \because Q^TQ = I \\
+  \end{split}
+\end{equation*}
+```
+
+```{proposition, qrres, name = "QR representation for residual"}
+Let $X = QR$. Then
+
+$$\mathbf{e} = (I - QQ^T)\mathbf{Y}$$
+```
+
+```{proof}
+From Equation \@ref(eq:qrfit),
+
+$$\Pi_X = QQ^T$$
+
+Hence,
+
+$$\mathbf{e} = (I - \Pi_X)\mathbf{Y} = (I - QQ^T)\mathbf{Y}$$
+```
+
+
+
+
+
+
+
+
 
 
 
