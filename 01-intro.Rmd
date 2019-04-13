@@ -1853,11 +1853,11 @@ Now we can determine the distributions of various quadratic forms. The reason we
 ```{theorem, idem, name = "Idempotent and symmetric"}
 Let $A \in \R^{k \times k}$ be idempotent and symmetric. Then
 
-$\text{(a)}\: A^n$ is also idempotent
-
-$\text{(b)}\: I - A$ is also idempotent
-
-$\text{(c)}\:$ Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$
+\begin{enumerate}
+  \item $A^n$ is also idempotent
+  \item $I - A$ is also idempotent
+  \item Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$
+\end{enumerate}
 ```
 
 ```{proof}
@@ -2151,11 +2151,11 @@ $$df = \text{the number of deviation} - \text{the number of linear constraints}$
 ```{corollary, dfss, name = "df of SS"}
 $df$ of each sum of square is computed as
 
-$\text{(a)}\: df(SST) = n - 1$
-
-$\text{(b)}\: df(SSR) = 1$
-
-$\text{(c)}\: df(SSE) = n - 2$
+\begin{enumerate}
+  \item $df(SST) = n - 1$
+  \item $df(SSR) = 1$
+  \item $df(SSE) = n - 2$
+\end{enumerate}
 ```
 
 ```{proof}

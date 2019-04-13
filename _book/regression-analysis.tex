@@ -2314,11 +2314,11 @@ Now we can determine the distributions of various quadratic forms. The reason we
 \BeginKnitrBlock{theorem}[Idempotent and symmetric]
 \protect\hypertarget{thm:idem}{}{\label{thm:idem} \iffalse (Idempotent and symmetric) \fi{} }Let \(A \in \mathbb{R}^{k \times k}\) be idempotent and symmetric. Then
 
-\(\text{(a)}\: A^n\) is also idempotent
-
-\(\text{(b)}\: I - A\) is also idempotent
-
-\(\text{(c)}\:\) Every eigenvalue of \(A\) is either \(0\) or \(1\) so that \(tr(A) = rank(A)\)
+\begin{enumerate}
+  \item $A^n$ is also idempotent
+  \item $I - A$ is also idempotent
+  \item Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$
+\end{enumerate}
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{proof}
@@ -2633,11 +2633,11 @@ However, this direct comparison somtimes does not work in many times. Both \(SSR
 \BeginKnitrBlock{corollary}[df of SS]
 \protect\hypertarget{cor:dfss}{}{\label{cor:dfss} \iffalse (df of SS) \fi{} }\(df\) of each sum of square is computed as
 
-\(\text{(a)}\: df(SST) = n - 1\)
-
-\(\text{(b)}\: df(SSR) = 1\)
-
-\(\text{(c)}\: df(SSE) = n - 2\)
+\begin{enumerate}
+  \item $df(SST) = n - 1$
+  \item $df(SSR) = 1$
+  \item $df(SSE) = n - 2$
+\end{enumerate}
 \EndKnitrBlock{corollary}
 
 \BeginKnitrBlock{proof}
@@ -3106,12 +3106,13 @@ From (ii) of Theorem \ref{thm:orthdecomp},
 
 Since \(\mathbf{1} \perp \mathbb{X}_{A, \perp}\), Equations \eqref{eq:blockfit} and \eqref{eq:decompfit} imply that
 
-\[
-\begin{cases}
-  \hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}\mathbb{X}_A\boldsymbol{\hat\beta}_A \\
-  \boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
-\end{cases}
-\]
+\begin{equation}
+  \begin{cases}
+    \hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \\
+    \boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
+  \end{cases}
+  \label{eq:orthbeta}
+\end{equation}
 
 \begin{figure}[H]
 
@@ -3616,6 +3617,188 @@ Hence,
 
 \[\mathbf{e} = (I - \Pi_X)\mathbf{Y} = (I - QQ^T)\mathbf{Y}\]
 \EndKnitrBlock{proof}
+
+On Figure \ref{fig:simpledraw3}, we can see these relations. Operation \(Q^T\mathbf{Y}\) is just projection to each orthogonal basis. \(Q\) sums these projection so that we get \(\mathbf{\hat{Y}}\) which projection of \(\mathbf{Y}\) onto the column space of model matrix.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/multiple-residual} 
+
+}
+
+\caption{Residual vector}\label{fig:multresfig}
+\end{figure}
+
+\hypertarget{mean-response-and-response-1}{%
+\subsection{Mean response and response}\label{mean-response-and-response-1}}
+
+Let \(\mathbf{z} = (z_1, \ldots, z_p)^T\).
+
+\BeginKnitrBlock{theorem}[Estimation of the mean response]
+\protect\hypertarget{thm:multmeanres}{}{\label{thm:multmeanres} \iffalse (Estimation of the mean response) \fi{} }\[\hat\mu_z = \hat\beta_0 + \mathbf{z}^T\boldsymbol{\hat\beta}_A\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{theorem}[(out of sample) Prediction of a response]
+\protect\hypertarget{thm:multpred}{}{\label{thm:multpred} \iffalse ((out of sample) Prediction of a response) \fi{} }\[\hat{Y}_z = \hat\beta_0 + \mathbf{z}^T \boldsymbol{\hat\beta}_Z\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proposition}[Residual vector]
+\protect\hypertarget{prp:multresprop}{}{\label{prp:multresprop} \iffalse (Residual vector) \fi{} }Let \(\mathbf{e} = (I - \Pi_X)\mathbf{Y}\). Then
+
+\begin{enumerate}
+  \item $Var(\mathbf{e}) = \sigma^2(I - \Pi_X)$
+  \item $\mathbf{e} \perp \mathbf{\hat{Y}}$
+\end{enumerate}
+\EndKnitrBlock{proposition}
+
+\BeginKnitrBlock{proof}[$Var(\mathbf{e})$]
+\iffalse{} {Proof (\(Var(\mathbf{e})\)). } \fi{}\begin{equation*}
+  \begin{split}
+    Var(\mathbf{e}) & = Var\Big( (I - \Pi_X)\mathbf{Y} \Big) \\
+    & = (I - \Pi_X) Var(\mathbf{Y}) (I - \Pi_X)^T \\
+    & = \sigma^2 (I - \Pi_X) \qquad \because (I - \Pi_X) \:\text{symmetric itempotent}
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{proof}[$\mathbf{e} \perp \mathbf{\hat{Y}}$]
+\iffalse{} {Proof (\(\mathbf{e} \perp \mathbf{\hat{Y}}\)). } \fi{}Note that
+
+\[\mathbf{e} \in Col(X)^{\perp}\]
+
+From the properties of projection, we have
+
+\begin{equation}
+  \begin{cases}
+    \mathbf{e} \perp \mathbf{1} \\
+    \mathbf{e} \perp \mathbf{x}_j & \forall j = 1, 2, \ldots, p
+  \end{cases}
+  \label{eq:multnormaleq}
+\end{equation}
+
+Since \(\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_{i1} + \cdots + \hat\beta_p x_{ip}\),
+
+\[\mathbf{e} \perp \mathbf{\hat{Y}}\]
+\EndKnitrBlock{proof}
+
+Equation \eqref{eq:multnormaleq} is another form of the \emph{normal equation}.
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}The least squares regression line \(\{ (\mathbf{z}, y) : y = \hat\beta_0 + \mathbf{z}^T\hat\beta_A \}\) always passes through
+
+\[\bigg( \frac{1}{n} \mathbb{X}_A^T \mathbf{1}, \overline{Y} \bigg)\]
+
+In simple linear regression setting,
+
+\[(\overline{x}, \overline{Y})\]
+\EndKnitrBlock{remark}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}First consider \(p = 1\). Normal equation gives directly that
+
+\[\hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x}\]
+
+Thus,
+
+\[\overline{Y} = \hat\beta_0 + \hat\beta_1 \overline{x}\]
+
+We now give more general proof, i.e.~for \(p \ge 1\).
+
+Claim: \(\overline{Y} = \hat\beta_0 + \bigg(\frac{1}{n} \mathbb{X}_A^T \mathbf{1} \bigg)^T \boldsymbol{\hat\beta}_A\)
+
+From Equation \eqref{eq:orthbeta},
+
+\[\hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A\]
+
+It follows that
+
+\[\overline{Y} = \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A\]
+
+This completes the proof.
+\EndKnitrBlock{proof}
+
+\hypertarget{analysis-of-variance-1}{%
+\section{Analysis of Variance}\label{analysis-of-variance-1}}
+
+\hypertarget{decomposition-of-sst}{%
+\subsection{Decomposition of SST}\label{decomposition-of-sst}}
+
+We have
+
+\begin{itemize}
+\tightlist
+\item
+  \(SST = \lVert \mathbf{Y} - \overline{Y}\mathbf{1} \rVert^2 = \mathbf{Y}^T(I - \Pi_{\mathbf{1}})\mathbf{Y}\)
+\item
+  \(SSR = \lVert \mathbf{\hat{Y}} - \overline{Y}\mathbf{1} \rVert^2 = \mathbf{Y}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{Y}\)
+\item
+  \(SSE = \lVert \mathbf{Y} - \mathbf{\hat{Y}} \rVert^2 = \mathbf{Y}^T(I - \Pi_X)\mathbf{Y}\)
+\end{itemize}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/multiple-anova} 
+
+}
+
+\caption{Decomposition of SST}\label{fig:mdecomp}
+\end{figure}
+
+In Figure \ref{fig:mdecomp}, Pythagorean law gives
+
+\[SST = SSR + SSE\]
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:unnamed-chunk-71}{}{\label{lem:unnamed-chunk-71} }Let \(X = [\mathbf{1} \mid \mathbb{X}_A]\) and let \(\mathbb{X}_{A, \perp} = \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\). Then
+
+\[\mathbf{\hat{Y}} - \overline{Y}\mathbf{1} = \mathbb{X}_{A, \perp}\boldsymbol{\hat\beta}_A\]
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Note that \(\mathbf{1} \perp \mathbb{X}_{A, \perp}\).
+
+Recall that
+
+\[\Pi(\mathbf{Y} \mid R(\mathbf{1})) = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\mathbf{Y} = \overline{Y}\mathbf{1}\]
+
+From Theorem \ref{thm:orthdecomp},
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{\hat{Y}} & = \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \Pi(\mathbf{Y} \mid R(\mathbb{X}_{A,\perp})) \\
+    & = \overline{Y}\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\[\mathbf{\hat{Y}} - \overline{Y}\mathbf{1} = \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A\]
+\EndKnitrBlock{proof}
+
+\hypertarget{distributions}{%
+\subsection{Distributions}\label{distributions}}
+
+\BeginKnitrBlock{proposition}[Distribution of SSE]
+\protect\hypertarget{prp:mssedist}{}{\label{prp:mssedist} \iffalse (Distribution of SSE) \fi{} }\[\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)\]
+\EndKnitrBlock{proposition}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Note that
+
+\[SSE = \mathbf{Y}^T(I - \Pi_X)\mathbf{Y}\]
+
+From Theorem \ref{thm:quaddist},
+
+\[K = rank(I - \Pi_X) = tr(I - \Pi_X) = n - rank(\Pi_X) = n - p - 1\]
+
+\(\delta\) proof is exactly same as Proposition \ref{prp:ssedist}. Hence, \(\delta = 0\).
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{proposition}[Distribution of SSR]
+\protect\hypertarget{prp:mssrdist}{}{\label{prp:mssrdist} \iffalse (Distribution of SSR) \fi{} }\[\frac{SSR}{\sigma^2} \sim \chi^2(p, \delta)\]
+
+where \(\delta = \frac{\boldsymbol{\hat\beta}^TX^T(\Pi_X - \Pi_{\mathbf{1}})X\boldsymbol{\hat\beta}}{\sigma^2}\)
+\EndKnitrBlock{proposition}
 
 \bibliography{book.bib,packages.bib}
 

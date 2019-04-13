@@ -222,12 +222,13 @@ From (ii) of Theorem \@ref(thm:orthdecomp),
 
 Since $\mathbf{1} \perp \mathbb{X}_{A, \perp}$, Equations \@ref(eq:blockfit) and \@ref(eq:decompfit) imply that
 
-$$
-\begin{cases}
-  \hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}\mathbb{X}_A\boldsymbol{\hat\beta}_A \\
-  \boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
-\end{cases}
-$$
+\begin{equation}
+  \begin{cases}
+    \hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A \\
+    \boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}
+  \end{cases}
+  (\#eq:orthbeta)
+\end{equation}
 
 ```{r illdecomp, echo=FALSE, fig.cap="Orthogonal decomposition of the column space and LSE"}
 knitr::include_graphics("images/multiple-orthogonal.png")
@@ -679,6 +680,173 @@ Hence,
 
 $$\mathbf{e} = (I - \Pi_X)\mathbf{Y} = (I - QQ^T)\mathbf{Y}$$
 ```
+
+On Figure \@ref(fig:simpledraw3), we can see these relations. Operation $Q^T\mathbf{Y}$ is just projection to each orthogonal basis. $Q$ sums these projection so that we get $\mathbf{\hat{Y}}$ which projection of $\mathbf{Y}$ onto the column space of model matrix.
+
+```{r multresfig, echo=FALSE, fig.cap="Residual vector"}
+knitr::include_graphics("images/multiple-residual.png")
+```
+
+### Mean response and response
+
+Let $\mathbf{z} = (z_1, \ldots, z_p)^T$.
+
+```{theorem, multmeanres, name = "Estimation of the mean response"}
+$$\hat\mu_z = \hat\beta_0 + \mathbf{z}^T\boldsymbol{\hat\beta}_A$$
+```
+
+```{theorem, multpred, name = "(out of sample) Prediction of a response"}
+$$\hat{Y}_z = \hat\beta_0 + \mathbf{z}^T \boldsymbol{\hat\beta}_Z$$
+```
+
+```{proposition, multresprop, name = "Residual vector"}
+Let $\mathbf{e} = (I - \Pi_X)\mathbf{Y}$. Then
+
+\begin{enumerate}
+  \item $Var(\mathbf{e}) = \sigma^2(I - \Pi_X)$
+  \item $\mathbf{e} \perp \mathbf{\hat{Y}}$
+\end{enumerate}
+```
+
+```{proof, name = "$Var(\\mathbf{e})$"}
+\begin{equation*}
+  \begin{split}
+    Var(\mathbf{e}) & = Var\Big( (I - \Pi_X)\mathbf{Y} \Big) \\
+    & = (I - \Pi_X) Var(\mathbf{Y}) (I - \Pi_X)^T \\
+    & = \sigma^2 (I - \Pi_X) \qquad \because (I - \Pi_X) \:\text{symmetric itempotent}
+  \end{split}
+\end{equation*}
+```
+
+```{proof, name = "$\\mathbf{e} \\perp \\mathbf{\\hat{Y}}$"}
+Note that
+
+$$\mathbf{e} \in Col(X)^{\perp}$$
+
+From the properties of projection, we have
+
+\begin{equation}
+  \begin{cases}
+    \mathbf{e} \perp \mathbf{1} \\
+    \mathbf{e} \perp \mathbf{x}_j & \forall j = 1, 2, \ldots, p
+  \end{cases}
+  (\#eq:multnormaleq)
+\end{equation}
+
+Since $\hat{Y_i} = \hat\beta_0 + \hat\beta_1 x_{i1} + \cdots + \hat\beta_p x_{ip}$,
+
+$$\mathbf{e} \perp \mathbf{\hat{Y}}$$
+```
+
+Equation \@ref(eq:multnormaleq) is another form of the *normal equation*.
+
+```{remark}
+The least squares regression line $\{ (\mathbf{z}, y) : y = \hat\beta_0 + \mathbf{z}^T\hat\beta_A \}$ always passes through
+
+$$\bigg( \frac{1}{n} \mathbb{X}_A^T \mathbf{1}, \overline{Y} \bigg)$$
+
+In simple linear regression setting,
+
+$$(\overline{x}, \overline{Y})$$
+```
+
+```{proof}
+First consider $p = 1$. Normal equation gives directly that
+
+$$\hat\beta_0 = \overline{Y} - \hat\beta_1 \overline{x}$$
+
+Thus,
+
+$$\overline{Y} = \hat\beta_0 + \hat\beta_1 \overline{x}$$
+
+We now give more general proof, i.e. for $p \ge 1$.
+
+Claim: $\overline{Y} = \hat\beta_0 + \bigg(\frac{1}{n} \mathbb{X}_A^T \mathbf{1} \bigg)^T \boldsymbol{\hat\beta}_A$
+
+From Equation \@ref(eq:orthbeta),
+
+$$\hat\beta_0 = \overline{Y} - \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A$$
+
+It follows that
+
+$$\overline{Y} = \hat\beta_0 + \frac{1}{n}\mathbf{1}^T\mathbb{X}_A\boldsymbol{\hat\beta}_A$$
+
+This completes the proof.
+```
+
+## Analysis of Variance
+
+### Decomposition of SST
+
+We have
+
+- $SST = \lVert \mathbf{Y} - \overline{Y}\mathbf{1} \rVert^2 = \mathbf{Y}^T(I - \Pi_{\mathbf{1}})\mathbf{Y}$
+- $SSR = \lVert \mathbf{\hat{Y}} - \overline{Y}\mathbf{1} \rVert^2 = \mathbf{Y}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{Y}$
+- $SSE = \lVert \mathbf{Y} - \mathbf{\hat{Y}} \rVert^2 = \mathbf{Y}^T(I - \Pi_X)\mathbf{Y}$
+
+
+```{r mdecomp, echo=FALSE, fig.cap="Decomposition of SST"}
+knitr::include_graphics("images/multiple-anova.png")
+```
+
+In Figure \@ref(fig:mdecomp), Pythagorean law gives
+
+$$SST = SSR + SSE$$
+
+```{lemma}
+Let $X = [\mathbf{1} \mid \mathbb{X}_A]$ and let $\mathbb{X}_{A, \perp} = \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A$. Then
+
+$$\mathbf{\hat{Y}} - \overline{Y}\mathbf{1} = \mathbb{X}_{A, \perp}\boldsymbol{\hat\beta}_A$$
+```
+
+```{proof}
+Note that $\mathbf{1} \perp \mathbb{X}_{A, \perp}$.
+
+Recall that
+
+$$\Pi(\mathbf{Y} \mid R(\mathbf{1})) = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\mathbf{Y} = \overline{Y}\mathbf{1}$$
+
+From Theorem \@ref(thm:orthdecomp),
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{\hat{Y}} & = \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \Pi(\mathbf{Y} \mid R(\mathbb{X}_{A,\perp})) \\
+    & = \overline{Y}\mathbf{1} + \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$\mathbf{\hat{Y}} - \overline{Y}\mathbf{1} = \mathbb{X}_{A,\perp}\boldsymbol{\hat\beta}_A$$
+```
+
+### Distributions
+
+```{proposition, mssedist, name = "Distribution of SSE"}
+$$\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)$$
+```
+
+```{proof}
+Note that
+
+$$SSE = \mathbf{Y}^T(I - \Pi_X)\mathbf{Y}$$
+
+From Theorem \@ref(thm:quaddist),
+
+$$K = rank(I - \Pi_X) = tr(I - \Pi_X) = n - rank(\Pi_X) = n - p - 1$$
+
+$\delta$ proof is exactly same as Proposition \@ref(prp:ssedist). Hence, $\delta = 0$.
+```
+
+```{proposition, mssrdist, name = "Distribution of SSR"}
+$$\frac{SSR}{\sigma^2} \sim \chi^2(p, \delta)$$
+
+where $\delta = \frac{\boldsymbol{\hat\beta}^TX^T(\Pi_X - \Pi_{\mathbf{1}})X\boldsymbol{\hat\beta}}{\sigma^2}$
+```
+
+
+
+
 
 
 
