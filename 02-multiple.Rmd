@@ -543,7 +543,7 @@ Set $D := C - (X^TX)^{-1}X^T$. From unbiasedness,
   \end{split}
 \end{equation*}
 
-Since $\boldsymbol\beta \neq \mathbf{0}$,
+Since $\forall \boldsymbol\beta \in \R^{p + 1} : DX \boldsymbol\beta = \mathbf{0}$,
 
 \begin{equation} \label{eq:prgm}
   DX = 0
@@ -822,11 +822,18 @@ $$\mathbf{\hat{Y}} - \overline{Y}\mathbf{1} = \mathbb{X}_{A,\perp}\boldsymbol{\h
 
 ### Distributions
 
-```{proposition, mssedist, name = "Distribution of SSE"}
-$$\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)$$
+```{proposition, ssdist, name = "Distribution of SS"}
+Extending for $p > 1$, we can get each result.
+
+\begin{enumerate}
+  \item $\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)$
+  \item $\frac{SSR}{\sigma^2} \sim \chi^2(p, \delta), \quad \delta = \frac{\boldsymbol\beta^TX^T(\Pi_X - \Pi_{\mathbf{1}})X\boldsymbol\beta}{\sigma^2}$
+  \item $SSR \ind SSE$
+  \item $\frac{SST}{\sigma^2} \sim \chi^2(n - 1, \delta), \quad \delta = \frac{\boldsymbol\beta^TX^T(I - \Pi_{\mathbf{1}})X\boldsymbol\beta}{\sigma^2}$
+\end{enumerate}
 ```
 
-```{proof}
+```{proof, name = "Distribution of SSE"}
 Note that
 
 $$SSE = \mathbf{Y}^T(I - \Pi_X)\mathbf{Y}$$
@@ -835,25 +842,148 @@ From Theorem \@ref(thm:quaddist),
 
 $$K = rank(I - \Pi_X) = tr(I - \Pi_X) = n - rank(\Pi_X) = n - p - 1$$
 
-$\delta$ proof is exactly same as Proposition \@ref(prp:ssedist). Hence, $\delta = 0$.
+$\delta$ proof is exactly same as Proposition \@ref(prp:ssedist).
+
+\begin{equation*}
+  \begin{split}
+    \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (I - \Pi_X) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \\
+    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{(\boldsymbol\beta^TX^T)X(X^TX)^{-1}X^T(X\boldsymbol\beta)}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} \\
+    & = 0
+  \end{split}
+\end{equation*}
+
+Hence, $\delta = 0$.
 ```
 
-```{proposition, mssrdist, name = "Distribution of SSR"}
-$$\frac{SSR}{\sigma^2} \sim \chi^2(p, \delta)$$
+```{proof, name = "Distribution of SSR"}
+Note that
 
-where $\delta = \frac{\boldsymbol{\hat\beta}^TX^T(\Pi_X - \Pi_{\mathbf{1}})X\boldsymbol{\hat\beta}}{\sigma^2}$
+$$SSR = \mathbf{Y}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{Y}$$
+
+From Theorem \@ref(thm:quaddist),
+
+$$K = rank(\Pi_X - \Pi_{\mathbf{1}}) = tr(\Pi_X) - tr(\Pi_{\mathbf{1}}) = rank(\Pi_X) - rank(\Pi_{\mathbf{1}}) = p + 1 - 1 = p$$
+
+$\delta$ proof is exactly same as Proposition \@ref(prp:ssrdist).
+
+\begin{equation*}
+  \begin{split}
+    \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (\Pi_X - \Pi_{\mathbf{1}}) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \qquad \because \frac{\mathbf{Y}}{\sigma} \sim MVN(\frac{1}{\sigma}X\boldsymbol\beta, I) \\
+    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{\boldsymbol\beta^TX^T\Pi_{\mathbf{1}}X\boldsymbol\beta}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T(X^TX - X^T \Pi_{\mathbf{1}}X)\boldsymbol\beta}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T \Big\{ X^T(I - \Pi_{\mathbf{1}})X \Big\} \boldsymbol\beta }{\sigma^2}
+  \end{split}
+\end{equation*}
+
+This completes the proof.
 ```
 
+```{proof, name = "Independence between SSE and SSR"}
+Since $SSE$ and $SSR$ are quadratic form of $\mathbf{Y} \sim MVN(X\boldsymbol\beta, \sigma^2 I)$ and each $I - \Pi_X$ and $\Pi_X - \Pi_{\mathbf{1}}$ is symmetric,
 
+Claim: $(I - \Pi_X)(\Pi_X - \Pi_{\mathbf{1}}) = 0$
 
+We have already shown this in Proposition \@ref(prp:ssind). Using the fact that $\Pi_X\Pi_{\mathbf{1}} = \Pi_{\mathbf{1}}$,
 
+\begin{equation*}
+  \begin{split}
+    (I - \Pi_X)(\Pi_X - \Pi_{\mathbf{1}}) & = \Pi_X - \Pi_{\mathbf{1}} - \Pi_X^2 + \Pi_X\Pi_{\mathbf{1}} \\
+    & = \Pi_X - \Pi_{\mathbf{1}} - \Pi_X + \Pi_{\mathbf{1}} \qquad \because \text{idempotent} \\
+    & = 0
+  \end{split}
+\end{equation*}
+```
 
+```{proof, name = "Distribution of SST"}
+Note that
 
+$$SST = \mathbf{Y}^T(I - \Pi_{\mathbf{1}})\mathbf{Y}$$
 
+From Theorem \@ref(thm:quaddist),
 
+$$K = rank(I - \Pi_{\mathbf{1}}) = tr(I - \Pi_{\mathbf{1}}) = n - 1$$
 
+and
 
+\begin{equation*}
+  \begin{split}
+    \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (I - \Pi_{\mathbf{1}}) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \\
+    & = \frac{\boldsymbol\beta^TX^T(I - \Pi_{\mathbf{1}})X\boldsymbol\beta}{\sigma^2}
+  \end{split}
+\end{equation*}
+```
 
+### ANOVA for testing significance of regression
+
+Under the normality of error term
+
+$$\boldsymbol\epsilon_i \sim MVN(\mathbf{0}, \sigma^2 I)$$
+
+a test statistic can follow $F$-distribution as in univariate setting.
+
+```{corollary, ftest, name = "F-test"}
+Under normality,
+
+$$F = \frac{SSR / p}{SSE / (n - p - 1)} \sim F(p, n - p - 1, \delta)$$
+
+where
+
+$\delta = \frac{\boldsymbol\beta^TX^T(\Pi_X - \Pi_{\mathbf{1}})X\boldsymbol\beta}{\sigma^2}$
+```
+
+In the proof of \@ref(prp:ssrdist), we can understand the structure that $\delta = 0$ when all coefficients corresponding to predictors are zero.
+
+$$F \stackrel{H_0}{\sim} F(p, n - p - 1)$$
+
+where
+
+$$H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$$
+
+As other ordinary test, we just reject this $H_0$ if observed $F_0$ is large, i.e.
+
+$$F_0 > F_{\alpha}(p, n - p - 1)$$
+
+See Figure \@ref(fig:goodfitfig). **ANOVA table** summarizes these statistics in table form.
+
+|Source|SS|df|MS|F|p-value|  
+|:----:|:--:|:--:|:--:|:--:|:--:|  
+|Model| $SSR$ | $p$ | $MSR = \frac{SSR}{p}$ | $F_0 = \frac{MSR}{MSE}$ | p-value |  
+|Error| $SSE$ | $n - p - 1$ | $MSE = \frac{SSE}{n - p - 1}$ | | |  
+|Total| $SST$ | $n - 1$ | | | |  
+
+Everything is same in `R`.
+
+```{r}
+cem_fit <- lm(y ~ ., data = cem)
+summary(cem_fit)
+```
+
+You can see `F-statistic` with degrees of freedom `r ncol(cem) - 1` `r nrow(cem) - length(coef(cem_fit))`.
+
+```{r}
+summary(cem_fit)$fstatistic
+```
+
+However, `anova.lm()` gives a bit different format This is related to *extra sum of squares*, which will be covered later.
+
+```{r}
+anova(cem_fit)
+```
+
+### Coefficient of determination
+
+In univariate setting, coefficient of determination measures linear relationship based on the $SST$ decomposition.
+
+$$R^2 = \frac{SSR}{SST} = \hat\rho = \cos\theta$$
+
+Moreover, it becomes to be same as sample correlation $\hat\rho$ and angle between two vectors. In multivariate setting, we also define this kind of measure.
+
+```{definition, mrsq, name = "Coefficient of Determination"}
+For $\mathbf{Y}_i = X\boldsymbol\beta + \epsilon_i$,
+
+$$R^2 := \max_{\boldsymbol\beta \in \R^{p + 1}} Corr(\mathbf{Y}, X\boldsymbol\beta)$$
+```
 
 
 
