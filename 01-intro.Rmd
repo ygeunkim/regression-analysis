@@ -1189,7 +1189,10 @@ $$SST = SSR + SSE$$
 
 Also,
 
-$$R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2$$
+\begin{equation}
+  R^2 = \frac{SSR}{SST} = cos^2\theta = \hat\rho_{XY}^2
+  (\#eq:rsqcos)
+\end{equation}
 
 ### Projection mapping {#solproj}
 

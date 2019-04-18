@@ -980,10 +980,508 @@ $$R^2 = \frac{SSR}{SST} = \hat\rho = \cos\theta$$
 Moreover, it becomes to be same as sample correlation $\hat\rho$ and angle between two vectors. In multivariate setting, we also define this kind of measure.
 
 ```{definition, mrsq, name = "Coefficient of Determination"}
-For $\mathbf{Y}_i = X\boldsymbol\beta + \epsilon_i$,
+For $\mathbf{Y}_i = X\B + \epsilon_i$,
 
-$$R^2 := \max_{\boldsymbol\beta \in \R^{p + 1}} Corr(\mathbf{Y}, X\boldsymbol\beta)$$
+$$R^2 := \max_{\B \in \R^{p + 1}} \hat\rho(\mathbf{Y}, X\B)$$
+
+where $\hat\rho$ means sample correlation.
 ```
+
+We have mentioned about $R^2 = (\cos\theta)^2$ in simple linear regression. See Equation \@ref(eq:rsqcos). Now we try to see detail of this relation. First, in @Leon:2014aa, you might see the relation of $\cos\theta$ and inner product.
+
+```{lemma, cosprod}
+If $\mathbf{x}, \mathbf{y} \in \R^n$ are two nonzero vectors and $\theta$ is the angle between them, then
+
+$$\mathbf{x}^T\mathbf{y} = \lVert \mathbf{x} \rVert \lVert \mathbf{y} \rVert \cos\theta$$
+```
+
+```{r cosfig, echo=FALSE, fig.cap="Two vectors in $\\R^2$"}
+knitr::include_graphics("images/multiple-cos.png")
+```
+
+```{proof}
+See Figure \@ref(fig:cosfig). We have a triangle. Law of cosines gives that
+
+$$\lVert \mathbf{y} - \mathbf{x} \rVert^2 = \lVert \mathbf{x} \rVert^2 + \lVert \mathbf{y} \rVert^2 -2 \lVert \mathbf{x} \rVert \lVert \mathbf{y} \rVert \cos\theta$$
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    \lVert \mathbf{x} \rVert \lVert \mathbf{y} \rVert \cos\theta & = \frac{1}{2}(\lVert \mathbf{x} \rVert^2 + \lVert \mathbf{y} \rVert^2 - \lVert \mathbf{y} - \mathbf{x} \rVert^2) \\
+    & = \frac{1}{2}(\mathbf{x}^T \mathbf{x} + \mathbf{y}^T \mathbf{y} - (\mathbf{y} - \mathbf{x})^T(\mathbf{y} - \mathbf{x})) \\
+    & = \mathbf{x}^T\mathbf{y}
+  \end{split}
+\end{equation*}
+```
+
+This implies the *relationship between sample correlation and the angle*.
+
+```{theorem, corrangle, name = "Sample correlation and the Angle"}
+Let $\mathbf{X} = (X_1, \ldots, X_n)^T$ and $\mathbf{Y} = (Y_1, \ldots, Y_n)^T$ be random variables. Then
+
+$$\hat\rho(\mathbf{X}, \mathbf{Y}) = cos \theta$$
+
+where $\theta$ is the angle between $\mathbf{X} - \overline{X}\mathbf{1}$ and $\mathbf{Y} - \overline{Y}\mathbf{1}$.
+```
+
+```{proof}
+Note that
+
+$$\widehat{Cov}(\mathbf{X}, \mathbf{Y}) = \frac{1}{n - 1} (\mathbf{X} - \overline{X}\mathbf{1})^T(\mathbf{Y} - \overline{Y}\mathbf{1})$$
+
+$$\hat\sigma_{\mathbf{X}} = \sqrt{\frac{1}{n - 1} (\mathbf{X} - \overline{X}\mathbf{1})^T (\mathbf{X} - \overline{X}\mathbf{1})}$$
+
+and
+
+$$\hat\sigma_{\mathbf{Y}} = \sqrt{\frac{1}{n - 1} (\mathbf{Y} - \overline{Y}\mathbf{1})^T (\mathbf{Y} - \overline{Y}\mathbf{1})}$$
+
+and hence it follows that
+
+\begin{equation*}
+  \begin{split}
+    \hat\rho(\mathbf{X}, \mathbf{Y}) & = \frac{\widehat{Cov}(\mathbf{X}, \mathbf{Y})}{\hat\sigma_{\mathbf{X}}\hat\sigma_{\mathbf{Y}}} \\
+    & = \frac{(\mathbf{X} - \overline{X}\mathbf{1})^T(\mathbf{Y} - \overline{Y}\mathbf{1})}{\sqrt{(\mathbf{X} - \overline{X}\mathbf{1})^T (\mathbf{X} - \overline{X}\mathbf{1})}\sqrt{(\mathbf{Y} - \overline{Y}\mathbf{1})^T (\mathbf{Y} - \overline{Y}\mathbf{1})}} \\
+    & = \frac{<\mathbf{X} - \overline{X}\mathbf{1}, \mathbf{Y} - \overline{Y}\mathbf{1}>}{\lVert \mathbf{X} - \overline{X}\mathbf{1} \rVert \lVert \mathbf{Y} - \overline{Y}\mathbf{1} \rVert} \\
+    & = cos \theta
+  \end{split}
+\end{equation*}
+
+where $\theta$ is the angle between $\mathbf{X} - \overline{X}\mathbf{1}$ and $\mathbf{Y} - \overline{Y}\mathbf{1}$.
+```
+
+Using this fact, we can finally derive that
+
+\begin{equation}
+  \hat\rho(\mathbf{Y}, X\B) = \cos\theta
+  (\#eq:rsqangle)
+\end{equation}
+
+where $\theta$ is the angle between $\mathbf{Y} - \overline{Y}\mathbf{1}$ and 
+
+$$\beta_1(\mathbf{x}_1 - \overline{x}_1\mathbf{1}) + \cdots \beta_p(\mathbf{x}_p - \overline{x}_p\mathbf{1}) = \mathbb{X}_{A,\perp} \B_A \in Col(\mathbb{X}_{A, \perp})$$
+
+```{r rsqfig, echo=FALSE, fig.cap="$R^2$ and Projection"}
+knitr::include_graphics("images/multiple-rsq.png")
+```
+
+See Figure \@ref(fig:rsqfig). $\theta$ is marked on Figure \@ref(fig:mdecomp) setting. In this setting, we know that $\theta < \frac{\pi}{2}$ is minimized by projection onto $\mathbb{X}_{A,\perp}$. This means that $\cos\theta$ is maximized. In other words,
+
+$$R^2 = \frac{SSR}{SST} = (\cos\theta)^2$$
+
+is maximized by the projection of $\mathbf{Y} - \overline{Y}\mathbf{1}$ onto $Col(\mathbb{X}_{A, \perp})$. Thus, $R^2$ can be interpreted as *proportion of variability of $Y$ that is explained by the set of $x_j$s*. It is obvious that $0 \le R^2 \le 1$.
+
+$R^2$ becomes larger if a set of $\mathbb{X}_{A, \perp}$ explains the response well. Is it proper to use this measure as judging *goodness-of-fit*? However, this is not a good measure for model comparison. Model comparison includes different number of predictors. *$SSE$, however, always decreases when new $X_j$ is added,* while $SST = \sum (Y_i - \overline{Y})$ never changes given $Y$ data. This leads
+
+$$R^2 = 1 - \frac{SSE}{SST}$$
+
+always becomes larger by more predictors. For example,
+
+$$
+\begin{cases}
+  Y = \beta_0 + \beta_1 X_1 + \epsilon \\
+  Y = \beta_0 + \beta_1 X_1 + \beta_1 X_2 + \epsilon
+\end{cases}
+$$
+
+Whether $X_2$ additionaly contributes to $Y$ significantly, $R^2$ increases and we could judge that second model is better than first one. Hence to use this properly, we need some adjustment. As $p + 1$ increases, this adjustment should become smaller:
+
+$$\frac{n - 1}{n - p - 1}$$
+
+```{definition, ra, name = "Adjusted Rsquared"}
+$$R_a^2 := 1 - \frac{SSE / (n - p - 1)}{SST / (n - 1)}$$
+```
+
+```{remark, name = "Adjustment"}
+$$R_a^2 = 1 - \frac{n - 1}{n - p - 1}(1 - R^2)$$
+```
+
+```{proof}
+Note that
+
+$$R^2 = 1 - \frac{SSE}{SST}$$
+
+and hence,
+
+\begin{equation*}
+  \begin{split}
+    R_a^2 & := 1 - \frac{SSE / (n - p - 1)}{SST / (n - 1)} \\
+    & = 1 - \frac{n - 1}{n - p - 1}\bigg(\frac{SSE}{SST}\bigg) \\
+    & = 1 - \frac{n - 1}{n - p - 1}(1 - R^2)
+  \end{split}
+\end{equation*}
+```
+
+So $R_a^2$ becomes a useful measure for the goodness-of-fit. On the contrary, *it cannot be interpreted as the proportion of total variation in $Y$ that is explained by $X_1, \ldots, X_p$.*
+
+
+## Distributions
+
+### Individual Regression coefficients
+
+Under Normality,
+
+$$\mathbf{Y} \sim MVN(X\B, \sigma^2I)$$
+
+Since $\hb$ is an unbiased estimator, Proposition \@ref(prp:multbmoment) implies that
+
+\begin{equation}
+  \hb \sim MVN\bigg( \B, \sigma^2(X^TX)^{-1} \bigg)
+  (\#eq:hbdist)
+\end{equation}
+
+Let $C \equiv (X^TX)^{-1}$. Then
+
+$$
+\begin{bmatrix}
+  \hat\beta_0 \\ \hline
+  \hat\beta_1 \\ \hline
+  \vdots \\ \hline
+  \hat\beta_p
+\end{bmatrix} \sim MVN\Bigg( \begin{bmatrix}
+  \beta_0 \\ \hline
+  \beta_1 \\ \hline
+  \vdots \\ \hline
+  \beta_p
+\end{bmatrix}, \sigma^2\begin{bmatrix}
+  c_{00} & \cdots & \cdots \\ \hline
+  \cdots & c_{11} & \cdots \\ \hline
+  \vdots & \vdots & \vdots \\ \hline
+  \cdots & \cdots & c_{pp}
+\end{bmatrix} \Bigg)
+$$
+
+i.e. Individual coefficient follows
+
+$$\hat\beta_j \sim N(\beta_j, c_{jj}\sigma^2), \quad j = 0, 1, \ldots, p$$
+
+where $c_{jj}$ is $j + 1$th diagonal element of $C = (X^TX)^{-1}$. Then
+
+\begin{equation}
+  \frac{\hat\beta_k - \beta_k}{\sigma\sqrt{c_{kk}}} \sim N(0, 1)
+  (\#eq:bejzdist)
+\end{equation}
+
+From Proposition \@ref(prp:ssdist),
+
+$$\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)$$
+
+Since $\hat\sigma^2 = \frac{SSE}{n - p - 1}$ and $\hat\beta_k \ind \hat\sigma^2$,
+
+\begin{equation}
+  \frac{\hat\beta_k - \beta_k}{\hat\sigma\sqrt{c_{kk}}} = \frac{(\hat\beta_k - \beta_k) / (\sigma\sqrt{c_{kk}}) \sim N(0, 1)}{\sqrt{\frac{SSE}{\sigma^2} / (n - p - 1) \sim \chi^2(n - p - 1)}} \sim t(n - p - 1), \quad k = 0, 1, \ldots, p
+  (\#eq:bejtdist)
+\end{equation}
+
+<!-- In fact, QR representation \@ref(prp:qrmoment) would give much more simple diagonal element. -->
+
+<!-- $$Var(\hb) = \sigma^2(R^TR)^{-1}$$ -->
+
+<!-- Since $R$ is upper triangular matrix, we have -->
+
+<!-- $$ -->
+<!-- Var(\hb) = \sigma^2 diag\bigg(\frac{1}{r_{11}^2}, \ldots, \frac{1}{r_{p + 1, p + 1}^2} \bigg) -->
+<!-- $$ -->
+
+### Mean response
+
+Consider prediction at $\mathbf{z} = (1, z_1, \ldots, z_p)^T$
+
+Mean response targets
+
+$$\hat\mu_{\mathbf{z}} = \mathbf{z}^T\hb$$
+
+From Equation \@ref(eq:hbdist),
+
+$$\hat\mu_{\mathbf{z}} \sim N(\mathbf{z}^T\B, \sigma^2\mathbf{z}^T(X^TX)^{-1}\mathbf{z})$$
+
+Set
+
+\begin{equation}
+  C_{\mathbf{z}} := \mathbf{z}^T(X^TX)^{-1}\mathbf{z}
+  (\#eq:predse)
+\end{equation}
+
+Then by standardization,
+
+\begin{equation}
+  \frac{\hat\mu_{\mathbf{z}} - \mu_{\mathbf{z}}}{\sqrt{C_{\mathbf{z}}\sigma^2}} \sim N(0, 1)
+  (\#eq:meanreszdist)
+\end{equation}
+
+Hence,
+
+\begin{equation}
+  \frac{\hat\mu_{\mathbf{z}} - \mu_{\mathbf{z}}}{\sqrt{C_{\mathbf{z}}\hat\sigma^2}} \sim t(n - p - 1)
+  (\#eq:meanrestdist)
+\end{equation}
+
+### Response
+
+Now we target $\mathbf{Y}$ at $\mathbf{z} = (1, z_1, \ldots, z_p)^T$ *out-of-sample*. $\boldsymbol\epsilon_{\mathbf{z}}$ at this point is independent of the data set.
+
+Consider
+
+\begin{equation}
+  \hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}} = \mathbf{z}^T(\hb - \B) + \epsilon_{\mathbf{z}}
+  (\#eq:prerrz)
+\end{equation}
+
+As in Proposition \@ref(prp:bepsmvn), it can be proven that
+
+$$
+\begin{bmatrix}
+  \hb - \B \\
+  \epsilon_{\mathbf{z}}
+\end{bmatrix} \sim MVN
+$$
+
+by showing marginal follows Normal and two are independent. First part - marginal follows normal distribution - has been already shown and assumed. Since these are Normal, it is enough to show covariance is zero.
+
+\begin{equation*}
+  \begin{split}
+    Cov((\hb - \B), \epsilon_{\mathbf{z}}) & = Cov\Big( (X^TX)^{-1}X^T Y, \epsilon_{\mathbf{z}} \Big) \\
+    & = (X^TX)^{-1}X^T Cov(Y, \epsilon_{\mathbf{z}}) \\
+    & = 0
+  \end{split}
+\end{equation*}
+
+Hence, the joint distribution
+
+$$
+\begin{bmatrix}
+  \hb - \B \\ \hline
+  \epsilon_{\mathbf{z}}
+\end{bmatrix} \sim MVN\bigg( \mathbf{0}, \left[\begin{array}{c|c}
+  \sigma^2(X^TX)^{-1} & 0 \\ \hline
+  0 & \sigma^2
+\end{array}\right] \bigg)
+$$
+
+From Equation \@ref(eq:prerrz),
+
+\begin{equation*}
+  \begin{split}
+    \hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}} & = \left[\begin{array}{c|c}
+      \mathbf{z}^T & 1
+    \end{array}\right] \begin{bmatrix}
+      \hb - \B \\ \hline
+      \epsilon_{\mathbf{z}}
+    \end{bmatrix} \\
+    & \sim N \Bigg( \mathbf{0}, \left[\begin{array}{c|c}
+      \mathbf{z}^T & 1
+    \end{array}\right] \left[\begin{array}{c|c}
+      \sigma^2(X^TX)^{-1} & 0 \\ \hline
+      0 & \sigma^2
+    \end{array}\right] \left[\begin{array}{cc}
+      \mathbf{z} \\ 1
+    \end{array}\right] \Bigg) \\
+    & \stackrel{d}{=} N \Big( \mathbf{0}, \sigma^2\mathbf{z}^T(X^TX)^{-1}\mathbf{z} + \sigma^2 \Big)
+  \end{split}
+\end{equation*}
+
+Using notation from Equation \@ref(eq:predse), we get
+
+\begin{equation}
+  \hat{\mathbf{Y}}_{\mathbf{z}} - \mathbf{Y}_{\mathbf{z}} \sim N\bigg( \mathbf{0}, (C_{\mathbf{z}} + 1)\sigma^2 \bigg)
+  (\#eq:resdistn)
+\end{equation}
+
+Then standardization gives that
+
+\begin{equation}
+  \frac{\hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}}}{\sqrt{C_{\mathbf{z}} + 1)\sigma^2}} \sim N(0, 1)
+  (\#eq:reszdist)
+\end{equation}
+
+and hence,
+
+\begin{equation}
+  \frac{\hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}}}{\sqrt{C_{\mathbf{z}} + 1)\hat\sigma^2}} \sim t(n - p - 1)
+  (\#eq:restdist)
+\end{equation}
+
+Compare Statistic \@ref(eq:restdist) with Statistic \@ref(eq:meanrestdist). We can see that out-of-sample one has larger standard error by $\sigma^2$ with same degrees of freedom. This is same as simple regression setting. Error of mean response only comes from $\boldsymbol{\hat\beta}$. When we predict out-of-sample individual, however, $Var(\epsilon_{\mathbf{z}})$ is added. Denote that this $\epsilon_{\mathbf{z}}$ should be independent with given data. Otherwise, we cannot get the distribution as ordinary [@Johnson:2013aa].
+
+
+## Statistical Inference
+
+We have derived basic distributions, so we try to test or build a confidence interval.
+
+### Individual Regression coefficients
+
+From Statistic \@ref(eq:bejtdist), we can easily make $(1 - \alpha)100\%$ confidence interval $\hat\theta \pm t_{\frac{\alpha}{2}} SE$ and test statistic.
+
+```{theorem, bjci, name = "$(1 - \\alpha)100\\%$ Confidence interval"}
+$(1 - \alpha)100\%$ confidence interval for each individual $\beta_j$ is
+
+$$\bigg[ \hat\beta_j \pm t_{\frac{\alpha}{2}}(n - p - 1) \hat\sigma\sqrt{c_{kk}} \bigg]$$
+```
+
+<!-- ```{remark, name = "$(1 - \\alpha)100\\%$ Confidence interval"} -->
+<!-- By QR decomposition for $X = QR$, $(1 - \alpha)100\%$ confidence interval for each individual $\beta_j$ can be computed as -->
+
+<!-- $$\bigg[ \hat\beta_j \pm t_{\frac{\alpha}{2}}(n - p - 1) \frac{\hat\sigma}{r_{k + 1, k + 1}} \bigg]$$ -->
+<!-- ``` -->
+
+In fact, we have already seen the test statistic form.
+
+```{theorem, partialt, name = "Partial t-test"}
+Test $H_0: \beta_k = \alpha_k \quad \text{vs} \quad H_1: \beta_k \neq \alpha_k$. For given data, partial $t$-test computes
+
+$$T_0 = \frac{\hat\beta_k - \alpha_k}{\hat\sigma\sqrt{c_{kk}}} \sim t(n - p - 1)$$
+
+where $(X^TX)^{-1} = (c_{ij})_{0 \le i,j \le p}$
+```
+
+As usual test, we reject $H_0$ when
+
+$$\lvert T_0 \rvert > t_{\frac{\alpha}{2}}(n - p - 1)$$
+
+```{r bjreject, echo=FALSE, fig.cap="Rejection region for $\\beta_k$"}
+tdf <- nrow(cem) - (ncol(cem) - 1) - 1
+tibble(x = seq(-5, 5, by = .01)) %>% 
+  mutate(
+    y = dt(x, df = tdf),
+    test = ifelse(
+      x >= qt(.05 / 2, df = tdf, lower.tail = FALSE) |
+        x <= qt(.05 / 2, df = tdf, lower.tail = TRUE),
+      "reject",
+      "accept"
+    ),
+    ymax = ifelse(test == "reject", y, 0)
+  ) %>% 
+  ggplot(aes(x = x)) +
+  geom_path(aes(y = y)) +
+  geom_ribbon(aes(ymin = 0, ymax = ymax), alpha = .5, fill = gg_hcl(1))
+```
+
+If we use `summary()` to `lm` object, we can get each $T$ statistic(`t value`), standard error(`Std. Error`), and p-value(`Pr(>|t|)`). These are the results of partial $t$-test.
+
+```{r}
+summary(cem_fit)
+```
+
+If the test is significant, it means that additional contribution of that variable is significant after all other variables are already in the model. This might be understood well with extra sum of squares concept, later.
+
+### Prediction interval
+
+Consider prediction at $\mathbf{z} = (1, z_1, \ldots, z_p)^T$. Write
+
+$$C_{\mathbf{z}} := \mathbf{z}^T(X^TX)^{-1}\mathbf{z}$$
+
+```{theorem, meanresci, name = "Prediction or Confidence interval for mean response"}
+$(1 - \alpha)100\%$ prediction interval for $\mu_{\mathbf{z}}$ is
+
+$$\bigg[ \hat\mu_{\mathbf{z}} \pm t_{\frac{\alpha}{2}}(n - p - 1)\sqrt{C_{\mathbf{z}}\hat\sigma^2} \bigg]$$
+```
+
+```{theorem, predresci, name = "Out-of-sample prediction interval"}
+$(1 - \alpha)100\%$ prediction interval for $Y_{\mathbf{z}}$ is
+
+$$\bigg[ \hat{Y}_{\mathbf{z}} \pm t_{\frac{\alpha}{2}}(n - p - 1)\sqrt{(C_{\mathbf{z}} + 1)\hat\sigma^2} \bigg]$$
+```
+
+See standard error part of Theorem \@ref(thm:meanresci) and Theorem \@ref(thm:predresci). As mentioned, Out of sample prediction interval *always has larger standard error.* This leads to wider interval.
+
+### Regression coefficient vector
+
+Now we consider the coefficients simultaneously. For example, $\B = (\beta_0, \beta_1, \ldots, \beta_p)^T$.
+
+Note that
+
+$$\hb - \B \sim MVN(\mathbf{0}, \sigma^2(X^TX)^{-1})$$
+
+Then standardization gives
+
+$$\mathbf{Z} \equiv \frac{(X^TX)^{\frac{1}{2}}}{\sigma}(\hb - \B) \sim MVN(\mathbf{0}, I)$$
+
+It follows that
+
+$$\mathbf{Z}^T\mathbf{Z} = \frac{(\hb - \B)^T X^TX (\hb - \B)}{\sigma^2} \sim \chi^2(p + 1)$$
+
+Since $\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)$ and $\hat\sigma^2 = MSE$,
+
+\begin{equation}
+  \begin{split}
+    \frac{(\hb - \B)^T X^TX (\hb - \B)}{\hat\sigma^2 (p + 1)} & = \frac{(X\hb - X\B)^T(X\hb - X\B)}{MSE} \\
+    & = \frac{SSR / (p + 1)}{SSE / (n - p - 1)} \\
+    & = F(p + 1, n - p - 1, \delta)
+  \end{split}
+  (\#eq:bvecdist)
+\end{equation}
+
+where $\delta = \frac{\B^TX^T(I - \Pi_{\mathbf{1}})X\B}{\sigma^2}$.
+
+```{corollary, bvech0, name = "F-test"}
+Test $H_0: \B = \mathbf{0} \quad \text{vs} \quad H_1: \B \neq \mathbf{0}$. For given data, $F$-test computes
+
+$$\frac{(\hb - \B)^T X^TX (\hb - \B)}{\hat\sigma^2 (p + 1)} = \frac{SSR / (p + 1)}{MSE} \hsim F(p + 1, n - p - 1)$$
+```
+
+From the first part, we can get the confidence region for $\B$.
+
+```{theorem, bveccr, name = "Confidence region"}
+$(1 - \alpha)100\%$ confidence interval for $\B = (\beta_0, \beta_1, \ldots, \beta_p)^T$ is
+
+$$\Big\{ \B : (\hb - \B)^T X^TX (\hb - \B) \le (p + 1)\hat\sigma^2 F_{1 - \alpha}(p + 1, n - p - 1) \Big\}$$
+```
+
+```{remark}
+The confidence region for the vector $\B$ is the ellipsoid that is centered at $\hb$. Eigenvectors and eigenvalues of $X^TX$ determines its orientation and size, respectively. See @Johnson:2013aa for details.
+```
+
+`ellipse::ellipse()` has method for `lm` object. So if you provides the regression object, it will give ellipsoid coordinate as `matrix`. However, this function only supports two variables. By specifying `which` argument, you can select which variable to get coordinates. By default, first two variables `c(1, 2)`.
+
+```{r}
+ellipse::ellipse(cem_fit) %>% 
+  tbl_df() %>% # change to data frame
+  ggplot(aes(x = `(Intercept)`, y = x1)) +
+  geom_path()
+```
+
+Look again corollary \@ref(cor:bvech0). Compare this to ANOVA. Something is different. When testing significance in ANOVA, degrees of freedom of $SSR$ was $p$. Because when testing regression relation, we only need $\beta_1$ to $\beta_p$, i.e. $p$ parameters. How can we do this here?
+
+### Regression coefficient vector $\B_A$
+
+Consider $\B_A = (\beta_1, \ldots, \beta_p)^T$. We can use $\mathbb{X}_{A, \perp}$ defined before. From Equation \@ref(eq:orthbeta),
+
+$$\hb_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}$$
+
+Since
+
+$$
+\hb - \B = \begin{bmatrix}
+  \hat\beta_0 - \beta_0 \\ \hline
+  \hb_A - \B_A
+\end{bmatrix} \sim MVN\Bigg( \begin{bmatrix}
+  0 \\ \hline
+  \mathbf{0}
+\end{bmatrix}, \left[\begin{array}{c|c}
+
+\end{array}\right]
+$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

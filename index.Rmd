@@ -11,6 +11,8 @@ include-before:
   - \newcommand{\hsim}{\stackrel{H_0}{\sim}}
   - \newcommand{\ind}{\perp\!\!\!\perp}
   - \newcommand{\R}{\mathbb{R}}
+  - \newcommand{\B}{\boldsymbol\beta}
+  - \newcommand{\hb}{\boldsymbol{\hat\beta}}
   - $\DeclareMathOperator*{\argmin}{argmin}$
 cover-image: cover.png
 site: bookdown::bookdown_site
