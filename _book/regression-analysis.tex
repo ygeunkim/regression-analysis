@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{18 Apr, 2019}
+    \date{20 Apr, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -4201,16 +4201,6 @@ Since \(\hat\sigma^2 = \frac{SSE}{n - p - 1}\) and \(\hat\beta_k \perp\!\!\!\per
   \label{eq:bejtdist}
 \end{equation}
 
-In fact, QR representation \ref{prp:qrmoment} would give much more simple diagonal element.
-
-\[Var(\boldsymbol{\hat\beta}) = \sigma^2(R^TR)^{-1}\]
-
-Since \(R\) is upper triangular matrix, we have
-
-\[
-Var(\boldsymbol{\hat\beta}) = \sigma^2 diag\bigg(\frac{1}{r_{11}^2}, \ldots, \frac{1}{r_{p + 1, p + 1}^2} \bigg)
-\]
-
 \hypertarget{mean-response-1}{%
 \subsection{Mean response}\label{mean-response-1}}
 
@@ -4349,20 +4339,14 @@ From Statistic \eqref{eq:bejtdist}, we can easily make \((1 - \alpha)100\%\) con
 \[\bigg[ \hat\beta_j \pm t_{\frac{\alpha}{2}}(n - p - 1) \hat\sigma\sqrt{c_{kk}} \bigg]\]
 \EndKnitrBlock{theorem}
 
-\BeginKnitrBlock{remark}[$(1 - \alpha)100\%$ Confidence interval]
-\iffalse{} {Remark (\((1 - \alpha)100\%\) Confidence interval). } \fi{}By QR decomposition for \(X = QR\), \((1 - \alpha)100\%\) confidence interval for each individual \(\beta_j\) can be computed as
-
-\[\bigg[ \hat\beta_j \pm t_{\frac{\alpha}{2}}(n - p - 1) \frac{\hat\sigma}{r_{k + 1, k + 1}} \bigg]\]
-\EndKnitrBlock{remark}
-
 In fact, we have already seen the test statistic form.
 
 \BeginKnitrBlock{theorem}[Partial t-test]
 \protect\hypertarget{thm:partialt}{}{\label{thm:partialt} \iffalse (Partial t-test) \fi{} }Test \(H_0: \beta_k = \alpha_k \quad \text{vs} \quad H_1: \beta_k \neq \alpha_k\). For given data, partial \(t\)-test computes
 
-\[T_0 = \frac{\hat\beta_k - \alpha_k}{\hat\sigma\sqrt{c_{kk}}} = \frac{\hat\beta_k - \alpha_k}{\hat\sigma / r_{k + 1, k + 1}} \sim t(n - p - 1)\]
+\[T_0 = \frac{\hat\beta_k - \alpha_k}{\hat\sigma\sqrt{c_{kk}}} \sim t(n - p - 1)\]
 
-where \((X^TX)^{-1} = (c_{ij})_{0 \le i,j \le p}\) and \((R^TR)^{-1} = diag\Big(\frac{1}{r_{ii}^2}\Big)_{1 \le i \le p +1}\)
+where \((X^TX)^{-1} = (c_{ij})_{0 \le i,j \le p}\)
 \EndKnitrBlock{theorem}
 
 As usual test, we reject \(H_0\) when
@@ -4377,6 +4361,40 @@ As usual test, we reject \(H_0\) when
 
 \caption{Rejection region for $\beta_k$}\label{fig:bjreject}
 \end{figure}
+
+If we use \texttt{summary()} to \texttt{lm} object, we can get each \(T\) statistic(\texttt{t\ value}), standard error(\texttt{Std.\ Error}), and p-value(\texttt{Pr(\textgreater{}\textbar{}t\textbar{})}). These are the results of partial \(t\)-test.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(cem_fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+lm(formula = y ~ ., data = cem)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.175 -1.671  0.251  1.378  3.925 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept)   62.405     70.071    0.89    0.399  
+x1             1.551      0.745    2.08    0.071 .
+x2             0.510      0.724    0.70    0.501  
+x3             0.102      0.755    0.14    0.896  
+x4            -0.144      0.709   -0.20    0.844  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.45 on 8 degrees of freedom
+Multiple R-squared:  0.982, Adjusted R-squared:  0.974 
+F-statistic:  111 on 4 and 8 DF,  p-value: 4.76e-07
+\end{verbatim}
+
+If the test is significant, it means that additional contribution of that variable is significant after all other variables are already in the model. This might be understood well with extra sum of squares concept, later.
 
 \hypertarget{prediction-interval-1}{%
 \subsection{Prediction interval}\label{prediction-interval-1}}
@@ -4401,6 +4419,106 @@ See standard error part of Theorem \ref{thm:meanresci} and Theorem \ref{thm:pred
 
 \hypertarget{regression-coefficient-vector}{%
 \subsection{Regression coefficient vector}\label{regression-coefficient-vector}}
+
+Now we consider the coefficients simultaneously. For example, \(\boldsymbol\beta= (\beta_0, \beta_1, \ldots, \beta_p)^T\).
+
+Note that
+
+\[\boldsymbol{\hat\beta}- \boldsymbol\beta\sim MVN(\mathbf{0}, \sigma^2(X^TX)^{-1})\]
+
+Then standardization gives
+
+\[\mathbf{Z} \equiv \frac{(X^TX)^{\frac{1}{2}}}{\sigma}(\boldsymbol{\hat\beta}- \boldsymbol\beta) \sim MVN(\mathbf{0}, I)\]
+
+It follows that
+
+\[\mathbf{Z}^T\mathbf{Z} = \frac{(\boldsymbol{\hat\beta}- \boldsymbol\beta)^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol\beta)}{\sigma^2} \sim \chi^2(p + 1)\]
+
+Since \(\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)\) and \(\hat\sigma^2 = MSE\),
+
+\begin{equation}
+  \begin{split}
+    \frac{(\boldsymbol{\hat\beta}- \boldsymbol\beta)^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol\beta)}{\hat\sigma^2 (p + 1)} & = \frac{(X\boldsymbol{\hat\beta}- X\boldsymbol\beta)^T(X\boldsymbol{\hat\beta}- X\boldsymbol\beta)}{MSE} \\
+    & = \frac{SSR / (p + 1)}{SSE / (n - p - 1)} \\
+    & = F(p + 1, n - p - 1, \delta)
+  \end{split}
+  \label{eq:bvecdist}
+\end{equation}
+
+where \(\delta = \frac{\boldsymbol\beta^TX^T(I - \Pi_{\mathbf{1}})X\boldsymbol\beta}{\sigma^2}\).
+
+\BeginKnitrBlock{corollary}[F-test]
+\protect\hypertarget{cor:bvech0}{}{\label{cor:bvech0} \iffalse (F-test) \fi{} }Test \(H_0: \boldsymbol\beta= \mathbf{0} \quad \text{vs} \quad H_1: \boldsymbol\beta\neq \mathbf{0}\). For given data, \(F\)-test computes
+
+\[\frac{(\boldsymbol{\hat\beta}- \boldsymbol\beta)^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol\beta)}{\hat\sigma^2 (p + 1)} = \frac{SSR / (p + 1)}{MSE} \stackrel{H_0}{\sim}F(p + 1, n - p - 1)\]
+\EndKnitrBlock{corollary}
+
+From the first part, we can get the confidence region for \(\boldsymbol\beta\).
+
+\BeginKnitrBlock{theorem}[Confidence region]
+\protect\hypertarget{thm:bveccr}{}{\label{thm:bveccr} \iffalse (Confidence region) \fi{} }\((1 - \alpha)100\%\) confidence interval for \(\boldsymbol\beta= (\beta_0, \beta_1, \ldots, \beta_p)^T\) is
+
+\[\Big\{ \boldsymbol\beta: (\boldsymbol{\hat\beta}- \boldsymbol\beta)^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol\beta) \le (p + 1)\hat\sigma^2 F_{1 - \alpha}(p + 1, n - p - 1) \Big\}\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}The confidence region for the vector \(\boldsymbol\beta\) is the ellipsoid that is centered at \(\boldsymbol{\hat\beta}\). Eigenvectors and eigenvalues of \(X^TX\) determines its orientation and size, respectively. See \citet{Johnson:2013aa} for details.
+\EndKnitrBlock{remark}
+
+\texttt{ellipse::ellipse()} has method for \texttt{lm} object. So if you provides the regression object, it will give ellipsoid coordinate as \texttt{matrix}. However, this function only supports two variables. By specifying \texttt{which} argument, you can select which variable to get coordinates. By default, first two variables \texttt{c(1,\ 2)}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ellipse}\OperatorTok{::}\KeywordTok{ellipse}\NormalTok{(cem_fit) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tbl_df}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\CommentTok{# change to data frame}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \StringTok{`}\DataTypeTok{(Intercept)}\StringTok{`}\NormalTok{, }\DataTypeTok{y =}\NormalTok{ x1)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_path}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-86-1} \end{center}
+
+Look again corollary \ref{cor:bvech0}. Compare this to ANOVA. Something is different. When testing significance in ANOVA, degrees of freedom of \(SSR\) was \(p\). Because when testing regression relation, we only need \(\beta_1\) to \(\beta_p\), i.e.~\(p\) parameters. How can we do this here?
+
+\hypertarget{regression-coefficient-vector-boldsymbolbeta_a}{%
+\subsection{\texorpdfstring{Regression coefficient vector \(\boldsymbol\beta_A\)}{Regression coefficient vector \textbackslash boldsymbol\textbackslash beta\_A}}\label{regression-coefficient-vector-boldsymbolbeta_a}}
+
+Consider \(\boldsymbol\beta_A = (\beta_1, \ldots, \beta_p)^T\). In fact, these tell us significance of variables. We can use \(\mathbb{X}_{A, \perp}\) defined before. From Equation \eqref{eq:orthbeta},
+
+\[\boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}\]
+
+The reason using \(\mathbb{X}_{A, \perp}\) is to decomposing the space orthogonally.
+
+\[
+\boldsymbol{\hat\beta}- \boldsymbol\beta= \begin{bmatrix}
+  \hat\beta_0 - \beta_0 \\ \hline
+  \boldsymbol{\hat\beta}_A - \boldsymbol\beta_A
+\end{bmatrix} \sim MVN\Bigg( \begin{bmatrix}
+  0 \\ \hline
+  \mathbf{0}
+\end{bmatrix}, \sigma^2 (X^T X)^{-1} \bigg)
+\]
+
+with
+
+\[Var(\boldsymbol{\hat\beta}_A - \boldsymbol\beta_A) = \sigma^2 (\mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp})^{-1}\]
+
+\BeginKnitrBlock{theorem}[Confidence region]
+\protect\hypertarget{thm:bacr}{}{\label{thm:bacr} \iffalse (Confidence region) \fi{} }\((1 - \alpha)100\%\) confidence interval for \(\boldsymbol\beta_A = (\beta_1, \ldots, \beta_p)^T\) is
+
+\[\Big\{ \boldsymbol\beta_A : (\boldsymbol{\hat\beta}_A - \boldsymbol\beta_A)^T \mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp} (\boldsymbol{\hat\beta}_A - \boldsymbol\beta_A) \le p \hat\sigma^2 F_{1 - \alpha}(p, n - p - 1) \Big\}\]
+
+where \(\boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}\)
+\EndKnitrBlock{theorem}
+
+We can know that this tests the same hypothesis as ANOVA for significance.
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}As for \(X\), the confidence region for the vector \(\boldsymbol\beta_A\) is the ellipsoid that is centered at \(\boldsymbol{\hat\beta}_A\). Eigenvectors and eigenvalues of \(\mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp}\) determines its orientation and size, respectively.
+\EndKnitrBlock{remark}
+
+\hypertarget{nested-models}{%
+\section{Nested Models}\label{nested-models}}
 
 \bibliography{book.bib,packages.bib}
 

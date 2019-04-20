@@ -1444,11 +1444,11 @@ Look again corollary \@ref(cor:bvech0). Compare this to ANOVA. Something is diff
 
 ### Regression coefficient vector $\B_A$
 
-Consider $\B_A = (\beta_1, \ldots, \beta_p)^T$. We can use $\mathbb{X}_{A, \perp}$ defined before. From Equation \@ref(eq:orthbeta),
+Consider $\B_A = (\beta_1, \ldots, \beta_p)^T$. In fact, these tell us significance of variables. We can use $\mathbb{X}_{A, \perp}$ defined before. From Equation \@ref(eq:orthbeta),
 
 $$\hb_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}$$
 
-Since
+The reason using $\mathbb{X}_{A, \perp}$ is to decomposing the space orthogonally.
 
 $$
 \hb - \B = \begin{bmatrix}
@@ -1457,11 +1457,29 @@ $$
 \end{bmatrix} \sim MVN\Bigg( \begin{bmatrix}
   0 \\ \hline
   \mathbf{0}
-\end{bmatrix}, \left[\begin{array}{c|c}
-
-\end{array}\right]
+\end{bmatrix}, \sigma^2 (X^T X)^{-1} \bigg)
 $$
 
+with
+
+$$Var(\hb_A - \B_A) = \sigma^2 (\mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp})^{-1}$$
+
+```{theorem, bacr, name = "Confidence region"}
+$(1 - \alpha)100\%$ confidence interval for $\B_A = (\beta_1, \ldots, \beta_p)^T$ is
+
+$$\Big\{ \B_A : (\hb_A - \B_A)^T \mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp} (\hb_A - \B_A) \le p \hat\sigma^2 F_{1 - \alpha}(p, n - p - 1) \Big\}$$
+
+where $\hb_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}$
+```
+
+We can know that this tests the same hypothesis as ANOVA for significance.
+
+```{remark}
+As for $X$, the confidence region for the vector $\B_A$ is the ellipsoid that is centered at $\hb_A$. Eigenvectors and eigenvalues of $\mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp}$ determines its orientation and size, respectively.
+```
+
+
+## Nested Models
 
 
 
