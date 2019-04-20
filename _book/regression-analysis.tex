@@ -141,6 +141,7 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\B}{\boldsymbol\beta}
 \newcommand{\hb}{\boldsymbol{\hat\beta}}
+\newcommand{\E}{\boldsymbol\epsilon}
 \DeclareMathOperator*{\argmin}{argmin}
 
 \let\oldmaketitle\maketitle
@@ -4511,7 +4512,7 @@ with
 where \(\boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}\)
 \EndKnitrBlock{theorem}
 
-We can know that this tests the same hypothesis as ANOVA for significance.
+This tests the same hypothesis as ANOVA for significance.
 
 \BeginKnitrBlock{remark}
 \iffalse{} {Remark. } \fi{}As for \(X\), the confidence region for the vector \(\boldsymbol\beta_A\) is the ellipsoid that is centered at \(\boldsymbol{\hat\beta}_A\). Eigenvectors and eigenvalues of \(\mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp}\) determines its orientation and size, respectively.
@@ -4519,6 +4520,359 @@ We can know that this tests the same hypothesis as ANOVA for significance.
 
 \hypertarget{nested-models}{%
 \section{Nested Models}\label{nested-models}}
+
+We have seen \(t\)-test and \(F\)-test testing \(\beta_j = 0\) and \(\beta_1 = \cdots = \beta_p = 0\), respectively. Here, we generalize the hypothesis in terms of \emph{nested model}. Consider several types of hypothesis.
+
+\BeginKnitrBlock{example}[Examples of three types of hypothesis]
+\protect\hypertarget{exm:ftestex}{}{\label{exm:ftestex} \iffalse (Examples of three types of hypothesis) \fi{} }We can test if every coefficient is zero or some coefficient is zero, or just test if coefficients are same not specific value.
+
+\begin{enumerate}
+  \item $H_0: \beta_1 = \cdots = \beta_p = 0$
+  \item $H_0: \beta_{p - 1} = \beta_p = 0$
+  \item $H_0: \beta_{p - 1} = \beta_p$
+\end{enumerate}
+\EndKnitrBlock{example}
+
+What is the unified approach to these kind of test?
+
+\hypertarget{full-model-and-reduced-model}{%
+\subsection{Full model and reduced model}\label{full-model-and-reduced-model}}
+
+To test some forms of \(H_0\), consider two nested model.
+
+\BeginKnitrBlock{definition}[Nested models]
+\protect\hypertarget{def:fmrm}{}{\label{def:fmrm} \iffalse (Nested models) \fi{} }We name nested models for the test as follow.
+
+\begin{enumerate}
+  \item \textbf{\textit{Full model}} (FM) represents the basic starting model
+  \item \textbf{\textit{Reduced model}} (RM) represents the null model under $H_0$
+\end{enumerate}
+\EndKnitrBlock{definition}
+
+For Example \ref{exm:ftestex}, the basic starting model, i.e.~FM is
+
+\[Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_i, \quad \epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\]
+
+See the second case.
+
+\[H_0: \beta_{p - 1} = \beta_p = 0 \qquad \text{vs} \qquad H_1: \beta_{p - 1} \neq 0 \:\text{or}\: \beta_p \neq 0\]
+
+This is equivalent to choosing a model between
+
+\[
+\begin{cases}
+  FM: Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_i \\
+  RM: Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{p - 2}x_{i,p-2} + \epsilon_i
+\end{cases}
+\]
+
+Let us define \(SSR\) and \(SSE\) for each model.
+
+\BeginKnitrBlock{definition}[SS of nested models]
+\protect\hypertarget{def:ssfmrm}{}{\label{def:ssfmrm} \iffalse (SS of nested models) \fi{} }For each full model and reduced model, compute \(SSR\) and \(SSE\).
+
+\begin{enumerate}
+  \item $SSR(FM)$ regression sum of squares after fitting the FM
+  \item $SSE(FM)$ error sum of squares after fitting the FM
+  \item $SSR(RM)$ regression sum of squares after fitting the RM
+  \item $SSR(RM)$ error sum of squares after fitting the RM
+\end{enumerate}
+\EndKnitrBlock{definition}
+
+Note that \(SST = \sum\limits_{i = 1}^n(Y_i - \overline{Y})^2\) does not depend on model, i.e.~consistent with given data.
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}\[SST = SSR(FM) + SSE(FM) = SSR(RM) + SSE(RM)\]
+
+and hence
+
+\[SSE(RM) - SSE(FM) = SSR(FM) - SSR(RM)\]
+\EndKnitrBlock{remark}
+
+\(SSE\) indicates a variation that cannot be explained by the model. \(SSR\) represents a variation explained by the model. We can compare these between the two model. If \(SSE(RM) - SSE(FM) = SSR(FM) - SSR(RM)\) is large, then we can think that the full model is explaining given data better than reduced model. In terms of \(H_0: RM \:\text{vs}\: H_1: FM\), it can be said that it is a strong evidene supporting FM against RM. In turn, we conclude that \(H_1: \beta_{p - 1} \neq 0 \:\text{or}\: \beta_p \neq 0\) from our first hypothesis set.
+
+\BeginKnitrBlock{conjecture}
+\protect\hypertarget{cnj:fmrmdist}{}{\label{cnj:fmrmdist} }\[SSR(FM) - SSR(RM) > c \Leftrightarrow \text{reject}\: H_0\]
+\EndKnitrBlock{conjecture}
+
+We can test any hypothesis using RM-FM with Conjecture \ref{cnj:fmrmdist}. The question is
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  What is the distribution of \(SSR(FM) - SSR(RM)\)?
+\item
+  Then what is \(c\)?
+\end{enumerate}
+
+Define two design matrices to build full model and reduced model.
+
+\[
+Z_1 := \begin{bmatrix}
+  1 & x_{11} & \cdots & x_{1, p - 2} \\
+  1 & x_{21} & \cdots & x_{2, p - 2} \\
+  \vdots & \vdots & \vdots & \vdots \\
+  1 & x_{n1} & \cdots & x_{n,p - 2}
+\end{bmatrix}, \quad \text{and} \qquad Z_2 := \begin{bmatrix}
+  x_{1, p - 1} & x_{1p} \\
+  x_{2, p - 1} & x_{2p} \\
+  \vdots & \vdots \\
+  x_{n, p - 1} & x_{np}
+\end{bmatrix}
+\]
+
+\(Z_1\) is a design matrix of reduced model, while \(Z_2\) consists of column vector that was not in \(Z_2\), i.e.~which were specified in \(H_0\). It is intended to make
+
+\[
+X^{\ast} = \begin{bmatrix}
+  Z_1 \mid Z_2
+\end{bmatrix}
+\]
+
+where \(X^{\ast}\) can have different column order with original \(X\). It follows that
+
+\[
+\begin{cases}
+  FM: \mathbf{Y} = X\boldsymbol\beta_F + \E \\
+  RM: \mathbf{Y} = Z_1 \boldsymbol\beta_R + \E
+\end{cases}
+\]
+
+where \(\boldsymbol\beta_F = (\beta_0, \ldots, \beta_p)^T\) and \(\boldsymbol\beta_R = (\beta_0, \beta_1, \ldots, \beta_{p - 2})^T\). Thus,
+
+\begin{equation}
+  \begin{cases}
+    SSR(FM) = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y} \\
+    SSR(RM) = \mathbf{Y}^T (\Pi_{Z_1} - \Pi_{\mathbf{1}}) \mathbf{Y}
+  \end{cases}
+  \label{eq:ssrfmrm}
+\end{equation}
+
+and so
+
+\begin{equation}
+  \begin{split}
+    SSR(FM) - SSR(RM) & = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}} - \Pi_{Z_1} + \Pi_{\mathbf{1}}) \mathbf{Y} \\
+    & = \mathbf{Y}^T (\Pi_X - \Pi_{Z_1}) \mathbf{Y}
+  \end{split}
+  \label{eq:fmrmstat}
+\end{equation}
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:ssrfmlem}{}{\label{lem:ssrfmlem} }\(SSR(FM) - SSR(RM)\) satisfies following properties.
+
+\begin{enumerate}
+  \item $\Pi_X - \Pi_{Z_1}$ is symmetric and idempotent
+  \item $tr(\Pi_X - \Pi_{Z_1}) = (p + 1) - \text{number of parameters in reduced model}$
+  \item $\Pi_X - \Pi_{Z_1} \perp\!\!\!\perp SSE(FM)$
+\end{enumerate}
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Propery of prjection implies that
+
+\[\Pi_X \Pi_{Z_1} = \Pi_{Z_1}\]
+
+Note that
+
+\[SSE(FM) = \mathbf{Y}^T (I - \Pi_X) \mathbf{Y}\]
+
+Then
+
+\[(\Pi_X - \Pi_{Z_1})(I - \Pi_X) = 0\]
+
+Hence, \(\Pi_X - \Pi_{Z_1} \perp\!\!\!\perp SSE(FM)\)
+\EndKnitrBlock{proof}
+
+Go back to our Example \ref{exm:ftestex}. Denote that \(\Pi_X - \Pi_{Z_1}\) implies that \(R_{p - 1}^2 > R_{p - 2}^2\). \(tr(\Pi_X - \Pi_{Z_1}) = (p + 1) - (p - 1) = 2\).
+
+\begin{equation}
+  \frac{SSR(FM) - SSR(RM)}{\sigma^2} \stackrel{H_0}{\sim}\chi^2(2)
+  \label{eq:ssrfmnull}
+\end{equation}
+
+Since from Proposition \ref{prp:ssdist}
+
+\[\frac{SSE(FM)}{\sigma^2} \stackrel{H_0}{\sim}\chi^2(n - p - 1)\]
+
+\begin{equation}
+  \begin{split}
+    \frac{(SSR(FM) - SSR(RM)) / 2}{SSE(FM) / (n - p - 1)} & = \frac{\frac{SSR(FM) - SSR(RM)}{\sigma^2} / 2}{\frac{SSE(FM)}{\sigma^2} / (n - p - 1)} \\
+    & \stackrel{H_0}{\sim}F(2, n - p - 1)
+  \end{split}
+  \label{eq:ssrfmstat}
+\end{equation}
+
+Hence, for our
+
+\[H_0: \beta_{p - 1} = \beta_p = 0 \qquad \text{vs} \qquad H_1: \beta_{p - 1} \neq 0 \:\text{or}\: \beta_p \neq 0\]
+
+reject \(H_0\) if \(\frac{(SSR(FM) - SSR(RM)) / 2}{SSE(FM) / (n - p - 1)} > F_{1 - \alpha}(2, n - p - 1)\).
+
+See the numerator part \(SSR(FM) - SSR(RM)\) we have been explored. This can be also written as
+
+\[SSR(X_1, \ldots, X_p) - SSR(X_{p - 1}, X_{p})\]
+
+and this is called \emph{extra sum of squares}.
+
+\hypertarget{extra-sum-of-squares}{%
+\subsection{Extra sum of squares}\label{extra-sum-of-squares}}
+
+\BeginKnitrBlock{definition}[Extra sum of squares]
+\protect\hypertarget{def:ess}{}{\label{def:ess} \iffalse (Extra sum of squares) \fi{} }Extra sum of squares measures the amount of the additional contribution of variables added after the variables that were already considered. For example,
+
+\[SSR(X_2 \mid X_1) := SSR(X_1, X_2) - SSR(X_1)\]
+
+This measures marginal contribution of \(X_2\) after \(X_1\) is considred. Here, the contribution means marginal increase of \(SSR\).
+\EndKnitrBlock{definition}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/multiple-extrass} 
+
+}
+
+\caption{Extra sum of squares}\label{fig:essfig}
+\end{figure}
+
+\(SST\) does not change given data. By adding some variable, \(SSR\) increases or \(SSE\) decreases. \emph{We interpret this change as additional contribution of those variables}. If it is large enough, they are significant. Using this idea, we might test any kind of sets of coefficients. Partial \(F\)-test and sequential \(F\)-test are typical forms that we can think of and useful.
+
+\hypertarget{partial-f-test}{%
+\subsection{Partial F test}\label{partial-f-test}}
+
+Focus on marginal contribution given that every other predictor is already in the model.
+
+\BeginKnitrBlock{definition}[Partial sum of squares]
+\protect\hypertarget{def:pss}{}{\label{def:pss} \iffalse (Partial sum of squares) \fi{} }Partial SS or Type III Sum of squares are following.
+
+\begin{itemize}
+  \item $SSR(X_1 \mid X_2, \ldots, X_p)$
+  \item $SSR(X_2 \mid X_1, X_3, \ldots, X_p)$
+  \item $SSR(X_3 \mid X_1, X_2, X_4, \ldots, X_p)$
+  \item $\vdots$
+  \item $SSR(X_p \mid X_1, \ldots, X_{p - 1})$
+\end{itemize}
+\EndKnitrBlock{definition}
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}Partial SS satisties following properties.
+
+\begin{enumerate}
+  \item $SSR(X_1) + SSR(X_2 \mid X_1) + \cdots + SSR(X_p \mid X_1, \ldots, X_{p - 1}) = SSR(X_1, \ldots, X_p)$
+  \item $SSR(X_1 \mid X_2, \mid X_p) + \cdots + SSR(X_p \mid X_1, \ldots, X_{p - 1}) \neq SSR(X_1, \ldots, X_p)$
+  \item Partial SS (Type III SS) represents the additional contribution of each predictor after the other predictor variables are considred.
+\end{enumerate}
+\EndKnitrBlock{remark}
+
+Partial \(F\)-test aims at testing single coefficient.
+
+\[H_0: \beta_j = 0 \qquad \text{vs} \qquad H_1 : \beta_j \neq 0\]
+
+How to make test statistic is same as previous session: using full model and reduced model. Here, one with and without \(\beta_j\).
+
+\begin{equation}
+  F_0 = \frac{SSR(X_j \mid X_1, \ldots, X_{j - 1}, X_{j + 1}, \ldots, X_p) / 1}{SSE / (n - p - 1)} \stackrel{H_0}{\sim}F(1, n - p - 1)
+  \label{eq:partialstat}
+\end{equation}
+
+Hence, reject \(H_0\) if \(F_0 > F_{1 - \alpha}(1, n - p - 1)\). Since the first degrees of freedom is \(1\), we have
+
+\[F_0 = \bigg( \frac{\hat\beta_j}{\widehat{SE}(\hat\beta_j)} \bigg)^2 = T_0^2\]
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}Partial \(F\)-test is equivalent to partial \(t\)-test. Both tests the additional contribution of \(X_j\) after the other variables are already considered, not individual significance.
+\EndKnitrBlock{remark}
+
+\hypertarget{sequential-f-test}{%
+\subsection{Sequential F test}\label{sequential-f-test}}
+
+This sequential \(F\)-test adds variable sequentially.
+
+\BeginKnitrBlock{definition}[Sequential sum of squares]
+\protect\hypertarget{def:seqs}{}{\label{def:seqs} \iffalse (Sequential sum of squares) \fi{} }Sequential SS or Type I Sum of squares are following.
+
+\begin{enumerate}
+  \item $SSR(X_1)$
+  \item $SSR(X_2 \mid X_1)$
+  \item $SSR(X_3 \mid X_1, X_2)$
+  \item $\vdots$
+  \item $SSR(X_p \mid X_1, \ldots, X_{p - 1})$
+\end{enumerate}
+\EndKnitrBlock{definition}
+
+Following Definition \ref{def:seqs}, start from intercept-only model.
+
+\begin{algorithm}[H] \label{alg:algseq}
+  \SetAlgoLined
+  \SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+  $j \leftarrow 1$\;
+  \While{reject $H_0$}{
+    $H_0: \beta_j = 0 \quad \text{vs} \quad H_1: \beta_j \neq 0$\;
+    $\begin{cases} FM : Y_i = \beta_0 + \cdots + \beta_j x_{1j} + \epsilon_i \\ RM : Y_i = \beta_0 + \ldots + \beta_{j - 1}x_{1, j - 1} + \epsilon_i \end{cases}$\;
+    $F_0 = \frac{SSR(X_j \mid X_1, \ldots, X_{j - 1}) / 1}{SSE(X_1, \ldots, X_j) / (n - j - 1)}$\;
+    reject $H_0$ if $F_0 > F_{1 - \alpha}(1, n - j - 3)$\;
+  }
+  \Output{accepted $FM$}
+  \caption{Sequential F Test from beginning}
+\end{algorithm}
+
+Algorithm \(\ref{alg:algseq}\) shows the logic how to add a variable sequentially. It continues until rejecting \(H_0\). In general form, we can test
+
+\[H_0: \beta_{q + 1} = \beta_{q + 2} = \cdots = \beta_p = 0 \qquad \text{vs} \qquad H_1: \text{not}\: H_0\]
+
+Here, reject \(H_0\) if
+
+\begin{equation}
+  \frac{\Big(SSR(X_1, \ldots, X_p) - SSR(X_{q + 1}, \ldots, X_p)\Big) / (p - q)}{SSE(X_1, \ldots, X_p) / (n - p - 1)} > F_{1 - \alpha}(p - q, n - p - 1)
+  \label{eq:seqgen}
+\end{equation}
+
+\hypertarget{general-linear-hypothesis}{%
+\subsection{General linear hypothesis}\label{general-linear-hypothesis}}
+
+See Example \ref{exm:ftestex} again. The third one, \(H_0: \beta_{p - 1} = \beta_p\) can be also tested using \(F\)-test by changing model representation.
+
+\[H_0: \beta_{p - 1} = \beta_p = \alpha \quad \forall \alpha\]
+
+Then null model can be set as
+
+\[Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{p - 2} x_{i, p - 2} + \alpha(x_{i, p - 1} + x_{ip}) + \epsilon_i\]
+
+However, there is a more general test procedure: linear combination. For instance, \(\beta_{p - 1} = \beta_p\) can be represented as
+
+\[\beta_{p - 1} - \beta_p = 0 \Leftrightarrow (0, \ldots, 0, 1, -1)^T \boldsymbol\beta= 0\]
+
+Now we analyze this form of hypothesis.
+
+\[H_0: C \boldsymbol\beta= \mathbf{d} \qquad \text{vs} \qquad H_1: C \boldsymbol\beta\neq \mathbf{d}\]
+
+Since \(\hat{\boldsymbol\beta} \sim MVN(\boldsymbol\beta, \sigma^2(X^TX)^{-1})\),
+
+\[C\hat{\boldsymbol\beta} \sim MVN(C \boldsymbol\beta, \sigma^2 C(X^TX)^{-1}C^T)\]
+
+and under \(H_0: C\boldsymbol\beta= \mathbf{d}\),
+
+\[C\hat{\boldsymbol\beta} \stackrel{H_0}{\sim}MVN(\mathbf{d}, \sigma^2 C(X^TX)^{-1}C^T)\]
+
+Set
+
+\[\mathbf{Z} \equiv \sigma (C(X^TX)^{-1}C^T)^{-\frac{1}{2}} (C \hat{\boldsymbol\beta} - \mathbf{d}) \stackrel{H_0}{\sim}MVN(\mathbf{0}, I)\]
+
+It follows that
+
+\[\mathbf{Z}^T\mathbf{Z} = \frac{1}{\sigma^2}(C\hat{\boldsymbol\beta} - \mathbf{d})^T(C(X^TX)^{-1}C^T)^{-1}(C\hat{\boldsymbol\beta} - \mathbf{d}) \stackrel{H_0}{\sim}\chi^2(q = rank(C))\]
+
+Hence,
+
+\begin{equation}
+  \begin{split}
+    \frac{\frac{(C\hat{\boldsymbol\beta} - \mathbf{d})^T(C(X^TX)^{-1}C^T)^{-1}(C\hat{\boldsymbol\beta} - \mathbf{d})}{\sigma^2} / q}{\frac{SSE}{\sigma^2} / (n - p - 1)} & = \frac{(C\hat{\boldsymbol\beta} - \mathbf{d})^T(C(X^TX)^{-1}C^T)^{-1}(C\hat{\boldsymbol\beta} - \mathbf{d}) / q}{\hat\sigma^2} \\
+    & \stackrel{H_0}{\sim}F(q, n - p - 1)
+  \end{split}
+  \label{eq:lincombtest}
+\end{equation}
 
 \bibliography{book.bib,packages.bib}
 
