@@ -3678,6 +3678,7 @@ Hence,
   \item $\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)$
   \item $\frac{SSR}{\sigma^2} \sim \chi^2(p, \delta), \quad \delta = \frac{\boldsymbol\beta^TX^T(\Pi_X - \Pi_{\mathbf{1}})X\boldsymbol\beta}{\sigma^2}$
   \item $SSR \perp\!\!\!\perp SSE$
+  \item $SSE \perp\!\!\!\perp\boldsymbol{\hat\beta}$
   \item $\frac{SST}{\sigma^2} \sim \chi^2(n - 1, \delta), \quad \delta = \frac{\boldsymbol\beta^TX^T(I - \Pi_{\mathbf{1}})X\boldsymbol\beta}{\sigma^2}$
 \end{enumerate}
 \EndKnitrBlock{proposition}
@@ -3716,15 +3717,98 @@ From Theorem \ref{thm:quaddist},
 
 \(\delta\) proof is exactly same as Proposition \ref{prp:ssrdist}.
 
-\begin{equation*}
+\begin{equation}
   \begin{split}
     \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (\Pi_X - \Pi_{\mathbf{1}}) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \qquad \because \frac{\mathbf{Y}}{\sigma} \sim MVN(\frac{1}{\sigma}X\boldsymbol\beta, I) \\
     & = \frac{\boldsymbol\beta^T \Big\{ X^T(\Pi_X - \Pi_{\mathbf{1}})X \Big\} \boldsymbol\beta }{\sigma^2}
   \end{split}
-\end{equation*}
+  \label{eq:multssrdel}
+\end{equation}
 
 This completes the proof.
 \EndKnitrBlock{proof}
+
+In univariate setting, we have seen that \(\delta\) is expressed in terms of \(\hat\beta_1\) excluding \(\hat\beta_0\). How about in multivariate? In Equation \eqref{eq:multssrdel}, we can block design matrix \(X\) into
+
+\[X = \begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix}\]
+
+One proceeds in a similar way. Since both \(\mathbf{1}, \mathbb{X}_A \in Col(X)\),
+
+\[\Pi_X \mathbf{1} = \mathbf{1}, \qquad \Pi_X \mathbb{X}_A = \mathbb{X}_A\]
+
+Since \(\mathbf{1} \in R(\{ \mathbf{1} \})\),
+
+\[\Pi_{\mathbf{1}} \mathbf{1} = \mathbf{1}\]
+
+Since \(\Pi_{\mathbf{1}} = \frac{1}{n}\mathbf{1}\mathbf{1}^T\),
+
+\[
+\Pi_{\mathbf{1}}\mathbb{X}_A = \mathbf{1} \mathbf{\overline{x}}^T = \begin{bmatrix}
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p \\
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p \\
+  \vdots & \vdots & \vdots & \vdots \\
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p
+\end{bmatrix}
+\]
+
+Using these facts, we have following
+
+\begin{equation} \label{eq:mssrquad1}
+  \mathbf{1}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{1} = \mathbf{1}^T (\mathbf{1} - \mathbf{1}) = 0
+\end{equation}
+
+\begin{equation} \label{eq:mssrquad2}
+  \begin{split}
+    \mathbf{1}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbb{X}_A & = \mathbf{1}^T (\mathbb{X}_A - \mathbf{1} \mathbf{\overline{x}}^T) \\
+    & = \mathbf{1}^T \begin{bmatrix}
+      x_{ij} - \overline{x}_j
+    \end{bmatrix}_{1 \times j} \\
+    & = \begin{bmatrix}
+      \sum_i x_{ij} - n \overline{x}_j
+    \end{bmatrix}_{1 \times j} \\
+    & 0
+  \end{split}
+\end{equation}
+
+\begin{equation} \label{eq:mssrquad3}
+  \mathbb{X}_A^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{1} = \mathbb{X}_A^T (\mathbf{1} - \mathbf{1}) = 0
+\end{equation}
+
+From Lemma \ref{lem:sxy},
+
+\begin{equation} \label{eq:mssrquad4}
+  \begin{split}
+    \mathbb{X}_A^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbb{X}_A & = \mathbb{X}_A^T \begin{bmatrix}
+      x_{ij} - \overline{x}_j
+    \end{bmatrix}_{1 \times j} \\
+    & = \begin{bmatrix}
+      \sum_i x_{ij}(x_{jk} - \overline{x}_k)
+    \end{bmatrix}_{j \times k} \\
+    & = \begin{bmatrix}
+      \sum_i (x_{ij} - \overline{x}_j) (x_{ik} - \overline{x}_k)
+    \end{bmatrix}_{j \times k} \\
+    & = (n - 1) Var(\mathbb{X}_A) \\
+    & \equiv S
+  \end{split}
+\end{equation}
+
+Hence,
+
+\begin{equation}
+  \begin{split}
+    \delta & = \frac{\boldsymbol\beta^T \Big\{ \begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix}^T(\Pi_X - \Pi_{\mathbf{1}})\begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix} \Big\} \boldsymbol\beta }{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T \left[\begin{array}{c|c}
+      \eqref{eq:mssrquad1} & \eqref{eq:mssrquad2} \\ \hline
+      \eqref{eq:mssrquad3} & \eqref{eq:mssrquad4}
+    \end{array}\right] \boldsymbol\beta}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta^T \left[\begin{array}{c|c}
+      0 & 0 \\ \hline
+      0 & S
+    \end{array}\right] \boldsymbol\beta}{\sigma^2} \\
+    & = \frac{\boldsymbol\beta_A^T S \boldsymbol\beta_A}{\sigma^2}
+  \end{split}
+  \label{eq:mssrdelta}
+\end{equation}
 
 \BeginKnitrBlock{proof}[Independence between SSE and SSR]
 \iffalse{} {Proof (Independence between SSE and SSR). } \fi{}Since \(SSE\) and \(SSR\) are quadratic form of \(\mathbf{Y} \sim MVN(X\boldsymbol\beta, \sigma^2 I)\) and each \(I - \Pi_X\) and \(\Pi_X - \Pi_{\mathbf{1}}\) is symmetric,
@@ -3740,6 +3824,16 @@ We have already shown this in Proposition \ref{prp:ssind}. Using the fact that \
     & = 0
   \end{split}
 \end{equation*}
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{proof}[Independence between SSE and regression vector]
+\iffalse{} {Proof (Independence between SSE and regression vector). } \fi{}The proof is same as \ref{prp:ssbind}, by showing that \(((X^TX)^{-1}X^T)(I - \Pi_X) = 0\).
+
+Since \(\Pi_X = X(X^TX)^{-1}X^T\),
+
+\[((X^TX)^{-1}X^T)(I - \Pi_X) = (X^TX)^{-1}X^T - (X^TX)^{-1}X^T = 0\]
+
+This completes the proof.
 \EndKnitrBlock{proof}
 
 \BeginKnitrBlock{proof}[Distribution of SST]
@@ -4350,7 +4444,7 @@ From the first part, we can get the confidence region for \(\boldsymbol\beta\).
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-86-1} \end{center}
+\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-87-1} \end{center}
 
 Look again corollary \ref{cor:bvech0}. Compare this to ANOVA. Something is different. When testing significance in ANOVA, degrees of freedom of \(SSR\) was \(p\). Because when testing regression relation, we only need \(\beta_1\) to \(\beta_p\), i.e.~\(p\) parameters. How can we do this here?
 
@@ -4754,7 +4848,7 @@ It follows that
 
 \[\mathbf{Z}^T\mathbf{Z} = \frac{1}{\sigma^2}(C\hat{\boldsymbol\beta} - \mathbf{d})^T(C(X^TX)^{-1}C^T)^{-1}(C\hat{\boldsymbol\beta} - \mathbf{d}) \stackrel{H_0}{\sim}\chi^2(q = rank(C))\]
 
-It can be proven that \(SSE \perp\!\!\!\perp\boldsymbol{\hat\beta}\) as before. Hence,
+Since \(SSE \perp\!\!\!\perp\boldsymbol{\hat\beta}\) (See Proposition \ref{prp:ssdist}),
 
 \begin{equation}
   \begin{split}
