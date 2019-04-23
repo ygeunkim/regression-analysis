@@ -172,7 +172,7 @@ Parameters $\beta_0$ and $\beta_1$ have some properties related to the expectati
 ```{lemma, sxy}
 $$S_{XX} = \sum_{i = 1}^n x_i^2 - \frac{1}{n}\bigg(\sum\limits_{i = 1}^n x_i\bigg)^2 = \sum_{i = 1}^n x_i(x_i - \overline{x})$$
 
-$$S_{XY} = \sum_{i = 1}^n x_i Y_i - \frac{1}{n}\bigg(\sum_{i = 1}^n x_i\bigg)\bigg(\sum_{i = 1}^n Y_i\bigg) = \sum_{i = 1}^n Y_i(x_i - \overline{x})$$
+$$S_{XY} = \sum_{i = 1}^n x_i Y_i - \frac{1}{n}\bigg(\sum_{i = 1}^n x_i\bigg)\bigg(\sum_{i = 1}^n Y_i\bigg) = \sum_{i = 1}^n Y_i(x_i - \overline{x}) = \sum_{i = 1}^n x_i(Y_i - \overline{Y})$$
 ```
 
 ```{proof}
@@ -199,6 +199,8 @@ Second part of $S_{XY}$ also can be proven from the definition.
     & = \sum_{i = 1}^n Y_i (x_i - \overline{x}) \qquad \because \sum_{i = 1}^n (x_i - \overline{x}) = 0
   \end{split}
 \end{equation*}
+
+Same for the last part.
 ```
 
 ```{lemma, linbet, name = "Linearity"}
