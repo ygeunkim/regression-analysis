@@ -1753,13 +1753,14 @@ Following Definition \@ref(def:seqs), start from intercept-only model.
   \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
   $j \leftarrow 1$\;
-  \While{reject $H_0$}{
-    $H_0: \beta_j = 0 \quad \text{vs} \quad H_1: \beta_j \neq 0$\;
-    $\begin{cases} FM : Y_i = \beta_0 + \cdots + \beta_j x_{1j} + \epsilon_i \\ RM : Y_i = \beta_0 + \ldots + \beta_{j - 1}x_{1, j - 1} + \epsilon_i \end{cases}$\;
+  \Repeat{accept $H_0$}{
+     $\begin{cases} FM : Y_i = \beta_0 + \cdots + \beta_j x_{1j} + \epsilon_i \\ RM : Y_i = \beta_0 + \ldots + \beta_{j - 1}x_{1, j - 1} + \epsilon_i \end{cases}$\;
+    $H_0: \beta_j = 0 (RM) \quad \text{vs} \quad H_1: \beta_j \neq 0 (FM)$\;
     $F_0 = \frac{SSR(X_j \mid X_1, \ldots, X_{j - 1}) / 1}{SSE(X_1, \ldots, X_j) / (n - j - 1)}$\;
     reject $H_0$ if $F_0 > F_{1 - \alpha}(1, n - j - 3)$\;
+    $j \leftarrow j + 1$\;
   }
-  \Output{accepted $FM$}
+  \Output{accepted model, i.e. final $RM$}
   \caption{Sequential F Test from beginning}
 \end{algorithm}
 
@@ -1818,10 +1819,44 @@ Hence,
   (\#eq:lincombtest)
 \end{equation}
 
+### Extra SS in `R`
 
+`anova.lm()` gives extra sum of squres by default, which is *sequential sum of squares*, i.e. type I SS.
 
+```{r}
+anova(cem_fit)
+```
 
+If we change the order,
 
+```{r}
+anova(lm(y ~ x2 + x1 + x3 + x4, data = cem))
+```
+
+SS differs. To get Type III SS, we can use `car::Anova()`. This function can compute type II or type III sum of squares. Since it gives type II by default, we should specify `type = "III"` or `type = 3`.
+
+```{r}
+car::Anova(cem_fit, type = 3)
+```
+
+As base `anova.lm()`, we can also tidy this object.
+
+```{r}
+car::Anova(cem_fit, type = 3) %>% 
+  broom::tidy()
+```
+
+Look p-value of the type III SS, i.e. partial F-test. Comparing to partial t-test, we can see both are equivalent.
+
+```{r}
+car::Anova(cem_fit, type = 3) %>% 
+  broom::tidy() %>% 
+  na.omit() %>% 
+  select(p.value) %>% 
+  bind_cols(t_test = broom::tidy(cem_fit)$p.value)
+```
+
+As we can see in the argument of `car::Anova()`, there are also type II and type IV SS. These are not popular ones, though.
 
 
 

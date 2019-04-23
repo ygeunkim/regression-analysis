@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{20 Apr, 2019}
+    \date{23 Apr, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -201,28 +201,25 @@ This book aims at covering materials of regression analysis. Also, there will be
 \NormalTok{(BioOxyDemand <-}
 \StringTok{  }\NormalTok{BioOxyDemand }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{tbl_df}\NormalTok{())}
+\CommentTok{# A tibble: 14 x 2}
+\NormalTok{       x     y}
+   \OperatorTok{<}\NormalTok{int}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{int}\OperatorTok{>}
+\StringTok{ }\DecValTok{1}     \DecValTok{3}     \DecValTok{4}
+ \DecValTok{2}     \DecValTok{8}     \DecValTok{7}
+ \DecValTok{3}    \DecValTok{10}     \DecValTok{8}
+ \DecValTok{4}    \DecValTok{11}     \DecValTok{8}
+ \DecValTok{5}    \DecValTok{13}    \DecValTok{10}
+ \DecValTok{6}    \DecValTok{16}    \DecValTok{11}
+ \DecValTok{7}    \DecValTok{27}    \DecValTok{16}
+ \DecValTok{8}    \DecValTok{30}    \DecValTok{26}
+ \DecValTok{9}    \DecValTok{35}    \DecValTok{21}
+\DecValTok{10}    \DecValTok{37}     \DecValTok{9}
+\DecValTok{11}    \DecValTok{38}    \DecValTok{31}
+\DecValTok{12}    \DecValTok{44}    \DecValTok{30}
+\DecValTok{13}   \DecValTok{103}    \DecValTok{75}
+\DecValTok{14}   \DecValTok{142}    \DecValTok{90}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-# A tibble: 14 x 2
-       x     y
-   <int> <int>
- 1     3     4
- 2     8     7
- 3    10     8
- 4    11     8
- 5    13    10
- 6    16    11
- 7    27    16
- 8    30    26
- 9    35    21
-10    37     9
-11    38    31
-12    44    30
-13   103    75
-14   142    90
-\end{verbatim}
 
 \hypertarget{relation}{%
 \subsection*{Relation}\label{relation}}
@@ -411,18 +408,15 @@ It follows that
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ delv)}
+
+\NormalTok{Call}\OperatorTok{:}
+\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ delv)}
+
+\NormalTok{Coefficients}\OperatorTok{:}
+\NormalTok{(Intercept)            x  }
+       \FloatTok{3.32}         \FloatTok{2.18}  
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-
-Call:
-lm(formula = y ~ x, data = delv)
-
-Coefficients:
-(Intercept)            x  
-       3.32         2.18  
-\end{verbatim}
 
 \hypertarget{prediction-and-mean-response}{%
 \subsection{Prediction and Mean response}\label{prediction-and-mean-response}}
@@ -1041,17 +1035,14 @@ See Figure \ref{fig:regplot}. Each red line is \(e_i\). As we can see, \(e_i\) r
 \begin{Highlighting}[]
 \NormalTok{delv_fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ delv)}
 \NormalTok{delv_fit}\OperatorTok{$}\NormalTok{residuals}
+     \DecValTok{1}      \DecValTok{2}      \DecValTok{3}      \DecValTok{4}      \DecValTok{5}      \DecValTok{6}      \DecValTok{7}      \DecValTok{8}      \DecValTok{9}     \DecValTok{10} 
+\FloatTok{-1.874}  \FloatTok{1.651}  \FloatTok{2.181}  \FloatTok{2.855} \FloatTok{-2.628} \FloatTok{-0.444}  \FloatTok{0.327} \FloatTok{-0.724} \FloatTok{10.634}  \FloatTok{7.298} 
+    \DecValTok{11}     \DecValTok{12}     \DecValTok{13}     \DecValTok{14}     \DecValTok{15}     \DecValTok{16}     \DecValTok{17}     \DecValTok{18}     \DecValTok{19}     \DecValTok{20} 
+ \FloatTok{2.191} \FloatTok{-4.082}  \FloatTok{1.475}  \FloatTok{3.372}  \FloatTok{1.094}  \FloatTok{3.918} \FloatTok{-1.028}  \FloatTok{0.446} \FloatTok{-0.349} \FloatTok{-5.216} 
+    \DecValTok{21}     \DecValTok{22}     \DecValTok{23}     \DecValTok{24}     \DecValTok{25} 
+\FloatTok{-7.182} \FloatTok{-7.581} \FloatTok{-4.156} \FloatTok{-0.900} \FloatTok{-1.275} 
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-     1      2      3      4      5      6      7      8      9     10 
--1.874  1.651  2.181  2.855 -2.628 -0.444  0.327 -0.724 10.634  7.298 
-    11     12     13     14     15     16     17     18     19     20 
- 2.191 -4.082  1.475  3.372  1.094  3.918 -1.028  0.446 -0.349 -5.216 
-    21     22     23     24     25 
--7.182 -7.581 -4.156 -0.900 -1.275 
-\end{verbatim}
 
 \(\sum e_i^2\), which has been minimized in the procedure of LSE, can be used to see \emph{overall size of prediction errors}.
 
@@ -1770,25 +1761,22 @@ For example, in the Figure \ref{fig:smoothline}, the blue line indicates \(E(Y \
 \begin{Highlighting}[]
 \NormalTok{delv }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{eyx =} \KeywordTok{predict}\NormalTok{(delv_fit, }\DataTypeTok{newdata =} \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ x)))}
+\CommentTok{# A tibble: 25 x 3}
+\NormalTok{       y     x   eyx}
+   \OperatorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}
+\StringTok{ }\DecValTok{1}  \FloatTok{16.7}     \DecValTok{7} \FloatTok{18.6} 
+ \DecValTok{2}  \FloatTok{11.5}     \DecValTok{3}  \FloatTok{9.85}
+ \DecValTok{3}  \FloatTok{12.0}     \DecValTok{3}  \FloatTok{9.85}
+ \DecValTok{4}  \FloatTok{14.9}     \DecValTok{4} \FloatTok{12.0} 
+ \DecValTok{5}  \FloatTok{13.8}     \DecValTok{6} \FloatTok{16.4} 
+ \DecValTok{6}  \FloatTok{18.1}     \DecValTok{7} \FloatTok{18.6} 
+ \DecValTok{7}   \DecValTok{8}       \DecValTok{2}  \FloatTok{7.67}
+ \DecValTok{8}  \FloatTok{17.8}     \DecValTok{7} \FloatTok{18.6} 
+ \DecValTok{9}  \FloatTok{79.2}    \DecValTok{30} \FloatTok{68.6} 
+\DecValTok{10}  \FloatTok{21.5}     \DecValTok{5} \FloatTok{14.2} 
+\CommentTok{# ... with 15 more rows}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-# A tibble: 25 x 3
-       y     x   eyx
-   <dbl> <dbl> <dbl>
- 1  16.7     7 18.6 
- 2  11.5     3  9.85
- 3  12.0     3  9.85
- 4  14.9     4 12.0 
- 5  13.8     6 16.4 
- 6  18.1     7 18.6 
- 7   8       2  7.67
- 8  17.8     7 18.6 
- 9  79.2    30 68.6 
-10  21.5     5 14.2 
-# ... with 15 more rows
-\end{verbatim}
 
 We have already seen in section \ref{simplebdist} that the estimators \(\hat\beta_0\) and \(\hat\beta_1\) are random variables. So \(\hat\mu_x\) is. In fact, the ribbon of the line in Figure \ref{fig:smoothline} represents upper and lower confidence limits on mean response. In the later section, we get to know that it is \(+ t(n - 2)\widehat{SE}(\hat\mu_x)\) and \(- t(n - 2) \widehat{SE}(\hat\mu_x)\). It can be drawn by default with the option of the \texttt{geom\_smooth(se\ =\ TRUE)}.
 
@@ -1989,45 +1977,39 @@ We can get the standard error for each coefficient through \texttt{summary()} fu
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(delv_fit)}
+
+\NormalTok{Call}\OperatorTok{:}
+\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ delv)}
+
+\NormalTok{Residuals}\OperatorTok{:}
+\StringTok{   }\NormalTok{Min     1Q Median     3Q    Max }
+\FloatTok{-7.581} \FloatTok{-1.874} \FloatTok{-0.349}  \FloatTok{2.181} \FloatTok{10.634} 
+
+\NormalTok{Coefficients}\OperatorTok{:}
+\StringTok{            }\NormalTok{Estimate Std. Error t value }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\ErrorTok{|}\NormalTok{t}\OperatorTok{|}\NormalTok{)    }
+\NormalTok{(Intercept)    }\FloatTok{3.321}      \FloatTok{1.371}    \FloatTok{2.42}    \FloatTok{0.024} \OperatorTok{*}\StringTok{  }
+\NormalTok{x              }\FloatTok{2.176}      \FloatTok{0.124}   \FloatTok{17.55}  \FloatTok{8.2e-15} \OperatorTok{**}\ErrorTok{*}
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+
+\NormalTok{Residual standard error}\OperatorTok{:}\StringTok{ }\FloatTok{4.18}\NormalTok{ on }\DecValTok{23}\NormalTok{ degrees of freedom}
+\NormalTok{Multiple R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.93}\NormalTok{,  Adjusted R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.927} 
+\NormalTok{F}\OperatorTok{-}\NormalTok{statistic}\OperatorTok{:}\StringTok{  }\DecValTok{308}\NormalTok{ on }\DecValTok{1}\NormalTok{ and }\DecValTok{23}\NormalTok{ DF,  p}\OperatorTok{-}\NormalTok{value}\OperatorTok{:}\StringTok{ }\FloatTok{8.22e-15}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-
-Call:
-lm(formula = y ~ x, data = delv)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--7.581 -1.874 -0.349  2.181 10.634 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)    3.321      1.371    2.42    0.024 *  
-x              2.176      0.124   17.55  8.2e-15 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 4.18 on 23 degrees of freedom
-Multiple R-squared:  0.93,  Adjusted R-squared:  0.927 
-F-statistic:  308 on 1 and 23 DF,  p-value: 8.22e-15
-\end{verbatim}
 
 Or more state-or-art way, \texttt{broom:tidy()} function has a method for each model object to make tidy data: \texttt{tibble}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(delv_fit)}
+\CommentTok{# A tibble: 2 x 5}
+\NormalTok{  term        estimate std.error statistic  p.value}
+  \OperatorTok{<}\NormalTok{chr}\OperatorTok{>}\StringTok{          }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{     }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{     }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{    }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}
+\DecValTok{1}\NormalTok{ (Intercept)     }\FloatTok{3.32}     \FloatTok{1.37}       \FloatTok{2.42} \FloatTok{2.37}\NormalTok{e}\OperatorTok{-}\StringTok{ }\DecValTok{2}
+\DecValTok{2}\NormalTok{ x               }\FloatTok{2.18}     \FloatTok{0.124}     \FloatTok{17.5}  \FloatTok{8.22e-15}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-# A tibble: 2 x 5
-  term        estimate std.error statistic  p.value
-  <chr>          <dbl>     <dbl>     <dbl>    <dbl>
-1 (Intercept)     3.32     1.37       2.42 2.37e- 2
-2 x               2.18     0.124     17.5  8.22e-15
-\end{verbatim}
 
 \hypertarget{confidence-interval}{%
 \subsection{Confidence interval}\label{confidence-interval}}
@@ -2086,14 +2068,11 @@ Here we can estimate the intervals. Basically, \texttt{confint()} function gives
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{confint}\NormalTok{(delv_fit, }\DataTypeTok{level =} \FloatTok{.95}\NormalTok{)}
+            \FloatTok{2.5} \OperatorTok{% 97.5 %}
+\NormalTok{(Intercept) }\FloatTok{0.484}   \FloatTok{6.16}
+\NormalTok{x           }\FloatTok{1.920}   \FloatTok{2.43}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-            2.5 % 97.5 %
-(Intercept) 0.484   6.16
-x           1.920   2.43
-\end{verbatim}
 
 \BeginKnitrBlock{proposition}[Confidence interval on $\hat\mu_x$ when unknown $\sigma^2$]
 \protect\hypertarget{prp:mrci2}{}{\label{prp:mrci2} \iffalse (Confidence interval on \(\hat\mu_x\) when unknown \(\sigma^2\)) \fi{} }With unknown \(\sigma^2\), \((1 - \alpha)100 \%\) confidence interval on \(\hat\mu_x\) is given as
@@ -2121,25 +2100,22 @@ Default \texttt{level} is \texttt{0.95}.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{predict}\NormalTok{(delv_fit, }\DataTypeTok{interval =} \StringTok{"confidence"}\NormalTok{, }\DataTypeTok{level =} \FloatTok{.95}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tbl_df}\NormalTok{()}
+\CommentTok{# A tibble: 25 x 3}
+\NormalTok{     fit   lwr   upr}
+   \OperatorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}
+\StringTok{ }\DecValTok{1} \FloatTok{18.6}  \FloatTok{16.8}   \FloatTok{20.3}
+ \DecValTok{2}  \FloatTok{9.85}  \FloatTok{7.57}  \FloatTok{12.1}
+ \DecValTok{3}  \FloatTok{9.85}  \FloatTok{7.57}  \FloatTok{12.1}
+ \DecValTok{4} \FloatTok{12.0}   \FloatTok{9.91}  \FloatTok{14.1}
+ \DecValTok{5} \FloatTok{16.4}  \FloatTok{14.5}   \FloatTok{18.2}
+ \DecValTok{6} \FloatTok{18.6}  \FloatTok{16.8}   \FloatTok{20.3}
+ \DecValTok{7}  \FloatTok{7.67}  \FloatTok{5.22}  \FloatTok{10.1}
+ \DecValTok{8} \FloatTok{18.6}  \FloatTok{16.8}   \FloatTok{20.3}
+ \DecValTok{9} \FloatTok{68.6}  \FloatTok{62.9}   \FloatTok{74.3}
+\DecValTok{10} \FloatTok{14.2}  \FloatTok{12.2}   \FloatTok{16.2}
+\CommentTok{# ... with 15 more rows}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-# A tibble: 25 x 3
-     fit   lwr   upr
-   <dbl> <dbl> <dbl>
- 1 18.6  16.8   20.3
- 2  9.85  7.57  12.1
- 3  9.85  7.57  12.1
- 4 12.0   9.91  14.1
- 5 16.4  14.5   18.2
- 6 18.6  16.8   20.3
- 7  7.67  5.22  10.1
- 8 18.6  16.8   20.3
- 9 68.6  62.9   74.3
-10 14.2  12.2   16.2
-# ... with 15 more rows
-\end{verbatim}
 
 \hypertarget{prediction-interval}{%
 \subsection{Prediction interval}\label{prediction-interval}}
@@ -2167,17 +2143,14 @@ Since this is out-of-sample setting, we should also give \texttt{newdata} option
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{predict}\NormalTok{(delv_fit, }\DataTypeTok{newdata =} \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{x =} \DecValTok{31}\OperatorTok{:}\DecValTok{35}\NormalTok{), }\DataTypeTok{interval =} \StringTok{"prediction"}\NormalTok{, }\DataTypeTok{level =} \FloatTok{.95}\NormalTok{)}
+\NormalTok{   fit  lwr  upr}
+\DecValTok{1} \FloatTok{70.8} \FloatTok{60.3} \FloatTok{81.3}
+\DecValTok{2} \FloatTok{73.0} \FloatTok{62.3} \FloatTok{83.6}
+\DecValTok{3} \FloatTok{75.1} \FloatTok{64.3} \FloatTok{85.9}
+\DecValTok{4} \FloatTok{77.3} \FloatTok{66.4} \FloatTok{88.3}
+\DecValTok{5} \FloatTok{79.5} \FloatTok{68.4} \FloatTok{90.6}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-   fit  lwr  upr
-1 70.8 60.3 81.3
-2 73.0 62.3 83.6
-3 75.1 64.3 85.9
-4 77.3 66.4 88.3
-5 79.5 68.4 90.6
-\end{verbatim}
 
 \hypertarget{hypothesis-testing}{%
 \subsection{Hypothesis testing}\label{hypothesis-testing}}
@@ -2187,29 +2160,26 @@ Look again the output of \texttt{summary.lm()} and \texttt{broom::tidy.lm()}.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(delv_fit)}
+
+\NormalTok{Call}\OperatorTok{:}
+\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ delv)}
+
+\NormalTok{Residuals}\OperatorTok{:}
+\StringTok{   }\NormalTok{Min     1Q Median     3Q    Max }
+\FloatTok{-7.581} \FloatTok{-1.874} \FloatTok{-0.349}  \FloatTok{2.181} \FloatTok{10.634} 
+
+\NormalTok{Coefficients}\OperatorTok{:}
+\StringTok{            }\NormalTok{Estimate Std. Error t value }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\ErrorTok{|}\NormalTok{t}\OperatorTok{|}\NormalTok{)    }
+\NormalTok{(Intercept)    }\FloatTok{3.321}      \FloatTok{1.371}    \FloatTok{2.42}    \FloatTok{0.024} \OperatorTok{*}\StringTok{  }
+\NormalTok{x              }\FloatTok{2.176}      \FloatTok{0.124}   \FloatTok{17.55}  \FloatTok{8.2e-15} \OperatorTok{**}\ErrorTok{*}
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+
+\NormalTok{Residual standard error}\OperatorTok{:}\StringTok{ }\FloatTok{4.18}\NormalTok{ on }\DecValTok{23}\NormalTok{ degrees of freedom}
+\NormalTok{Multiple R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.93}\NormalTok{,  Adjusted R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.927} 
+\NormalTok{F}\OperatorTok{-}\NormalTok{statistic}\OperatorTok{:}\StringTok{  }\DecValTok{308}\NormalTok{ on }\DecValTok{1}\NormalTok{ and }\DecValTok{23}\NormalTok{ DF,  p}\OperatorTok{-}\NormalTok{value}\OperatorTok{:}\StringTok{ }\FloatTok{8.22e-15}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-
-Call:
-lm(formula = y ~ x, data = delv)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--7.581 -1.874 -0.349  2.181 10.634 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)    3.321      1.371    2.42    0.024 *  
-x              2.176      0.124   17.55  8.2e-15 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 4.18 on 23 degrees of freedom
-Multiple R-squared:  0.93,  Adjusted R-squared:  0.927 
-F-statistic:  308 on 1 and 23 DF,  p-value: 8.22e-15
-\end{verbatim}
 
 We can see \texttt{t\ value} and \texttt{Pr(\textgreater{}\textbar{}t\textbar{})}. At the same time, \texttt{statistic} and \texttt{p.value}. What are these values? These are the results of the following tests.
 
@@ -2753,42 +2723,36 @@ Then we reject \(H_0\) if
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(delv_fit)}
+
+\NormalTok{Call}\OperatorTok{:}
+\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ delv)}
+
+\NormalTok{Residuals}\OperatorTok{:}
+\StringTok{   }\NormalTok{Min     1Q Median     3Q    Max }
+\FloatTok{-7.581} \FloatTok{-1.874} \FloatTok{-0.349}  \FloatTok{2.181} \FloatTok{10.634} 
+
+\NormalTok{Coefficients}\OperatorTok{:}
+\StringTok{            }\NormalTok{Estimate Std. Error t value }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\ErrorTok{|}\NormalTok{t}\OperatorTok{|}\NormalTok{)    }
+\NormalTok{(Intercept)    }\FloatTok{3.321}      \FloatTok{1.371}    \FloatTok{2.42}    \FloatTok{0.024} \OperatorTok{*}\StringTok{  }
+\NormalTok{x              }\FloatTok{2.176}      \FloatTok{0.124}   \FloatTok{17.55}  \FloatTok{8.2e-15} \OperatorTok{**}\ErrorTok{*}
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+
+\NormalTok{Residual standard error}\OperatorTok{:}\StringTok{ }\FloatTok{4.18}\NormalTok{ on }\DecValTok{23}\NormalTok{ degrees of freedom}
+\NormalTok{Multiple R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.93}\NormalTok{,  Adjusted R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.927} 
+\NormalTok{F}\OperatorTok{-}\NormalTok{statistic}\OperatorTok{:}\StringTok{  }\DecValTok{308}\NormalTok{ on }\DecValTok{1}\NormalTok{ and }\DecValTok{23}\NormalTok{ DF,  p}\OperatorTok{-}\NormalTok{value}\OperatorTok{:}\StringTok{ }\FloatTok{8.22e-15}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-
-Call:
-lm(formula = y ~ x, data = delv)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--7.581 -1.874 -0.349  2.181 10.634 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)    3.321      1.371    2.42    0.024 *  
-x              2.176      0.124   17.55  8.2e-15 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 4.18 on 23 degrees of freedom
-Multiple R-squared:  0.93,  Adjusted R-squared:  0.927 
-F-statistic:  308 on 1 and 23 DF,  p-value: 8.22e-15
-\end{verbatim}
 
 This statistic is \texttt{F-statistic} included in \texttt{summary.lm()} output. This is saved as \texttt{\$fstatistic}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(delv_fit)}\OperatorTok{$}\NormalTok{fstatistic}
+\NormalTok{value numdf dendf }
+  \DecValTok{308}     \DecValTok{1}    \DecValTok{23} 
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-value numdf dendf 
-  308     1    23 
-\end{verbatim}
 
 We usually summarize these statistic in table form, so called \emph{ANOVA table}.
 
@@ -2808,19 +2772,16 @@ To get this table, just use \texttt{anova()} for \texttt{lm} object.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{anova}\NormalTok{(delv_fit)}
+\NormalTok{Analysis of Variance Table}
+
+\NormalTok{Response}\OperatorTok{:}\StringTok{ }\NormalTok{y}
+\NormalTok{          Df Sum Sq Mean Sq F value  }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\NormalTok{F)    }
+\NormalTok{x          }\DecValTok{1}   \DecValTok{5382}    \DecValTok{5382}     \DecValTok{308} \FloatTok{8.2e-15} \OperatorTok{**}\ErrorTok{*}
+\NormalTok{Residuals }\DecValTok{23}    \DecValTok{402}      \DecValTok{17}                    
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-Analysis of Variance Table
-
-Response: y
-          Df Sum Sq Mean Sq F value  Pr(>F)    
-x          1   5382    5382     308 8.2e-15 ***
-Residuals 23    402      17                    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-\end{verbatim}
 
 Since the last \texttt{Total} row is just sum of the model and error, the function does not give it. To use this table as \texttt{data.frame} more easily, just implement \texttt{broom::tidy} as before.
 
@@ -2828,16 +2789,13 @@ Since the last \texttt{Total} row is just sum of the model and error, the functi
 \begin{Highlighting}[]
 \KeywordTok{anova}\NormalTok{(delv_fit) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{()}
+\CommentTok{# A tibble: 2 x 6}
+\NormalTok{  term         df sumsq meansq statistic   p.value}
+  \OperatorTok{<}\NormalTok{chr}\OperatorTok{>}\StringTok{     }\ErrorTok{<}\NormalTok{int}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{  }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{     }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{     }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}
+\DecValTok{1}\NormalTok{ x             }\DecValTok{1} \FloatTok{5382.} \FloatTok{5382.}       \FloatTok{308.}  \FloatTok{8.22e-15}
+\DecValTok{2}\NormalTok{ Residuals    }\DecValTok{23}  \FloatTok{402.}   \FloatTok{17.5}       \OtherTok{NA}  \OtherTok{NA}       
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-# A tibble: 2 x 6
-  term         df sumsq meansq statistic   p.value
-  <chr>     <int> <dbl>  <dbl>     <dbl>     <dbl>
-1 x             1 5382. 5382.       308.  8.22e-15
-2 Residuals    23  402.   17.5       NA  NA       
-\end{verbatim}
 
 Denote that here \emph{simple linear regression setting} \(F\)-statistic and \(t\)-statistic of Equation \eqref{eq:b1test} perform exactly same thing, \(H_0 : \beta_1 = 0\). In fact, we know that
 
@@ -2858,27 +2816,24 @@ Denote that here \emph{simple linear regression setting} \(F\)-statistic and \(t
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{(cem <-}\StringTok{ }\NormalTok{MPV}\OperatorTok{::}\NormalTok{cement }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tbl_df}\NormalTok{())}
+\CommentTok{# A tibble: 13 x 5}
+\NormalTok{       y    x1    x2    x3    x4}
+   \OperatorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}
+\StringTok{ }\DecValTok{1}  \FloatTok{78.5}     \DecValTok{7}    \DecValTok{26}     \DecValTok{6}    \DecValTok{60}
+ \DecValTok{2}  \FloatTok{74.3}     \DecValTok{1}    \DecValTok{29}    \DecValTok{15}    \DecValTok{52}
+ \DecValTok{3} \FloatTok{104.}     \DecValTok{11}    \DecValTok{56}     \DecValTok{8}    \DecValTok{20}
+ \DecValTok{4}  \FloatTok{87.6}    \DecValTok{11}    \DecValTok{31}     \DecValTok{8}    \DecValTok{47}
+ \DecValTok{5}  \FloatTok{95.9}     \DecValTok{7}    \DecValTok{52}     \DecValTok{6}    \DecValTok{33}
+ \DecValTok{6} \FloatTok{109.}     \DecValTok{11}    \DecValTok{55}     \DecValTok{9}    \DecValTok{22}
+ \DecValTok{7} \FloatTok{103.}      \DecValTok{3}    \DecValTok{71}    \DecValTok{17}     \DecValTok{6}
+ \DecValTok{8}  \FloatTok{72.5}     \DecValTok{1}    \DecValTok{31}    \DecValTok{22}    \DecValTok{44}
+ \DecValTok{9}  \FloatTok{93.1}     \DecValTok{2}    \DecValTok{54}    \DecValTok{18}    \DecValTok{22}
+\DecValTok{10} \FloatTok{116.}     \DecValTok{21}    \DecValTok{47}     \DecValTok{4}    \DecValTok{26}
+\DecValTok{11}  \FloatTok{83.8}     \DecValTok{1}    \DecValTok{40}    \DecValTok{23}    \DecValTok{34}
+\DecValTok{12} \FloatTok{113.}     \DecValTok{11}    \DecValTok{66}     \DecValTok{9}    \DecValTok{12}
+\DecValTok{13} \FloatTok{109.}     \DecValTok{10}    \DecValTok{68}     \DecValTok{8}    \DecValTok{12}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-# A tibble: 13 x 5
-       y    x1    x2    x3    x4
-   <dbl> <dbl> <dbl> <dbl> <dbl>
- 1  78.5     7    26     6    60
- 2  74.3     1    29    15    52
- 3 104.     11    56     8    20
- 4  87.6    11    31     8    47
- 5  95.9     7    52     6    33
- 6 109.     11    55     9    22
- 7 103.      3    71    17     6
- 8  72.5     1    31    22    44
- 9  93.1     2    54    18    22
-10 116.     21    47     4    26
-11  83.8     1    40    23    34
-12 113.     11    66     9    12
-13 109.     10    68     8    12
-\end{verbatim}
 
 Above is a data set about cement and concerning four ingredients from the \citet{Montgomery:2015aa} textbook.
 
@@ -3353,35 +3308,29 @@ Using Equation \eqref{eq:qrhat}, we get each coefficient as follow.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{solve}\NormalTok{(cem_r) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(cem_q) }\OperatorTok{%*%}\StringTok{ }\NormalTok{cem}\OperatorTok{$}\NormalTok{y}
+\NormalTok{              [,}\DecValTok{1}\NormalTok{]}
+\NormalTok{(Intercept) }\FloatTok{62.405}
+\NormalTok{x1           }\FloatTok{1.551}
+\NormalTok{x2           }\FloatTok{0.510}
+\NormalTok{x3           }\FloatTok{0.102}
+\NormalTok{x4          }\FloatTok{-0.144}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-              [,1]
-(Intercept) 62.405
-x1           1.551
-x2           0.510
-x3           0.102
-x4          -0.144
-\end{verbatim}
 
 On the other hand, \texttt{lm()} gives the following result.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ cem)}
+
+\NormalTok{Call}\OperatorTok{:}
+\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ cem)}
+
+\NormalTok{Coefficients}\OperatorTok{:}
+\NormalTok{(Intercept)           x1           x2           x3           x4  }
+     \FloatTok{62.405}        \FloatTok{1.551}        \FloatTok{0.510}        \FloatTok{0.102}       \FloatTok{-0.144}  
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-
-Call:
-lm(formula = y ~ ., data = cem)
-
-Coefficients:
-(Intercept)           x1           x2           x3           x4  
-     62.405        1.551        0.510        0.102       -0.144  
-\end{verbatim}
 
 We can check the result is same. In fact, \texttt{lm()} fits the model by default \texttt{method\ =\ "qr"}.
 
@@ -3926,67 +3875,58 @@ Everything is same in \texttt{R}.
 \begin{Highlighting}[]
 \NormalTok{cem_fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ cem)}
 \KeywordTok{summary}\NormalTok{(cem_fit)}
+
+\NormalTok{Call}\OperatorTok{:}
+\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ cem)}
+
+\NormalTok{Residuals}\OperatorTok{:}
+\StringTok{   }\NormalTok{Min     1Q Median     3Q    Max }
+\FloatTok{-3.175} \FloatTok{-1.671}  \FloatTok{0.251}  \FloatTok{1.378}  \FloatTok{3.925} 
+
+\NormalTok{Coefficients}\OperatorTok{:}
+\StringTok{            }\NormalTok{Estimate Std. Error t value }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\ErrorTok{|}\NormalTok{t}\OperatorTok{|}\NormalTok{)  }
+\NormalTok{(Intercept)   }\FloatTok{62.405}     \FloatTok{70.071}    \FloatTok{0.89}    \FloatTok{0.399}  
+\NormalTok{x1             }\FloatTok{1.551}      \FloatTok{0.745}    \FloatTok{2.08}    \FloatTok{0.071}\NormalTok{ .}
+\NormalTok{x2             }\FloatTok{0.510}      \FloatTok{0.724}    \FloatTok{0.70}    \FloatTok{0.501}  
+\NormalTok{x3             }\FloatTok{0.102}      \FloatTok{0.755}    \FloatTok{0.14}    \FloatTok{0.896}  
+\NormalTok{x4            }\FloatTok{-0.144}      \FloatTok{0.709}   \FloatTok{-0.20}    \FloatTok{0.844}  
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+
+\NormalTok{Residual standard error}\OperatorTok{:}\StringTok{ }\FloatTok{2.45}\NormalTok{ on }\DecValTok{8}\NormalTok{ degrees of freedom}
+\NormalTok{Multiple R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.982}\NormalTok{, Adjusted R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.974} 
+\NormalTok{F}\OperatorTok{-}\NormalTok{statistic}\OperatorTok{:}\StringTok{  }\DecValTok{111}\NormalTok{ on }\DecValTok{4}\NormalTok{ and }\DecValTok{8}\NormalTok{ DF,  p}\OperatorTok{-}\NormalTok{value}\OperatorTok{:}\StringTok{ }\FloatTok{4.76e-07}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-
-Call:
-lm(formula = y ~ ., data = cem)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--3.175 -1.671  0.251  1.378  3.925 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)  
-(Intercept)   62.405     70.071    0.89    0.399  
-x1             1.551      0.745    2.08    0.071 .
-x2             0.510      0.724    0.70    0.501  
-x3             0.102      0.755    0.14    0.896  
-x4            -0.144      0.709   -0.20    0.844  
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 2.45 on 8 degrees of freedom
-Multiple R-squared:  0.982, Adjusted R-squared:  0.974 
-F-statistic:  111 on 4 and 8 DF,  p-value: 4.76e-07
-\end{verbatim}
 
 You can see \texttt{F-statistic} with degrees of freedom 4 8.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(cem_fit)}\OperatorTok{$}\NormalTok{fstatistic}
+\NormalTok{value numdf dendf }
+  \DecValTok{111}     \DecValTok{4}     \DecValTok{8} 
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-value numdf dendf 
-  111     4     8 
-\end{verbatim}
 
 However, \texttt{anova.lm()} gives a bit different format This is related to \emph{extra sum of squares}, which will be covered later.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{anova}\NormalTok{(cem_fit)}
+\NormalTok{Analysis of Variance Table}
+
+\NormalTok{Response}\OperatorTok{:}\StringTok{ }\NormalTok{y}
+\NormalTok{          Df Sum Sq Mean Sq F value  }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\NormalTok{F)    }
+\NormalTok{x1         }\DecValTok{1}   \DecValTok{1450}    \DecValTok{1450}  \FloatTok{242.37} \FloatTok{2.9e-07} \OperatorTok{**}\ErrorTok{*}
+\NormalTok{x2         }\DecValTok{1}   \DecValTok{1208}    \DecValTok{1208}  \FloatTok{201.87} \FloatTok{5.9e-07} \OperatorTok{**}\ErrorTok{*}
+\NormalTok{x3         }\DecValTok{1}     \DecValTok{10}      \DecValTok{10}    \FloatTok{1.64}    \FloatTok{0.24}    
+\NormalTok{x4         }\DecValTok{1}      \DecValTok{0}       \DecValTok{0}    \FloatTok{0.04}    \FloatTok{0.84}    
+\NormalTok{Residuals  }\DecValTok{8}     \DecValTok{48}       \DecValTok{6}                    
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-Analysis of Variance Table
-
-Response: y
-          Df Sum Sq Mean Sq F value  Pr(>F)    
-x1         1   1450    1450  242.37 2.9e-07 ***
-x2         1   1208    1208  201.87 5.9e-07 ***
-x3         1     10      10    1.64    0.24    
-x4         1      0       0    0.04    0.84    
-Residuals  8     48       6                    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-\end{verbatim}
 
 \hypertarget{coefficient-of-determination-1}{%
 \subsection{Coefficient of determination}\label{coefficient-of-determination-1}}
@@ -4368,32 +4308,29 @@ If we use \texttt{summary()} to \texttt{lm} object, we can get each \(T\) statis
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{summary}\NormalTok{(cem_fit)}
+
+\NormalTok{Call}\OperatorTok{:}
+\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ cem)}
+
+\NormalTok{Residuals}\OperatorTok{:}
+\StringTok{   }\NormalTok{Min     1Q Median     3Q    Max }
+\FloatTok{-3.175} \FloatTok{-1.671}  \FloatTok{0.251}  \FloatTok{1.378}  \FloatTok{3.925} 
+
+\NormalTok{Coefficients}\OperatorTok{:}
+\StringTok{            }\NormalTok{Estimate Std. Error t value }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\ErrorTok{|}\NormalTok{t}\OperatorTok{|}\NormalTok{)  }
+\NormalTok{(Intercept)   }\FloatTok{62.405}     \FloatTok{70.071}    \FloatTok{0.89}    \FloatTok{0.399}  
+\NormalTok{x1             }\FloatTok{1.551}      \FloatTok{0.745}    \FloatTok{2.08}    \FloatTok{0.071}\NormalTok{ .}
+\NormalTok{x2             }\FloatTok{0.510}      \FloatTok{0.724}    \FloatTok{0.70}    \FloatTok{0.501}  
+\NormalTok{x3             }\FloatTok{0.102}      \FloatTok{0.755}    \FloatTok{0.14}    \FloatTok{0.896}  
+\NormalTok{x4            }\FloatTok{-0.144}      \FloatTok{0.709}   \FloatTok{-0.20}    \FloatTok{0.844}  
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+
+\NormalTok{Residual standard error}\OperatorTok{:}\StringTok{ }\FloatTok{2.45}\NormalTok{ on }\DecValTok{8}\NormalTok{ degrees of freedom}
+\NormalTok{Multiple R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.982}\NormalTok{, Adjusted R}\OperatorTok{-}\NormalTok{squared}\OperatorTok{:}\StringTok{  }\FloatTok{0.974} 
+\NormalTok{F}\OperatorTok{-}\NormalTok{statistic}\OperatorTok{:}\StringTok{  }\DecValTok{111}\NormalTok{ on }\DecValTok{4}\NormalTok{ and }\DecValTok{8}\NormalTok{ DF,  p}\OperatorTok{-}\NormalTok{value}\OperatorTok{:}\StringTok{ }\FloatTok{4.76e-07}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-
-Call:
-lm(formula = y ~ ., data = cem)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--3.175 -1.671  0.251  1.378  3.925 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)  
-(Intercept)   62.405     70.071    0.89    0.399  
-x1             1.551      0.745    2.08    0.071 .
-x2             0.510      0.724    0.70    0.501  
-x3             0.102      0.755    0.14    0.896  
-x4            -0.144      0.709   -0.20    0.844  
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 2.45 on 8 degrees of freedom
-Multiple R-squared:  0.982, Adjusted R-squared:  0.974 
-F-statistic:  111 on 4 and 8 DF,  p-value: 4.76e-07
-\end{verbatim}
 
 If the test is significant, it means that additional contribution of that variable is significant after all other variables are already in the model. This might be understood well with extra sum of squares concept, later.
 
@@ -4808,13 +4745,14 @@ Following Definition \ref{def:seqs}, start from intercept-only model.
   \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
   $j \leftarrow 1$\;
-  \While{reject $H_0$}{
-    $H_0: \beta_j = 0 \quad \text{vs} \quad H_1: \beta_j \neq 0$\;
-    $\begin{cases} FM : Y_i = \beta_0 + \cdots + \beta_j x_{1j} + \epsilon_i \\ RM : Y_i = \beta_0 + \ldots + \beta_{j - 1}x_{1, j - 1} + \epsilon_i \end{cases}$\;
+  \Repeat{accept $H_0$}{
+     $\begin{cases} FM : Y_i = \beta_0 + \cdots + \beta_j x_{1j} + \epsilon_i \\ RM : Y_i = \beta_0 + \ldots + \beta_{j - 1}x_{1, j - 1} + \epsilon_i \end{cases}$\;
+    $H_0: \beta_j = 0 (RM) \quad \text{vs} \quad H_1: \beta_j \neq 0 (FM)$\;
     $F_0 = \frac{SSR(X_j \mid X_1, \ldots, X_{j - 1}) / 1}{SSE(X_1, \ldots, X_j) / (n - j - 1)}$\;
     reject $H_0$ if $F_0 > F_{1 - \alpha}(1, n - j - 3)$\;
+    $j \leftarrow j + 1$\;
   }
-  \Output{accepted $FM$}
+  \Output{accepted model, i.e. final $RM$}
   \caption{Sequential F Test from beginning}
 \end{algorithm}
 
@@ -4873,6 +4811,107 @@ Hence,
   \end{split}
   \label{eq:lincombtest}
 \end{equation}
+
+\hypertarget{extra-ss-in-r}{%
+\subsection{\texorpdfstring{Extra SS in \texttt{R}}{Extra SS in R}}\label{extra-ss-in-r}}
+
+\texttt{anova.lm()} gives extra sum of squres by default, which is \emph{sequential sum of squares}, i.e.~type I SS.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{anova}\NormalTok{(cem_fit)}
+\NormalTok{Analysis of Variance Table}
+
+\NormalTok{Response}\OperatorTok{:}\StringTok{ }\NormalTok{y}
+\NormalTok{          Df Sum Sq Mean Sq F value  }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\NormalTok{F)    }
+\NormalTok{x1         }\DecValTok{1}   \DecValTok{1450}    \DecValTok{1450}  \FloatTok{242.37} \FloatTok{2.9e-07} \OperatorTok{**}\ErrorTok{*}
+\NormalTok{x2         }\DecValTok{1}   \DecValTok{1208}    \DecValTok{1208}  \FloatTok{201.87} \FloatTok{5.9e-07} \OperatorTok{**}\ErrorTok{*}
+\NormalTok{x3         }\DecValTok{1}     \DecValTok{10}      \DecValTok{10}    \FloatTok{1.64}    \FloatTok{0.24}    
+\NormalTok{x4         }\DecValTok{1}      \DecValTok{0}       \DecValTok{0}    \FloatTok{0.04}    \FloatTok{0.84}    
+\NormalTok{Residuals  }\DecValTok{8}     \DecValTok{48}       \DecValTok{6}                    
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+\end{Highlighting}
+\end{Shaded}
+
+If we change the order,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{anova}\NormalTok{(}\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x2 }\OperatorTok{+}\StringTok{ }\NormalTok{x1 }\OperatorTok{+}\StringTok{ }\NormalTok{x3 }\OperatorTok{+}\StringTok{ }\NormalTok{x4, }\DataTypeTok{data =}\NormalTok{ cem))}
+\NormalTok{Analysis of Variance Table}
+
+\NormalTok{Response}\OperatorTok{:}\StringTok{ }\NormalTok{y}
+\NormalTok{          Df Sum Sq Mean Sq F value  }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\NormalTok{F)    }
+\NormalTok{x2         }\DecValTok{1}   \DecValTok{1809}    \DecValTok{1809}  \FloatTok{302.43} \FloatTok{1.2e-07} \OperatorTok{**}\ErrorTok{*}
+\NormalTok{x1         }\DecValTok{1}    \DecValTok{848}     \DecValTok{848}  \FloatTok{141.81} \FloatTok{2.3e-06} \OperatorTok{**}\ErrorTok{*}
+\NormalTok{x3         }\DecValTok{1}     \DecValTok{10}      \DecValTok{10}    \FloatTok{1.64}    \FloatTok{0.24}    
+\NormalTok{x4         }\DecValTok{1}      \DecValTok{0}       \DecValTok{0}    \FloatTok{0.04}    \FloatTok{0.84}    
+\NormalTok{Residuals  }\DecValTok{8}     \DecValTok{48}       \DecValTok{6}                    
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+\end{Highlighting}
+\end{Shaded}
+
+SS differs. To get Type III SS, we can use \texttt{car::Anova()}. This function can compute type II or type III sum of squares. Since it gives type II by default, we should specify \texttt{type\ =\ "III"} or \texttt{type\ =\ 3}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{car}\OperatorTok{::}\KeywordTok{Anova}\NormalTok{(cem_fit, }\DataTypeTok{type =} \DecValTok{3}\NormalTok{)}
+\NormalTok{Anova }\KeywordTok{Table}\NormalTok{ (Type III tests)}
+
+\NormalTok{Response}\OperatorTok{:}\StringTok{ }\NormalTok{y}
+\NormalTok{            Sum Sq Df F value }\KeywordTok{Pr}\NormalTok{(}\OperatorTok{>}\NormalTok{F)  }
+\NormalTok{(Intercept)    }\FloatTok{4.7}  \DecValTok{1}    \FloatTok{0.79}  \FloatTok{0.399}  
+\NormalTok{x1            }\FloatTok{26.0}  \DecValTok{1}    \FloatTok{4.34}  \FloatTok{0.071}\NormalTok{ .}
+\NormalTok{x2             }\FloatTok{3.0}  \DecValTok{1}    \FloatTok{0.50}  \FloatTok{0.501}  
+\NormalTok{x3             }\FloatTok{0.1}  \DecValTok{1}    \FloatTok{0.02}  \FloatTok{0.896}  
+\NormalTok{x4             }\FloatTok{0.2}  \DecValTok{1}    \FloatTok{0.04}  \FloatTok{0.844}  
+\NormalTok{Residuals     }\FloatTok{47.9}  \DecValTok{8}                 
+\OperatorTok{---}
+\NormalTok{Signif. codes}\OperatorTok{:}\StringTok{  }\DecValTok{0} \StringTok{'***'} \FloatTok{0.001} \StringTok{'**'} \FloatTok{0.01} \StringTok{'*'} \FloatTok{0.05} \StringTok{'.'} \FloatTok{0.1} \StringTok{' '} \DecValTok{1}
+\end{Highlighting}
+\end{Shaded}
+
+As base \texttt{anova.lm()}, we can also tidy this object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{car}\OperatorTok{::}\KeywordTok{Anova}\NormalTok{(cem_fit, }\DataTypeTok{type =} \DecValTok{3}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{()}
+\CommentTok{# A tibble: 6 x 5}
+\NormalTok{  term         sumsq    df statistic p.value}
+  \OperatorTok{<}\NormalTok{chr}\OperatorTok{>}\StringTok{        }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{ }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{     }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{   }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}
+\DecValTok{1}\NormalTok{ (Intercept)  }\FloatTok{4.75}      \DecValTok{1}    \FloatTok{0.793}   \FloatTok{0.399} 
+\DecValTok{2}\NormalTok{ x1          }\FloatTok{26.0}       \DecValTok{1}    \FloatTok{4.34}    \FloatTok{0.0708}
+\DecValTok{3}\NormalTok{ x2           }\FloatTok{2.97}      \DecValTok{1}    \FloatTok{0.497}   \FloatTok{0.501} 
+\DecValTok{4}\NormalTok{ x3           }\FloatTok{0.109}     \DecValTok{1}    \FloatTok{0.0182}  \FloatTok{0.896} 
+\DecValTok{5}\NormalTok{ x4           }\FloatTok{0.247}     \DecValTok{1}    \FloatTok{0.0413}  \FloatTok{0.844} 
+\DecValTok{6}\NormalTok{ Residuals   }\FloatTok{47.9}       \DecValTok{8}   \OtherTok{NA}      \OtherTok{NA}     
+\end{Highlighting}
+\end{Shaded}
+
+Look p-value of the type III SS, i.e.~partial F-test. Comparing to partial t-test, we can see both are equivalent.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{car}\OperatorTok{::}\KeywordTok{Anova}\NormalTok{(cem_fit, }\DataTypeTok{type =} \DecValTok{3}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{na.omit}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(p.value) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{bind_cols}\NormalTok{(}\DataTypeTok{t_test =}\NormalTok{ broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(cem_fit)}\OperatorTok{$}\NormalTok{p.value)}
+\CommentTok{# A tibble: 5 x 2}
+\NormalTok{  p.value t_test}
+    \OperatorTok{<}\NormalTok{dbl}\OperatorTok{>}\StringTok{  }\ErrorTok{<}\NormalTok{dbl}\OperatorTok{>}
+\DecValTok{1}  \FloatTok{0.399}  \FloatTok{0.399} 
+\DecValTok{2}  \FloatTok{0.0708} \FloatTok{0.0708}
+\DecValTok{3}  \FloatTok{0.501}  \FloatTok{0.501} 
+\DecValTok{4}  \FloatTok{0.896}  \FloatTok{0.896} 
+\DecValTok{5}  \FloatTok{0.844}  \FloatTok{0.844} 
+\end{Highlighting}
+\end{Shaded}
+
+As we can see in the argument of \texttt{car::Anova()}, there are also type II and type IV SS. These are not popular ones, though.
 
 \bibliography{book.bib,packages.bib}
 
