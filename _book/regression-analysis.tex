@@ -131,6 +131,7 @@
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{enumitem}
 \usepackage{pdfpages}
 \usepackage[linesnumbered]{algorithm2e}
 
@@ -522,9 +523,10 @@ It gives that
 \BeginKnitrBlock{proposition}[Unbiasedness]
 \protect\hypertarget{prp:ue}{}{\label{prp:ue} \iffalse (Unbiasedness) \fi{} }Both coefficients are unbiased.
 
-\(\text{(a)}\: E\hat\beta_1 = \beta_1\)
-
-\(\text{(b)}\: E\hat\beta_0 = \beta_0\)
+\begin{enumerate}
+  \item $E\hat\beta_1 = \beta_1$
+  \item $E\hat\beta_0 = \beta_0$
+\end{enumerate}
 \EndKnitrBlock{proposition}
 
 From the model, \(Y_1, \ldots, Y_n \stackrel{indep}{\sim} (\beta_0 + \beta_1 x_i, \sigma^2)\).
@@ -557,20 +559,17 @@ It follows that
 \BeginKnitrBlock{proposition}[Variances]
 \protect\hypertarget{prp:vb}{}{\label{prp:vb} \iffalse (Variances) \fi{} }Variances and covariance of coefficients
 
-\(\text{(a)}\: Var\hat\beta_1 = \frac{\sigma^2}{S_{XX}}\)
-
-\(\text{(b)}\: Var\hat\beta_0 = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2\)
-
-\(\text{(c)}\: Cov(\hat\beta_0, \hat\beta_1) = - \frac{\overline{x}}{S_{XX}} \sigma^2\)
+\begin{enumerate}[label=(\alph*)]
+  \item $Var\hat\beta_1 = \frac{\sigma^2}{S_{XX}}$ \label{itm:vbone}
+  \item $Var\hat\beta_0 = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2$ \label{itm:vbtwo}
+  \item $Cov(\hat\beta_0, \hat\beta_1) = - \frac{\overline{x}}{S_{XX}} \sigma^2$ \label{itm:vbthree}
+\end{enumerate}
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proof}
 \iffalse{} {Proof. } \fi{}Proving is just arithmetic.
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\item
-\end{enumerate}
+\(\ref{itm:vbone}\)
 
 \begin{equation*}
   \begin{split}
@@ -579,11 +578,7 @@ It follows that
   \end{split}
 \end{equation*}
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{1}
-\item
-\end{enumerate}
+\(\ref{itm:vbtwo}\)
 
 \begin{equation*}
   \begin{split}
@@ -593,11 +588,7 @@ It follows that
   \end{split}
 \end{equation*}
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{2}
-\item
-\end{enumerate}
+\(\ref{itm:vbthree}\)
 
 \begin{equation*}
   \begin{split}
@@ -1058,13 +1049,14 @@ See Figure \ref{fig:regplot}. Each red line is \(e_i\). As we can see, \(e_i\) r
 \BeginKnitrBlock{lemma}
 \protect\hypertarget{lem:yandbet}{}{\label{lem:yandbet} }Covriance between Y and each coefficient
 
-\(\text{(a)}\: Cov(\hat\beta_0, Y_i) = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2\)
-
-\(\text{(b)}\: Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2\)
+\begin{enumerate}[label=(\alph*)]
+  \item $Cov(\hat\beta_0, Y_i) = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2$ \label{itm:yandbetone}
+  \item $Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2$ \label{itm:yandbettwo}
+\end{enumerate}
 \EndKnitrBlock{lemma}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}(a)
+\iffalse{} {Proof. } \fi{}\(\ref{itm:yandbetone}\)
 
 \begin{equation*}
   \begin{split}
@@ -1073,11 +1065,7 @@ See Figure \ref{fig:regplot}. Each red line is \(e_i\). As we can see, \(e_i\) r
   \end{split}
 \end{equation*}
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{1}
-\item
-\end{enumerate}
+\(\ref{itm:yandbettwo}\)
 
 \begin{equation*}
   \begin{split}
@@ -1090,23 +1078,17 @@ See Figure \ref{fig:regplot}. Each red line is \(e_i\). As we can see, \(e_i\) r
 \BeginKnitrBlock{proposition}[Properties of residuals]
 \protect\hypertarget{prp:resprop}{}{\label{prp:resprop} \iffalse (Properties of residuals) \fi{} }Mean and variance of the residual
 
-\(\text{(a)}\: E(e_i) = 0\)
-
-\(\text{(b)}\: Var(e_i) \neq \sigma^2\)
-
-\(\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0\)
+\begin{enumerate}[label=(\alph*)]
+  \item $E(e_i) = 0$ \label{itm:respropone}
+  \item $Var(e_i) \neq \sigma^2$ \label{itm:resproptwo}
+  \item $\forall i \neq j : Cov(e_i, e_j) \neq 0$ \label{itm:respropthree}
+\end{enumerate}
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}(a) Recall that this is the assumption of the regression model.
+\iffalse{} {Proof. } \fi{}\(\ref{itm:respropone}\) Recall that this is the assumption of the regression model.
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Lemma \ref{lem:yandbet} implies that
-\end{enumerate}
+\(\ref{itm:resproptwo}\) Lemma \ref{lem:yandbet} implies that
 
 \begin{equation*}
   \begin{split}
@@ -1153,13 +1135,7 @@ These Equations \eqref{eq:predvar} and \eqref{eq:yyhat} give that
   \label{eq:residvar}
 \end{equation}
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{2}
-\tightlist
-\item
-  Let \(i \neq j\). Then
-\end{enumerate}
+\(\ref{itm:respropthree}\) Let \(i \neq j\). Then
 
 \begin{equation*}
   \begin{split}
@@ -1550,6 +1526,8 @@ Combining this equation and our figure, we can know that \(X(X^TX)^{-1}X^T\) pro
 \protect\hypertarget{def:projop}{}{\label{def:projop} \iffalse (Projection matrix) \fi{} }Projection operator or mapping from \(\mathbb{R}^n\) to \(W\) is written by
 
 \[\Pi(\cdot \mid W) := X(X^TX)^{-1}X^T\]
+
+It can also be called \textbf{\textit{Hat matrix}} and written as \(H\).
 \EndKnitrBlock{definition}
 
 As mentioned, \(X^TX\) should be invertible to get the LSE solution.
@@ -1581,7 +1559,7 @@ It follows that
 
 \[X\mathbf{b} = \mathbf{0}\]
 
-If \(rank(X) = n\), then the linear equation system has trivial solution \(\mathbf{b} = \mathbf{0}\) and so does \(X^T (X\mathbf{b}) = \mathbf{0}\). Hence, \(X^T X\) is invertible.
+If \(rank(X) = \min(n, p + 1)\), then the linear equation system has trivial solution \(\mathbf{b} = \mathbf{0}\) and so does \(X^T (X\mathbf{b}) = \mathbf{0}\). Hence, \(X^T X\) is invertible.
 \EndKnitrBlock{proof}
 
 Using projection matrix \(\Pi_W\), we can re-express each sum of squares. Recall that when we only use \(y_i\) for regression fitting, the result becomes its average. It is because \(\mathbf{Y}\) vector has been projected onto \(sp(\{ \mathbf{1} \})\) line.
@@ -1597,28 +1575,11 @@ Intuitively, every projection matrix is idempotent and symmetric. Once projected
 \BeginKnitrBlock{corollary}[Sum of squares]
 \protect\hypertarget{cor:projss}{}{\label{cor:projss} \iffalse (Sum of squares) \fi{} }\(\Pi_{\mathbf{1}}\) and \(\Pi_X\) can express each \(SS\) as following.
 
-\begin{enumerate}
-\def\labelenumi{(\roman{enumi})}
-\item
+\begin{enumerate}[label=(\roman*)]
+  \item $$SST = \mathbf{Y}^T (I - \Pi_{\mathbf{1}}) \mathbf{Y}$$
+  \item $$SSR = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y}$$
+  \item $$SSE = \mathbf{Y}^T (I - \Pi_X) \mathbf{Y}$$
 \end{enumerate}
-
-\[SST = \mathbf{Y}^T (I - \Pi_{\mathbf{1}}) \mathbf{Y}\]
-
-\begin{enumerate}
-\def\labelenumi{(\roman{enumi})}
-\setcounter{enumi}{1}
-\item
-\end{enumerate}
-
-\[SSR = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y}\]
-
-\begin{enumerate}
-\def\labelenumi{(\roman{enumi})}
-\setcounter{enumi}{2}
-\item
-\end{enumerate}
-
-\[SSE = \mathbf{Y}^T (I - \Pi_X) \mathbf{Y}\]
 \EndKnitrBlock{corollary}
 
 \hypertarget{simpledist}{%
@@ -1693,7 +1654,12 @@ where \(\mathbf{b} = (b_1, \ldots, b_n)^T \in \mathbb{R}^n\) with \(b_i = \frac{
 
 Let
 
-\[A^T = [ \mathbf{a}^T, \mathbf{b}^T ]\]
+\[
+A = \begin{bmatrix}
+  \mathbf{a}^T \\ \hline
+  \mathbf{b}^T
+\end{bmatrix} \in \mathbb{R}^{2 \times n}
+\]
 
 Then
 
@@ -2208,7 +2174,7 @@ More importantly, we test \(\beta_1\) which means slope
 \[H_0 : \beta_1 = \alpha_1 \qquad \text{vs} \qquad H_1 : \beta_1 \neq \alpha_1\]
 
 \begin{equation}
-  T = \frac{\hat\beta_0 - \alpha_0}{\hat\sigma \sqrt{\frac{1}{S_{xx}}}} \stackrel{H_0}{\sim} t(n - 2)
+  T = \frac{\hat\beta_1 - \alpha_1}{\hat\sigma \sqrt{\frac{1}{S_{xx}}}} \stackrel{H_0}{\sim} t(n - 2)
   \label{eq:b1test}
 \end{equation}
 
@@ -2290,25 +2256,21 @@ Now we can determine the distributions of various quadratic forms. The reason we
 \BeginKnitrBlock{theorem}[Idempotent and symmetric]
 \protect\hypertarget{thm:idem}{}{\label{thm:idem} \iffalse (Idempotent and symmetric) \fi{} }Let \(A \in \mathbb{R}^{k \times k}\) be idempotent and symmetric. Then
 
-\begin{enumerate}
-  \item $A^n$ is also idempotent
-  \item $I - A$ is also idempotent
-  \item Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$
+\begin{enumerate}[label=(\alph*)]
+  \item $A^n$ is also idempotent \label{itm:idemone}
+  \item $I - A$ is also idempotent \label{itm:idemtwo}
+  \item Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$ \label{itm:idemthree}
 \end{enumerate}
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}(a) and (b) are trivial.
+\iffalse{} {Proof. } \fi{}\(\ref{itm:idemone}\) and \(\ref{itm:idemtwo}\) are trivial.
 
 \[(A^n)^2 = (A^2)^n = A^n\]
 
 \[(I - A)^2 = I - 2A + A^2 = I - A\]
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{2}
-\item
-\end{enumerate}
+\(\ref{itm:idemthree}\)
 
 Fix \(\lambda\) an eigenvalue of \(A\). Let \(\mathbf{v} \neq \mathbf{0}\) be the corresponding eigenvector.
 
@@ -2342,24 +2304,10 @@ Since \(\lambda = 0, 1\) of A,
 \BeginKnitrBlock{proposition}[Independence]
 \protect\hypertarget{prp:quadmvn}{}{\label{prp:quadmvn} \iffalse (Independence) \fi{} }Assume \(\mathbf{Y} \sim MVN(\mathbf\mu, \Sigma)\). Then
 
-\begin{enumerate}
-\def\labelenumi{(\roman{enumi})}
-\tightlist
-\item
-  If \(A\) and \(B\) are symmetric,
+\begin{enumerate}[label=(\roman*)]
+  \item If $A$ and $B$ are symmetric, $$Y^T AY \perp\!\!\!\perp Y^T BY \Leftrightarrow A\Sigma B = 0$$
+  \item If $A$ is symmetric, $$Y^T AY \perp\!\!\!\perp BY \Leftrightarrow B\Sigma A = 0$$
 \end{enumerate}
-
-\[Y^T AY \perp\!\!\!\perp Y^T BY \Leftrightarrow A\Sigma B = 0\]
-
-\begin{enumerate}
-\def\labelenumi{(\roman{enumi})}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  If \(A\) is symmetric,
-\end{enumerate}
-
-\[Y^T AY \perp\!\!\!\perp BY \Leftrightarrow B\Sigma A = 0\]
 \EndKnitrBlock{proposition}
 
 \BeginKnitrBlock{theorem}[Distribution of quadratic form]
@@ -2609,25 +2557,21 @@ However, this direct comparison somtimes does not work in many times. Both \(SSR
 \BeginKnitrBlock{corollary}[df of SS]
 \protect\hypertarget{cor:dfss}{}{\label{cor:dfss} \iffalse (df of SS) \fi{} }\(df\) of each sum of square is computed as
 
-\begin{enumerate}
-  \item $df(SST) = n - 1$
-  \item $df(SSR) = 1$
-  \item $df(SSE) = n - 2$
+\begin{enumerate}[label=(\alph*)]
+  \item $df(SST) = n - 1$ \label{itm:dfssone}
+  \item $df(SSR) = 1$ \label{itm:dfsstwo}
+  \item $df(SSE) = n - 2$ \label{itm:dfssthree}
 \end{enumerate}
 \EndKnitrBlock{corollary}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}(a)
+\iffalse{} {Proof. } \fi{}\(\ref{itm:dfssone}\)
 
 Since \(\sum (Y_i - \overline{Y}) = 0\), we have \(1\) linear constraints. Thus,
 
 \[df(SST) = n - 1\]
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{1}
-\item
-\end{enumerate}
+\(\ref{itm:dfsstwo}\)
 
 Note that \(\hat{Y_i} - \overline{Y} = \hat\beta_1(x_i - \overline{x})\)
 
@@ -2637,11 +2581,7 @@ Thus,
 
 \[df(SSR) = n - (n - 1) = 1\]
 
-\begin{enumerate}
-\def\labelenumi{(\alph{enumi})}
-\setcounter{enumi}{2}
-\item
-\end{enumerate}
+\(\ref{itm:dfssthree}\)
 
 From Example \ref{exm:usingnormal}, \(\sum (Y_i - \hat{Y_i}) = 0\) and \(\sum x_i (Y_i - \hat{Y_i}) = 0\).
 
@@ -2706,6 +2646,10 @@ which means that the predictor does not explain the response anything. In other 
 
 \[F_0 = \frac{MSR}{MSE} = \frac{SSR / df(SSR)}{SSE / df(SSE)} \stackrel{H_0}{\sim}F(df(SSR), df(SSE))\]
 \EndKnitrBlock{remark}
+
+Here, it is
+
+\[F_0 = \frac{SSR / 1}{SSE / (n - 2)}\]
 
 Then we reject \(H_0\) if
 
@@ -2804,7 +2748,7 @@ Denote that here \emph{simple linear regression setting} \(F\)-statistic and \(t
 \BeginKnitrBlock{remark}
 \iffalse{} {Remark. } \fi{}In the simple linear regression setting, \(F\)-test for significance and \(t\)-test for no slope are equivalent, i.e.~under \(H_0 : \beta_1 = 0\)
 
-\[F_0 = \frac{\hat\beta_1 S_{xx}}{\sigma^2} = \bigg( \frac{\hat\beta_1}{\sigma / \sqrt{S_xx}} \bigg) = T_0^2\]
+\[F_0 = \frac{\hat\beta_1 S_{xx}}{\sigma^2} = \bigg( \frac{\hat\beta_1}{\sigma / \sqrt{S_{xx}}} \bigg) = T_0^2\]
 \EndKnitrBlock{remark}
 
 \hypertarget{multiple}{%
@@ -2866,21 +2810,21 @@ Compared to simple linear regression problem \ref{simple}, we have more paramete
 Each \(\beta_j\) is a change of \(Y\) when each predictor variable \(x_j\) increases in 1 unit while the others fixed. In this part, we use \emph{matrix notation}. Extending our former matrix work \ref{matnot},
 
 \[
-\underset{\substack{\\ \\ \\ \\ \huge \mathbf{Y}}}{\begin{bmatrix}
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
   Y_1 \\
   Y_2 \\
   \vdots \\
   Y_n
-\end{bmatrix}} = \underset{\substack{\\ \\ \\ \\ \huge X}}{\begin{bmatrix}
+\end{bmatrix}} = \underset{\huge X}{\begin{bmatrix}
   1 & x_{11} & \cdots & x_{1p} \\
   1 & x_{21} & \cdots & x_{2p} \\
   \vdots & \vdots & \vdots & \vdots \\
   1 & x_{n1} & \cdots & x_{np}
-\end{bmatrix}} \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\beta}}{\begin{bmatrix}
+\end{bmatrix}} \underset{\huge \boldsymbol\beta}{\begin{bmatrix}
   \beta_0 \\
   \vdots \\
   \beta_p
-\end{bmatrix}} + \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\epsilon}}{\begin{bmatrix}
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
   \epsilon_1 \\
   \epsilon_2 \\
   \vdots \\
@@ -2890,9 +2834,9 @@ Each \(\beta_j\) is a change of \(Y\) when each predictor variable \(x_j\) incre
 
 where \(\epsilon_i\) are i.i.d., and
 
-\[E\boldsymbol\epsilon = \mathbf{0}\]
+\[E \E = \mathbf{0}\]
 
-\[Var\boldsymbol\epsilon = \sigma^2 I\]
+\[Var \E = \sigma^2 I\]
 
 \hypertarget{least-square-estimation}{%
 \section{Least Square Estimation}\label{least-square-estimation}}
@@ -2901,9 +2845,9 @@ Write \(\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \mathbb{R}^{p +
 
 \begin{equation}
   \begin{split}
-    \boldsymbol{\hat\beta} & = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
-    & = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
-    & = \argmin_{\boldsymbol\beta \in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+    \boldsymbol{\hat\beta}& = \argmin_{ \boldsymbol\beta\in \mathbb{R}^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    & = \argmin_{ \boldsymbol\beta\in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    & = \argmin_{ \boldsymbol\beta\in \mathbb{R}^{p + 1}} \lVert \mathbf{Y} - X \boldsymbol\beta\rVert^2
   \end{split}
   \label{eq:qmultiple}
 \end{equation}
@@ -2915,22 +2859,22 @@ As discussed, the solution \(\boldsymbol{\hat\beta}\) is related to the projecti
 
 Now recap the section \ref{solproj}. Fundamental subspaces theorem \ref{thm:fundsub} implies that
 
-\[\mathbf{Y} - X\boldsymbol{\hat\beta} \in Col(X)^{\perp} = N(X^T)\]
+\[\mathbf{Y} - X \boldsymbol{\hat\beta}\in Col(X)^{\perp} = N(X^T)\]
 
 From the second part of subset, i.e.~\(N(X^T)\), we now have \emph{Normal equation}
 
 \begin{equation}
-  X^T(\mathbf{Y} - X\boldsymbol{\hat\beta}) = \mathbf{0}
+  X^T(\mathbf{Y} - X \boldsymbol{\hat\beta}) = \mathbf{0}
   \label{eq:multeq}
 \end{equation}
 
 This is equivalent to
 
-\[X^T\mathbf{Y} = X^TX\boldsymbol{\hat\beta}\]
+\[X^T\mathbf{Y} = X^TX \boldsymbol{\hat\beta}\]
 
 Hence, if \(X^T X\) is invertible, the equation gives unique solution
 
-\[\boldsymbol{\hat\beta} = (X^TX)^{-1}X^T \mathbf{Y}\]
+\[\boldsymbol{\hat\beta}= (X^TX)^{-1}X^T \mathbf{Y}\]
 
 Our first question is when \(X^T X\) is invertible, and Theorem \ref{thm:fullrank} have said that it is when the model matrix \(X\) is full rank.
 
@@ -3020,20 +2964,10 @@ Theorem \ref{thm:dsum} implies that
 \BeginKnitrBlock{theorem}[Orthogonal decomposition]
 \protect\hypertarget{thm:orthdecomp}{}{\label{thm:orthdecomp} \iffalse (Orthogonal decomposition) \fi{} }Let \(X = [\mathbf{1}, \mathbb{X}_A]\). Then
 
-\begin{enumerate}
-\def\labelenumi{(\roman{enumi})}
-\item
+\begin{enumerate}[label=(\roman*)]
+  \item $$R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$ \label{itm:orthdecompone}
+  \item $$\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))$$ \label{itm:orthdecomptwo}
 \end{enumerate}
-
-\[R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)\]
-
-\begin{enumerate}
-\def\labelenumi{(\roman{enumi})}
-\setcounter{enumi}{1}
-\item
-\end{enumerate}
-
-\[\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))\]
 \EndKnitrBlock{theorem}
 
 Write

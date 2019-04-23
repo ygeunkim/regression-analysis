@@ -29,21 +29,21 @@ $$(\beta_0, \beta_1, \ldots, \beta_p, \sigma^2)$$
 Each $\beta_j$ is a change of $Y$ when each predictor variable $x_j$ increases in 1 unit while the others fixed. In this part, we use *matrix notation*. Extending our former matrix work \@ref(matnot),
 
 $$
-\underset{\substack{\\ \\ \\ \\ \huge \mathbf{Y}}}{\begin{bmatrix}
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
   Y_1 \\
   Y_2 \\
   \vdots \\
   Y_n
-\end{bmatrix}} = \underset{\substack{\\ \\ \\ \\ \huge X}}{\begin{bmatrix}
+\end{bmatrix}} = \underset{\huge X}{\begin{bmatrix}
   1 & x_{11} & \cdots & x_{1p} \\
   1 & x_{21} & \cdots & x_{2p} \\
   \vdots & \vdots & \vdots & \vdots \\
   1 & x_{n1} & \cdots & x_{np}
-\end{bmatrix}} \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\beta}}{\begin{bmatrix}
+\end{bmatrix}} \underset{\huge \B}{\begin{bmatrix}
   \beta_0 \\
   \vdots \\
   \beta_p
-\end{bmatrix}} + \underset{\substack{\\ \\ \\ \\ \huge \boldsymbol\epsilon}}{\begin{bmatrix}
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
   \epsilon_1 \\
   \epsilon_2 \\
   \vdots \\
@@ -53,9 +53,9 @@ $$
 
 where $\epsilon_i$ are i.i.d., and
 
-$$E\boldsymbol\epsilon = \mathbf{0}$$
+$$E \E = \mathbf{0}$$
 
-$$Var\boldsymbol\epsilon = \sigma^2 I$$
+$$Var \E = \sigma^2 I$$
 
 
 ## Least Square Estimation
@@ -64,9 +64,9 @@ Write $\boldsymbol\beta \equiv (\beta_1, \ldots, \beta_p)^T \in \R^{p + 1}$. Ext
 
 \begin{equation}
   \begin{split}
-    \boldsymbol{\hat\beta} & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
-    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
-    & = \argmin_{\boldsymbol\beta \in \R^{p + 1}} \lVert \mathbf{Y} - X\boldsymbol\beta \rVert^2
+    \hb & = \argmin_{ \B \in \R^{p + 1}} \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2 \\
+    & = \argmin_{ \B \in \R^{p + 1}} \lVert \mathbf{Y} - \beta_0 \mathbf{1} - \beta_1 \mathbf{x}_1 - \cdots - \beta_p \mathbf{x}_p \rVert^2 \\
+    & = \argmin_{ \B \in \R^{p + 1}} \lVert \mathbf{Y} - X \B \rVert^2
   \end{split}
   (\#eq:qmultiple)
 \end{equation}
@@ -77,22 +77,22 @@ As discussed, the solution $\boldsymbol{\hat\beta}$ is related to the projection
 
 Now recap the section \@ref(solproj). Fundamental subspaces theorem \@ref(thm:fundsub) implies that
 
-$$\mathbf{Y} - X\boldsymbol{\hat\beta} \in Col(X)^{\perp} = N(X^T)$$
+$$\mathbf{Y} - X \hb \in Col(X)^{\perp} = N(X^T)$$
 
 From the second part of subset, i.e. $N(X^T)$, we now have *Normal equation*
 
 \begin{equation}
-  X^T(\mathbf{Y} - X\boldsymbol{\hat\beta}) = \mathbf{0}
+  X^T(\mathbf{Y} - X \hb) = \mathbf{0}
   (\#eq:multeq)
 \end{equation}
 
 This is equivalent to
 
-$$X^T\mathbf{Y} = X^TX\boldsymbol{\hat\beta}$$
+$$X^T\mathbf{Y} = X^TX \hb$$
 
 Hence, if $X^T X$ is invertible, the equation gives unique solution
 
-$$\boldsymbol{\hat\beta} = (X^TX)^{-1}X^T \mathbf{Y}$$
+$$\hb = (X^TX)^{-1}X^T \mathbf{Y}$$
 
 Our first question is when $X^T X$ is invertible, and Theorem \@ref(thm:fullrank) have said that it is when the model matrix $X$ is full rank.
 
@@ -182,13 +182,10 @@ $$R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$
 ```{theorem, orthdecomp, name = "Orthogonal decomposition"}
 Let $X = [\mathbf{1}, \mathbb{X}_A]$. Then
 
-(i)
-
-$$R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$
-
-(ii)
-
-$$\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))$$
+\begin{enumerate}[label=(\roman*)]
+  \item $$R(X) = R(\mathbf{1}) \oplus R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A)$$ \label{itm:orthdecompone}
+  \item $$\Pi(\cdot \mid R(X)) = \Pi(\cdot \mid R(\mathbf{1})) + \Pi(\cdot \mid R(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A))$$ \label{itm:orthdecomptwo}
+\end{enumerate}
 ```
 
 Write

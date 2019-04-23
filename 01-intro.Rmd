@@ -233,9 +233,10 @@ It gives that
 ```{proposition, ue, name = "Unbiasedness"}
 Both coefficients are unbiased.
 
-$\text{(a)}\: E\hat\beta_1 = \beta_1$
-
-$\text{(b)}\: E\hat\beta_0 = \beta_0$
+\begin{enumerate}
+  \item $E\hat\beta_1 = \beta_1$
+  \item $E\hat\beta_0 = \beta_0$
+\end{enumerate}
 ```
 
 From the model, $Y_1, \ldots, Y_n \stackrel{indep}{\sim} (\beta_0 + \beta_1 x_i, \sigma^2)$.
@@ -268,17 +269,17 @@ It follows that
 ```{proposition, vb, name = "Variances"}
 Variances and covariance of coefficients
 
-$\text{(a)}\: Var\hat\beta_1 = \frac{\sigma^2}{S_{XX}}$
-
-$\text{(b)}\: Var\hat\beta_0 = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2$
-
-$\text{(c)}\: Cov(\hat\beta_0, \hat\beta_1) = - \frac{\overline{x}}{S_{XX}} \sigma^2$
+\begin{enumerate}[label=(\alph*)]
+  \item $Var\hat\beta_1 = \frac{\sigma^2}{S_{XX}}$ \label{itm:vbone}
+  \item $Var\hat\beta_0 = \bigg( \frac{1}{n} + \frac{\overline{x}^2}{S_{XX}} \bigg)\sigma^2$ \label{itm:vbtwo}
+  \item $Cov(\hat\beta_0, \hat\beta_1) = - \frac{\overline{x}}{S_{XX}} \sigma^2$ \label{itm:vbthree}
+\end{enumerate}
 ```
 
 ```{proof}
 Proving is just arithmetic.
 
-(a)
+$\ref{itm:vbone}$
 
 \begin{equation*}
   \begin{split}
@@ -287,7 +288,7 @@ Proving is just arithmetic.
   \end{split}
 \end{equation*}
 
-(b)
+$\ref{itm:vbtwo}$
 
 \begin{equation*}
   \begin{split}
@@ -297,7 +298,7 @@ Proving is just arithmetic.
   \end{split}
 \end{equation*}
 
-(c)
+$\ref{itm:vbthree}$
 
 \begin{equation*}
   \begin{split}
@@ -733,13 +734,14 @@ $e_i$ is a random quantity, which contains the information for $\epsilon_i$. $\s
 ```{lemma, yandbet}
 Covriance between Y and each coefficient
 
-$\text{(a)}\: Cov(\hat\beta_0, Y_i) = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2$
-
-$\text{(b)}\: Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2$
+\begin{enumerate}[label=(\alph*)]
+  \item $Cov(\hat\beta_0, Y_i) = \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg)\sigma^2$ \label{itm:yandbetone}
+  \item $Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^2$ \label{itm:yandbettwo}
+\end{enumerate}
 ```
 
 ```{proof}
-(a)
+$\ref{itm:yandbetone}$
 
 \begin{equation*}
   \begin{split}
@@ -748,7 +750,7 @@ $\text{(b)}\: Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^
   \end{split}
 \end{equation*}
 
-(b)
+$\ref{itm:yandbettwo}$
 
 \begin{equation*}
   \begin{split}
@@ -762,17 +764,17 @@ $\text{(b)}\: Cov(\hat\beta_1, Y_i) = \frac{(x_i - \overline{x})}{S_{XX}}\sigma^
 ```{proposition, resprop, name = "Properties of residuals"}
 Mean and variance of the residual
 
-$\text{(a)}\: E(e_i) = 0$
-
-$\text{(b)}\: Var(e_i) \neq \sigma^2$
-
-$\text{(c)}\: \forall i \neq j : Cov(e_i, e_j) \neq 0$
+\begin{enumerate}[label=(\alph*)]
+  \item $E(e_i) = 0$ \label{itm:respropone}
+  \item $Var(e_i) \neq \sigma^2$ \label{itm:resproptwo}
+  \item $\forall i \neq j : Cov(e_i, e_j) \neq 0$ \label{itm:respropthree}
+\end{enumerate}
 ```
 
 ```{proof}
-(a) Recall that this is the assumption of the regression model.
+$\ref{itm:respropone}$ Recall that this is the assumption of the regression model.
 
-(b) Lemma \@ref(lem:yandbet) implies that
+$\ref{itm:resproptwo}$ Lemma \@ref(lem:yandbet) implies that
 
 \begin{equation*}
   \begin{split}
@@ -819,7 +821,7 @@ These Equations \@ref(eq:predvar) and \@ref(eq:yyhat) give that
   (\#eq:residvar)
 \end{equation}
 
-(c) Let $i \neq j$. Then
+$\ref{itm:respropthree}$ Let $i \neq j$. Then
 
 \begin{equation*}
   \begin{split}
@@ -1231,6 +1233,8 @@ Combining this equation and our figure, we can know that $X(X^TX)^{-1}X^T$ proje
 Projection operator or mapping from $\R^n$ to $W$ is written by
 
 $$\Pi(\cdot \mid W) := X(X^TX)^{-1}X^T$$
+
+It can also be called \textbf{\textit{Hat matrix}} and written as $H$.
 ```
 
 As mentioned, $X^TX$ should be invertible to get the LSE solution.
@@ -1262,7 +1266,7 @@ It follows that
 
 $$X\mathbf{b} = \mathbf{0}$$
 
-If $rank(X) = n$, then the linear equation system has trivial solution $\mathbf{b} = \mathbf{0}$ and so does $X^T (X\mathbf{b}) = \mathbf{0}$. Hence, $X^T X$ is invertible.
+If $rank(X) = \min(n, p + 1)$, then the linear equation system has trivial solution $\mathbf{b} = \mathbf{0}$ and so does $X^T (X\mathbf{b}) = \mathbf{0}$. Hence, $X^T X$ is invertible.
 ```
 
 Using projection matrix $\Pi_W$, we can re-express each sum of squares. Recall that when we only use $y_i$ for regression fitting, the result becomes its average. It is because $\mathbf{Y}$ vector has been projected onto $sp(\{ \mathbf{1} \})$ line.
@@ -1278,17 +1282,11 @@ Intuitively, every projection matrix is idempotent and symmetric. Once projected
 ```{corollary, projss, name = "Sum of squares"}
 $\Pi_{\mathbf{1}}$ and $\Pi_X$ can express each $SS$ as following.
 
-(i)
-
-$$SST = \mathbf{Y}^T (I - \Pi_{\mathbf{1}}) \mathbf{Y}$$
-
-(ii)
-
-$$SSR = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y}$$
-
-(iii)
-
-$$SSE = \mathbf{Y}^T (I - \Pi_X) \mathbf{Y}$$
+\begin{enumerate}[label=(\roman*)]
+  \item $$SST = \mathbf{Y}^T (I - \Pi_{\mathbf{1}}) \mathbf{Y}$$
+  \item $$SSR = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y}$$
+  \item $$SSE = \mathbf{Y}^T (I - \Pi_X) \mathbf{Y}$$
+\end{enumerate}
 ```
 
 
@@ -1362,7 +1360,12 @@ where $\mathbf{b} = (b_1, \ldots, b_n)^T \in \mathbb{R}^n$ with $b_i = \frac{(x_
 
 Let
 
-$$A^T = [ \mathbf{a}^T, \mathbf{b}^T ]$$
+$$
+A = \begin{bmatrix}
+  \mathbf{a}^T \\ \hline
+  \mathbf{b}^T
+\end{bmatrix} \in \R^{2 \times n}
+$$
 
 Then
 
@@ -1782,7 +1785,7 @@ More importantly, we test $\beta_1$ which means slope
 $$H_0 : \beta_1 = \alpha_1 \qquad \text{vs} \qquad H_1 : \beta_1 \neq \alpha_1$$
 
 \begin{equation}
-  T = \frac{\hat\beta_0 - \alpha_0}{\hat\sigma \sqrt{\frac{1}{S_{xx}}}} \stackrel{H_0}{\sim} t(n - 2)
+  T = \frac{\hat\beta_1 - \alpha_1}{\hat\sigma \sqrt{\frac{1}{S_{xx}}}} \stackrel{H_0}{\sim} t(n - 2)
   (\#eq:b1test)
 \end{equation}
 
@@ -1856,21 +1859,21 @@ Now we can determine the distributions of various quadratic forms. The reason we
 ```{theorem, idem, name = "Idempotent and symmetric"}
 Let $A \in \R^{k \times k}$ be idempotent and symmetric. Then
 
-\begin{enumerate}
-  \item $A^n$ is also idempotent
-  \item $I - A$ is also idempotent
-  \item Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$
+\begin{enumerate}[label=(\alph*)]
+  \item $A^n$ is also idempotent \label{itm:idemone}
+  \item $I - A$ is also idempotent \label{itm:idemtwo}
+  \item Every eigenvalue of $A$ is either $0$ or $1$ so that $tr(A) = rank(A)$ \label{itm:idemthree}
 \end{enumerate}
 ```
 
 ```{proof}
-(a) and (b) are trivial.
+$\ref{itm:idemone}$ and $\ref{itm:idemtwo}$ are trivial.
 
 $$(A^n)^2 = (A^2)^n = A^n$$
 
 $$(I - A)^2 = I - 2A + A^2 = I - A$$
 
-(c)
+$\ref{itm:idemthree}$
 
 Fix $\lambda$ an eigenvalue of $A$. Let $\mathbf{v} \neq \mathbf{0}$ be the corresponding eigenvector.
 
@@ -1904,13 +1907,10 @@ $$tr(A) = rank(A)$$
 ```{proposition, quadmvn, name = "Independence"}
 Assume $\mathbf{Y} \sim MVN(\mathbf\mu, \Sigma)$. Then
 
-(i) If $A$ and $B$ are symmetric,
-
-$$Y^T AY \ind Y^T BY \Leftrightarrow A\Sigma B = 0$$
-
-(ii) If $A$ is symmetric,
-
-$$Y^T AY \ind BY \Leftrightarrow B\Sigma A = 0$$
+\begin{enumerate}[label=(\roman*)]
+  \item If $A$ and $B$ are symmetric, $$Y^T AY \ind Y^T BY \Leftrightarrow A\Sigma B = 0$$
+  \item If $A$ is symmetric, $$Y^T AY \ind BY \Leftrightarrow B\Sigma A = 0$$
+\end{enumerate}
 ```
 
 ```{theorem, quaddist, name = "Distribution of quadratic form"}
@@ -2154,21 +2154,21 @@ $$df = \text{the number of deviation} - \text{the number of linear constraints}$
 ```{corollary, dfss, name = "df of SS"}
 $df$ of each sum of square is computed as
 
-\begin{enumerate}
-  \item $df(SST) = n - 1$
-  \item $df(SSR) = 1$
-  \item $df(SSE) = n - 2$
+\begin{enumerate}[label=(\alph*)]
+  \item $df(SST) = n - 1$ \label{itm:dfssone}
+  \item $df(SSR) = 1$ \label{itm:dfsstwo}
+  \item $df(SSE) = n - 2$ \label{itm:dfssthree}
 \end{enumerate}
 ```
 
 ```{proof}
-(a)
+$\ref{itm:dfssone}$
 
 Since $\sum (Y_i - \overline{Y}) = 0$, we have $1$ linear constraints. Thus,
 
 $$df(SST) = n - 1$$
 
-(b)
+$\ref{itm:dfsstwo}$
 
 Note that $\hat{Y_i} - \overline{Y} = \hat\beta_1(x_i - \overline{x})$
 
@@ -2178,7 +2178,7 @@ Thus,
 
 $$df(SSR) = n - (n - 1) = 1$$
 
-(c)
+$\ref{itm:dfssthree}$
 
 From Example \@ref(exm:usingnormal), $\sum (Y_i - \hat{Y_i}) = 0$ and $\sum x_i (Y_i - \hat{Y_i}) = 0$.
 
@@ -2244,6 +2244,10 @@ Null hypothesis \@ref(eq:goodfit) can be tested with $F$-statistic.
 $$F_0 = \frac{MSR}{MSE} = \frac{SSR / df(SSR)}{SSE / df(SSE)} \hsim F(df(SSR), df(SSE))$$
 ```
 
+Here, it is
+
+$$F_0 = \frac{SSR / 1}{SSE / (n - 2)}$$
+
 Then we reject $H_0$ if
 
 $$F_0 > F_\alpha\bigg( df(SSR), df(SSE) \bigg)$$
@@ -2305,6 +2309,6 @@ $$F(1, k) \stackrel{d}{=} T_k^2$$
 ```{remark}
 In the simple linear regression setting, $F$-test for significance and $t$-test for no slope are equivalent, i.e. under $H_0 : \beta_1 = 0$
 
-$$F_0 = \frac{\hat\beta_1 S_{xx}}{\sigma^2} = \bigg( \frac{\hat\beta_1}{\sigma / \sqrt{S_xx}} \bigg) = T_0^2$$
+$$F_0 = \frac{\hat\beta_1 S_{xx}}{\sigma^2} = \bigg( \frac{\hat\beta_1}{\sigma / \sqrt{S_{xx}}} \bigg) = T_0^2$$
 ```
 
