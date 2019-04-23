@@ -206,7 +206,7 @@ Each coefficient is a linear estimator.
 
 $$\hat\beta_1 = \sum_{i = 1}^n\frac{(x_i - \overline{x})}{S_{XX}}Y_i$$
 
-$$\hat\beta_0 = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})}{S_{XX}} \bigg) Y_i$$
+$$\hat\beta_0 = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg) Y_i$$
 ```
 
 ```{proof}

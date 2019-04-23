@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{23 Apr, 2019}
+    \date{24 Apr, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -496,7 +496,7 @@ Second part of \(S_{XY}\) also can be proven from the definition.
 
 \[\hat\beta_1 = \sum_{i = 1}^n\frac{(x_i - \overline{x})}{S_{XX}}Y_i\]
 
-\[\hat\beta_0 = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})}{S_{XX}} \bigg) Y_i\]
+\[\hat\beta_0 = \sum_{i = 1}^n \bigg( \frac{1}{n} - \frac{(x_i - \overline{x})\overline{x}}{S_{XX}} \bigg) Y_i\]
 \EndKnitrBlock{lemma}
 
 \BeginKnitrBlock{proof}
@@ -4281,14 +4281,14 @@ Using notation from Equation \eqref{eq:predse}, we get
 Then standardization gives that
 
 \begin{equation}
-  \frac{\hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}}}{\sqrt{C_{\mathbf{z}} + 1)\sigma^2}} \sim N(0, 1)
+  \frac{\hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}}}{\sqrt{(C_{\mathbf{z}} + 1)\sigma^2}} \sim N(0, 1)
   \label{eq:reszdist}
 \end{equation}
 
 and hence,
 
 \begin{equation}
-  \frac{\hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}}}{\sqrt{C_{\mathbf{z}} + 1)\hat\sigma^2}} \sim t(n - p - 1)
+  \frac{\hat{Y}_{\mathbf{z}} - Y_{\mathbf{z}}}{\sqrt{(C_{\mathbf{z}} + 1)\hat\sigma^2}} \sim t(n - p - 1)
   \label{eq:restdist}
 \end{equation}
 
@@ -4474,7 +4474,7 @@ with
 \BeginKnitrBlock{theorem}[Confidence region]
 \protect\hypertarget{thm:bacr}{}{\label{thm:bacr} \iffalse (Confidence region) \fi{} }\((1 - \alpha)100\%\) confidence interval for \(\boldsymbol\beta_A = (\beta_1, \ldots, \beta_p)^T\) is
 
-\[\Big\{ \boldsymbol\beta_A : (\boldsymbol{\hat\beta}_A - \boldsymbol\beta_A)^T \mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp} (\boldsymbol{\hat\beta}_A - \boldsymbol\beta_A) \le p \hat\sigma^2 F_{1 - \alpha}(p, n - p - 1) \Big\}\]
+\[\Big\{ \boldsymbol\beta_A : (\boldsymbol{\hat\beta}_A - \boldsymbol\beta_A)^T \mathbb{X}_{A, \perp}^T\mathbb{X}_{A, \perp} (\boldsymbol{\hat\beta}_A - \boldsymbol\beta_A) \le p \hat\sigma^2 F_{\alpha}(p, n - p - 1) \Big\}\]
 
 where \(\boldsymbol{\hat\beta}_A = (\mathbb{X}_{A,\perp}^T\mathbb{X}_{A,\perp})^{-1}\mathbb{X}_{A,\perp}^T\mathbf{Y}\)
 \EndKnitrBlock{theorem}
@@ -4681,7 +4681,7 @@ Hence, for our
 
 \[H_0: \beta_{p - 1} = \beta_p = 0 \qquad \text{vs} \qquad H_1: \beta_{p - 1} \neq 0 \:\text{or}\: \beta_p \neq 0\]
 
-reject \(H_0\) if \(\frac{(SSR(FM) - SSR(RM)) / 2}{SSE(FM) / (n - p - 1)} > F_{1 - \alpha}(2, n - p - 1)\).
+reject \(H_0\) if \(\frac{(SSR(FM) - SSR(RM)) / 2}{SSE(FM) / (n - p - 1)} > F_{\alpha}(2, n - p - 1)\).
 
 See the numerator part \(SSR(FM) - SSR(RM)\) we have been explored. This can be also written as
 
@@ -4732,7 +4732,7 @@ Focus on marginal contribution given that every other predictor is already in th
 \iffalse{} {Remark. } \fi{}Partial SS satisties following properties.
 
 \begin{enumerate}
-  \item $SSR(X_1 \mid X_2, \mid X_p) + \cdots + SSR(X_p \mid X_1, \ldots, X_{p - 1}) \neq SSR(X_1, \ldots, X_p)$
+  \item $SSR(X_1 \mid X_2, \ldots X_p) + \cdots + SSR(X_p \mid X_1, \ldots, X_{p - 1}) \neq SSR(X_1, \ldots, X_p)$
   \item Partial SS (Type III SS) represents the additional contribution of each predictor after the other predictor variables are considred.
 \end{enumerate}
 \EndKnitrBlock{remark}
@@ -4748,7 +4748,7 @@ How to make test statistic is same as previous session: using full model and red
   \label{eq:partialstat}
 \end{equation}
 
-Hence, reject \(H_0\) if \(F_0 > F_{1 - \alpha}(1, n - p - 1)\). Since the first degrees of freedom is \(1\), we have
+Hence, reject \(H_0\) if \(F_0 > F_{\alpha}(1, n - p - 1)\). Since the first degrees of freedom is \(1\), we have
 
 \[F_0 = \bigg( \frac{\hat\beta_j}{\widehat{SE}(\hat\beta_j)} \bigg)^2 = T_0^2\]
 
@@ -4807,11 +4807,11 @@ Algorithm \(\ref{alg:algseq}\) shows the logic how to add a variable sequentiall
 Here, reject \(H_0\) if
 
 \begin{equation}
-  \frac{\Big(SSR(X_1, \ldots, X_p) - SSR(X_{q + 1}, \ldots, X_p)\Big) / (p - q)}{SSE(X_1, \ldots, X_p) / (n - p - 1)} > F_{1 - \alpha}(p - q, n - p - 1)
+  \frac{\Big(SSR(X_1, \ldots, X_p) - SSR(X_{q + 1}, \ldots, X_p)\Big) / (p - q)}{SSE(X_1, \ldots, X_p) / (n - p - 1)} > F_{\alpha}(p - q, n - p - 1)
   \label{eq:seqgen}
 \end{equation}
 
-This form of test might be useful when see the significance of categorical predictor. In regression model, quantative predictor is modeled as multiple dummy variables. In this case, we have to see these coefficients all at once and sequential \(F\)-test form might be helpful.
+This form of test might be useful when see the significance of categorical predictor. In regression model, quantative predictor is modeled as multiple dummy variables. In this case, we have to see these coefficients all at once and sequential \(F\)-test form might be helpful \citep{Hastie:2013aa}.
 
 \hypertarget{general-linear-hypothesis}{%
 \subsection{General linear hypothesis}\label{general-linear-hypothesis}}
