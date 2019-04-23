@@ -867,9 +867,7 @@ $\delta$ proof is exactly same as Proposition \@ref(prp:ssrdist).
 \begin{equation*}
   \begin{split}
     \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (\Pi_X - \Pi_{\mathbf{1}}) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \qquad \because \frac{\mathbf{Y}}{\sigma} \sim MVN(\frac{1}{\sigma}X\boldsymbol\beta, I) \\
-    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{\boldsymbol\beta^TX^T\Pi_{\mathbf{1}}X\boldsymbol\beta}{\sigma^2} \\
-    & = \frac{\boldsymbol\beta^T(X^TX - X^T \Pi_{\mathbf{1}}X)\boldsymbol\beta}{\sigma^2} \\
-    & = \frac{\boldsymbol\beta^T \Big\{ X^T(I - \Pi_{\mathbf{1}})X \Big\} \boldsymbol\beta }{\sigma^2}
+    & = \frac{\boldsymbol\beta^T \Big\{ X^T(\Pi_X - \Pi_{\mathbf{1}})X \Big\} \boldsymbol\beta }{\sigma^2}
   \end{split}
 \end{equation*}
 
@@ -1505,7 +1503,7 @@ We name nested models for the test as follow.
 \end{enumerate}
 ```
 
-For Example \@ref(exm:ftestex), the basic starting model, i.e. FM is
+In Example \@ref(exm:ftestex), the basic starting model, i.e. FM is
 
 $$Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_i, \quad \epsilon_i \iid N(0, \sigma^2)$$
 
@@ -1535,7 +1533,7 @@ For each full model and reduced model, compute $SSR$ and $SSE$.
 \end{enumerate}
 ```
 
-Note that $SST = \sum\limits_{i = 1}^n(Y_i - \overline{Y})^2$ does not depend on model, i.e. consistent with given data.
+By construction, $SST = \sum\limits_{i = 1}^n(Y_i - \overline{Y})^2$ does not depend on model. This measures variability when no predictor is used. It jus the variation of a response itself. So it becomes consistent with given data.
 
 ```{remark}
 $$SST = SSR(FM) + SSE(FM) = SSR(RM) + SSE(RM)$$
@@ -1545,13 +1543,13 @@ and hence
 $$SSE(RM) - SSE(FM) = SSR(FM) - SSR(RM)$$
 ```
 
-$SSE$ indicates a variation that cannot be explained by the model. $SSR$ represents a variation explained by the model. We can compare these between the two model. If $SSE(RM) - SSE(FM) = SSR(FM) - SSR(RM)$ is large, then we can think that the full model is explaining given data better than reduced model. In terms of $H_0: RM \:\text{vs}\: H_1: FM$, it can be said that it is a strong evidene supporting FM against RM. In turn, we conclude that $H_1: \beta_{p - 1} \neq 0 \:\text{or}\: \beta_p \neq 0$ from our first hypothesis set.
+$SSE$ indicates a variation that cannot be explained by the model. $SSR$ represents a variation explained by the model. We can compare each between the two model. If $SSE(RM) - SSE(FM) = SSR(FM) - SSR(RM)$ is large, then we can think that the full model is explaining given data better than reduced model. Or, $SSE$ says that full model can explain some parts that reduced model have failed to explained. In terms of $H_0: RM \:\text{vs}\: H_1: FM$, it can be said that it is a strong evidene supporting FM against RM. In turn, we conclude that $H_1: \beta_{p - 1} \neq 0 \:\text{or}\: \beta_p \neq 0$ from our first hypothesis set.
 
 ```{conjecture, fmrmdist}
 $$SSR(FM) - SSR(RM) > c \Leftrightarrow \text{reject}\: H_0$$
 ```
 
-We can test any hypothesis using RM-FM with Conjecture \@ref(cnj:fmrmdist). The question is
+We can test any hypothesis using RM-FM pair as in Conjecture \@ref(cnj:fmrmdist). The question is
 
 1. What is the distribution of $SSR(FM) - SSR(RM)$?
 2. Then what is $c$?
@@ -1577,7 +1575,7 @@ $Z_1$ is a design matrix of reduced model, while $Z_2$ consists of column vector
 $$
 X^{\ast} = \begin{bmatrix}
   Z_1 \mid Z_2
-\end{bmatrix}
+\end{bmatrix} \in \R^{n \times (p + 1)}
 $$
 
 where $X^{\ast}$ can have different column order with original $X$. It follows that
@@ -1615,7 +1613,7 @@ $SSR(FM) - SSR(RM)$ satisfies following properties.
 \begin{enumerate}
   \item $\Pi_X - \Pi_{Z_1}$ is symmetric and idempotent
   \item $tr(\Pi_X - \Pi_{Z_1}) = (p + 1) - \text{number of parameters in reduced model}$
-  \item $\Pi_X - \Pi_{Z_1} \ind SSE(FM)$
+  \item $SSR(FM) - SSR(RM) \ind SSE(FM)$
 \end{enumerate}
 ```
 
@@ -1632,19 +1630,25 @@ Then
 
 $$(\Pi_X - \Pi_{Z_1})(I - \Pi_X) = 0$$
 
-Hence, $\Pi_X - \Pi_{Z_1} \ind SSE(FM)$
+Hence, $SSR(FM) - SSR(RM) \ind SSE(FM)$
 ```
 
-Go back to our Example \@ref(exm:ftestex). Denote that $\Pi_X - \Pi_{Z_1}$ implies that $R_{p - 1}^2 > R_{p - 2}^2$. $tr(\Pi_X - \Pi_{Z_1}) = (p + 1) - (p - 1) = 2$.
+Go back to our Example \@ref(exm:ftestex). Denote that $\Pi_X - \Pi_{Z_1}$ implies that $R_{p - 1}^2 > R_{p - 2}^2$. It is easy to get
+
+$$tr(\Pi_X - \Pi_{Z_1}) = (p + 1) - (p - 1) = 2$$
+
+Then
 
 \begin{equation}
   \frac{SSR(FM) - SSR(RM)}{\sigma^2} \hsim \chi^2(2)
   (\#eq:ssrfmnull)
 \end{equation}
 
-Since from Proposition \@ref(prp:ssdist)
+From Proposition \@ref(prp:ssdist)
 
 $$\frac{SSE(FM)}{\sigma^2} \hsim \chi^2(n - p - 1)$$
+
+Since $SSR(FM) - SSR(RM) \ind SSE(FM)$,
 
 \begin{equation}
   \begin{split}
@@ -1673,10 +1677,10 @@ Extra sum of squares measures the amount of the additional contribution of varia
 
 $$SSR(X_2 \mid X_1) := SSR(X_1, X_2) - SSR(X_1)$$
 
-This measures marginal contribution of $X_2$ after $X_1$ is considred. Here, the contribution means marginal increase of $SSR$.
+This measures marginal contribution of $X_2$ after $X_1$ is considred. Here, the contribution means marginal increase of $SSR$. Equivalently, marginal decrease of $SSE$.
 ```
 
-```{r essfig, echo=FALSE, fig.cap="Extra sum of squares"}
+```{r essfig, echo=FALSE, fig.cap="Extra sum of squares - SSR increases and SSE decreases"}
 knitr::include_graphics("images/multiple-extrass.png")
 ```
 
@@ -1702,7 +1706,6 @@ Partial SS or Type III Sum of squares are following.
 Partial SS satisties following properties.
 
 \begin{enumerate}
-  \item $SSR(X_1) + SSR(X_2 \mid X_1) + \cdots + SSR(X_p \mid X_1, \ldots, X_{p - 1}) = SSR(X_1, \ldots, X_p)$
   \item $SSR(X_1 \mid X_2, \mid X_p) + \cdots + SSR(X_p \mid X_1, \ldots, X_{p - 1}) \neq SSR(X_1, \ldots, X_p)$
   \item Partial SS (Type III SS) represents the additional contribution of each predictor after the other predictor variables are considred.
 \end{enumerate}
@@ -1743,6 +1746,16 @@ Sequential SS or Type I Sum of squares are following.
 \end{enumerate}
 ```
 
+```{remark}
+Sequential SS satisfies following properties.
+
+\begin{enumerate}
+  \item $SSR(X_1) + SSR(X_2 \mid X_1) + \cdots + SSR(X_p \mid X_1, \ldots, X_{p - 1}) = SSR(X_1, \ldots, X_p)$
+  \item Sequential SS is useful when we consider nested model. That is, when we know that $X_1$ is the most important, $X_2$ is the second important, and so on.
+\end{enumerate}
+```
+
+
 Following Definition \@ref(def:seqs), start from intercept-only model.
 
 \begin{algorithm}[H] \label{alg:algseq}
@@ -1771,6 +1784,8 @@ Here, reject $H_0$ if
   \frac{\Big(SSR(X_1, \ldots, X_p) - SSR(X_{q + 1}, \ldots, X_p)\Big) / (p - q)}{SSE(X_1, \ldots, X_p) / (n - p - 1)} > F_{1 - \alpha}(p - q, n - p - 1)
   (\#eq:seqgen)
 \end{equation}
+
+This form of test might be useful when see the significance of categorical predictor. In regression model, quantative predictor is modeled as multiple dummy variables. In this case, we have to see these coefficients all at once and sequential $F$-test form might be helpful.
 
 ### General linear hypothesis
 
@@ -1806,7 +1821,7 @@ It follows that
 
 $$\mathbf{Z}^T\mathbf{Z} = \frac{1}{\sigma^2}(C\hat{\B} - \mathbf{d})^T(C(X^TX)^{-1}C^T)^{-1}(C\hat{\B} - \mathbf{d}) \hsim \chi^2(q = rank(C))$$
 
-Hence,
+It can be proven that $SSE \ind \hb$ as before. Hence,
 
 \begin{equation}
   \begin{split}
@@ -1855,6 +1870,11 @@ car::Anova(cem_fit, type = 3) %>%
 
 As we can see in the argument of `car::Anova()`, there are also type II and type IV SS. These are not popular ones, though.
 
+`car::linearHypothesis()` function peforms test for linear combination. Just specify $C$ matrix to `hypothesis.matrix`. If you want additional $\mathbf{d}$, specify `rhs`. If this is `NULL` (by default), test will be done with zero. Try $H_0: \beta_3 = \beta_4$.
+
+```{r}
+car::linearHypothesis(cem_fit, hypothesis.matrix = c(0, 0, 0, 1, -1))
+```
 
 
 

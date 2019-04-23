@@ -2001,26 +2001,24 @@ $$K = rank(\Pi_X - \Pi_{\mathbf{1}}) = tr(\Pi_X - \Pi_{\mathbf{1}}) = rank(\Pi_X
 \begin{equation*}
   \begin{split}
     \delta & = \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg)^T (\Pi_X - \Pi_{\mathbf{1}}) \bigg(\frac{X\boldsymbol\beta}{\sigma}\bigg) \qquad \because \frac{\mathbf{Y}}{\sigma} \sim MVN(\frac{1}{\sigma}X\boldsymbol\beta, I) \\
-    & = \frac{\boldsymbol\beta^TX^TX\boldsymbol\beta}{\sigma^2} - \frac{\boldsymbol\beta^TX^T\Pi_{\mathbf{1}}X\boldsymbol\beta}{\sigma^2} \\
-    & = \frac{\boldsymbol\beta^T(X^TX - X^T \Pi_{\mathbf{1}}X)\boldsymbol\beta}{\sigma^2} \\
-    & = \frac{\boldsymbol\beta^T \Big\{ X^T(I - \Pi_{\mathbf{1}})X \Big\} \boldsymbol\beta }{\sigma^2}
+    & = \frac{\boldsymbol\beta^T \Big\{ X^T(\Pi_X - \Pi_{\mathbf{1}})X \Big\} \boldsymbol\beta }{\sigma^2}
   \end{split}
 \end{equation*}
 
-Since $\mathbf{1} \in sp(\{ \mathbf{1} \})$,
+Since $\mathbf{1} \in Col(X)$,
 
-$$\Pi_{\mathbf{1}} \mathbf{1} = \mathbf{1}$$
+$$\Pi_X \mathbf{1} = \mathbf{1}$$
 
 It gives that
 
 \begin{equation} \label{eq:ssrquad1}
-  \mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = 0
+  \mathbf{1}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{1} = 0
 \end{equation}
 
 If $\mathbf{x} \neq \mathbf{1}$, then we have
 
 \begin{equation} \label{eq:ssrquad2}
-  \mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum_{i = 1}^n (x_i - \overline{x})^2 = S_{xx}
+  \mathbf{x}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{x} = \sum_{i = 1}^n (x_i - \overline{x})^2 = S_{xx}
 \end{equation}
 
 Recall that
@@ -2030,20 +2028,20 @@ $$\overline{x}\mathbf{1} = \mathbf{1}(\mathbf{1}^T\mathbf{1})^{-1}\mathbf{1}^T\m
 Then we have
 
 \begin{equation} \label{eq:ssrquad3}
-  \mathbf{1}^T(I - \Pi_{\mathbf{1}})\mathbf{x} = \sum x_i - n \overline{x} = 0
+  \mathbf{1}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{x} = \sum x_i - n \overline{x} = 0
 \end{equation}
 
 By symmetry,
 
 \begin{equation} \label{eq:ssrquad4}
-  \mathbf{x}^T(I - \Pi_{\mathbf{1}})\mathbf{1} = n \overline{x} - \sum x_i = 0
+  \mathbf{x}^T(\Pi_X - \Pi_{\mathbf{1}})\mathbf{1} = n \overline{x} - \sum x_i = 0
 \end{equation}
 
 Hence by partitioning $X = [\mathbf{1} \mid \mathbf{x}]$,
 
 \begin{equation} \label{eq:delta2}
   \begin{split}
-    \delta & = \frac{\boldsymbol\beta^T \Big\{ [\mathbf{1} \mid \mathbf{x}]^T(I - \Pi_{\mathbf{1}})[\mathbf{1} \mid \mathbf{x}] \Big\} \boldsymbol\beta }{\sigma^2} \\
+    \delta & = \frac{\boldsymbol\beta^T \Big\{ [\mathbf{1} \mid \mathbf{x}]^T(\Pi_X - \Pi_{\mathbf{1}})[\mathbf{1} \mid \mathbf{x}] \Big\} \boldsymbol\beta }{\sigma^2} \\
     & = \frac{\boldsymbol\beta^T \begin{bmatrix} \eqref{eq:ssrquad1} & \eqref{eq:ssrquad3} \\ \eqref{eq:ssrquad4} & \eqref{eq:ssrquad2} \end{bmatrix} \boldsymbol\beta}{\sigma^2} \\
     & = \frac{\boldsymbol\beta^T \begin{bmatrix} 0 & 0 \\ 0 & S_{xx} \end{bmatrix} \boldsymbol\beta}{\sigma^2} \\
     & = \frac{S_{xx}\beta_1^2}{\sigma^2}
@@ -2121,6 +2119,12 @@ $$\frac{SST}{\sigma^2} = \bigg(\frac{\mathbf{Y}}{\sigma}\bigg)^T (I - \Pi_{\math
 Since $I - \Pi_{\mathbf{1}}$ is symmetric idempotent,
 
 $$K = rank(I - \Pi_{\mathbf{1}}) = tr(I - \Pi_{\mathbf{1}}) = n - rank(\Pi_{\mathbf{1}}) = n - 1$$
+
+Since $\mathbf{1} \in sp( \{ \mathbf{1} \})$,
+
+$$\Pi_{\mathbf{1}} \mathbf{1} = \mathbf{1}$$
+
+Hence,
 
 \begin{equation*}
   \begin{split}
@@ -2309,6 +2313,6 @@ $$F(1, k) \stackrel{d}{=} T_k^2$$
 ```{remark}
 In the simple linear regression setting, $F$-test for significance and $t$-test for no slope are equivalent, i.e. under $H_0 : \beta_1 = 0$
 
-$$F_0 = \frac{\hat\beta_1 S_{xx}}{\sigma^2} = \bigg( \frac{\hat\beta_1}{\sigma / \sqrt{S_{xx}}} \bigg) = T_0^2$$
+$$F_0 = \frac{\hat\beta_1 S_{xx}}{\hat\sigma^2} = \bigg( \frac{\hat\beta_1}{\hat\sigma / \sqrt{S_{xx}}} \bigg) = T_0^2$$
 ```
 
