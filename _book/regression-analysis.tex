@@ -3298,7 +3298,7 @@ By default and only way, \texttt{lm()} fits the model using \(QR\) factorization
 \caption{Non-orthogonal basis}\label{fig:qrpng2}
 \end{figure}
 
-See Figure \ref{fig:qrpng}. By construbtion, projection onto each basis is same as \(\hat\beta_0\) and \(\hat\beta_1\). In Figure \ref{fig:qrpng2}, however, each projection is not regression coefficient.
+See Figure \ref{fig:qrpng}. By construction, projection onto each basis is same as \(\hat\beta_0\) and \(\hat\beta_1\). In Figure \ref{fig:qrpng2}, however, each projection is not regression coefficient.
 
 \begin{figure}[H]
 
@@ -4410,7 +4410,7 @@ Since \(\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)\) and \(\hat\sigma^2 = MSE\)
   \begin{split}
     \frac{(\boldsymbol{\hat\beta}- \boldsymbol\beta)^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol\beta)}{\hat\sigma^2 (p + 1)} & = \frac{(X\boldsymbol{\hat\beta}- X\boldsymbol\beta)^T(X\boldsymbol{\hat\beta}- X\boldsymbol\beta)}{MSE} \\
     & = \frac{SSR / (p + 1)}{SSE / (n - p - 1)} \\
-    & = F(p + 1, n - p - 1, \delta)
+    & \sim F(p + 1, n - p - 1, \delta)
   \end{split}
   \label{eq:bvecdist}
 \end{equation}

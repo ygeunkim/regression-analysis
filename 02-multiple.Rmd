@@ -467,7 +467,7 @@ knitr::include_graphics("images/multiple-qr1.png")
 knitr::include_graphics("images/multiple-qr2.png")
 ```
 
-See Figure \@ref(fig:qrpng). By construbtion, projection onto each basis is same as $\hat\beta_0$ and $\hat\beta_1$. In Figure \@ref(fig:qrpng2), however, each projection is not regression coefficient.
+See Figure \@ref(fig:qrpng). By construction, projection onto each basis is same as $\hat\beta_0$ and $\hat\beta_1$. In Figure \@ref(fig:qrpng2), however, each projection is not regression coefficient.
 
 ```{r simpledraw3, echo=FALSE, fig.cap="QR decomposition for model matrix"}
 knitr::include_graphics("images/multiple-qr3.png")
@@ -1496,7 +1496,7 @@ Since $\frac{SSE}{\sigma^2} \sim \chi^2(n - p - 1)$ and $\hat\sigma^2 = MSE$,
   \begin{split}
     \frac{(\hb - \B)^T X^TX (\hb - \B)}{\hat\sigma^2 (p + 1)} & = \frac{(X\hb - X\B)^T(X\hb - X\B)}{MSE} \\
     & = \frac{SSR / (p + 1)}{SSE / (n - p - 1)} \\
-    & = F(p + 1, n - p - 1, \delta)
+    & \sim F(p + 1, n - p - 1, \delta)
   \end{split}
   (\#eq:bvecdist)
 \end{equation}
