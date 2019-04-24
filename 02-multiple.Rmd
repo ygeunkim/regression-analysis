@@ -1910,7 +1910,7 @@ $$C\hat{\B} \hsim MVN(\mathbf{d}, \sigma^2 C(X^TX)^{-1}C^T)$$
 
 Set
 
-$$\mathbf{Z} \equiv \sigma (C(X^TX)^{-1}C^T)^{-\frac{1}{2}} (C \hat{\B} - \mathbf{d}) \hsim MVN(\mathbf{0}, I)$$
+$$\mathbf{Z} \equiv \frac{1}{\sigma} (C(X^TX)^{-1}C^T)^{-\frac{1}{2}} (C \hat{\B} - \mathbf{d}) \hsim MVN(\mathbf{0}, I)$$
 
 It follows that
 
