@@ -256,7 +256,7 @@ $$\mathbf{u}_{k + 1} = \frac{1}{\lVert \mathbf{x}_{k + 1} - \mathbf{r}_k^{*} \rV
 
 for $k = 1, \ldots, p$, where
 
-$$\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{a}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u}_k > \mathbf{u}_k$$
+$$\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_1> \mathbf{u}_1 + <\mathbf{x}_{k + 1}, \mathbf{u}_2 >\mathbf{u}_2 + \cdots + < \mathbf{x}_{k + 1}, \mathbf{u}_k > \mathbf{u}_k$$
 
 is the projection of $\mathbf{x}_{k + 1}$ onto $sp(\{ \mathbf{u}_1, \ldots, \mathbf{u}_k \})$.
 
@@ -270,7 +270,7 @@ Hence, we get $\{ \mathbf{u}_1, \ldots, \mathbf{u}_{p + 1} \}$ is an orthonormal
   Initialize $\mathbf{v}_0 = \mathbf{x}_0$\;
   \For{$k \leftarrow 1$ \KwTo $p$}{
     $\mathbf{u}_{k - 1} = \frac{\mathbf{v}_{k - 1}}{\lVert \mathbf{v}_{k - 1} \rVert}$\;
-    $\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_0> \mathbf{u}_0 + <\mathbf{a}_{k + 1}, \mathbf{u}_1 >\mathbf{u}_1 + \cdots + < \mathbf{a}_{k + 1}, \mathbf{u}_k > \mathbf{u}_k$\;
+    $\mathbf{r}_k^{*} = <\mathbf{x}_{k + 1}, \mathbf{u}_0> \mathbf{u}_0 + <\mathbf{x}_{k + 1}, \mathbf{u}_1 >\mathbf{u}_1 + \cdots + < \mathbf{x}_{k + 1}, \mathbf{u}_k > \mathbf{u}_k$\;
     $\mathbf{v}_{k + 1} = \mathbf{x}_{k + 1} - \mathbf{r}_k^{*}$
   }
   $\mathbf{u}_p = \frac{\mathbf{v}_p}{\lVert \mathbf{v}_p \rVert}$
