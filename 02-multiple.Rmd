@@ -1882,7 +1882,7 @@ $$H_0: \beta_{q + 1} = \beta_{q + 2} = \cdots = \beta_p = 0 \qquad \text{vs} \qq
 Here, reject $H_0$ if
 
 \begin{equation}
-  \frac{\Big(SSR(X_1, \ldots, X_p) - SSR(X_{q + 1}, \ldots, X_p)\Big) / (p - q)}{SSE(X_1, \ldots, X_p) / (n - p - 1)} > F_{\alpha}(p - q, n - p - 1)
+  \frac{\Big(SSR(X_1, \ldots, X_p) - SSR(X_1, \ldots, X_q)\Big) / (p - q)}{SSE(X_1, \ldots, X_p) / (n - p - 1)} > F_{\alpha}(p - q, n - p - 1)
   (\#eq:seqgen)
 \end{equation}
 
