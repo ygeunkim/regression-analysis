@@ -1899,7 +1899,7 @@ $$\lambda = 0 \:\text{or}\: 1$$
 
 Note that for every matrix and its eigenvalues $\lambda_j$
 
-$$tr(X) = \sum_{j = 1}^p \lambda_j, \quad rank(X) = \text{the number of non-zero}\: \lambda_j$$
+$$tr(A) = \sum_{j = 1}^p \lambda_j, \quad rank(A) = \text{the number of non-zero}\: \lambda_j$$
 
 Since $\lambda = 0, 1$ of A,
 
