@@ -1761,7 +1761,7 @@ reject $H_0$ if $\frac{(SSR(FM) - SSR(RM)) / 2}{SSE(FM) / (n - p - 1)} > F_{\alp
 
 See the numerator part $SSR(FM) - SSR(RM)$ we have been explored. This can be also written as
 
-$$SSR(X_1, \ldots, X_p) - SSR(X_{p - 1}, X_{p})$$
+$$SSR(X_1, \ldots, X_p) - SSR(X_1, \ldots, X_{p - 2})$$
 
 and this is called *extra sum of squares*.
 
@@ -1779,7 +1779,13 @@ This measures marginal contribution of $X_2$ after $X_1$ is considred. Here, the
 knitr::include_graphics("images/multiple-extrass.png")
 ```
 
-$SST$ does not change given data. By adding some variable, $SSR$ increases or $SSE$ decreases. *We interpret this change as additional contribution of those variables*. If it is large enough, they are significant. Using this idea, we might test any kind of sets of coefficients. Partial $F$-test and sequential $F$-test are typical forms that we can think of and useful.
+Similarly,
+
+$$SSR(X_3, X_4 \mid X_1, X_2) := SSR(X_1, X_2, X_3, X_4) - SSR(X_1, X_2)$$
+
+measures of $X_3$ and $X_4$ after $X_1$ and $X_2$ are already in the model.
+
+$SST$ does not change given data. By adding some variables, $SSR$ increases or $SSE$ decreases. *We interpret this change as additional contribution of those variables*. If it is large enough, they are significant. Using this idea, we might test any kind of sets of coefficients. Partial $F$-test and sequential $F$-test are typical forms that we can think of and useful.
 
 ### Partial F test
 
