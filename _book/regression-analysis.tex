@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{24 Apr, 2019}
+    \date{02 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -4446,7 +4446,14 @@ From the first part, we can get the confidence region for \(\boldsymbol\beta\).
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-87-1} \end{center}
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/ellip-1} 
+
+}
+
+\caption{Confidence region for $(\beta_0, \beta_1)$}\label{fig:ellip}
+\end{figure}
 
 Look again corollary \ref{cor:bvech0}. Compare this to ANOVA. Something is different. When testing significance in ANOVA, degrees of freedom of \(SSR\) was \(p\). Because when testing regression relation, we only need \(\beta_1\) to \(\beta_p\), i.e.~\(p\) parameters. How can we do this here?
 
@@ -4985,6 +4992,325 @@ As we can see in the argument of \texttt{car::Anova()}, there are also type II a
 \CommentTok{#> 2      8 47.9  1      9.38 1.57   0.25}
 \end{Highlighting}
 \end{Shaded}
+
+\hypertarget{qualitative-variables-as-predictors}{%
+\section{Qualitative Variables as Predictors}\label{qualitative-variables-as-predictors}}
+
+See the example data set from \citet{Chatterjee:2015aa}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{salary <-}\StringTok{ }\KeywordTok{read_delim}\NormalTok{(}\StringTok{"data/P124.txt"}\NormalTok{, }\DataTypeTok{delim =} \StringTok{"}\CharTok{\textbackslash{}t}\StringTok{"}\NormalTok{)}
+\NormalTok{(salary <-}
+\StringTok{  }\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate_at}\NormalTok{(}\DataTypeTok{.vars =} \KeywordTok{vars}\NormalTok{(}\StringTok{"E"}\NormalTok{, }\StringTok{"M"}\NormalTok{), }\DataTypeTok{.funs =} \KeywordTok{list}\NormalTok{(}\OperatorTok{~}\NormalTok{factor)))}
+\CommentTok{#> # A tibble: 46 x 4}
+\CommentTok{#>        S     X E     M    }
+\CommentTok{#>    <dbl> <dbl> <fct> <fct>}
+\CommentTok{#>  1 13876     1 1     1    }
+\CommentTok{#>  2 11608     1 3     0    }
+\CommentTok{#>  3 18701     1 3     1    }
+\CommentTok{#>  4 11283     1 2     0    }
+\CommentTok{#>  5 11767     1 3     0    }
+\CommentTok{#>  6 20872     2 2     1    }
+\CommentTok{#>  7 11772     2 2     0    }
+\CommentTok{#>  8 10535     2 1     0    }
+\CommentTok{#>  9 12195     2 3     0    }
+\CommentTok{#> 10 12313     3 2     0    }
+\CommentTok{#> # ... with 36 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{S}: salary (\emph{response variable})
+\item
+  \texttt{X}: year of experiece
+\item
+  \texttt{E}: education level
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{1}: high school (HS)
+  \item
+    \texttt{2}: bachelor degree (BS)
+  \item
+    \texttt{3}: advanced degree (ADV)
+  \end{itemize}
+\item
+  \texttt{M}: management status
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{1}: person with management responsibility (MGT)
+  \item
+    \texttt{0}: otherwise (None)
+  \end{itemize}
+\end{itemize}
+
+Unlike with previous setting, we have two qualitative variables \texttt{E} and \texttt{M}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X, }\DataTypeTok{y =}\NormalTok{ S)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{colour =}\NormalTok{ E, }\DataTypeTok{shape =}\NormalTok{ M)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Experience (year)"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Salary"}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Education"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"High School"}\NormalTok{, }\StringTok{"Bachelor"}\NormalTok{, }\StringTok{"Advanced"}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_shape_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Management"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"None"}\NormalTok{, }\StringTok{"Management"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/sald-1} 
+
+}
+
+\caption{Salary Survey Data}\label{fig:sald}
+\end{figure}
+
+See Figure \ref{fig:sald}. There are 6 combinations of \texttt{E}-\texttt{M}. For each level, we can see obvious linear relationship between \texttt{S} (salary) and \texttt{X} (experience). Also, person in management statement has larer salary than not. How can we deal with these variables?
+
+\hypertarget{separate-models}{%
+\subsection{Separate models}\label{separate-models}}
+
+The easiest way that we can think of is fit separate regression models for
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  different levels of the qualitative predictor (in case there is only one qualitative predictor)
+\item
+  \emph{different combinations of the levels.}
+\end{enumerate}
+
+In the above salary survey dataset, we can make 6 models.
+
+\begin{longtable}[]{@{}cccc@{}}
+\toprule
+\begin{minipage}[b]{0.25\columnwidth}\centering
+levels\strut
+\end{minipage} & \begin{minipage}[b]{0.21\columnwidth}\centering
+HS\strut
+\end{minipage} & \begin{minipage}[b]{0.21\columnwidth}\centering
+BS\strut
+\end{minipage} & \begin{minipage}[b]{0.21\columnwidth}\centering
+ADV\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.25\columnwidth}\centering
+MGT\strut
+\end{minipage} & \begin{minipage}[t]{0.21\columnwidth}\centering
+\(Y_i = \beta_{01} + \beta_{11} x_i + \epsilon_{i1}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.21\columnwidth}\centering
+\(Y_i = \beta_{02} + \beta_{12} x_i + \epsilon_{i2}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.21\columnwidth}\centering
+\(Y_i = \beta_{03} + \beta_{13} x_i + \epsilon_{i3}\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.25\columnwidth}\centering
+None\strut
+\end{minipage} & \begin{minipage}[t]{0.21\columnwidth}\centering
+\(Y_i = \beta_{04} + \beta_{14} x_i + \epsilon_{i4}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.21\columnwidth}\centering
+\(Y_i = \beta_{05} + \beta_{15} x_i + \epsilon_{i5}\)\strut
+\end{minipage} & \begin{minipage}[t]{0.21\columnwidth}\centering
+\(Y_i = \beta_{06} + \beta_{16} x_i + \epsilon_{i6}\)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{dummy-variables}{%
+\subsection{Dummy variables}\label{dummy-variables}}
+
+However, we want to explain linear relationship between response variable and qualitative predictors. Commonly, this is done by defining \textbf{dummy variables} or \textbf{indicator variables}. For instance, Define \(E_{i1}\) and \(E_{i2}\) by
+
+\begin{equation*}
+  \begin{split}
+    & E_{i1} = \begin{cases}
+      1 & E = HS \\
+      0 & \text{o/w}
+    \end{cases} \\
+    & E_{i2} = \begin{cases}
+      1 & E = BS \\
+      0 & \text{o/w}
+    \end{cases}
+  \end{split}
+\end{equation*}
+
+In other words, the last level ADV(\texttt{3}) has value of \(E_{i1} = E_{i2} = 0\). This is called \emph{dummy coding} of the last level as baseline. The following function gives how the coding is happened. In \texttt{R}, baseline is set to be the first level, i.e.~\texttt{base\ =\ 1} by default.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{C}\NormalTok{(salary}\OperatorTok{$}\NormalTok{E, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \DecValTok{3}\NormalTok{)}
+\CommentTok{#>  [1] 1 3 3 2 3 2 2 1 3 2 1 2 3 1 3 3 2 2 3 1 1 3 2 2 1 2 1 3 1 1 2 3 2 2 1}
+\CommentTok{#> [36] 2 3 1 2 2 3 2 2 1 2 1}
+\CommentTok{#> attr(,"contrasts")}
+\CommentTok{#>   1 2}
+\CommentTok{#> 1 1 0}
+\CommentTok{#> 2 0 1}
+\CommentTok{#> 3 0 0}
+\CommentTok{#> Levels: 1 2 3}
+\end{Highlighting}
+\end{Shaded}
+
+For management status, define \(MGT_i\) by
+
+\[
+MGT_i = \begin{cases}
+  1 & M = MGT \\
+  0 & M = None
+\end{cases}
+\]
+
+This is the case when \texttt{base\ =\ 1}, i.e.~\texttt{0}(None) in our data set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{C}\NormalTok{(salary}\OperatorTok{$}\NormalTok{M, }\DataTypeTok{contr =}\NormalTok{ contr.treatment)}
+\CommentTok{#>  [1] 1 0 1 0 0 1 0 0 0 0 1 1 1 0 1 0 0 0 0 1 0 1 0 1 1 0 1 1 0 0 0 1 1 1 0}
+\CommentTok{#> [36] 0 1 0 1 0 1 1 0 0 0 0}
+\CommentTok{#> attr(,"contrasts")}
+\CommentTok{#>   2}
+\CommentTok{#> 0 0}
+\CommentTok{#> 1 1}
+\CommentTok{#> Levels: 0 1}
+\end{Highlighting}
+\end{Shaded}
+
+The we now have regression model as
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_i + \gamma_1 E_{i1} + \gamma_2 E_{i2} + \delta MGT_i + \epsilon_i
+  \label{eq:dummymod}
+\end{equation}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
+    \DataTypeTok{E =} \KeywordTok{C}\NormalTok{(E, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \DecValTok{3}\NormalTok{) }\CommentTok{# different with default}
+\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{lm}\NormalTok{(S }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .)}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = S ~ ., data = .)}
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#> (Intercept)            X           E1           E2           M1  }
+\CommentTok{#>       11032          546        -2996          148         6884}
+\end{Highlighting}
+\end{Shaded}
+
+Plug in each value. Then we can make 6 models as previous section.
+
+\begin{equation}
+  \begin{cases}
+    Y_i = (\beta_0 + \gamma_1) + \beta_1 x_i + \epsilon_i & \text{HS-None} \qquad E_1 = 1, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_1 + \delta) + \beta_1 x_i + \epsilon_i & \text{HS-MGT} \qquad E_1 = 1, E_2 = 0, MGT = 1 \\
+    Y_i = (\beta_0 + \gamma_2) + \beta_1 x_i + \epsilon_i & \text{BS-None} \qquad E_1 = 0, E_2 = 1, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_2 + \delta) + \beta_1 x_i + \epsilon_i & \text{BS-MGT} \qquad E_1 = 0, E_2 = 1, MGT = 1 \\
+    Y_i = \beta_0 + \beta_1 x_i + \epsilon_i & \text{ADV-None} \qquad E_1 = 0, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \delta) + \beta_1 x_i + \epsilon_i & \text{ADV-MGT} \qquad E_1 = 0, E_2 = 0, MGT = 1
+  \end{cases}
+  \label{eq:dummysep}
+\end{equation}
+
+Observe that every line has same slope \(\beta_1\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
+    \DataTypeTok{E =} \KeywordTok{C}\NormalTok{(E, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \DecValTok{3}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X, }\DataTypeTok{y =}\NormalTok{ S, }\DataTypeTok{colour =}\NormalTok{ E, }\DataTypeTok{linetype =}\NormalTok{ M)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ M), }\DataTypeTok{alpha =} \FloatTok{.7}\NormalTok{, }\DataTypeTok{show.legend =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{, }\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{fullrange =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Experience (year)"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Salary"}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Education"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"High School"}\NormalTok{, }\StringTok{"Bachelor"}\NormalTok{, }\StringTok{"Advanced"}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_linetype_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Management"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"None"}\NormalTok{, }\StringTok{"Management"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/saldfit-1} 
+
+}
+
+\caption{Salary Survey Data with Dummy variables}\label{fig:saldfit}
+\end{figure}
+
+Every line is parallel to each other. In the set of Equations \eqref{eq:dummysep}, we can interpret \(\beta_1\) as the increment of salary when experience increases in 1 year \emph{when the other predictors are fixed}.
+
+\(\gamma_1\), the coefficient of \(E_{i1}\), can be interpreted as the increment of salary for \texttt{HS} compared to \texttt{ADV}(baseline) when the other predictors are fixed. Similarly, we interpret \(\gamma_2\), the coefficient of \(E_{i2}\) as the increment of salary for \texttt{BS} compared to the baseline level \texttt{ADV} when the other predictors are fixed. The coefficient of \(MGT\) \(\delta\) means the increment of salary for management status for none when the other predictors fixed.
+
+In sum, each coefficient for dummy variables is the increment for corresponding level versus baseline level.
+
+\hypertarget{interaction-variables}{%
+\subsection{Interaction variables}\label{interaction-variables}}
+
+See Figure \ref{fig:sald} and focus on education level. Among people in management responsibility, ones with bachelor degrees have the largest salaries and next advanced dgrees. On the other hand, advanced degrees seem to be more important than bachelor among people that are not in management status. The \emph{magnitude of the salary difference between education level also depends management status}. To explain this, we add \emph{interaction term} in the previous model \eqref{eq:dummymod}.
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_i + \gamma_1 E_{i1} + \gamma_2 E_{i2} + \delta MGT_i + {\color{blue}{\alpha_1 (E_{i1} MGT_i)}} + {\color{blue}{\alpha_2 (E_{i2} MGT_i)}} + \epsilon_i
+  \label{eq:dummymod2}
+\end{equation}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
+    \DataTypeTok{E =} \KeywordTok{C}\NormalTok{(E, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \DecValTok{3}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{lm}\NormalTok{(S }\OperatorTok{~}\StringTok{ }\NormalTok{X }\OperatorTok{+}\StringTok{ }\NormalTok{E }\OperatorTok{*}\StringTok{ }\NormalTok{M, }\DataTypeTok{data =}\NormalTok{ .)}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = S ~ X + E * M, data = .)}
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#> (Intercept)            X           E1           E2           M1  }
+\CommentTok{#>       11203          497        -1731         -349         7047  }
+\CommentTok{#>       E1:M1        E2:M1  }
+\CommentTok{#>       -3066         1836}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{equation}
+  \begin{cases}
+    Y_i = (\beta_0 + \gamma_1) + \beta_1 x_i + \epsilon_i & \text{HS-None} \qquad E_1 = 1, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_1 + \delta + {\color{blue}{\alpha_1}}) + \beta_1 x_i + \epsilon_i & \text{HS-MGT} \qquad E_1 = 1, E_2 = 0, MGT = 1 \\
+    Y_i = (\beta_0 + \gamma_2) + \beta_1 x_i + \epsilon_i & \text{BS-None} \qquad E_1 = 0, E_2 = 1, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_2 + \delta + {\color{blue}{\alpha_2}}) + \beta_1 x_i + \epsilon_i & \text{BS-MGT} \qquad E_1 = 0, E_2 = 1, MGT = 1 \\
+    Y_i = \beta_0 + \beta_1 x_i + \epsilon_i & \text{ADV-None} \qquad E_1 = 0, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \delta) + \beta_1 x_i + \epsilon_i & \text{ADV-MGT} \qquad E_1 = 0, E_2 = 0, MGT = 1
+  \end{cases}
+  \label{eq:dummysep2}
+\end{equation}
 
 \bibliography{book.bib,packages.bib}
 

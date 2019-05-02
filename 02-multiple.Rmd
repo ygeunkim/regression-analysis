@@ -1523,7 +1523,7 @@ The confidence region for the vector $\B$ is the ellipsoid that is centered at $
 
 `ellipse::ellipse()` has method for `lm` object. So if you provides the regression object, it will give ellipsoid coordinate as `matrix`. However, this function only supports two variables. By specifying `which` argument, you can select which variable to get coordinates. By default, first two variables `c(1, 2)`.
 
-```{r}
+```{r ellip, fig.cap="Confidence region for $(\\beta_0, \\beta_1)$"}
 ellipse::ellipse(cem_fit) %>% 
   tbl_df() %>% # change to data frame
   ggplot(aes(x = `(Intercept)`, y = x1)) +
@@ -1976,6 +1976,197 @@ As we can see in the argument of `car::Anova()`, there are also type II and type
 ```{r}
 car::linearHypothesis(cem_fit, hypothesis.matrix = c(0, 0, 0, 1, -1))
 ```
+
+
+## Qualitative Variables as Predictors
+
+See the example data set from @Chatterjee:2015aa.
+
+```{r, message=FALSE}
+salary <- read_delim("data/P124.txt", delim = "\t")
+(salary <-
+  salary %>% 
+  mutate_at(.vars = vars("E", "M"), .funs = list(~factor)))
+```
+
+- `S`: salary (*response variable*)
+- `X`: year of experiece
+- `E`: education level
+    - `1`: high school (HS)
+    - `2`: bachelor degree (BS)
+    - `3`: advanced degree (ADV)
+- `M`: management status
+    - `1`: person with management responsibility (MGT)
+    - `0`: otherwise (None)
+
+Unlike with previous setting, we have two qualitative variables `E` and `M`.
+
+```{r sald, fig.cap="Salary Survey Data"}
+salary %>% 
+  ggplot(aes(x = X, y = S)) +
+  geom_point(aes(colour = E, shape = M)) +
+  labs(
+    x = "Experience (year)",
+    y = "Salary"
+  ) +
+  scale_colour_discrete(
+    name = "Education",
+    label = c("High School", "Bachelor", "Advanced")
+  ) +
+  scale_shape_discrete(
+    name = "Management",
+    label = c("None", "Management")
+  )
+```
+
+See Figure \@ref(fig:sald). There are 6 combinations of `E`-`M`. For each level, we can see obvious linear relationship between `S` (salary) and `X` (experience). Also, person in management statement has larer salary than not. How can we deal with these variables?
+
+### Separate models
+
+The easiest way that we can think of is fit separate regression models for
+
+1. different levels of the qualitative predictor (in case there is only one qualitative predictor)
+2. *different combinations of the levels.*
+
+In the above salary survey dataset, we can make 6 models.
+
+|levels|HS|BS|ADV|  
+|:----:|:---:|:---:|:---:|  
+|MGT| $Y_i = \beta_{01} + \beta_{11} x_i + \epsilon_{i1}$ | $Y_i = \beta_{02} + \beta_{12} x_i + \epsilon_{i2}$ | $Y_i = \beta_{03} + \beta_{13} x_i + \epsilon_{i3}$ |  
+|None| $Y_i = \beta_{04} + \beta_{14} x_i + \epsilon_{i4}$ | $Y_i = \beta_{05} + \beta_{15} x_i + \epsilon_{i5}$ | $Y_i = \beta_{06} + \beta_{16} x_i + \epsilon_{i6}$ |  
+
+### Dummy variables
+
+However, we want to explain linear relationship between response variable and qualitative predictors. Commonly, this is done by defining **dummy variables** or **indicator variables**. For instance, Define $E_{i1}$ and $E_{i2}$ by
+
+\begin{equation*}
+  \begin{split}
+    & E_{i1} = \begin{cases}
+      1 & E = HS \\
+      0 & \text{o/w}
+    \end{cases} \\
+    & E_{i2} = \begin{cases}
+      1 & E = BS \\
+      0 & \text{o/w}
+    \end{cases}
+  \end{split}
+\end{equation*}
+
+In other words, the last level ADV(`3`) has value of $E_{i1} = E_{i2} = 0$. This is called *dummy coding* of the last level as baseline. The following function gives how the coding is happened. In `R`, baseline is set to be the first level, i.e. `base = 1` by default.
+
+```{r}
+C(salary$E, contr = contr.treatment, base = 3)
+```
+
+For management status, define $MGT_i$ by
+
+$$
+MGT_i = \begin{cases}
+  1 & M = MGT \\
+  0 & M = None
+\end{cases}
+$$
+
+This is the case when `base = 1`, i.e. `0`(None) in our data set.
+
+```{r}
+C(salary$M, contr = contr.treatment)
+```
+
+The we now have regression model as
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_i + \gamma_1 E_{i1} + \gamma_2 E_{i2} + \delta MGT_i + \epsilon_i
+  (\#eq:dummymod)
+\end{equation}
+
+```{r}
+salary %>% 
+  mutate(
+    E = C(E, contr = contr.treatment, base = 3) # different with default
+  ) %>% 
+  lm(S ~ ., data = .)
+```
+
+Plug in each value. Then we can make 6 models as previous section.
+
+\begin{equation}
+  \begin{cases}
+    Y_i = (\beta_0 + \gamma_1) + \beta_1 x_i + \epsilon_i & \text{HS-None} \qquad E_1 = 1, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_1 + \delta) + \beta_1 x_i + \epsilon_i & \text{HS-MGT} \qquad E_1 = 1, E_2 = 0, MGT = 1 \\
+    Y_i = (\beta_0 + \gamma_2) + \beta_1 x_i + \epsilon_i & \text{BS-None} \qquad E_1 = 0, E_2 = 1, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_2 + \delta) + \beta_1 x_i + \epsilon_i & \text{BS-MGT} \qquad E_1 = 0, E_2 = 1, MGT = 1 \\
+    Y_i = \beta_0 + \beta_1 x_i + \epsilon_i & \text{ADV-None} \qquad E_1 = 0, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \delta) + \beta_1 x_i + \epsilon_i & \text{ADV-MGT} \qquad E_1 = 0, E_2 = 0, MGT = 1
+  \end{cases}
+  (\#eq:dummysep)
+\end{equation}
+
+Observe that every line has same slope $\beta_1$.
+
+```{r saldfit, fig.cap="Salary Survey Data with Dummy variables"}
+salary %>% 
+  mutate(
+    E = C(E, contr = contr.treatment, base = 3)
+  ) %>% 
+  ggplot(aes(x = X, y = S, colour = E, linetype = M)) +
+  geom_point(aes(shape = M), alpha = .7, show.legend = FALSE) +
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) +
+  labs(
+    x = "Experience (year)",
+    y = "Salary"
+  ) +
+  scale_colour_discrete(
+    name = "Education",
+    label = c("High School", "Bachelor", "Advanced")
+  ) +
+  scale_linetype_discrete(
+    name = "Management",
+    label = c("None", "Management")
+  )
+```
+
+Every line is parallel to each other. In the set of Equations \@ref(eq:dummysep), we can interpret $\beta_1$ as the increment of salary when experience increases in 1 year *when the other predictors are fixed*.
+
+$\gamma_1$, the coefficient of $E_{i1}$, can be interpreted  as the increment of salary for `HS` compared to `ADV`(baseline) when the other predictors are fixed. Similarly, we interpret $\gamma_2$, the coefficient of $E_{i2}$ as the increment of salary for `BS` compared to the baseline level `ADV` when the other predictors are fixed. The coefficient of $MGT$ $\delta$ means the increment of salary for management status for none when the other predictors fixed.
+
+In sum, each coefficient for dummy variables is the increment for corresponding level versus baseline level.
+
+### Interaction variables
+
+See Figure \@ref(fig:sald) and focus on education level. Among people in management responsibility, ones with bachelor degrees have the largest salaries and next advanced dgrees. On the other hand, advanced degrees seem to be more important than bachelor among people that are not in management status. The *magnitude of the salary difference between education level also depends management status*. To explain this, we add *interaction term* in the previous model \@ref(eq:dummymod).
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_i + \gamma_1 E_{i1} + \gamma_2 E_{i2} + \delta MGT_i + {\color{blue}{\alpha_1 (E_{i1} MGT_i)}} + {\color{blue}{\alpha_2 (E_{i2} MGT_i)}} + \epsilon_i
+  (\#eq:dummymod2)
+\end{equation}
+
+```{r}
+salary %>% 
+  mutate(
+    E = C(E, contr = contr.treatment, base = 3)
+  ) %>% 
+  lm(S ~ X + E * M, data = .)
+```
+
+\begin{equation}
+  \begin{cases}
+    Y_i = (\beta_0 + \gamma_1) + \beta_1 x_i + \epsilon_i & \text{HS-None} \qquad E_1 = 1, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_1 + \delta + {\color{blue}{\alpha_1}}) + \beta_1 x_i + \epsilon_i & \text{HS-MGT} \qquad E_1 = 1, E_2 = 0, MGT = 1 \\
+    Y_i = (\beta_0 + \gamma_2) + \beta_1 x_i + \epsilon_i & \text{BS-None} \qquad E_1 = 0, E_2 = 1, MGT = 0 \\
+    Y_i = (\beta_0 + \gamma_2 + \delta + {\color{blue}{\alpha_2}}) + \beta_1 x_i + \epsilon_i & \text{BS-MGT} \qquad E_1 = 0, E_2 = 1, MGT = 1 \\
+    Y_i = \beta_0 + \beta_1 x_i + \epsilon_i & \text{ADV-None} \qquad E_1 = 0, E_2 = 0, MGT = 0 \\
+    Y_i = (\beta_0 + \delta) + \beta_1 x_i + \epsilon_i & \text{ADV-MGT} \qquad E_1 = 0, E_2 = 0, MGT = 1
+  \end{cases}
+  (\#eq:dummysep2)
+\end{equation}
+
+
+
+
+
+
+
 
 
 
