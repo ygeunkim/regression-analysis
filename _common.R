@@ -27,6 +27,8 @@ library(MPV)
 
 # rounding digits ------------------------------
 options(digits = 3)
+# tibble print options -------------------------
+options(tibble.print_min = 6, tibble.print_max = 6)
 
 # pander table remove NA ----------------------
 pander::panderOptions("missing", "")

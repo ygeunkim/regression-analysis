@@ -203,22 +203,15 @@ This book aims at covering materials of regression analysis. Also, there will be
 \StringTok{  }\NormalTok{BioOxyDemand }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{tbl_df}\NormalTok{())}
 \CommentTok{#> # A tibble: 14 x 2}
-\CommentTok{#>        x     y}
-\CommentTok{#>    <int> <int>}
-\CommentTok{#>  1     3     4}
-\CommentTok{#>  2     8     7}
-\CommentTok{#>  3    10     8}
-\CommentTok{#>  4    11     8}
-\CommentTok{#>  5    13    10}
-\CommentTok{#>  6    16    11}
-\CommentTok{#>  7    27    16}
-\CommentTok{#>  8    30    26}
-\CommentTok{#>  9    35    21}
-\CommentTok{#> 10    37     9}
-\CommentTok{#> 11    38    31}
-\CommentTok{#> 12    44    30}
-\CommentTok{#> 13   103    75}
-\CommentTok{#> 14   142    90}
+\CommentTok{#>       x     y}
+\CommentTok{#>   <int> <int>}
+\CommentTok{#> 1     3     4}
+\CommentTok{#> 2     8     7}
+\CommentTok{#> 3    10     8}
+\CommentTok{#> 4    11     8}
+\CommentTok{#> 5    13    10}
+\CommentTok{#> 6    16    11}
+\CommentTok{#> # ... with 8 more rows}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1730,19 +1723,15 @@ For example, in the Figure \ref{fig:smoothline}, the blue line indicates \(E(Y \
 \NormalTok{delv }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{eyx =} \KeywordTok{predict}\NormalTok{(delv_fit, }\DataTypeTok{newdata =} \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ x)))}
 \CommentTok{#> # A tibble: 25 x 3}
-\CommentTok{#>        y     x   eyx}
-\CommentTok{#>    <dbl> <dbl> <dbl>}
-\CommentTok{#>  1  16.7     7 18.6 }
-\CommentTok{#>  2  11.5     3  9.85}
-\CommentTok{#>  3  12.0     3  9.85}
-\CommentTok{#>  4  14.9     4 12.0 }
-\CommentTok{#>  5  13.8     6 16.4 }
-\CommentTok{#>  6  18.1     7 18.6 }
-\CommentTok{#>  7   8       2  7.67}
-\CommentTok{#>  8  17.8     7 18.6 }
-\CommentTok{#>  9  79.2    30 68.6 }
-\CommentTok{#> 10  21.5     5 14.2 }
-\CommentTok{#> # ... with 15 more rows}
+\CommentTok{#>       y     x   eyx}
+\CommentTok{#>   <dbl> <dbl> <dbl>}
+\CommentTok{#> 1  16.7     7 18.6 }
+\CommentTok{#> 2  11.5     3  9.85}
+\CommentTok{#> 3  12.0     3  9.85}
+\CommentTok{#> 4  14.9     4 12.0 }
+\CommentTok{#> 5  13.8     6 16.4 }
+\CommentTok{#> 6  18.1     7 18.6 }
+\CommentTok{#> # ... with 19 more rows}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2069,19 +2058,15 @@ Default \texttt{level} is \texttt{0.95}.
 \begin{Highlighting}[]
 \KeywordTok{predict}\NormalTok{(delv_fit, }\DataTypeTok{interval =} \StringTok{"confidence"}\NormalTok{, }\DataTypeTok{level =} \FloatTok{.95}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tbl_df}\NormalTok{()}
 \CommentTok{#> # A tibble: 25 x 3}
-\CommentTok{#>      fit   lwr   upr}
-\CommentTok{#>    <dbl> <dbl> <dbl>}
-\CommentTok{#>  1 18.6  16.8   20.3}
-\CommentTok{#>  2  9.85  7.57  12.1}
-\CommentTok{#>  3  9.85  7.57  12.1}
-\CommentTok{#>  4 12.0   9.91  14.1}
-\CommentTok{#>  5 16.4  14.5   18.2}
-\CommentTok{#>  6 18.6  16.8   20.3}
-\CommentTok{#>  7  7.67  5.22  10.1}
-\CommentTok{#>  8 18.6  16.8   20.3}
-\CommentTok{#>  9 68.6  62.9   74.3}
-\CommentTok{#> 10 14.2  12.2   16.2}
-\CommentTok{#> # ... with 15 more rows}
+\CommentTok{#>     fit   lwr   upr}
+\CommentTok{#>   <dbl> <dbl> <dbl>}
+\CommentTok{#> 1 18.6  16.8   20.3}
+\CommentTok{#> 2  9.85  7.57  12.1}
+\CommentTok{#> 3  9.85  7.57  12.1}
+\CommentTok{#> 4 12.0   9.91  14.1}
+\CommentTok{#> 5 16.4  14.5   18.2}
+\CommentTok{#> 6 18.6  16.8   20.3}
+\CommentTok{#> # ... with 19 more rows}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2767,21 +2752,15 @@ Denote that here \emph{simple linear regression setting} \(F\)-statistic and \(t
 \begin{Highlighting}[]
 \NormalTok{(cem <-}\StringTok{ }\NormalTok{MPV}\OperatorTok{::}\NormalTok{cement }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tbl_df}\NormalTok{())}
 \CommentTok{#> # A tibble: 13 x 5}
-\CommentTok{#>        y    x1    x2    x3    x4}
-\CommentTok{#>    <dbl> <dbl> <dbl> <dbl> <dbl>}
-\CommentTok{#>  1  78.5     7    26     6    60}
-\CommentTok{#>  2  74.3     1    29    15    52}
-\CommentTok{#>  3 104.     11    56     8    20}
-\CommentTok{#>  4  87.6    11    31     8    47}
-\CommentTok{#>  5  95.9     7    52     6    33}
-\CommentTok{#>  6 109.     11    55     9    22}
-\CommentTok{#>  7 103.      3    71    17     6}
-\CommentTok{#>  8  72.5     1    31    22    44}
-\CommentTok{#>  9  93.1     2    54    18    22}
-\CommentTok{#> 10 116.     21    47     4    26}
-\CommentTok{#> 11  83.8     1    40    23    34}
-\CommentTok{#> 12 113.     11    66     9    12}
-\CommentTok{#> 13 109.     10    68     8    12}
+\CommentTok{#>       y    x1    x2    x3    x4}
+\CommentTok{#>   <dbl> <dbl> <dbl> <dbl> <dbl>}
+\CommentTok{#> 1  78.5     7    26     6    60}
+\CommentTok{#> 2  74.3     1    29    15    52}
+\CommentTok{#> 3 104.     11    56     8    20}
+\CommentTok{#> 4  87.6    11    31     8    47}
+\CommentTok{#> 5  95.9     7    52     6    33}
+\CommentTok{#> 6 109.     11    55     9    22}
+\CommentTok{#> # ... with 7 more rows}
 \end{Highlighting}
 \end{Shaded}
 
@@ -5000,24 +4979,20 @@ See the example data set from \citet{Chatterjee:2015aa}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{salary <-}\StringTok{ }\KeywordTok{read_delim}\NormalTok{(}\StringTok{"data/P124.txt"}\NormalTok{, }\DataTypeTok{delim =} \StringTok{"}\CharTok{\textbackslash{}t}\StringTok{"}\NormalTok{)}
+\NormalTok{salary <-}\StringTok{ }\NormalTok{haven}\OperatorTok{::}\KeywordTok{read_sav}\NormalTok{(}\StringTok{"data/p124.sav"}\NormalTok{)}
 \NormalTok{(salary <-}
 \StringTok{  }\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate_at}\NormalTok{(}\DataTypeTok{.vars =} \KeywordTok{vars}\NormalTok{(}\StringTok{"E"}\NormalTok{, }\StringTok{"M"}\NormalTok{), }\DataTypeTok{.funs =} \KeywordTok{list}\NormalTok{(}\OperatorTok{~}\NormalTok{factor)))}
 \CommentTok{#> # A tibble: 46 x 4}
-\CommentTok{#>        S     X E     M    }
-\CommentTok{#>    <dbl> <dbl> <fct> <fct>}
-\CommentTok{#>  1 13876     1 1     1    }
-\CommentTok{#>  2 11608     1 3     0    }
-\CommentTok{#>  3 18701     1 3     1    }
-\CommentTok{#>  4 11283     1 2     0    }
-\CommentTok{#>  5 11767     1 3     0    }
-\CommentTok{#>  6 20872     2 2     1    }
-\CommentTok{#>  7 11772     2 2     0    }
-\CommentTok{#>  8 10535     2 1     0    }
-\CommentTok{#>  9 12195     2 3     0    }
-\CommentTok{#> 10 12313     3 2     0    }
-\CommentTok{#> # ... with 36 more rows}
+\CommentTok{#>       S     X E     M    }
+\CommentTok{#>   <dbl> <dbl> <fct> <fct>}
+\CommentTok{#> 1 13876     1 1     1    }
+\CommentTok{#> 2 11608     1 3     0    }
+\CommentTok{#> 3 18701     1 3     1    }
+\CommentTok{#> 4 11283     1 2     0    }
+\CommentTok{#> 5 11767     1 3     0    }
+\CommentTok{#> 6 20872     2 2     1    }
+\CommentTok{#> # ... with 40 more rows}
 \end{Highlighting}
 \end{Shaded}
 
@@ -5084,8 +5059,8 @@ Unlike with previous setting, we have two qualitative variables \texttt{E} and \
 
 See Figure \ref{fig:sald}. There are 6 combinations of \texttt{E}-\texttt{M}. For each level, we can see obvious linear relationship between \texttt{S} (salary) and \texttt{X} (experience). Also, person in management statement has larer salary than not. How can we deal with these variables?
 
-\hypertarget{separate-models}{%
-\subsection{Separate models}\label{separate-models}}
+\hypertarget{modsep}{%
+\subsection{Separate models}\label{modsep}}
 
 The easiest way that we can think of is fit separate regression models for
 
@@ -5134,8 +5109,8 @@ None\strut
 \bottomrule
 \end{longtable}
 
-\hypertarget{dummy-variables}{%
-\subsection{Dummy variables}\label{dummy-variables}}
+\hypertarget{moddummy1}{%
+\subsection{Dummy variables}\label{moddummy1}}
 
 However, we want to explain linear relationship between response variable and qualitative predictors. Commonly, this is done by defining \textbf{dummy variables} or \textbf{indicator variables}. For instance, Define \(E_{i1}\) and \(E_{i2}\) by
 
@@ -5201,10 +5176,13 @@ The we now have regression model as
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
+\NormalTok{salary_relev <-}
+\StringTok{  }\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}
     \DataTypeTok{E =} \KeywordTok{C}\NormalTok{(E, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \DecValTok{3}\NormalTok{) }\CommentTok{# different with default}
-\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
+\NormalTok{  )}
+\CommentTok{#--------------}
+\NormalTok{salary_relev }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{lm}\NormalTok{(S }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .)}
 \CommentTok{#> }
 \CommentTok{#> Call:}
@@ -5234,13 +5212,10 @@ Observe that every line has same slope \(\beta_1\).
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{E =} \KeywordTok{C}\NormalTok{(E, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \DecValTok{3}\NormalTok{)}
-\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
+\NormalTok{salary_relev }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X, }\DataTypeTok{y =}\NormalTok{ S, }\DataTypeTok{colour =}\NormalTok{ E, }\DataTypeTok{linetype =}\NormalTok{ M)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ M), }\DataTypeTok{alpha =} \FloatTok{.7}\NormalTok{, }\DataTypeTok{show.legend =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{, }\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{fullrange =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ M), }\DataTypeTok{alpha =} \FloatTok{.7}\NormalTok{, }\DataTypeTok{show.legend =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{labs}\NormalTok{(}
     \DataTypeTok{x =} \StringTok{"Experience (year)"}\NormalTok{,}
     \DataTypeTok{y =} \StringTok{"Salary"}
@@ -5271,8 +5246,8 @@ Every line is parallel to each other. In the set of Equations \eqref{eq:dummysep
 
 In sum, each coefficient for dummy variables is the increment for corresponding level versus baseline level.
 
-\hypertarget{interaction-variables}{%
-\subsection{Interaction variables}\label{interaction-variables}}
+\hypertarget{moddummy2}{%
+\subsection{Interaction variables}\label{moddummy2}}
 
 See Figure \ref{fig:sald} and focus on education level. Among people in management responsibility, ones with bachelor degrees have the largest salaries and next advanced dgrees. On the other hand, advanced degrees seem to be more important than bachelor among people that are not in management status. The \emph{magnitude of the salary difference between education level also depends management status}. To explain this, we add \emph{interaction term} in the previous model \eqref{eq:dummymod}.
 
@@ -5283,11 +5258,9 @@ See Figure \ref{fig:sald} and focus on education level. Among people in manageme
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{salary }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{E =} \KeywordTok{C}\NormalTok{(E, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \DecValTok{3}\NormalTok{)}
-\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{lm}\NormalTok{(S }\OperatorTok{~}\StringTok{ }\NormalTok{X }\OperatorTok{+}\StringTok{ }\NormalTok{E }\OperatorTok{*}\StringTok{ }\NormalTok{M, }\DataTypeTok{data =}\NormalTok{ .)}
+\NormalTok{(dum_int1 <-}
+\StringTok{  }\NormalTok{salary_relev }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{lm}\NormalTok{(S }\OperatorTok{~}\StringTok{ }\NormalTok{X }\OperatorTok{+}\StringTok{ }\NormalTok{E }\OperatorTok{*}\StringTok{ }\NormalTok{M, }\DataTypeTok{data =}\NormalTok{ .))}
 \CommentTok{#> }
 \CommentTok{#> Call:}
 \CommentTok{#> lm(formula = S ~ X + E * M, data = .)}
@@ -5311,6 +5284,218 @@ See Figure \ref{fig:sald} and focus on education level. Among people in manageme
   \end{cases}
   \label{eq:dummysep2}
 \end{equation}
+
+To visualize the model, i.e.~get prediction for each grid, we might use \texttt{modelr} library.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(modelr)}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{modelr::data\_grid()} expands predictor grids for prediction. \texttt{modelr::add\_predictions()} add predictions for a given model to a data frame. We can provide multiple models with \texttt{modelr::spread\_predictions()} and \texttt{modelr::gather\_predictions()} each as \texttt{tidyr::spread()} and \texttt{tidyr::gather()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{salary_relev }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{data_grid}\NormalTok{(X, E, M) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_predictions}\NormalTok{(dum_int1) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X, }\DataTypeTok{y =}\NormalTok{ pred, }\DataTypeTok{colour =}\NormalTok{ E, }\DataTypeTok{linetype =}\NormalTok{ M)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}
+    \DataTypeTok{data =}\NormalTok{ salary_relev, }
+    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X, }\DataTypeTok{y =}\NormalTok{ S, }\DataTypeTok{colour =}\NormalTok{ E, }\DataTypeTok{shape =}\NormalTok{ M), }
+    \DataTypeTok{alpha =} \FloatTok{.7}\NormalTok{, }
+    \DataTypeTok{show.legend =} \OtherTok{FALSE}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Experience (year)"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Salary"}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Education"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"High School"}\NormalTok{, }\StringTok{"Bachelor"}\NormalTok{, }\StringTok{"Advanced"}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_linetype_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Management"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"None"}\NormalTok{, }\StringTok{"Management"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/saldfit2-1} 
+
+}
+
+\caption{Interaction between qualitative variables}\label{fig:saldfit2}
+\end{figure}
+
+Here the increment for experience is also same for each level.
+
+\hypertarget{general-models-with-interaction}{%
+\subsection{General models with interaction}\label{general-models-with-interaction}}
+
+In the previous section \ref{moddummy1} and \ref{moddummy2}, there have been some assumptions in the model. In Model \eqref{eq:dummymod}, \emph{additive assumption} is given. Effects of each predictors do note depend on the others. It means that in the separate model setting \ref{modsep} we give conditions
+
+\[
+\begin{cases}
+  \beta_{11} = \beta_{12} = \cdots = \beta_{16} \equiv \beta_1 \\
+  \beta_{01} - \beta_{04} = \beta_{02} - \beta_{05} = \beta_{03} - \beta_{06} \equiv \delta
+\end{cases}
+\]
+
+Next model \eqref{eq:dummymod2} quite weakens this assumption, i.e.~remove the second condition for \(\delta\) by adding an interaction term between qualitative predictors. Instead, it still assumes that \emph{every combination of levels always has same slope} \(\beta_1\). Now we want more general one without the first assumption. Add interaction between \(x_i\) and other dummy variables.
+
+\begin{equation}
+  \begin{split}
+    Y_i = \beta_0 & + \beta_1 x_i + \gamma_1 E_{i1} + \gamma_2 E_{i2} + \delta MGT_i \\
+    & + {\color{blue}{\alpha_1 (E_{i1} MGT_i)}} + {\color{blue}{\alpha_2 (E_{i2} MGT_i)}} \\
+    & + {\color{red}{\eta_1(x_i E_{i1})}} + {\color{red}{\eta_2(x_i E_{i2})}} + {\color{red}{\eta_3(x_i MGT_i)}} \\
+    & + {\color{red}{\eta_4(x_i MGT_i E_{i1})}} + {\color{red}{\eta_5(x_i MGT_i E_{i2})}} \\
+    & + \epsilon_i
+  \end{split}
+  \label{eq:dummymod3}
+\end{equation}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(dum_int2 <-}
+\StringTok{  }\NormalTok{salary_relev }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{lm}\NormalTok{(S }\OperatorTok{~}\StringTok{ }\NormalTok{X }\OperatorTok{*}\StringTok{ }\NormalTok{E }\OperatorTok{*}\StringTok{ }\NormalTok{M, }\DataTypeTok{data =}\NormalTok{ .))}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = S ~ X * E * M, data = .)}
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#> (Intercept)            X           E1           E2           M1  }
+\CommentTok{#>   11189.455      502.364    -1708.064     -381.019     7094.382  }
+\CommentTok{#>        X:E1         X:E2         X:M1        E1:M1        E2:M1  }
+\CommentTok{#>      -6.247        0.246       -9.850    -3158.650     1904.041  }
+\CommentTok{#>     X:E1:M1      X:E2:M1  }
+\CommentTok{#>      18.416       -3.645}
+\end{Highlighting}
+\end{Shaded}
+
+In the same process, we have separate model. Since we have added terms with \(x_i\), the only change from Equation \eqref{eq:dummysep2} is slope part.
+
+\begin{equation}
+  \begin{alignedat}{5}
+    & Y_i = (\beta_0 + \gamma_1) && + (\beta_1 + {\color{red}{\eta_1}}) x_i && + \epsilon_i && \quad \text{HS-None} && \quad E_1 = 1, E_2 = 0, MGT = 0 \\
+    & Y_i = (\beta_0 + \gamma_1 + \delta + {\color{blue}{\alpha_1}}) && + (\beta_1 + {\color{red}{\eta_1}} + {\color{red}{\eta_3}} + {\color{red}{\eta_4}}) x_i && + \epsilon_i && \quad \text{HS-MGT} && \quad E_1 = 1, E_2 = 0, MGT = 1 \\
+    & Y_i = (\beta_0 + \gamma_2) && + (\beta_1 + {\color{red}{\eta_2}}) x_i && + \epsilon_i && \quad \text{BS-None} && \quad E_1 = 0, E_2 = 1, MGT = 0 \\
+    & Y_i = (\beta_0 + \gamma_2 + \delta + {\color{blue}{\alpha_2}}) && + (\beta_1 + {\color{red}{\eta_2}} + {\color{red}{\eta_3}} + {\color{red}{\eta_5}}) x_i && + \epsilon_i && \quad \text{BS-MGT} && \quad E_1 = 0, E_2 = 1, MGT = 1 \\
+    & Y_i = \beta_0 && + \beta_1 x_i && + \epsilon_i && \quad \text{ADV-None} && \quad E_1 = 0, E_2 = 0, MGT = 0 \\
+    & Y_i = (\beta_0 + \delta) && + (\beta_1 + {\color{red}{\eta_3}}) x_i && + \epsilon_i && \quad \text{ADV-MGT} && \quad E_1 = 0, E_2 = 0, MGT = 1
+  \end{alignedat}
+  \label{eq:dummysep3}
+\end{equation}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{salary_relev }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{data_grid}\NormalTok{(X, E, M) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_predictions}\NormalTok{(dum_int2) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X, }\DataTypeTok{y =}\NormalTok{ pred, }\DataTypeTok{colour =}\NormalTok{ E, }\DataTypeTok{linetype =}\NormalTok{ M)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}
+    \DataTypeTok{data =}\NormalTok{ salary_relev, }
+    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ X, }\DataTypeTok{y =}\NormalTok{ S, }\DataTypeTok{colour =}\NormalTok{ E, }\DataTypeTok{shape =}\NormalTok{ M), }
+    \DataTypeTok{alpha =} \FloatTok{.7}\NormalTok{, }
+    \DataTypeTok{show.legend =} \OtherTok{FALSE}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Experience (year)"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Salary"}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Education"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"High School"}\NormalTok{, }\StringTok{"Bachelor"}\NormalTok{, }\StringTok{"Advanced"}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_linetype_discrete}\NormalTok{(}
+    \DataTypeTok{name =} \StringTok{"Management"}\NormalTok{,}
+    \DataTypeTok{label =} \KeywordTok{c}\NormalTok{(}\StringTok{"None"}\NormalTok{, }\StringTok{"Management"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/saldfit3-1} 
+
+}
+
+\caption{Full interaction model}\label{fig:saldfit3}
+\end{figure}
+
+In fact, this example might not appropriate, so we consider another example. This is also from \citet{Chatterjee:2015aa}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{employ <-}\StringTok{ }\NormalTok{haven}\OperatorTok{::}\KeywordTok{read_sav}\NormalTok{(}\StringTok{"data/p134.sav"}\NormalTok{)}
+\NormalTok{(employ <-}
+\StringTok{  }\NormalTok{employ }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{RACE =} \KeywordTok{factor}\NormalTok{(RACE)))}
+\CommentTok{#> # A tibble: 20 x 3}
+\CommentTok{#>    }\AlertTok{TEST}\CommentTok{ RACE  JPERF}
+\CommentTok{#>   <dbl> <fct> <dbl>}
+\CommentTok{#> 1 0.280 1      1.83}
+\CommentTok{#> 2 0.970 1      4.59}
+\CommentTok{#> 3 1.25  1      2.97}
+\CommentTok{#> 4 2.46  1      8.14}
+\CommentTok{#> 5 2.51  1      8   }
+\CommentTok{#> 6 1.17  1      3.30}
+\CommentTok{#> # ... with 14 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+The set is collected from a special employment program. 20 applicants were tested for 6 weeks.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{TEST}: test scores
+\item
+  \texttt{RACE}: race
+\item
+  \texttt{JPERF}: index of job performance
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(job_fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(JPERF }\OperatorTok{~}\StringTok{ }\NormalTok{TEST }\OperatorTok{*}\StringTok{ }\NormalTok{RACE, }\DataTypeTok{data =}\NormalTok{ employ))}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = JPERF ~ }\AlertTok{TEST}\CommentTok{ * RACE, data = employ)}
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#> (Intercept)         }\AlertTok{TEST}\CommentTok{        RACE1   }\AlertTok{TEST}\CommentTok{:RACE1  }
+\CommentTok{#>        2.01         1.31        -1.91         2.00}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{employ }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{data_grid}\NormalTok{(TEST, RACE) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_predictions}\NormalTok{(job_fit) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ TEST, }\DataTypeTok{y =}\NormalTok{ pred, }\DataTypeTok{colour =}\NormalTok{ RACE)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}
+    \DataTypeTok{data =}\NormalTok{ employ, }
+    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ TEST, }\DataTypeTok{y =}\NormalTok{ JPERF, }\DataTypeTok{colour =}\NormalTok{ RACE), }
+    \DataTypeTok{alpha =} \FloatTok{.7}\NormalTok{, }
+    \DataTypeTok{show.legend =} \OtherTok{FALSE}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Test"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Job performance"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-108-1} \end{center}
 
 \bibliography{book.bib,packages.bib}
 

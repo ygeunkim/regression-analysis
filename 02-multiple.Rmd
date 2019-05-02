@@ -1983,7 +1983,7 @@ car::linearHypothesis(cem_fit, hypothesis.matrix = c(0, 0, 0, 1, -1))
 See the example data set from @Chatterjee:2015aa.
 
 ```{r, message=FALSE}
-salary <- read_delim("data/P124.txt", delim = "\t")
+salary <- haven::read_sav("data/p124.sav")
 (salary <-
   salary %>% 
   mutate_at(.vars = vars("E", "M"), .funs = list(~factor)))
@@ -2021,7 +2021,7 @@ salary %>%
 
 See Figure \@ref(fig:sald). There are 6 combinations of `E`-`M`. For each level, we can see obvious linear relationship between `S` (salary) and `X` (experience). Also, person in management statement has larer salary than not. How can we deal with these variables?
 
-### Separate models
+### Separate models {#modsep}
 
 The easiest way that we can think of is fit separate regression models for
 
@@ -2035,7 +2035,7 @@ In the above salary survey dataset, we can make 6 models.
 |MGT| $Y_i = \beta_{01} + \beta_{11} x_i + \epsilon_{i1}$ | $Y_i = \beta_{02} + \beta_{12} x_i + \epsilon_{i2}$ | $Y_i = \beta_{03} + \beta_{13} x_i + \epsilon_{i3}$ |  
 |None| $Y_i = \beta_{04} + \beta_{14} x_i + \epsilon_{i4}$ | $Y_i = \beta_{05} + \beta_{15} x_i + \epsilon_{i5}$ | $Y_i = \beta_{06} + \beta_{16} x_i + \epsilon_{i6}$ |  
 
-### Dummy variables
+### Dummy variables {#moddummy1}
 
 However, we want to explain linear relationship between response variable and qualitative predictors. Commonly, this is done by defining **dummy variables** or **indicator variables**. For instance, Define $E_{i1}$ and $E_{i2}$ by
 
@@ -2081,10 +2081,13 @@ The we now have regression model as
 \end{equation}
 
 ```{r}
-salary %>% 
+salary_relev <-
+  salary %>% 
   mutate(
     E = C(E, contr = contr.treatment, base = 3) # different with default
-  ) %>% 
+  )
+#--------------
+salary_relev %>% 
   lm(S ~ ., data = .)
 ```
 
@@ -2105,13 +2108,10 @@ Plug in each value. Then we can make 6 models as previous section.
 Observe that every line has same slope $\beta_1$.
 
 ```{r saldfit, fig.cap="Salary Survey Data with Dummy variables"}
-salary %>% 
-  mutate(
-    E = C(E, contr = contr.treatment, base = 3)
-  ) %>% 
+salary_relev %>% 
   ggplot(aes(x = X, y = S, colour = E, linetype = M)) +
-  geom_point(aes(shape = M), alpha = .7, show.legend = FALSE) +
   geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) +
+  geom_point(aes(shape = M), alpha = .7, show.legend = FALSE) +
   labs(
     x = "Experience (year)",
     y = "Salary"
@@ -2132,7 +2132,7 @@ $\gamma_1$, the coefficient of $E_{i1}$, can be interpreted  as the increment of
 
 In sum, each coefficient for dummy variables is the increment for corresponding level versus baseline level.
 
-### Interaction variables
+### Interaction variables {#moddummy2}
 
 See Figure \@ref(fig:sald) and focus on education level. Among people in management responsibility, ones with bachelor degrees have the largest salaries and next advanced dgrees. On the other hand, advanced degrees seem to be more important than bachelor among people that are not in management status. The *magnitude of the salary difference between education level also depends management status*. To explain this, we add *interaction term* in the previous model \@ref(eq:dummymod).
 
@@ -2142,11 +2142,9 @@ See Figure \@ref(fig:sald) and focus on education level. Among people in managem
 \end{equation}
 
 ```{r}
-salary %>% 
-  mutate(
-    E = C(E, contr = contr.treatment, base = 3)
-  ) %>% 
-  lm(S ~ X + E * M, data = .)
+(dum_int1 <-
+  salary_relev %>% 
+  lm(S ~ X + E * M, data = .))
 ```
 
 \begin{equation}
@@ -2161,6 +2159,149 @@ salary %>%
   (\#eq:dummysep2)
 \end{equation}
 
+To visualize the model, i.e. get prediction for each grid, we might use `modelr` library.
+
+```{r}
+library(modelr)
+```
+
+`modelr::data_grid()` expands predictor grids for prediction. `modelr::add_predictions()` add predictions for a given model to a data frame. We can provide multiple models with `modelr::spread_predictions()` and `modelr::gather_predictions()` each as `tidyr::spread()` and `tidyr::gather()`.
+
+```{r saldfit2, fig.cap="Interaction between qualitative variables"}
+salary_relev %>% 
+  data_grid(X, E, M) %>% 
+  add_predictions(dum_int1) %>% 
+  ggplot() +
+  geom_line(aes(x = X, y = pred, colour = E, linetype = M)) +
+  geom_point(
+    data = salary_relev, 
+    aes(x = X, y = S, colour = E, shape = M), 
+    alpha = .7, 
+    show.legend = FALSE
+  ) +
+  labs(
+    x = "Experience (year)",
+    y = "Salary"
+  ) +
+  scale_colour_discrete(
+    name = "Education",
+    label = c("High School", "Bachelor", "Advanced")
+  ) +
+  scale_linetype_discrete(
+    name = "Management",
+    label = c("None", "Management")
+  )
+```
+
+Here the increment for experience is also same for each level.
+
+### General models with interaction
+
+In the previous section \@ref(moddummy1) and \@ref(moddummy2), there have been some assumptions in the model. In Model \@ref(eq:dummymod), *additive assumption* is given. Effects of each predictors do note depend on the others. It means that in the separate model setting \@ref(modsep) we give conditions
+
+$$
+\begin{cases}
+  \beta_{11} = \beta_{12} = \cdots = \beta_{16} \equiv \beta_1 \\
+  \beta_{01} - \beta_{04} = \beta_{02} - \beta_{05} = \beta_{03} - \beta_{06} \equiv \delta
+\end{cases}
+$$
+
+Next model \@ref(eq:dummymod2) quite weakens this assumption, i.e. remove the second condition for $\delta$ by adding an interaction term between qualitative predictors. Instead, it still assumes that *every combination of levels always has same slope* $\beta_1$. Now we want more general one without the first assumption. Add interaction between $x_i$ and other dummy variables.
+
+\begin{equation}
+  \begin{split}
+    Y_i = \beta_0 & + \beta_1 x_i + \gamma_1 E_{i1} + \gamma_2 E_{i2} + \delta MGT_i \\
+    & + {\color{blue}{\alpha_1 (E_{i1} MGT_i)}} + {\color{blue}{\alpha_2 (E_{i2} MGT_i)}} \\
+    & + {\color{red}{\eta_1(x_i E_{i1})}} + {\color{red}{\eta_2(x_i E_{i2})}} + {\color{red}{\eta_3(x_i MGT_i)}} \\
+    & + {\color{red}{\eta_4(x_i MGT_i E_{i1})}} + {\color{red}{\eta_5(x_i MGT_i E_{i2})}} \\
+    & + \epsilon_i
+  \end{split}
+  (\#eq:dummymod3)
+\end{equation}
+
+```{r}
+(dum_int2 <-
+  salary_relev %>% 
+  lm(S ~ X * E * M, data = .))
+```
+
+In the same process, we have separate model. Since we have added terms with $x_i$, the only change from Equation \@ref(eq:dummysep2) is slope part.
+
+\begin{equation}
+  \begin{alignedat}{5}
+    & Y_i = (\beta_0 + \gamma_1) && + (\beta_1 + {\color{red}{\eta_1}}) x_i && + \epsilon_i && \quad \text{HS-None} && \quad E_1 = 1, E_2 = 0, MGT = 0 \\
+    & Y_i = (\beta_0 + \gamma_1 + \delta + {\color{blue}{\alpha_1}}) && + (\beta_1 + {\color{red}{\eta_1}} + {\color{red}{\eta_3}} + {\color{red}{\eta_4}}) x_i && + \epsilon_i && \quad \text{HS-MGT} && \quad E_1 = 1, E_2 = 0, MGT = 1 \\
+    & Y_i = (\beta_0 + \gamma_2) && + (\beta_1 + {\color{red}{\eta_2}}) x_i && + \epsilon_i && \quad \text{BS-None} && \quad E_1 = 0, E_2 = 1, MGT = 0 \\
+    & Y_i = (\beta_0 + \gamma_2 + \delta + {\color{blue}{\alpha_2}}) && + (\beta_1 + {\color{red}{\eta_2}} + {\color{red}{\eta_3}} + {\color{red}{\eta_5}}) x_i && + \epsilon_i && \quad \text{BS-MGT} && \quad E_1 = 0, E_2 = 1, MGT = 1 \\
+    & Y_i = \beta_0 && + \beta_1 x_i && + \epsilon_i && \quad \text{ADV-None} && \quad E_1 = 0, E_2 = 0, MGT = 0 \\
+    & Y_i = (\beta_0 + \delta) && + (\beta_1 + {\color{red}{\eta_3}}) x_i && + \epsilon_i && \quad \text{ADV-MGT} && \quad E_1 = 0, E_2 = 0, MGT = 1
+  \end{alignedat}
+  (\#eq:dummysep3)
+\end{equation}
+
+```{r saldfit3, fig.cap="Full interaction model"}
+salary_relev %>% 
+  data_grid(X, E, M) %>% 
+  add_predictions(dum_int2) %>% 
+  ggplot() +
+  geom_line(aes(x = X, y = pred, colour = E, linetype = M)) +
+  geom_point(
+    data = salary_relev, 
+    aes(x = X, y = S, colour = E, shape = M), 
+    alpha = .7, 
+    show.legend = FALSE
+  ) +
+  labs(
+    x = "Experience (year)",
+    y = "Salary"
+  ) +
+  scale_colour_discrete(
+    name = "Education",
+    label = c("High School", "Bachelor", "Advanced")
+  ) +
+  scale_linetype_discrete(
+    name = "Management",
+    label = c("None", "Management")
+  )
+```
+
+In fact, this example might not appropriate, so we consider another example. This is also from @Chatterjee:2015aa.
+
+```{r}
+employ <- haven::read_sav("data/p134.sav")
+(employ <-
+  employ %>% 
+  mutate(RACE = factor(RACE)))
+```
+
+The set is collected from a special employment program. 20 applicants were tested for 6 weeks.
+
+- `TEST`: test scores
+- `RACE`: race
+- `JPERF`: index of job performance
+
+```{r}
+(job_fit <- lm(JPERF ~ TEST * RACE, data = employ))
+```
+
+
+```{r}
+employ %>% 
+  data_grid(TEST, RACE) %>% 
+  add_predictions(job_fit) %>% 
+  ggplot() +
+  geom_line(aes(x = TEST, y = pred, colour = RACE)) +
+  geom_point(
+    data = employ, 
+    aes(x = TEST, y = JPERF, colour = RACE), 
+    alpha = .7, 
+    show.legend = FALSE
+  ) +
+  labs(
+    x = "Test",
+    y = "Job performance"
+  )
+```
 
 
 
