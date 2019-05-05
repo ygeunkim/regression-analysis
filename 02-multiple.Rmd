@@ -2303,7 +2303,7 @@ Recall that we can build two models, *means model* or *effects model*.
 In experimental design literature, effects model is more frequently used. Decomposing each group mean with overall mean and *treatment effect*, it gives more intuitive decription [@Montgomery:2012aa]. So we look at this effects model first.
 
 \begin{equation}
-  Y_{ij} = \mu + \tau_i + \epsilon_{ij}
+  Y_{ij} = \mu + \tau_j + \epsilon_{ij}
   (\#eq:effmod)
 \end{equation}
 
@@ -2315,16 +2315,8 @@ $$
   1 \le j \le k & j \text{: treatment} \\
   Y_{ij} = i \text{-th observation from the}\: j \text{-th treatment} \\
   \mu = \text{overall mean} \\
-  \tau_j = j \text{-th treatment effect} := \mu_i - \mu
-\end{cases}
-$$
-
-and
-
-$$
-\begin{cases}
-  \epsilon_{ij} \iid N(0, \sigma^2) \\
-  \sum \tau_i = 0
+  \tau_j = j \text{-th treatment effect} := \mu_j - \mu \\
+  \epsilon_{ij} \iid N(0, \sigma^2)
 \end{cases}
 $$
 
@@ -2355,10 +2347,11 @@ $$
   1 & 1 & 0 & \cdots & 0 \\
   1 & 1 & 0 & \cdots & 0 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
-  1 & 1 & 0 & \cdots & 0 \\
+  1 & 1 & 0 & \cdots & 0 \\ \hline
   1 & 0 & 1 & \cdots & 0 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
-  1 & 0 & 1 & \cdots & 0 \\
+  1 & 0 & 1 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \vdots & \vdots & \vdots \\ \hline
   1 & 0 & 0 & \cdots & 1 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
   1 & 0 & 0 & \cdots & 1
@@ -2395,6 +2388,46 @@ This is a bit different with dummy coding \@ref(moddummy1) producing $k - 1$ var
 
 $$\mathbf{1} = \mathbf{x}_1 + \cdots + \mathbf{x}_k$$
 
-i.e. linearly independent. This design matrix $X$ is of rank deficient. Hence, the normal equation $(X^TX)^{-1}\hb = X^T \mathbf{Y}$ does *not have a unique solution*. This kind of coding is not appropriate.
+i.e. linearly independent. This design matrix $X$ is of rank deficient. Hence, the normal equation $(X^TX)^{-1}\hb = X^T \mathbf{Y}$ does *not have a unique solution*. This kind of coding is not appropriate. @Rawlings:2006aa provides four ways *reparameterizing* to remove singularities.
+
+### Means model
+
+Consider means model.
+
+\begin{equation}
+  Y_{ij} = \mu_j + \epsilon_{ij}
+  (\#eq:meanmod)
+\end{equation}
+
+where
+
+$$
+\begin{cases}
+  1 \le i \le n_j \\
+  1 \le j \le k & j \text{: treatment} \\
+  Y_{ij} = i \text{-th observation from the}\: j \text{-th treatment} \\
+  \mu_j = \text{mean of}\: j \text{-th treatment} \\
+  \epsilon_{ij} \iid N(0, \sigma^2)
+\end{cases}
+$$
+
+With this model \@ref(eq:meanmod), we test if every $\mu_j$ is identical.
+
+$$H_0: \mu_1 = \cdots = \mu_k \quad \text{vs} \quad H_1: \text{not}\: H_0$$
+
+Write a parameter vector by
+
+$$\B \equiv (\mu_1, \ldots, \mu_k)^T \in \R^k$$
+
+One proceeds in a similar way for this $\B$,
+
+
+
+
+
+
+
+
+
 
 
