@@ -2300,11 +2300,101 @@ Recall that we can build two models, *means model* or *effects model*.
 
 ### Effects model
 
+In experimental design literature, effects model is more frequently used. Decomposing each group mean with overall mean and *treatment effect*, it gives more intuitive decription [@Montgomery:2012aa]. So we look at this effects model first.
 
+\begin{equation}
+  Y_{ij} = \mu + \tau_i + \epsilon_{ij}
+  (\#eq:effmod)
+\end{equation}
 
+where
 
+$$
+\begin{cases}
+  1 \le i \le n_j \\
+  1 \le j \le k & j \text{: treatment} \\
+  Y_{ij} = i \text{-th observation from the}\: j \text{-th treatment} \\
+  \mu = \text{overall mean} \\
+  \tau_j = j \text{-th treatment effect} := \mu_i - \mu
+\end{cases}
+$$
 
+and
 
+$$
+\begin{cases}
+  \epsilon_{ij} \iid N(0, \sigma^2) \\
+  \sum \tau_i = 0
+\end{cases}
+$$
 
+Here we test whether there is *no treatment effect*, i.e.
+
+$$H_0: \tau_1 = \cdots = \tau_k = 0 \quad \text{vs} \quad H_1: \text{not}\: H_0$$
+
+Note that we have $k + 1$ parameters in the model \@ref(eq:effmod). Write the parameter vector as
+
+$$\B \equiv (\mu, \tau_1, \ldots, \tau_k)^T$$
+
+Then we can build the regression model as
+
+$$
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
+  Y_{11} \\
+  Y_{21} \\
+  \vdots \\
+  Y_{n_1, 1} \\ \hline
+  Y_{12} \\
+  \vdots \\
+  Y_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  Y_{1k} \\
+  \vdots \\
+  Y_{n_k, k}
+\end{bmatrix}} = \underset{\huge X}{\begin{bmatrix}
+  1 & 1 & 0 & \cdots & 0 \\
+  1 & 1 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 1 & 0 & \cdots & 0 \\
+  1 & 0 & 1 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 1 & \cdots & 0 \\
+  1 & 0 & 0 & \cdots & 1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 1
+\end{bmatrix}} \underset{\huge \B}{\begin{bmatrix}
+  \mu \\
+  \tau_1 \\
+  \vdots \\
+  \tau_k
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
+  \epsilon_{11} \\
+  \epsilon_{21} \\
+  \vdots \\
+  \epsilon_{n_1, 1} \\ \hline
+  \epsilon_{12} \\
+  \vdots \\
+  \epsilon_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  \epsilon_{1k} \\
+  \vdots \\
+  \epsilon_{n_k,k}
+\end{bmatrix}}
+$$
+
+Look at the model matrix $X = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_k \end{bmatrix} \in \R^{N \times (k + 1)}$, where $N = \sum n_j$. The qualitative variable with level $k$ has made $k$ dummy variables
+
+$$
+E_j = \begin{cases}
+  1 & \text{from the treatment} \\
+  0 & \text{otherwise}
+\end{cases}
+$$
+
+This is a bit different with dummy coding \@ref(moddummy1) producing $k - 1$ variables. Note that, however,
+
+$$\mathbf{1} = \mathbf{x}_1 + \cdots + \mathbf{x}_k$$
+
+i.e. linearly independent. This design matrix $X$ is of rank deficient. Hence, the normal equation $(X^TX)^{-1}\hb = X^T \mathbf{Y}$ does *not have a unique solution*. This kind of coding is not appropriate.
 
 
