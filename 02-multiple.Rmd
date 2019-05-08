@@ -2277,7 +2277,8 @@ Denote that the changes of slopes are not that significant.
 medicine <-
   tibble(trt = gl(3, k = 30, labels = 1:3)) %>% 
   group_by(trt) %>% 
-  mutate(y = rnorm(n = 30, mean = as.numeric(trt)))
+  mutate(y = rnorm(n = 30, mean = as.numeric(trt))) %>% 
+  ungroup()
 ```
 
 We have generated three grouped data of which group is three.
@@ -2292,15 +2293,26 @@ medicine %>%
   summarise(m = mean(y), s = sd(y), N = n())
 ```
 
+```{r}
+medicine %>% 
+  ggplot(aes(x = trt, y = y, fill = trt)) +
+  geom_boxplot(show.legend = FALSE)
+```
+
 Each group follows $N(\mu_1 = 1, \sigma^2 = 1)$, $N(\mu_2 = 2, \sigma^2 = 1)$, and $N(\mu_3 = 3, \sigma^2 = 1)$. Our goal is comparison between treatment, i.e. mean comparison.
 
 $$H_0: \mu_1 = \mu_2 = \mu_3 \quad \text{vs} \quad H_1: \text{not}\: H_0$$
+
+```{r}
+aov(y ~ trt, data = medicine) %>% 
+  summary()
+```
 
 Recall that we can build two models, *means model* or *effects model*.
 
 ### Effects model
 
-In experimental design literature, effects model is more frequently used. Decomposing each group mean with overall mean and *treatment effect*, it gives more intuitive decription [@Montgomery:2012aa]. So we look at this effects model first.
+In experimental design literature, effects model is more frequently used. Decomposing each group mean with overall mean and *treatment effect*, it gives more intuitive decription [@Montgomery:2012aa]. So we look at this one first.
 
 \begin{equation}
   Y_{ij} = \mu + \tau_j + \epsilon_{ij}
@@ -2323,6 +2335,8 @@ $$
 Here we test whether there is *no treatment effect*, i.e.
 
 $$H_0: \tau_1 = \cdots = \tau_k = 0 \quad \text{vs} \quad H_1: \text{not}\: H_0$$
+
+which is equivalent to the above $\mu_1 = \cdots = \mu_k$ by construction.
 
 Note that we have $k + 1$ parameters in the model \@ref(eq:effmod). Write the parameter vector as
 
@@ -2375,16 +2389,16 @@ $$
 \end{bmatrix}}
 $$
 
-Look at the model matrix $X = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_k \end{bmatrix} \in \R^{N \times (k + 1)}$, where $N = \sum n_j$. The qualitative variable with level $k$ has made $k$ dummy variables
+Look at the model matrix $X = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_k \end{bmatrix} \in \R^{N \times (k + 1)}$, where $N = \sum n_j$. From the second column to the last, $\mathbf{x}_j = (x_{1j}, \ldots, x_{n_j, j})$ has value of
 
 $$
-E_j = \begin{cases}
-  1 & \text{from the treatment} \\
+x_{ij} = \begin{cases}
+  1 & j\text{-th treatment} \\
   0 & \text{otherwise}
 \end{cases}
 $$
 
-This is a bit different with dummy coding \@ref(moddummy1) producing $k - 1$ variables. Note that, however,
+However,
 
 $$\mathbf{1} = \mathbf{x}_1 + \cdots + \mathbf{x}_k$$
 
@@ -2392,7 +2406,7 @@ i.e. linearly independent. This design matrix $X$ is of rank deficient. Hence, t
 
 ### Means model
 
-Consider means model.
+Next, consider means model.
 
 \begin{equation}
   Y_{ij} = \mu_j + \epsilon_{ij}
@@ -2417,9 +2431,353 @@ $$H_0: \mu_1 = \cdots = \mu_k \quad \text{vs} \quad H_1: \text{not}\: H_0$$
 
 Write a parameter vector by
 
-$$\B \equiv (\mu_1, \ldots, \mu_k)^T \in \R^k$$
+$$\B^{\ast} \equiv (\mu_1, \ldots, \mu_k)^T \in \R^k$$
 
-One proceeds in a similar way for this $\B$,
+One proceeds in a similar way for this $\B^{\ast}$,
+
+$$
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
+  Y_{11} \\
+  Y_{21} \\
+  \vdots \\
+  Y_{n_1, 1} \\ \hline
+  Y_{12} \\
+  \vdots \\
+  Y_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  Y_{1k} \\
+  \vdots \\
+  Y_{n_k, k}
+\end{bmatrix}} = \underset{\huge X^{\ast}}{\begin{bmatrix}
+  1 & 0 & 0 & \cdots & 0 \\
+  1 & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 0 \\ \hline
+  0 & 1 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & 1 & 0 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \vdots & \vdots & \vdots \\ \hline
+  0 & 0 & 0 & \cdots & 1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & 0 & 0 & \cdots & 1
+\end{bmatrix}} \underset{\huge \B^{\ast}}{\begin{bmatrix}
+  \mu_1 \\
+  \mu_2 \\
+  \vdots \\
+  \mu_k
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
+  \epsilon_{11} \\
+  \epsilon_{21} \\
+  \vdots \\
+  \epsilon_{n_1, 1} \\ \hline
+  \epsilon_{12} \\
+  \vdots \\
+  \epsilon_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  \epsilon_{1k} \\
+  \vdots \\
+  \epsilon_{n_k,k}
+\end{bmatrix}}
+$$
+
+This results in design matrix
+
+$$
+X^{\ast} = \begin{bmatrix}
+  \mathbf{x}_1 \mid \mathbf{x}_2 \mid \cdots \mid \mathbf{x}_k
+\end{bmatrix} \in \R^{N \times k}
+$$
+
+where $N = \sum n_j$. Note that $\{ \mathbf{x}_1, \ldots, \mathbf{x}_k \}$ is orthogonal. Normalize each column matrix by
+
+$$\mathbf{u}_j = \frac{1}{\sqrt{n_j}} \mathbf{x}_j$$
+
+Let $Q = \begin{bmatrix} \mathbf{u}_1 \mid \cdots \mid \mathbf{u}_k \end{bmatrix}$ be orthogonal matrix and let
+
+$$R = diag(\sqrt{n_1}, \sqrt{n_2}, \ldots, \sqrt{n_k}) \in \R^{k \times k}$$
+
+Then
+
+$$X^{\ast} = QR$$
+
+Since
+
+$$X^{\ast T} X^{\ast} = R^TQ^TQR = R^TT$$
+
+Normal equation gives that
+
+$$\hb = R^{-1}Q^T\mathbf{Y}^T = (\overline{Y}_{1.}, \overline{Y}_{2.}, \ldots, \overline{Y}_{k.})^T$$
+
+where $\overline{Y}_{j.} = \sum\limits_{i = 1}^{n_j} Y_{ij}$, $j$-the treatment mean.
+
+<!-- ```{r} -->
+<!-- medicine %>%  -->
+<!--   mutate(mu = mean(y)) %>%  -->
+<!--   group_by(trt) %>%  -->
+<!--   summarise( -->
+<!--     ssr = sum( (mean(y) - mu)^2 ), -->
+<!--     sse = sum( (y - mean(y))^2 ) -->
+<!--   ) %>%  -->
+<!--   summarise_at(vars("ssr", "sse"), list(~sum)) -->
+<!-- ``` -->
+
+### Effect coding
+
+Go back to the effects model \@ref(eq:effmod). In fact, this model should be constrained by *identifiability condition* such as
+
+\begin{equation}
+  \forall j : \sum_{i = 1}^{n_j} \tau_j = 0
+  (\#eq:effsum)
+\end{equation}
+
+Then we have
+
+$$
+\tau_k = - (\tau_1 + \tau_2 + \cdots + \tau_{k - 1})
+$$
+
+Since $\tau_k$ is redundant, parameter vector is given by
+
+$$\B^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \R^k$$
+
+*Assume balanced setting*, i.e. $n_1 = n_2 = \cdots = n_k = n$.
+
+$$
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
+  Y_{11} \\
+  Y_{21} \\
+  \vdots \\
+  Y_{n1} \\ \hline
+  Y_{12} \\
+  \vdots \\
+  Y_{n2} \\ \hline
+  \vdots \\ \hline
+  Y_{1k} \\
+  \vdots \\
+  Y_{nk}
+\end{bmatrix}} = \underset{\huge X^{\ast}}{\begin{bmatrix}
+  1 & 1 & 0 & \cdots & 0 \\
+  1 & 1 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 1 & 0 & \cdots & 0 \\ \hline
+  1 & 0 & 1 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 1 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \vdots & \vdots & \vdots \\ \hline
+  1 & 0 & 0 & \cdots & 1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 1 \\ \hline
+  1 & -1 & -1 & \cdots & -1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & -1 & -1 & \cdots & -1
+\end{bmatrix}} \underset{\huge \B^{\ast}}{\begin{bmatrix}
+  \mu \\
+  \tau_1 \\
+  \vdots \\
+  \tau_{k - 1}
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
+  \epsilon_{11} \\
+  \epsilon_{21} \\
+  \vdots \\
+  \epsilon_{n1} \\ \hline
+  \epsilon_{12} \\
+  \vdots \\
+  \epsilon_{n2} \\ \hline
+  \vdots \\ \hline
+  \epsilon_{1k} \\
+  \vdots \\
+  \epsilon_{nk}
+\end{bmatrix}}
+$$
+
+with $X^{\ast} \in \R^{N \times k}$. This is called *effect coding*.
+
+Let $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix}$.
+
+Note that
+
+$$\mathbf{1} \perp \mathbb{X}_A$$
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    X^{\ast} \hb^{\ast} & = \hat\mu \mathbf{1} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
+    & = \mathbf{1} \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \mathbb{X}_A \Pi(\mathbf{Y} \mid R(\mathbb{X}_A)) \\
+    & = \overline{Y}_{..}\mathbf{1} + \mathbb{X}_A (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$\hat\mu = \overline{Y}_{..}$$
+
+and
+
+$$\boldsymbol\tau = (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y}$$
+
+
+```{r}
+C(medicine$trt, contr = contr.sum)
+```
+
+We can specify the coding by transformation or `contrasts` argument in `lm()` function directly. `contrasts = list(variablename = "contr")` makes it possible.
+
+```{r}
+(med_fit1 <- lm(y ~ trt, data = medicine, contrasts = list(trt = "contr.sum")))
+```
+
+ANOVA for this regression model produces the same result.
+
+```{r}
+anova(med_fit1)
+```
+
+Denote that `trt` is for `trt1 = trt2 = 0`.
+
+### Dummy coding
+
+In effects model, we can set baseline to be zero. For instance, the last level. This is what we have done in section \@ref(moddummy1).
+
+$$\tau_k = 0$$
+
+Then for the baseline level,
+
+$$Y_{ik} = \mu + \epsilon_{ik}$$
+
+Since the baseline $\tau_k$ is redundant, we have reduced parameter vector
+
+$$\B^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \R^k$$
+
+This implies that
+
+$$
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
+  Y_{11} \\
+  Y_{21} \\
+  \vdots \\
+  Y_{n_1, 1} \\ \hline
+  Y_{12} \\
+  \vdots \\
+  Y_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  Y_{1, k - 1} \\
+  \vdots \\
+  Y_{n_{k - 1}, k - 1} \\ \hline
+  Y_{1k} \\
+  \vdots \\
+  Y_{n_k, k}
+\end{bmatrix}} = \underset{\huge X^{\ast}}{\begin{bmatrix}
+  1 & 1 & 0 & \cdots & 0 \\
+  1 & 1 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 1 & 0 & \cdots & 0 \\ \hline
+  1 & 0 & 1 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 1 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \vdots & \vdots & \vdots \\ \hline
+  1 & 0 & 0 & \cdots & 1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 1 \\ \hline
+  1 & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 0
+\end{bmatrix}} \underset{\huge \B^{\ast}}{\begin{bmatrix}
+  \mu \\
+  \tau_1 \\
+  \vdots \\
+  \tau_{k - 1}
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
+  \epsilon_{11} \\
+  \epsilon_{21} \\
+  \vdots \\
+  \epsilon_{n_1, 1} \\ \hline
+  \epsilon_{12} \\
+  \vdots \\
+  \epsilon_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  \epsilon_{1, k - 1} \\
+  \vdots \\
+  \epsilon_{n_{k - 1}, k - 1} \\ \hline
+  \epsilon_{1k} \\
+  \vdots \\
+  \epsilon_{n_k,k}
+\end{bmatrix}}
+$$
+
+where $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \R^{N \times k}$.
+
+Denote that every column but the first one is orthogonal. Applying *G-S process* to this $\mathbf{1}$,
+
+$$\mathbf{v} = \mathbf{1} - (1, 1, \ldots, \underset{n_k}{\underline{0, \ldots, 0}})^T = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T$$
+
+Let $X^{\ast} = \begin{bmatrix} \mathbf{v} \mid \mathbb{X}_A \end{bmatrix}$. Then
+
+$$
+\begin{equation*}
+  \begin{split}
+    X^{\ast} \hb^{\ast} & = \hat\mu \mathbf{v} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
+    & = \mathbf{v} \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \mathbb{X}_A \Pi(\mathbf{Y} \mid R(\mathbb{X}_A)) \\
+    & = \mathbf{v}(\mathbf{v}^T \mathbf{v})^{-1} \mathbf{v}^T \mathbf{Y} + \mathbb{X}_A (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+$$
+
+Thus,
+
+$$
+\begin{equation*}
+  \begin{split}
+    \hat\mu & = (\mathbf{v}^T \mathbf{v})^{-1} \mathbf{v}^T \mathbf{Y} \\
+    & = \frac{1}{n_k}\mathbf{v}^T\mathbf{Y} \\
+    & = \overline{Y}_{k.} = \text{baseline group mean}
+  \end{split}
+\end{equation*}
+$$
+
+Since
+
+$$
+\mathbb{X}_A^T \mathbb{X}_A = \left[\begin{array}{cccc|ccc}
+  n_1 & 0 & \cdots & 0 & 0 & \cdots & 0 \\
+  0 & n_2 & \cdots & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \cdots & \vdots & 0 & \cdots & 0 \\
+  0 & 0 & \cdots & n_{k - 1} & 0 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \cdots & \vdots & 0 & \cdots & 0 \\
+  0 & \cdots & 0 & 0 & 0 & \cdots & 0
+\end{array}\right]
+$$
+
+
+$$
+\begin{equation*}
+  \begin{split}
+    \boldsymbol{\hat\tau} & = (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y} \\
+    & = diag\Big(\frac{1}{n_1}, \ldots, \frac{1}{n_{k - 1}}, \underset{N - k + 1}{\underline{0, \ldots, 0}} \Big) \mathbb{X}_A^T \mathbf{Y} \\
+    & = 
+  \end{split}
+\end{equation*}
+$$
+
+
+
+
+
+```{r}
+C(medicine$trt, contr = contr.treatment, base = nlevels(medicine$trt))
+```
+
+
+```{r}
+(med_fit2 <- 
+  medicine %>% 
+  mutate(trt = C(medicine$trt, contr = contr.treatment, base = nlevels(medicine$trt))) %>% 
+  lm(y ~ trt, data = .))
+```
+
+```{r}
+anova(med_fit2)
+```
 
 
 

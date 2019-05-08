@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{05 May, 2019}
+    \date{06 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -5474,7 +5474,6 @@ We have generated three grouped data of which group is three.
 \begin{Highlighting}[]
 \NormalTok{medicine}
 \CommentTok{#> # A tibble: 90 x 2}
-\CommentTok{#> # Groups:   trt [3]}
 \CommentTok{#>   trt       y}
 \CommentTok{#>   <fct> <dbl>}
 \CommentTok{#> 1 1     1.87 }
@@ -5504,6 +5503,18 @@ We have generated three grouped data of which group is three.
 Each group follows \(N(\mu_1 = 1, \sigma^2 = 1)\), \(N(\mu_2 = 2, \sigma^2 = 1)\), and \(N(\mu_3 = 3, \sigma^2 = 1)\). Our goal is comparison between treatment, i.e.~mean comparison.
 
 \[H_0: \mu_1 = \mu_2 = \mu_3 \quad \text{vs} \quad H_1: \text{not}\: H_0\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{aov}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{trt, }\DataTypeTok{data =}\NormalTok{ medicine) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summary}\NormalTok{()}
+\CommentTok{#>             Df Sum Sq Mean Sq F value  Pr(>F)    }
+\CommentTok{#> trt          2   69.5    34.7    36.3 3.5e-12 ***}
+\CommentTok{#> Residuals   87   83.3     1.0                    }
+\CommentTok{#> ---}
+\CommentTok{#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
+\end{Highlighting}
+\end{Shaded}
 
 Recall that we can build two models, \emph{means model} or \emph{effects model}.
 
@@ -5585,16 +5596,16 @@ Then we can build the regression model as
 \end{bmatrix}}
 \]
 
-Look at the model matrix \(X = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_k \end{bmatrix} \in \mathbb{R}^{N \times (k + 1)}\), where \(N = \sum n_j\). The qualitative variable with level \(k\) has made \(k\) dummy variables
+Look at the model matrix \(X = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_k \end{bmatrix} \in \mathbb{R}^{N \times (k + 1)}\), where \(N = \sum n_j\). From the second column to the last, \(\mathbf{x}_j = (x_{1j}, \ldots, x_{n_j, j})\) has value of
 
 \[
-E_j = \begin{cases}
-  1 & \text{from the treatment} \\
+x_{ij} = \begin{cases}
+  1 & j\text{-th treatment} \\
   0 & \text{otherwise}
 \end{cases}
 \]
 
-This is a bit different with dummy coding \ref{moddummy1} producing \(k - 1\) variables. Note that, however,
+However,
 
 \[\mathbf{1} = \mathbf{x}_1 + \cdots + \mathbf{x}_k\]
 
@@ -5628,9 +5639,322 @@ With this model \eqref{eq:meanmod}, we test if every \(\mu_j\) is identical.
 
 Write a parameter vector by
 
-\[\boldsymbol\beta\equiv (\mu_1, \ldots, \mu_k)^T \in \mathbb{R}^k\]
+\[\boldsymbol\beta^{\ast} \equiv (\mu_1, \ldots, \mu_k)^T \in \mathbb{R}^k\]
 
-One proceeds in a similar way for this \(\boldsymbol\beta\),
+One proceeds in a similar way for this \(\boldsymbol\beta^{\ast}\),
+
+\[
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
+  Y_{11} \\
+  Y_{21} \\
+  \vdots \\
+  Y_{n_1, 1} \\ \hline
+  Y_{12} \\
+  \vdots \\
+  Y_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  Y_{1k} \\
+  \vdots \\
+  Y_{n_k, k}
+\end{bmatrix}} = \underset{\huge X^{\ast}}{\begin{bmatrix}
+  1 & 0 & 0 & \cdots & 0 \\
+  1 & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 0 \\ \hline
+  0 & 1 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & 1 & 0 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \vdots & \vdots & \vdots \\ \hline
+  0 & 0 & 0 & \cdots & 1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & 0 & 0 & \cdots & 1
+\end{bmatrix}} \underset{\huge \boldsymbol\beta^{\ast}}{\begin{bmatrix}
+  \mu_1 \\
+  \mu_2 \\
+  \vdots \\
+  \mu_k
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
+  \epsilon_{11} \\
+  \epsilon_{21} \\
+  \vdots \\
+  \epsilon_{n_1, 1} \\ \hline
+  \epsilon_{12} \\
+  \vdots \\
+  \epsilon_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  \epsilon_{1k} \\
+  \vdots \\
+  \epsilon_{n_k,k}
+\end{bmatrix}}
+\]
+
+This results in design matrix
+
+\[
+X^{\ast} = \begin{bmatrix}
+  \mathbf{x}_1 \mid \mathbf{x}_2 \mid \cdots \mid \mathbf{x}_k
+\end{bmatrix} \in \mathbb{R}^{N \times k}
+\]
+
+where \(N = \sum n_j\). Note that \(\{ \mathbf{x}_1, \ldots, \mathbf{x}_k \}\) is orthogonal. Normalize each column matrix by
+
+\[\mathbf{u}_j = \frac{1}{\sqrt{n_j}} \mathbf{x}_j\]
+
+Let \(Q = \begin{bmatrix} \mathbf{u}_1 \mid \cdots \mid \mathbf{u}_k \end{bmatrix}\) be orthogonal matrix and let
+
+\[R = diag(\sqrt{n_1}, \sqrt{n_2}, \ldots, \sqrt{n_k}) \in \mathbb{R}^{k \times k}\]
+
+Then
+
+\[X^{\ast} = QR\]
+
+Since
+
+\[X^{\ast T} X^{\ast} = R^TQ^TQR = R^TT\]
+
+Normal equation gives that
+
+\[\boldsymbol{\hat\beta}= R^{-1}Q^T\mathbf{Y}^T = (\overline{Y}_{1.}, \overline{Y}_{2.}, \ldots, \overline{Y}_{k.})^T\]
+
+where \(\overline{Y}_{1.} = \sum\limits_{i = 1}^{n_j} Y_{ij}\).
+
+\hypertarget{effect-coding}{%
+\subsection{Effect coding}\label{effect-coding}}
+
+Go back to the effects model \eqref{eq:effmod}. In fact, this model should be constrained by \emph{identifiability condition} such as
+
+\begin{equation}
+  \forall j : \sum_{i = 1}^{n_j} \tau_j = 0
+  \label{eq:effsum}
+\end{equation}
+
+Then we have
+
+\[
+\tau_k = - (\tau_1 + \tau_2 + \cdots + \tau_{k - 1})
+\]
+
+Since \(\tau_k\) is redundant, parameter vector is given by
+
+\[\boldsymbol\beta^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \mathbb{R}^k\]
+
+\emph{Assume balanced setting}, i.e.~\(n_1 = n_2 = \cdots = n_k = n\).
+
+\[
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
+  Y_{11} \\
+  Y_{21} \\
+  \vdots \\
+  Y_{n1} \\ \hline
+  Y_{12} \\
+  \vdots \\
+  Y_{n2} \\ \hline
+  \vdots \\ \hline
+  Y_{1k} \\
+  \vdots \\
+  Y_{nk}
+\end{bmatrix}} = \underset{\huge X^{\ast}}{\begin{bmatrix}
+  1 & 1 & 0 & \cdots & 0 \\
+  1 & 1 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 1 & 0 & \cdots & 0 \\ \hline
+  1 & 0 & 1 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 1 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \vdots & \vdots & \vdots \\ \hline
+  1 & 0 & 0 & \cdots & 1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 1 \\ \hline
+  1 & -1 & -1 & \cdots & -1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & -1 & -1 & \cdots & -1
+\end{bmatrix}} \underset{\huge \boldsymbol\beta^{\ast}}{\begin{bmatrix}
+  \mu \\
+  \tau_1 \\
+  \vdots \\
+  \tau_{k - 1}
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
+  \epsilon_{11} \\
+  \epsilon_{21} \\
+  \vdots \\
+  \epsilon_{n1} \\ \hline
+  \epsilon_{12} \\
+  \vdots \\
+  \epsilon_{n2} \\ \hline
+  \vdots \\ \hline
+  \epsilon_{1k} \\
+  \vdots \\
+  \epsilon_{nk}
+\end{bmatrix}}
+\]
+
+with \(X^{\ast} \in \mathbb{R}^{N \times k}\). This is called \emph{effect coding}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{C}\NormalTok{(medicine}\OperatorTok{$}\NormalTok{trt, }\DataTypeTok{contr =}\NormalTok{ contr.sum)}
+\CommentTok{#>  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2}
+\CommentTok{#> [36] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3}
+\CommentTok{#> [71] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3}
+\CommentTok{#> attr(,"contrasts")}
+\CommentTok{#>   [,1] [,2]}
+\CommentTok{#> 1    1    0}
+\CommentTok{#> 2    0    1}
+\CommentTok{#> 3   -1   -1}
+\CommentTok{#> Levels: 1 2 3}
+\end{Highlighting}
+\end{Shaded}
+
+We can specify the coding by transformation or \texttt{contrasts} argument in \texttt{lm()} function directly. \texttt{contrasts\ =\ list(variablename\ =\ "contr")} makes it possible.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(med_fit1 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{trt, }\DataTypeTok{data =}\NormalTok{ medicine, }\DataTypeTok{contrasts =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{trt =} \StringTok{"contr.sum"}\NormalTok{)))}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = y ~ trt, data = medicine, contrasts = list(trt = "contr.sum"))}
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#> (Intercept)         trt1         trt2  }
+\CommentTok{#>       2.024       -1.142        0.147}
+\end{Highlighting}
+\end{Shaded}
+
+ANOVA for this regression model produces the same result.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{anova}\NormalTok{(med_fit1)}
+\CommentTok{#> Analysis of Variance Table}
+\CommentTok{#> }
+\CommentTok{#> Response: y}
+\CommentTok{#>           Df Sum Sq Mean Sq F value  Pr(>F)    }
+\CommentTok{#> trt        2   69.5    34.7    36.3 3.5e-12 ***}
+\CommentTok{#> Residuals 87   83.3     1.0                    }
+\CommentTok{#> ---}
+\CommentTok{#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
+\end{Highlighting}
+\end{Shaded}
+
+Denote that \texttt{trt} is for \texttt{trt1\ =\ trt2\ =\ 0}.
+
+\hypertarget{dummy-coding}{%
+\subsection{Dummy coding}\label{dummy-coding}}
+
+In effects model, we can set baseline to be zero. For instance, the last level. This is what we have done in section \ref{moddummy1}.
+
+\[\tau_k = 0\]
+
+Then for the baseline level,
+
+\[Y_{ik} = \mu + \epsilon_{ik}\]
+
+Since the baseline \(\tau_k\) is redundant, we have reduced parameter vector
+
+\[\boldsymbol\beta^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \mathbb{R}^k\]
+
+This implies that
+
+\[
+\underset{\huge \mathbf{Y}}{\begin{bmatrix}
+  Y_{11} \\
+  Y_{21} \\
+  \vdots \\
+  Y_{n_1, 1} \\ \hline
+  Y_{12} \\
+  \vdots \\
+  Y_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  Y_{1, k - 1} \\
+  \vdots \\
+  Y_{n_{k - 1}, k - 1} \\ \hline
+  Y_{1k} \\
+  \vdots \\
+  Y_{n_k, k}
+\end{bmatrix}} = \underset{\huge X^{\ast}}{\begin{bmatrix}
+  1 & 1 & 0 & \cdots & 0 \\
+  1 & 1 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 1 & 0 & \cdots & 0 \\ \hline
+  1 & 0 & 1 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 1 & \cdots & 0 \\ \hline
+  \vdots & \vdots & \vdots & \vdots & \vdots \\ \hline
+  1 & 0 & 0 & \cdots & 1 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 1 \\ \hline
+  1 & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  1 & 0 & 0 & \cdots & 0
+\end{bmatrix}} \underset{\huge \boldsymbol\beta}{\begin{bmatrix}
+  \mu \\
+  \tau_1 \\
+  \vdots \\
+  \tau_{k - 1}
+\end{bmatrix}} + \underset{\huge \E}{\begin{bmatrix}
+  \epsilon_{11} \\
+  \epsilon_{21} \\
+  \vdots \\
+  \epsilon_{n_1, 1} \\ \hline
+  \epsilon_{12} \\
+  \vdots \\
+  \epsilon_{n_2, 2} \\ \hline
+  \vdots \\ \hline
+  \epsilon_{1, k - 1} \\
+  \vdots \\
+  \epsilon_{n_{k - 1}, k - 1} \\ \hline
+  \epsilon_{1k} \\
+  \vdots \\
+  \epsilon_{n_k,k}
+\end{bmatrix}}
+\]
+
+where \(X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \mathbb{R}^{N \times k}\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{C}\NormalTok{(medicine}\OperatorTok{$}\NormalTok{trt, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \KeywordTok{nlevels}\NormalTok{(medicine}\OperatorTok{$}\NormalTok{trt))}
+\CommentTok{#>  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2}
+\CommentTok{#> [36] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3}
+\CommentTok{#> [71] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3}
+\CommentTok{#> attr(,"contrasts")}
+\CommentTok{#>   1 2}
+\CommentTok{#> 1 1 0}
+\CommentTok{#> 2 0 1}
+\CommentTok{#> 3 0 0}
+\CommentTok{#> Levels: 1 2 3}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(med_fit2 <-}\StringTok{ }
+\StringTok{  }\NormalTok{medicine }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{trt =} \KeywordTok{C}\NormalTok{(medicine}\OperatorTok{$}\NormalTok{trt, }\DataTypeTok{contr =}\NormalTok{ contr.treatment, }\DataTypeTok{base =} \KeywordTok{nlevels}\NormalTok{(medicine}\OperatorTok{$}\NormalTok{trt))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{trt, }\DataTypeTok{data =}\NormalTok{ .))}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = y ~ trt, data = .)}
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#> (Intercept)         trt1         trt2  }
+\CommentTok{#>       3.018       -2.137       -0.847}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{anova}\NormalTok{(med_fit2)}
+\CommentTok{#> Analysis of Variance Table}
+\CommentTok{#> }
+\CommentTok{#> Response: y}
+\CommentTok{#>           Df Sum Sq Mean Sq F value  Pr(>F)    }
+\CommentTok{#> trt        2   69.5    34.7    36.3 3.5e-12 ***}
+\CommentTok{#> Residuals 87   83.3     1.0                    }
+\CommentTok{#> ---}
+\CommentTok{#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
+\end{Highlighting}
+\end{Shaded}
 
 \bibliography{book.bib,packages.bib}
 
