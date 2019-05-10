@@ -16,6 +16,8 @@ knitr::knit_hooks$set(document = function(x) {
 
 # tidyverse -----------------------------------
 library(tidyverse)
+# modeling functions with tibble --------------
+library(modelr)
 # tools for r markdown ------------------------
 # devtools::install_github("ygeunkim/rmdtool")
 library(rmdtool)

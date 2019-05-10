@@ -1,0 +1,198 @@
+# Model Adequacy and Regression Diagnostics
+
+$$Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}, \quad \epsilon_i \iid N(0, \sigma^2)$$
+
+From this regression model, we conduct analysis such as
+
+- estimate $\hb$ and $\hat\sigma^2$
+- inference
+- predict $\hat{Y}$
+- ANOVA
+
+However, all these results make sense only when the model satisfies its assumption. @Chatterjee:2015aa categorizes the assumption into four: form of the model, error term, predictors, and observations.
+
+
+## The Standard Regression Assumptions
+
+```{r, include=FALSE}
+delv <- MPV::p2.9 %>% tbl_df()
+delv_fit <- lm(y ~ x, data = delv)
+```
+
+### Linearity assumption {#linassumption}
+
+First of all, the relation between response $Y$ and predictors $X_1, \ldots, X_p$ is assumed to be linear.
+
+$$E(Y \mid \mathbf{X} = \mathbf{x}) = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip}$$
+
+```{r linassume, fig.cap="Linearity assumption"}
+delv %>% 
+  add_predictions(delv_fit) %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_linerange(aes(ymin = y, ymax = pred), col = gg_hcl(1)) +
+  geom_smooth(method = "lm") +
+  geom_point() +
+  labs(
+    x = "Number of Cases",
+    y = "Delivery Time"
+  )
+```
+
+### Errors {#errassumption}
+
+Error term $\E$ is assumed as
+
+$$\epsilon_i \iid N(0, \sigma^2)$$
+
+This involves the following assumptions.
+
+1. **Mean-zero assumption**: $\epsilon_i$ has zero mean.
+2. **Homoskedasticity** (or homogeneity): $\epsilon_i$ has constant variance. If variance varies according to observation, we call it as *heteroskedasticity* (or heterogeneity).
+3. **Independence assumption**: $\epsilon_i$ is mutually independent.
+4. **Normality assumption**: $\epsilon_i$ follows Normal distribution.
+
+As mentioned many times, $\epsilon_j$ cannot be observed. Instead, we gain information from **residuals**.
+
+```{r rsdassume, fig.cap="Residual plot preview - Does this model satisfy the assumptions?"}
+delv %>% 
+  add_predictions(delv_fit) %>% 
+  add_residuals(delv_fit) %>% 
+  ggplot(aes(x = pred, y = resid)) +
+  geom_ref_line(h = 0) +
+  geom_linerange(aes(ymin = resid, ymax = 0), col = gg_hcl(1), linetype = "dotted") +
+  geom_point()
+```
+
+### Predictors {#xassumption}
+
+- **Non-random**: While $Y$ is random variable, $X_1, \ldots, X_p$ are not. They are assumed fixed or conditioned, i.e. $E(Y \mid \mathbf{X} = \mathbf{x})$.
+- **measured without error**: We assume here that $x_{i1}, \ldots, x_{ip}$ are measured without error, i.e. there is *no measurement error*. If there is, the measurement error will affect every residual variance, regression coefficient, et cetera. Let $w_i$ be the measurement error of $i$-th observation. Then what we observe is $Z_i = x_i + w_i$, not $x_i$. In turn, we estimate regression coefficient and the others using $(Z_i, Y_i)$, i.e. relationship between $Z_i$ and $Y_i$. *Residual variance will increase by construction*. Additionaly, correlation coefficients will be reduced.
+    - We have assumed that there is no measurement error, but we already know that *it is hardly not true*.
+    - So correction for the errors can be considered. But it requires the ratio between $Var(w_i)$ and $Var(\epsilon_i)$, which we seldomly know.
+    - As a result, we just sacrifice some accuracy for impossible correcting task.
+- **Linear independence**: A set of predictor variables $\{ X_1, \ldots, X_p \}$ is linearly independent. Recall Theorem \@ref(thm:fullrank2). This makes the design matrix full rank and guarantee unique least squares solution. This is violated by so-called *multicollinearity* problem.
+
+First two assumptions cannot be validated, but should be always remembered in the interpretation of the analysis results.
+
+### Observations {#obsassumption}
+
+```{r, include=FALSE}
+tmp <- 
+  tibble(x = runif(50), y = x) %>% 
+  gather() %>% 
+  add_row(key = "y", value = 20)
+```
+
+Every observation is equally reliable and plays an equal role in determining the results. When we estimate mean, for instance, each $X_1, \ldots, X_n$ has equal role so that
+
+$$\hat\mu = \frac{1}{n} X_1 + \cdots + \frac{1}{n} X_n = \overline{X}$$
+
+```{r outassume, echo=FALSE, fig.cap="Existence of Outlier"}
+tmp %>% 
+  ggplot(aes(y = value, group = key)) +
+  geom_boxplot(aes(middle = mean(value)), outlier.color = gg_hcl(1)) +
+  stat_summary(fun.y = mean, aes(x = 0), geom = "point", shape = 23, size = 2, col = I("red"), fill = I("red")) +
+  coord_flip() +
+  facet_grid(key ~ .) +
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank(), axis.ticks.y = element_blank())
+```
+
+However, if there exists *outlier*, it can be changed critically. See Figure \@ref(fig:outassume). In lower box plot, just one outlier is added: `20`. Each red dot is average. Thus, we should be careful about *outliers*. In regression literature, we would see the following observations.
+
+- Leverage point
+- Influential point
+
+
+## Residuals
+
+### Raw residual
+
+Looking at $\epsilon_i$, we might be able to check if the model violates the assumptions directly in section \@ref(linassumption) and \@ref(errassumption). The problem is $\epsilon_i$ is non-observable. So as a surrogate, we use residuals
+
+\begin{equation}
+  e_i := Y_i - \hat{Y_i} = Y_i - (\hat\beta_0 + \hat\beta_1 x_{i1} + \cdots + \hat\beta_p x_{ip}), \quad i = 1, \ldots, n
+  (\#eq:residualdef)
+\end{equation}
+
+Let
+
+$$\mathbf{e} := (e_1, \ldots, e_p)^T$$
+
+From Proposition \@ref(prp:multresprop),
+
+$$\mathbf{e} \sim N(\mathbf{0}, \sigma^2(I - H_X)), \quad H_X = \text{projection onto}\: R(X)$$
+
+This implies that
+
+$$Var(e_i) = (1 - h_{ii})\sigma^2$$
+
+where $h_{ii}$  is the $i$-th diagonal element of $H_X$. Recall that
+
+$$Var(\epsilon_i) = \sigma^2$$
+
+As a backup of $\sigma^2$, $e_i$ should reflect the assumption of $\epsilon_i$. *Scaling* might be needed.
+
+### Standardized residual
+
+Applying usual standardization procedure, one may use
+
+$$e_i^{\ast} = \frac{e_i}{\sigma \sqrt{1 - h_{ii}}}$$
+
+$\sigma$ is unkown. So replace $\sigma$ with $\hat\sigma$.
+
+```{definition, stdresid, name = "Standardized residual"}
+Standardized residual can be obtained by replacing $\sigma$ with $\hat\sigma$.
+
+$$d_i := \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}}$$
+
+where $\hat\sigma^2 = \frac{\sum\limits_{i = 1}^n e_i^2}{n - p - 1}$.
+```
+
+Does this $d_i$ follow $t(n - p - 1)$? $Z := \frac{e_i}{\sigma \sqrt{1 - h_{ii}}} \sim N(0, 1)$ and $X := \frac{\hat\sigma}{\sigma} \sim \chi^2(n - p - 1)$. In the other context, this typically leads to $t$-distribution. Here, however, $Z$ and $X$ are not independent. Denote that $\hat\sigma^2 = \frac{\sum\limits_{i = 1}^n e_i^2}{n - p - 1}$ includes $e_i$, so it cannot be independent with $e_i$. Thus, $d_i$ is not $t$ distributed.
+
+### Studentized residual
+
+To force $d_i$ to be $t$ random variable, we just prevent from each $e_i$ encountering each $e_i$ in $\hat\sigma^2$. This can be done by computing MSE without $i$-th observation, i.e. using data set
+
+$$
+D_{(-i)} := \begin{bmatrix}
+  (\mathbf{x}_1, Y_1) \\
+  (\mathbf{x}_2, Y_2) \\
+  \vdots \\
+  \msout{(\mathbf{x}_i, Y_i)} \\
+  \vdots \\
+  (\mathbf{x}_n, Y_n)
+\end{bmatrix}
+$$
+
+compute MSE $\hat\sigma_{(-i)}^2$.
+
+```{definition, studresid, name = "Studentized residual"}
+The studentized residual is defined by
+
+$$r_i := \frac{e_i}{\hat\sigma_{(-i)} \sqrt{1 - h_{ii}}}$$
+
+where $\hat\sigma_{(-i)}^2$ is MSE from data without $i$-th observation, $D_{(-i)}$.
+```
+
+In principle, we need to fit $n$ different models to get this residuals. In fact, this is not necessary because $\hat\sigma_{(-i)}^2$ has some relation to $\hat\sigma^2$.
+
+```{lemma, studsig}
+$\hat\sigma_{(-i)}^2$ can be computed from the original $\hat\sigma^2$.
+
+$$\hat\sigma_{(-i)}^2 = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}}{n - p - 1}$$
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

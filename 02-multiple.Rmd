@@ -2161,7 +2161,7 @@ See Figure \@ref(fig:sald) and focus on education level. Among people in managem
 
 To visualize the model, i.e. get prediction for each grid, we might use `modelr` library.
 
-```{r}
+```{r, eval=FALSE}
 library(modelr)
 ```
 
@@ -2705,62 +2705,79 @@ $$
 \end{bmatrix}}
 $$
 
-where $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \R^{N \times k}$.
+where $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \R^{N \times k}$. Let
 
-Denote that every column but the first one is orthogonal. Applying *G-S process* to this $\mathbf{1}$,
+$$\mathbf{u}_j = \frac{\mathbf{x}_j}{\lVert \mathbf{x}_j \rVert} = \frac{1}{\sqrt{n}_j} \mathbf{x}_j, \quad j = 1, \ldots k - 1$$
 
-$$\mathbf{v} = \mathbf{1} - (1, 1, \ldots, \underset{n_k}{\underline{0, \ldots, 0}})^T = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T$$
+Denote that every column but the first one is orthogonal and that
 
-Let $X^{\ast} = \begin{bmatrix} \mathbf{v} \mid \mathbb{X}_A \end{bmatrix}$. Then
+$$\mathbf{v} = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T = \mathbf{1} - <\mathbf{1}, \mathbf{u}_1> \mathbf{u}_1 - \cdots - <\mathbf{1}, \mathbf{u}_{k - 1}> \mathbf{u}_{k - 1}$$
+
+<!-- It follows that -->
+
+<!-- $$\mathbf{v} = \mathbf{1} - (1, 1, \ldots, \underset{n_k}{\underline{0, \ldots, 0}})^T = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T$$ -->
+
+Set
+
+$$\mathbf{u}_k = \frac{1}{\sqrt{n_k}} \mathbf{v}$$
 
 $$
+X^{\ast} = \begin{bmatrix}
+  \mathbf{u}_k & \mathbf{u}_1 & \cdots & \mathbf{u}_{k - 1}
+\end{bmatrix} \begin{bmatrix}
+  \sqrt{n_k} & <1, \mathbf{u}_1> = \sqrt{n_1} & <1, \mathbf{u}_2> = \sqrt{n_2} & \cdots & <1, \mathbf{u}_{k - 1}> = \sqrt{n_{k - 1}} \\
+  0 & \sqrt{n_1} & 0 & \cdots & 0 \\
+  0 & 0 & \sqrt{n_2} & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & 0 & 0 & \cdots & \sqrt{n_{k - 1}}
+\end{bmatrix} \equiv QR
+$$
+
 \begin{equation*}
   \begin{split}
-    X^{\ast} \hb^{\ast} & = \hat\mu \mathbf{v} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
-    & = \mathbf{v} \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \mathbb{X}_A \Pi(\mathbf{Y} \mid R(\mathbb{X}_A)) \\
-    & = \mathbf{v}(\mathbf{v}^T \mathbf{v})^{-1} \mathbf{v}^T \mathbf{Y} + \mathbb{X}_A (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y}
+    R^{-1} & = \left[\begin{array}{cccc|cccc}
+      \sqrt{n_k} & \sqrt{n_1} & \cdots & \sqrt{n_{k - 1}} & 1 & 0 & \cdots & 0 \\
+    0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\
+    0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+    0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1
+    \end{array}\right] \\
+    & \leftrightarrow \left[\begin{array}{cccc|cccc}
+      \sqrt{n_k} & 0 & \cdots & 0 & 1 & -1 & \cdots & -1 \\
+    0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\
+    0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+    0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1
+    \end{array}\right] \\
+    & \leftrightarrow \left[\begin{array}{cccc|cccc}
+      1 & 0 & \cdots & 0 & \frac{1}{\sqrt{n_k}} & -\frac{1}{\sqrt{n_k}} & \cdots & -\frac{1}{\sqrt{n_k}} \\
+    0 & 1 & \cdots & 0 & 0 & \frac{1}{\sqrt{n_1}} & \cdots & 0 \\
+    0 & 0 & 1 & \cdots & 0 & 0 & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+    0 & 0 & \cdots & 1 & 0 & 0 & \cdots & \frac{1}{\sqrt{n_{k - 1}}}
+    \end{array}\right]
   \end{split}
 \end{equation*}
-$$
 
-Thus,
+It follows that
 
-$$
 \begin{equation*}
   \begin{split}
-    \hat\mu & = (\mathbf{v}^T \mathbf{v})^{-1} \mathbf{v}^T \mathbf{Y} \\
-    & = \frac{1}{n_k}\mathbf{v}^T\mathbf{Y} \\
-    & = \overline{Y}_{k.} = \text{baseline group mean}
+    \hb & = R^{-1}Q^T \mathbf{Y} \\
+    & =
   \end{split}
 \end{equation*}
-$$
-
-Since
-
-$$
-\mathbb{X}_A^T \mathbb{X}_A = \left[\begin{array}{cccc|ccc}
-  n_1 & 0 & \cdots & 0 & 0 & \cdots & 0 \\
-  0 & n_2 & \cdots & 0 & 0 & \cdots & 0 \\
-  \vdots & \vdots & \cdots & \vdots & 0 & \cdots & 0 \\
-  0 & 0 & \cdots & n_{k - 1} & 0 & \cdots & 0 \\ \hline
-  \vdots & \vdots & \cdots & \vdots & 0 & \cdots & 0 \\
-  0 & \cdots & 0 & 0 & 0 & \cdots & 0
-\end{array}\right]
-$$
 
 
-$$
-\begin{equation*}
-  \begin{split}
-    \boldsymbol{\hat\tau} & = (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y} \\
-    & = diag\Big(\frac{1}{n_1}, \ldots, \frac{1}{n_{k - 1}}, \underset{N - k + 1}{\underline{0, \ldots, 0}} \Big) \mathbb{X}_A^T \mathbf{Y} \\
-    & = 
-  \end{split}
-\end{equation*}
-$$
-
-
-
+<!-- $$ -->
+<!-- \begin{equation*} -->
+<!--   \begin{split} -->
+<!--     \hat\mu & = (\mathbf{v}^T \mathbf{v})^{-1} \mathbf{v}^T \mathbf{Y} \\ -->
+<!--     & = \frac{1}{n_k}\mathbf{v}^T\mathbf{Y} \\ -->
+<!--     & = \overline{Y}_{k.} = \text{baseline group mean} -->
+<!--   \end{split} -->
+<!-- \end{equation*} -->
+<!-- $$ -->
 
 
 ```{r}
@@ -2779,13 +2796,177 @@ C(medicine$trt, contr = contr.treatment, base = nlevels(medicine$trt))
 anova(med_fit2)
 ```
 
+### Testing treatment effects
+
+Recall that the main interest is to test
+
+$$
+\begin{aligned}
+  & H_0: \mu_1 = \mu_2 = \cdots = \mu_k \\
+  & \Leftrightarrow H_0: \tau_1 = \tau_2 = \cdots = \tau_k = 0
+\end{aligned}
+$$
+
+Compute
+
+\begin{equation}
+  \begin{split}
+    SSR & = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y} \\
+    & = \sum_{j = 1}^k n_j (\overline{Y}_{j.})^2 - N(\overline{Y}_{..})^2 , \quad N \equiv \sum n_j \\
+    & = \sum_{j = 1}^k n_j (\overline{Y}_{j.} - \overline{Y}_{..})^2 \\
+    & = \text{between sum of squares}
+  \end{split}
+  (\#eq:qualssr)
+\end{equation}
+
+and
+
+\begin{equation}
+  SSE = \sum_{j = 1}^k \sum_{i = 1}^{n_j} (Y_{ij} - \overline{Y}_{j.})^2 = \text{within sum of squares}
+  (\#eq:qualsse)
+\end{equation}
+
+Since variance of each group is same,
+
+$$\frac{SSR}{\sigma^2} \hsim \chi^2(k - 1) \ind \frac{SSE}{\sigma^2} \sim \chi^2(N - (k - 1) - 1)$$
+
+and so
+
+$$F_0 = \frac{SSR / (k - 1)}{SSE / (N - k)} \hsim F(k - 1, N - k)$$
+
+```{r}
+anova(med_fit2)
+```
 
 
+## Maximum Likelihood Estimation
+
+### Maximum likelihood estimator
+
+For MLE, distributional assumption is needed.
+
+\begin{equation}
+  \E \sim MVN(\mathbf{0}, \sigma^2 I)
+  (\#eq:epsnormal)
+\end{equation}
+
+Then we now have
+
+\begin{equation}
+  Y_i \indep N(\beta_0 + \beta_1 x_{i1} + \cdots \beta_p x_{ip}, \sigma^2)
+  (\#eq:ynormal)
+\end{equation}
+
+It follows that
+
+\begin{equation}
+  \begin{split}
+    L(\beta_0, \ldots, \beta_p, \sigma^2) & = \prod_{i = 1}^n \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \bigg( -\frac{1}{2\sigma^2} \Big(Y_i - (\beta_0 + \cdots + \beta_p x_{ip})\Big)^2 \bigg) \\
+    & = \bigg( \frac{1}{\sqrt{2 \pi \sigma^2}} \bigg)^n \exp \bigg( -\frac{1}{2\sigma^2} \sum_{i = 1}^n \Big(Y_i - (\beta_0 + \cdots + \beta_p x_{ip})\Big)^2 \bigg) \\
+    & = (2 \pi \sigma^2)^{-\frac{n}{2}} \exp\Big( -\frac{1}{2\sigma^2} \lVert \mathbf{Y} - X \B \rVert^2 \Big) \\
+    & \equiv L(\B, \sigma^2)
+  \end{split}
+  (\#eq:multlike)
+\end{equation}
+
+Then log-likelihood is given by
+
+\begin{equation}
+  \begin{split}
+    l(\B, \sigma^2) & = \ln L(\B, \sigma^2) \\
+    & = - \frac{n}{2} \ln (2 \pi \sigma^2) - \frac{1}{2 \sigma^2} \lVert \mathbf{Y} - X \B \rVert^2
+  \end{split}
+  (\#eq:multloglk)
+\end{equation}
+
+Now we can find MLE by finding the maximum of this $l$.
+
+```{remark, name = "Likelihood Equation"}
+Since $l = - \frac{n}{2} \ln (2 \pi \sigma^2) - \frac{1}{2 \sigma^2} (\mathbf{Y} - X \B)^T (\mathbf{Y} - X \B)$,
+
+\begin{enumerate}
+  \item $\frac{\partial l}{\partial \B} = \frac{1}{\sigma^2} X^T (Y - X \B) = 0$
+  \item $\frac{\partial l}{\partial \sigma^2} = - \frac{n}{2 \sigma^2} + \frac{1}{2 \sigma^4} \lVert \mathbf{Y} - X \B \rVert^2 = 0$
+\end{enumerate}
+```
 
 
+Hence,
 
+\begin{equation}
+  \begin{cases}
+    \hb^{MLE} = (X^T X)^{-1} X^T \mathbf{Y} = \hb^{LSE} \\
+    \hat\sigma^{2 MLE} = \frac{\lVert \mathbf{Y} - X \hb \rVert^2}{n} \neq \hat\sigma^{2 LSE}
+  \end{cases}
+  (\#eq:mulmlvsls)
+\end{equation}
 
+### Rao-cramer lower bound
 
+Since $\hb^{MLE} = \hb^{LSE}$, $\hb^{MLE}$ is also an *ubiased estimator*, i.e.
 
+$$E\hb = \B$$
+
+Extending Theorem \@ref(thm:rclb2), we can see if this unbiased estimator has the *minimum variance*.
+
+```{theorem, rclbm, name = "Rao-Cramer Lower Bound, multivariate case"}
+Let $X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \ldots, \theta_{p + 1})$ and let $\boldsymbol{\theta} = (\theta_1, \ldots, \theta_{p + 1})^T$. If $\boldsymbol{\hat\theta}$ is an unbiased estimator of $\boldsymbol\theta$, then
+
+$$Var(\boldsymbol{\theta}) \ge I_n^{-1}(\boldsymbol\theta)$$
+
+where
+
+$$I_n(\boldsymbol\theta) = -E\bigg[ \frac{\partial^2 l}{\partial \boldsymbol\theta^2} \bigg]$$
+```
+
+As in simple linear regression setting, assume that $\sigma^2$ is **known**. From likelihood equation, we have
+
+\begin{equation}
+  \frac{\partial l}{\partial \B} = \frac{1}{\sigma^2} X^T (Y - X \B) \quad \text{and} \quad \frac{\partial^2 l}{\partial \B \partial \B^T} = - \frac{1}{\sigma^2} X^T X
+  (\#eq:loglikderiv)
+\end{equation}
+
+It gives that
+
+\begin{equation}
+  I_n(\B) = - E\bigg[ \frac{\partial^2 l}{\partial \B \partial \B^T} \bigg] = \frac{1}{\sigma^2} X^T X
+  (\#eq:multinform)
+\end{equation}
+
+and so
+
+\begin{equation}
+  I_n^{-1}(\B) = \sigma^2 (X^T X)^{-1} = Var(\hb^{LSE})
+  (\#eq:multinforminv)
+\end{equation}
+
+Hence, $\hb^{MLE} = \hb^{LSE}$ is the *minimum variance unbiased estimator*. In fact, it is same when $\sigma^2$ is unknown. Compute derivatives for $\sigma^2$ additionaly.
+
+\begin{equation}
+  \frac{\partial l}{\partial \sigma^2} = - \frac{n}{2 \sigma^2} + \frac{1}{2 \sigma^4} \lVert \mathbf{Y} - X \B \rVert^2 \quad \text{and} \quad \frac{\partial^2 l}{\partial^2 \sigma^2} = \frac{n}{2\sigma^4} - \frac{1}{\sigma^6} \lVert \mathbf{Y} - X \B \rVert^2
+  (\#eq:loglikederiv2)
+\end{equation}
+
+Then
+
+\begin{equation}
+  I_n(\B, \sigma^2) = \left[\begin{array}{c|c}
+    \frac{\partial^2 l}{\partial \B \partial \B^T} & \frac{\partial^2 l}{\partial \B \partial \sigma^2} \\ \hline
+    \frac{\partial^2 l}{\partial \B^T \partial \sigma^2} & \frac{\partial^2 l}{\partial^2 \sigma^2}
+  \end{array}\right]
+  (\#eq:blockinform)
+\end{equation}
+
+By construction,
+
+\begin{equation}
+  I_n^{-1}(\B, \sigma^2) = \left[\begin{array}{c|c}
+    I_n^{-1}(\B) & \vdots \\ \hline
+    \cdots & I_n^{-1}(\sigma^2)
+  \end{array}\right]
+  (\#eq:blockinforminv)
+\end{equation}
+
+In other words, it is still valid that $I_n^{-1}(\B)$ implies minimum variance of $\hb$.
 
 

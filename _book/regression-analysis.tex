@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{06 May, 2019}
+    \date{11 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -134,6 +134,7 @@
 \usepackage{enumitem}
 \usepackage{pdfpages}
 \usepackage[linesnumbered]{algorithm2e}
+\usepackage[normalem]{ulem}
 
 \newcommand{\iid}{\stackrel{iid}{\sim}}
 \newcommand{\indep}{\stackrel{indep}{\sim}}
@@ -143,6 +144,7 @@
 \newcommand{\B}{\boldsymbol\beta}
 \newcommand{\hb}{\boldsymbol{\hat\beta}}
 \newcommand{\E}{\boldsymbol\epsilon}
+\newcommand{\msout}[1]{\text{\sout{\ensuremath{#1}}}}
 \DeclareMathOperator*{\argmin}{argmin}
 
 \let\oldmaketitle\maketitle
@@ -5500,6 +5502,16 @@ We have generated three grouped data of which group is three.
 \end{Highlighting}
 \end{Shaded}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{medicine }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ trt, }\DataTypeTok{y =}\NormalTok{ y, }\DataTypeTok{fill =}\NormalTok{ trt)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{show.legend =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/unnamed-chunk-110-1} \end{center}
+
 Each group follows \(N(\mu_1 = 1, \sigma^2 = 1)\), \(N(\mu_2 = 2, \sigma^2 = 1)\), and \(N(\mu_3 = 3, \sigma^2 = 1)\). Our goal is comparison between treatment, i.e.~mean comparison.
 
 \[H_0: \mu_1 = \mu_2 = \mu_3 \quad \text{vs} \quad H_1: \text{not}\: H_0\]
@@ -5521,7 +5533,7 @@ Recall that we can build two models, \emph{means model} or \emph{effects model}.
 \hypertarget{effects-model}{%
 \subsection{Effects model}\label{effects-model}}
 
-In experimental design literature, effects model is more frequently used. Decomposing each group mean with overall mean and \emph{treatment effect}, it gives more intuitive decription \citep{Montgomery:2012aa}. So we look at this effects model first.
+In experimental design literature, effects model is more frequently used. Decomposing each group mean with overall mean and \emph{treatment effect}, it gives more intuitive decription \citep{Montgomery:2012aa}. So we look at this one first.
 
 \begin{equation}
   Y_{ij} = \mu + \tau_j + \epsilon_{ij}
@@ -5544,6 +5556,8 @@ where
 Here we test whether there is \emph{no treatment effect}, i.e.
 
 \[H_0: \tau_1 = \cdots = \tau_k = 0 \quad \text{vs} \quad H_1: \text{not}\: H_0\]
+
+which is equivalent to the above \(\mu_1 = \cdots = \mu_k\) by construction.
 
 Note that we have \(k + 1\) parameters in the model \eqref{eq:effmod}. Write the parameter vector as
 
@@ -5614,7 +5628,7 @@ i.e.~linearly independent. This design matrix \(X\) is of rank deficient. Hence,
 \hypertarget{means-model}{%
 \subsection{Means model}\label{means-model}}
 
-Consider means model.
+Next, consider means model.
 
 \begin{equation}
   Y_{ij} = \mu_j + \epsilon_{ij}
@@ -5716,7 +5730,7 @@ Normal equation gives that
 
 \[\boldsymbol{\hat\beta}= R^{-1}Q^T\mathbf{Y}^T = (\overline{Y}_{1.}, \overline{Y}_{2.}, \ldots, \overline{Y}_{k.})^T\]
 
-where \(\overline{Y}_{1.} = \sum\limits_{i = 1}^{n_j} Y_{ij}\).
+where \(\overline{Y}_{j.} = \sum\limits_{i = 1}^{n_j} Y_{ij}\), \(j\)-the treatment mean.
 
 \hypertarget{effect-coding}{%
 \subsection{Effect coding}\label{effect-coding}}
@@ -5789,6 +5803,30 @@ Since \(\tau_k\) is redundant, parameter vector is given by
 \]
 
 with \(X^{\ast} \in \mathbb{R}^{N \times k}\). This is called \emph{effect coding}.
+
+Let \(X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix}\).
+
+Note that
+
+\[\mathbf{1} \perp \mathbb{X}_A\]
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    X^{\ast} \boldsymbol{\hat\beta}^{\ast} & = \hat\mu \mathbf{1} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
+    & = \mathbf{1} \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \mathbb{X}_A \Pi(\mathbf{Y} \mid R(\mathbb{X}_A)) \\
+    & = \overline{Y}_{..}\mathbf{1} + \mathbb{X}_A (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\[\hat\mu = \overline{Y}_{..}\]
+
+and
+
+\[\boldsymbol\tau = (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y}\]
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -5886,7 +5924,7 @@ This implies that
   1 & 0 & 0 & \cdots & 0 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
   1 & 0 & 0 & \cdots & 0
-\end{bmatrix}} \underset{\huge \boldsymbol\beta}{\begin{bmatrix}
+\end{bmatrix}} \underset{\huge \boldsymbol\beta^{\ast}}{\begin{bmatrix}
   \mu \\
   \tau_1 \\
   \vdots \\
@@ -5909,7 +5947,64 @@ This implies that
 \end{bmatrix}}
 \]
 
-where \(X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \mathbb{R}^{N \times k}\).
+where \(X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \mathbb{R}^{N \times k}\). Let
+
+\[\mathbf{u}_j = \frac{\mathbf{x}_j}{\lVert \mathbf{x}_j \rVert} = \frac{1}{\sqrt{n}_j} \mathbf{x}_j, \quad j = 1, \ldots k - 1\]
+
+Denote that every column but the first one is orthogonal and that
+
+\[\mathbf{v} = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T = \mathbf{1} - <\mathbf{1}, \mathbf{u}_1> \mathbf{u}_1 - \cdots - <\mathbf{1}, \mathbf{u}_{k - 1}> \mathbf{u}_{k - 1}\]
+
+Set
+
+\[\mathbf{u}_k = \frac{1}{\sqrt{n_k}} \mathbf{v}\]
+
+\[
+X^{\ast} = \begin{bmatrix}
+  \mathbf{u}_k & \mathbf{u}_1 & \cdots & \mathbf{u}_{k - 1}
+\end{bmatrix} \begin{bmatrix}
+  \sqrt{n_k} & <1, \mathbf{u}_1> = \sqrt{n_1} & <1, \mathbf{u}_2> = \sqrt{n_2} & \cdots & <1, \mathbf{u}_{k - 1}> = \sqrt{n_{k - 1}} \\
+  0 & \sqrt{n_1} & 0 & \cdots & 0 \\
+  0 & 0 & \sqrt{n_2} & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & 0 & 0 & \cdots & \sqrt{n_{k - 1}}
+\end{bmatrix} \equiv QR
+\]
+
+\begin{equation*}
+  \begin{split}
+    R^{-1} & = \left[\begin{array}{cccc|cccc}
+      \sqrt{n_k} & \sqrt{n_1} & \cdots & \sqrt{n_{k - 1}} & 1 & 0 & \cdots & 0 \\
+    0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\
+    0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+    0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1
+    \end{array}\right] \\
+    & \leftrightarrow \left[\begin{array}{cccc|cccc}
+      \sqrt{n_k} & 0 & \cdots & 0 & 1 & -1 & \cdots & -1 \\
+    0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\
+    0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+    0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1
+    \end{array}\right] \\
+    & \leftrightarrow \left[\begin{array}{cccc|cccc}
+      1 & 0 & \cdots & 0 & \frac{1}{\sqrt{n_k}} & -\frac{1}{\sqrt{n_k}} & \cdots & -\frac{1}{\sqrt{n_k}} \\
+    0 & 1 & \cdots & 0 & 0 & \frac{1}{\sqrt{n_1}} & \cdots & 0 \\
+    0 & 0 & 1 & \cdots & 0 & 0 & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+    0 & 0 & \cdots & 1 & 0 & 0 & \cdots & \frac{1}{\sqrt{n_{k - 1}}}
+    \end{array}\right]
+  \end{split}
+\end{equation*}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    \boldsymbol{\hat\beta}& = R^{-1}Q^T \mathbf{Y} \\
+    & =
+  \end{split}
+\end{equation*}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -5955,6 +6050,426 @@ where \(X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid
 \CommentTok{#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
 \end{Highlighting}
 \end{Shaded}
+
+\hypertarget{testing-treatment-effects}{%
+\subsection{Testing treatment effects}\label{testing-treatment-effects}}
+
+Recall that the main interest is to test
+
+\[
+\begin{aligned}
+  & H_0: \mu_1 = \mu_2 = \cdots = \mu_k \\
+  & \Leftrightarrow H_0: \tau_1 = \tau_2 = \cdots = \tau_k = 0
+\end{aligned}
+\]
+
+Compute
+
+\begin{equation}
+  \begin{split}
+    SSR & = \mathbf{Y}^T (\Pi_X - \Pi_{\mathbf{1}}) \mathbf{Y} \\
+    & = \sum_{j = 1}^k n_j (\overline{Y}_{j.})^2 - N(\overline{Y}_{..})^2 , \quad N \equiv \sum n_j \\
+    & = \sum_{j = 1}^k n_j (\overline{Y}_{j.} - \overline{Y}_{..})^2 \\
+    & = \text{between sum of squares}
+  \end{split}
+  \label{eq:qualssr}
+\end{equation}
+
+and
+
+\begin{equation}
+  SSE = \sum_{j = 1}^k \sum_{i = 1}^{n_j} (Y_{ij} - \overline{Y}_{j.})^2 = \text{within sum of squares}
+  \label{eq:qualsse}
+\end{equation}
+
+Since variance of each group is same,
+
+\[\frac{SSR}{\sigma^2} \stackrel{H_0}{\sim}\chi^2(k - 1) \perp\!\!\!\perp\frac{SSE}{\sigma^2} \sim \chi^2(N - (k - 1) - 1)\]
+
+and so
+
+\[F_0 = \frac{SSR / (k - 1)}{SSE / (N - k)} \stackrel{H_0}{\sim}F(k - 1, N - k)\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{anova}\NormalTok{(med_fit2)}
+\CommentTok{#> Analysis of Variance Table}
+\CommentTok{#> }
+\CommentTok{#> Response: y}
+\CommentTok{#>           Df Sum Sq Mean Sq F value  Pr(>F)    }
+\CommentTok{#> trt        2   69.5    34.7    36.3 3.5e-12 ***}
+\CommentTok{#> Residuals 87   83.3     1.0                    }
+\CommentTok{#> ---}
+\CommentTok{#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{maximum-likelihood-estimation-1}{%
+\section{Maximum Likelihood Estimation}\label{maximum-likelihood-estimation-1}}
+
+\hypertarget{maximum-likelihood-estimator}{%
+\subsection{Maximum likelihood estimator}\label{maximum-likelihood-estimator}}
+
+For MLE, distributional assumption is needed.
+
+\begin{equation}
+  \E \sim MVN(\mathbf{0}, \sigma^2 I)
+  \label{eq:epsnormal}
+\end{equation}
+
+Then we now have
+
+\begin{equation}
+  Y_i \stackrel{indep}{\sim}N(\beta_0 + \beta_1 x_{i1} + \cdots \beta_p x_{ip}, \sigma^2)
+  \label{eq:ynormal}
+\end{equation}
+
+It follows that
+
+\begin{equation}
+  \begin{split}
+    L(\beta_0, \ldots, \beta_p, \sigma^2) & = \prod_{i = 1}^n \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \bigg( -\frac{1}{2\sigma^2} \Big(Y_i - (\beta_0 + \cdots + \beta_p x_{ip})\Big)^2 \bigg) \\
+    & = \bigg( \frac{1}{\sqrt{2 \pi \sigma^2}} \bigg)^n \exp \bigg( -\frac{1}{2\sigma^2} \sum_{i = 1}^n \Big(Y_i - (\beta_0 + \cdots + \beta_p x_{ip})\Big)^2 \bigg) \\
+    & = (2 \pi \sigma^2)^{-\frac{n}{2}} \exp\Big( -\frac{1}{2\sigma^2} \lVert \mathbf{Y} - X \boldsymbol\beta\rVert^2 \Big) \\
+    & \equiv L(\boldsymbol\beta, \sigma^2)
+  \end{split}
+  \label{eq:multlike}
+\end{equation}
+
+Then log-likelihood is given by
+
+\begin{equation}
+  \begin{split}
+    l(\boldsymbol\beta, \sigma^2) & = \ln L(\boldsymbol\beta, \sigma^2) \\
+    & = - \frac{n}{2} \ln (2 \pi \sigma^2) - \frac{1}{2 \sigma^2} \lVert \mathbf{Y} - X \boldsymbol\beta\rVert^2
+  \end{split}
+  \label{eq:multloglk}
+\end{equation}
+
+Now we can find MLE by finding the maximum of this \(l\).
+
+\BeginKnitrBlock{remark}[Likelihood Equation]
+\iffalse{} {Remark (Likelihood Equation). } \fi{}Since \(l = - \frac{n}{2} \ln (2 \pi \sigma^2) - \frac{1}{2 \sigma^2} (\mathbf{Y} - X \boldsymbol\beta)^T (\mathbf{Y} - X \boldsymbol\beta)\),
+
+\begin{enumerate}
+  \item $\frac{\partial l}{\partial \boldsymbol\beta} = \frac{1}{\sigma^2} X^T (Y - X \boldsymbol\beta) = 0$
+  \item $\frac{\partial l}{\partial \sigma^2} = - \frac{n}{2 \sigma^2} + \frac{1}{2 \sigma^4} \lVert \mathbf{Y} - X \boldsymbol\beta\rVert^2 = 0$
+\end{enumerate}
+\EndKnitrBlock{remark}
+
+Hence,
+
+\begin{equation}
+  \begin{cases}
+    \boldsymbol{\hat\beta}^{MLE} = (X^T X)^{-1} X^T \mathbf{Y} = \boldsymbol{\hat\beta}^{LSE} \\
+    \hat\sigma^{2 MLE} = \frac{\lVert \mathbf{Y} - X \boldsymbol{\hat\beta}\rVert^2}{n} \neq \hat\sigma^{2 LSE}
+  \end{cases}
+  \label{eq:mulmlvsls}
+\end{equation}
+
+\hypertarget{rao-cramer-lower-bound}{%
+\subsection{Rao-cramer lower bound}\label{rao-cramer-lower-bound}}
+
+Since \(\boldsymbol{\hat\beta}^{MLE} = \boldsymbol{\hat\beta}^{LSE}\), \(\boldsymbol{\hat\beta}^{MLE}\) is also an \emph{ubiased estimator}, i.e.
+
+\[E\boldsymbol{\hat\beta}= \boldsymbol\beta\]
+
+Extending Theorem \ref{thm:rclb2}, we can see if this unbiased estimator has the \emph{minimum variance}.
+
+\BeginKnitrBlock{theorem}[Rao-Cramer Lower Bound, multivariate case]
+\protect\hypertarget{thm:rclbm}{}{\label{thm:rclbm} \iffalse (Rao-Cramer Lower Bound, multivariate case) \fi{} }Let \(X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \ldots, \theta_{p + 1})\) and let \(\boldsymbol{\theta} = (\theta_1, \ldots, \theta_{p + 1})^T\). If \(\boldsymbol{\hat\theta}\) is an unbiased estimator of \(\boldsymbol\theta\), then
+
+\[Var(\boldsymbol{\theta}) \ge I_n^{-1}(\boldsymbol\theta)\]
+
+where
+
+\[I_n(\boldsymbol\theta) = -E\bigg[ \frac{\partial^2 l}{\partial \boldsymbol\theta^2} \bigg]\]
+\EndKnitrBlock{theorem}
+
+As in simple linear regression setting, assume that \(\sigma^2\) is \textbf{known}. From likelihood equation, we have
+
+\begin{equation}
+  \frac{\partial l}{\partial \boldsymbol\beta} = \frac{1}{\sigma^2} X^T (Y - X \boldsymbol\beta) \quad \text{and} \quad \frac{\partial^2 l}{\partial \boldsymbol\beta\partial \boldsymbol\beta^T} = - \frac{1}{\sigma^2} X^T X
+  \label{eq:loglikderiv}
+\end{equation}
+
+It gives that
+
+\begin{equation}
+  I_n(\boldsymbol\beta) = - E\bigg[ \frac{\partial^2 l}{\partial \boldsymbol\beta\partial \boldsymbol\beta^T} \bigg] = \frac{1}{\sigma^2} X^T X
+  \label{eq:multinform}
+\end{equation}
+
+and so
+
+\begin{equation}
+  I_n^{-1}(\boldsymbol\beta) = \sigma^2 (X^T X)^{-1} = Var(\boldsymbol{\hat\beta}^{LSE})
+  \label{eq:multinforminv}
+\end{equation}
+
+Hence, \(\boldsymbol{\hat\beta}^{MLE} = \boldsymbol{\hat\beta}^{LSE}\) is the \emph{minimum variance unbiased estimator}. In fact, it is same when \(\sigma^2\) is unknown. Compute derivatives for \(\sigma^2\) additionaly.
+
+\begin{equation}
+  \frac{\partial l}{\partial \sigma^2} = - \frac{n}{2 \sigma^2} + \frac{1}{2 \sigma^4} \lVert \mathbf{Y} - X \boldsymbol\beta\rVert^2 \quad \text{and} \quad \frac{\partial^2 l}{\partial^2 \sigma^2} = \frac{n}{2\sigma^4} - \frac{1}{\sigma^6} \lVert \mathbf{Y} - X \boldsymbol\beta\rVert^2
+  \label{eq:loglikederiv2}
+\end{equation}
+
+Then
+
+\begin{equation}
+  I_n(\boldsymbol\beta, \sigma^2) = \left[\begin{array}{c|c}
+    \frac{\partial^2 l}{\partial \boldsymbol\beta\partial \boldsymbol\beta^T} & \frac{\partial^2 l}{\partial \boldsymbol\beta\partial \sigma^2} \\ \hline
+    \frac{\partial^2 l}{\partial \boldsymbol\beta^T \partial \sigma^2} & \frac{\partial^2 l}{\partial^2 \sigma^2}
+  \end{array}\right]
+  \label{eq:blockinform}
+\end{equation}
+
+By construction,
+
+\begin{equation}
+  I_n^{-1}(\boldsymbol\beta, \sigma^2) = \left[\begin{array}{c|c}
+    I_n^{-1}(\boldsymbol\beta) & \vdots \\ \hline
+    \cdots & I_n^{-1}(\sigma^2)
+  \end{array}\right]
+  \label{eq:blockinforminv}
+\end{equation}
+
+In other words, it is still valid that \(I_n^{-1}(\boldsymbol\beta)\) implies minimum variance of \(\boldsymbol{\hat\beta}\).
+
+\hypertarget{model-adequacy-and-regression-diagnostics}{%
+\chapter{Model Adequacy and Regression Diagnostics}\label{model-adequacy-and-regression-diagnostics}}
+
+\[Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}, \quad \epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\]
+
+From this regression model, we conduct analysis such as
+
+\begin{itemize}
+\tightlist
+\item
+  estimate \(\boldsymbol{\hat\beta}\) and \(\hat\sigma^2\)
+\item
+  inference
+\item
+  predict \(\hat{Y}\)
+\item
+  ANOVA
+\end{itemize}
+
+However, all these results make sense only when the model satisfies its assumption. \citet{Chatterjee:2015aa} categorizes the assumption into four: form of the model, error term, predictors, and observations.
+
+\hypertarget{the-standard-regression-assumptions}{%
+\section{The Standard Regression Assumptions}\label{the-standard-regression-assumptions}}
+
+\hypertarget{linassumption}{%
+\subsection{Linearity assumption}\label{linassumption}}
+
+First of all, the relation between response \(Y\) and predictors \(X_1, \ldots, X_p\) is assumed to be linear.
+
+\[E(Y \mid \mathbf{X} = \mathbf{x}) = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip}\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{delv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_predictions}\NormalTok{(delv_fit) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ x, }\DataTypeTok{y =}\NormalTok{ y)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_linerange}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin =}\NormalTok{ y, }\DataTypeTok{ymax =}\NormalTok{ pred), }\DataTypeTok{col =} \KeywordTok{gg_hcl}\NormalTok{(}\DecValTok{1}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Number of Cases"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Delivery Time"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/linassume-1} 
+
+}
+
+\caption{Linearity assumption}\label{fig:linassume}
+\end{figure}
+
+\hypertarget{errassumption}{%
+\subsection{Errors}\label{errassumption}}
+
+Error term \(\E\) is assumed as
+
+\[\epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\]
+
+This involves the following assumptions.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Mean-zero assumption}: \(\epsilon_i\) has zero mean.
+\item
+  \textbf{Homoskedasticity} (or homogeneity): \(\epsilon_i\) has constant variance. If variance varies according to observation, we call it as \emph{heteroskedasticity} (or heterogeneity).
+\item
+  \textbf{Independence assumption}: \(\epsilon_i\) is mutually independent.
+\item
+  \textbf{Normality assumption}: \(\epsilon_i\) follows Normal distribution.
+\end{enumerate}
+
+As mentioned many times, \(\epsilon_j\) cannot be observed. Instead, we gain information from \textbf{residuals}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{delv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_predictions}\NormalTok{(delv_fit) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_residuals}\NormalTok{(delv_fit) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ pred, }\DataTypeTok{y =}\NormalTok{ resid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_ref_line}\NormalTok{(}\DataTypeTok{h =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_linerange}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin =}\NormalTok{ resid, }\DataTypeTok{ymax =} \DecValTok{0}\NormalTok{), }\DataTypeTok{col =} \KeywordTok{gg_hcl}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/rsdassume-1} 
+
+}
+
+\caption{Residual plot preview - Does this model satisfy the assumptions?}\label{fig:rsdassume}
+\end{figure}
+
+\hypertarget{xassumption}{%
+\subsection{Predictors}\label{xassumption}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Non-random}: While \(Y\) is random variable, \(X_1, \ldots, X_p\) are not. They are assumed fixed or conditioned, i.e.~\(E(Y \mid \mathbf{X} = \mathbf{x})\).
+\item
+  \textbf{measured without error}: We assume here that \(x_{i1}, \ldots, x_{ip}\) are measured without error, i.e.~there is \emph{no measurement error}. If there is, the measurement error will affect every residual variance, regression coefficient, et cetera. Let \(w_i\) be the measurement error of \(i\)-th observation. Then what we observe is \(Z_i = x_i + w_i\), not \(x_i\). In turn, we estimate regression coefficient and the others using \((Z_i, Y_i)\), i.e.~relationship between \(Z_i\) and \(Y_i\). \emph{Residual variance will increase by construction}. Additionaly, correlation coefficients will be reduced.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    We have assumed that there is no measurement error, but we already know that \emph{it is hardly not true}.
+  \item
+    So correction for the errors can be considered. But it requires the ratio between \(Var(w_i)\) and \(Var(\epsilon_i)\), which we seldomly know.
+  \item
+    As a result, we just sacrifice some accuracy for impossible correcting task.
+  \end{itemize}
+\item
+  \textbf{Linear independence}: A set of predictor variables \(\{ X_1, \ldots, X_p \}\) is linearly independent. Recall Theorem \ref{thm:fullrank2}. This makes the design matrix full rank and guarantee unique least squares solution. This is violated by so-called \emph{multicollinearity} problem.
+\end{itemize}
+
+First two assumptions cannot be validated, but should be always remembered in the interpretation of the analysis results.
+
+\hypertarget{obsassumption}{%
+\subsection{Observations}\label{obsassumption}}
+
+Every observation is equally reliable and plays an equal role in determining the results. When we estimate mean, for instance, each \(X_1, \ldots, X_n\) has equal role so that
+
+\[\hat\mu = \frac{1}{n} X_1 + \cdots + \frac{1}{n} X_n = \overline{X}\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/outassume-1} 
+
+}
+
+\caption{Existence of Outlier}\label{fig:outassume}
+\end{figure}
+
+However, if there exists \emph{outlier}, it can be changed critically. See Figure \ref{fig:outassume}. In lower box plot, just one outlier is added: \texttt{20}. Each red dot is average. Thus, we should be careful about \emph{outliers}. In regression literature, we would see the following observations.
+
+\begin{itemize}
+\tightlist
+\item
+  Leverage point
+\item
+  Influential point
+\end{itemize}
+
+\hypertarget{residuals-1}{%
+\section{Residuals}\label{residuals-1}}
+
+\hypertarget{raw-residual}{%
+\subsection{Raw residual}\label{raw-residual}}
+
+Looking at \(\epsilon_i\), we might be able to check if the model violates the assumptions directly in section \ref{linassumption} and \ref{errassumption}. The problem is \(\epsilon_i\) is non-observable. So as a surrogate, we use residuals
+
+\begin{equation}
+  e_i := Y_i - \hat{Y_i} = Y_i - (\hat\beta_0 + \hat\beta_1 x_{i1} + \cdots + \hat\beta_p x_{ip}), \quad i = 1, \ldots, n
+  \label{eq:residualdef}
+\end{equation}
+
+Let
+
+\[\mathbf{e} := (e_1, \ldots, e_p)^T\]
+
+From Proposition \ref{prp:multresprop},
+
+\[\mathbf{e} \sim N(\mathbf{0}, \sigma^2(I - H_X)), \quad H_X = \text{projection onto}\: R(X)\]
+
+This implies that
+
+\[Var(e_i) = (1 - h_{ii})\sigma^2\]
+
+where \(h_{ii}\) is the \(i\)-th diagonal element of \(H_X\). Recall that
+
+\[Var(\epsilon_i) = \sigma^2\]
+
+As a backup of \(\sigma^2\), \(e_i\) should reflect the assumption of \(\epsilon_i\). \emph{Scaling} might be needed.
+
+\hypertarget{standardized-residual}{%
+\subsection{Standardized residual}\label{standardized-residual}}
+
+Applying usual standardization procedure, one may use
+
+\[e_i^{\ast} = \frac{e_i}{\sigma \sqrt{1 - h_{ii}}}\]
+
+\(\sigma\) is unkown. So replace \(\sigma\) with \(\hat\sigma\).
+
+\BeginKnitrBlock{definition}[Standardized residual]
+\protect\hypertarget{def:stdresid}{}{\label{def:stdresid} \iffalse (Standardized residual) \fi{} }Standardized residual can be obtained by replacing \(\sigma\) with \(\hat\sigma\).
+
+\[d_i := \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}}\]
+
+where \(\hat\sigma^2 = \frac{\sum\limits_{i = 1}^n e_i^2}{n - p - 1}\).
+\EndKnitrBlock{definition}
+
+Does this \(d_i\) follow \(t(n - p - 1)\)? \(Z := \frac{e_i}{\sigma \sqrt{1 - h_{ii}}} \sim N(0, 1)\) and \(X := \frac{\hat\sigma}{\sigma} \sim \chi^2(n - p - 1)\). In the other context, this typically leads to \(t\)-distribution. Here, however, \(Z\) and \(X\) are not independent. Denote that \(\hat\sigma^2 = \frac{\sum\limits_{i = 1}^n e_i^2}{n - p - 1}\) includes \(e_i\), so it cannot be independent with \(e_i\). Thus, \(d_i\) is not \(t\) distributed.
+
+\hypertarget{studentized-residual}{%
+\subsection{Studentized residual}\label{studentized-residual}}
+
+To force \(d_i\) to be \(t\) random variable, we just prevent from each \(e_i\) encountering each \(e_i\) in \(\hat\sigma^2\). This can be done by computing MSE without \(i\)-th observation, i.e.~using data set
+
+\[
+D_{(-i)} := \begin{bmatrix}
+  (\mathbf{x}_1, Y_1) \\
+  (\mathbf{x}_2, Y_2) \\
+  \vdots \\
+  \msout{(\mathbf{x}_i, Y_i)} \\
+  \vdots \\
+  (\mathbf{x}_n, Y_n)
+\end{bmatrix}
+\]
+
+compute MSE \(\hat\sigma_{(-i)}^2\).
+
+\BeginKnitrBlock{definition}[Studentized residual]
+\protect\hypertarget{def:studresid}{}{\label{def:studresid} \iffalse (Studentized residual) \fi{} }The studentized residual is defined by
+
+\[r_i := \frac{e_i}{\hat\sigma_{(-i)} \sqrt{1 - h_{ii}}}\]
+
+where \(\hat\sigma_{(-i)}^2\) is MSE from data without \(i\)-th observation, \(D_{(-i)}\).
+\EndKnitrBlock{definition}
+
+In principle, we need to fit \(n\) different models to get this residuals. In fact, this is not necessary because \(\hat\sigma_{(-i)}^2\) has some relation to \(\hat\sigma^2\).
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:studsig}{}{\label{lem:studsig} }\(\hat\sigma_{(-i)}^2\) can be computed from the original \(\hat\sigma^2\).
+
+\[\hat\sigma_{(-i)}^2 = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}}{n - p - 1}\]
+\EndKnitrBlock{lemma}
 
 \bibliography{book.bib,packages.bib}
 

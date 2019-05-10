@@ -4,7 +4,8 @@ rmd_files: [
   "index.rmd",
   
   "01-intro.rmd",
-  "02-multiple.rmd"
+  "02-multiple.rmd",
+  "03-diagnostics.rmd"
 ]
 before_chapter_script: "_common.R"
 language:
