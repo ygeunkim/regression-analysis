@@ -97,6 +97,10 @@ tmp %>%
   theme(axis.text.y = element_blank(), axis.title.y = element_blank(), axis.ticks.y = element_blank())
 ```
 
+```{r, include=FALSE}
+rm("tmp")
+```
+
 However, if there exists *outlier*, it can be changed critically. See Figure \@ref(fig:outassume). In lower box plot, just one outlier is added: `20`. Each red dot is average. Thus, we should be careful about *outliers*. In regression literature, we would see the following observations.
 
 - Leverage point
@@ -113,6 +117,8 @@ Looking at $\epsilon_i$, we might be able to check if the model violates the ass
   e_i := Y_i - \hat{Y_i} = Y_i - (\hat\beta_0 + \hat\beta_1 x_{i1} + \cdots + \hat\beta_p x_{ip}), \quad i = 1, \ldots, n
   (\#eq:residualdef)
 \end{equation}
+
+We already know that `residuals(model)` or `model$residuals` gives residuals. `modelr::add_residuals(model)`, additionaly, mutates a colum named `resid` by default. We can change its name with `var` argument. See Figure \@ref(fig:rsdassume) and its code.
 
 Let
 
@@ -132,11 +138,15 @@ $$Var(\epsilon_i) = \sigma^2$$
 
 As a backup of $\sigma^2$, $e_i$ should reflect the assumption of $\epsilon_i$. *Scaling* might be needed.
 
+
 ### Standardized residual
 
 Applying usual standardization procedure, one may use
 
-$$e_i^{\ast} = \frac{e_i}{\sigma \sqrt{1 - h_{ii}}}$$
+\begin{equation}
+  e_i^{\ast} = \frac{e_i}{\sigma \sqrt{1 - h_{ii}}}
+  (\#eq:stdunknown)
+\end{equation}
 
 $\sigma$ is unkown. So replace $\sigma$ with $\hat\sigma$.
 
@@ -147,6 +157,37 @@ $$d_i := \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}}$$
 
 where $\hat\sigma^2 = \frac{\sum\limits_{i = 1}^n e_i^2}{n - p - 1}$.
 ```
+
+We can get values of $d_i$ with `rstandard()`.
+
+```{r}
+rstandard(delv_fit)
+```
+
+In fact, we can get both residuals using `broom::augment()`.
+
+- `.fitted`: fitted values
+- `.resid`: raw residuals
+- `.std.resid`: standardized residuals
+
+```{r rstdresid, fig.cap="Standardized residuals"}
+delv_fit %>% 
+  broom::augment() %>% 
+  gather(.resid, .std.resid, key = "residual", value = "value") %>% 
+  ggplot(aes(x = .fitted, y = value, colour = residual)) +
+  geom_ref_line(h = 0) +
+  geom_linerange(aes(ymin = value, ymax = 0), linetype = "dotted") +
+  geom_point() +
+  labs(
+    y = "Residuals",
+    x = "Prediction"
+  ) +
+  scale_colour_discrete(
+    name = "Residuals",
+    label = c("Raw", "Std")
+  )
+```
+
 
 Does this $d_i$ follow $t(n - p - 1)$? $Z := \frac{e_i}{\sigma \sqrt{1 - h_{ii}}} \sim N(0, 1)$ and $X := \frac{\hat\sigma}{\sigma} \sim \chi^2(n - p - 1)$. In the other context, this typically leads to $t$-distribution. Here, however, $Z$ and $X$ are not independent. Denote that $\hat\sigma^2 = \frac{\sum\limits_{i = 1}^n e_i^2}{n - p - 1}$ includes $e_i$, so it cannot be independent with $e_i$. Thus, $d_i$ is not $t$ distributed.
 
@@ -182,6 +223,551 @@ $\hat\sigma_{(-i)}^2$ can be computed from the original $\hat\sigma^2$.
 
 $$\hat\sigma_{(-i)}^2 = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}}{n - p - 1}$$
 ```
+
+This lemma removes repeating procedure.
+
+```{corollary}
+Studentized residuals and standardized residuals are related by
+
+$$r_i = d_i \frac{n - p - 2}{n - p - 1 - d_i^2}$$
+
+where $d_i$ are standardized residuals and $r_i$ are studentized residuals.
+```
+
+`rstudent()` gives this $r_i$ in `R`.
+
+```{r}
+rstudent(delv_fit)
+```
+
+```{r}
+# n = 25
+# p = 1
+rstandard(delv_fit) * sqrt((25 - 3) / (25 - 2 - rstandard(delv_fit)^2))
+```
+
+`broom::(augment)` does not provide `rstudent()` yet, so here `mutate` them all in hand.
+
+```{r rstudresid, fig.cap="Studentized residuals"}
+delv %>% 
+  add_predictions(delv_fit) %>% 
+  mutate(
+    resid = residuals(delv_fit),
+    std = rstandard(delv_fit),
+    stud = rstudent(delv_fit)
+  ) %>% 
+  gather(resid, std, stud, key = "residual", value = "value") %>% 
+  ggplot(aes(x = pred, y = value, colour = residual)) +
+  geom_ref_line(h = 0) +
+  geom_linerange(aes(ymin = value, ymax = 0), linetype = "dotted") +
+  geom_point() +
+  labs(
+    y = "Residuals",
+    x = "Prediction"
+  ) +
+  scale_colour_discrete(
+    name = "Residuals",
+    label = c("Raw", "Std", "Student")
+  )
+```
+
+
+@Chatterjee:2015aa names the above three \@ref(eq:stdunknown) $e_i^{\ast}$, \@ref(def:stdresid) $d_i$, and \@ref(def:studresid) $r_i$ as follows.
+
+```{remark}
+The form of residual in Equation \@ref(eq:stdunknown), Definition \@ref(def:stdresid), and \@ref(def:studresid) can be called as
+
+\begin{enumerate}
+  \item $e_i^{\ast} := \frac{e_i}{\sigma \sqrt{1 - h_{ii}}}$ \textit{Standardized residual}
+  \item $d_i := \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}}$ \textit{Internally studentized residual}
+  \item $r_i := \frac{e_i}{\hat\sigma_{(-i)} \sqrt{1 - h_{ii}}}$ \textit{Externally studentized residual}
+\end{enumerate}
+```
+
+The word *internal* and *external* is due to direct involvement of $\hat\sigma$ in $e_i$. In externally studentized residual, $\hat\sigma_{(-i)}$ is not involved in $e_i$, i.e. external to $e_i$.
+
+
+## Residual Plots
+
+Graphical methods are able to become some kind of caveat. It is effective way to investigate model adequacy.
+
+```{r, include=FALSE}
+cem <- MPV::cement %>% tbl_df()
+cem_fit <- lm(y ~ ., data = cem)
+```
+
+```{r}
+gg_fit <- function(data, mapping) {
+  pt <- gg_scatter(data, mapping = mapping, alpha = 1)
+  pt$layers <- c(geom_smooth(method = "lm"), pt$layers)
+  pt # point layer on line layer
+}
+#------------------------------------
+draw_dot <- function(data, mapping, ...) {
+  data %>% 
+    ggplot(mapping = mapping) +
+    geom_dotplot(...)
+}
+```
+
+Since `gg_scatter()` is pre-defined function drawing a scatter plot, we can change the order of layers by indexing its `layers`. This is because every `geom_*` and `stat_*` returns `layer()`. For example,
+
+```{r}
+geom_smooth
+```
+
+`GGally::ggpairs()` easily draws a matrix of plots. We can specify each `lower`, `upper`, and `diag`.
+
+```{r plmat, message=FALSE, fig.cap="Plot matrix for cement data set"}
+cem %>% 
+  GGally::ggpairs(
+    lower = list(continuous = gg_fit), # regression
+    diag = list(continuous = draw_dot) # dot plot
+  )
+```
+
+Plots that have scatter plot in the matrix form and pairwise correlation such as Figure \@ref(fig:plmat) is called *plot matrix* or *scatter matrix*. First column let us know the relationship between `y` and each `x`. Correlation is important in that we have assumed linear independence. This would be covered later.
+
+### Residual plot
+
+Direct illustration of $Y$ and $X_1, \ldots, X_p$ is helpful, but has its limit to check the assumptions. Residuals might be more informative. Among the three we have defined, we often draw *externally studentized residual* \@ref(def:studresid), i.e. `rstudent()`.
+
+$$r_i := \frac{e_i}{\hat\sigma_{(-i)} \sqrt{1 - h_{ii}}}$$
+
+```{definition, residplot, name = "Residual plot"}
+Residual plot is a plot of $r_i$ versus corresponding fitted values $\hat{Y_i}$
+```
+
+In `modelr` syntax,
+
+```{r}
+add_rstudent <- function(data, model, var = ".stud.resid") {
+  data[[var]] <- rstudent(model, x = data)
+  data
+}
+#----------------------------------------
+residplot <- function(data, model, ...) {
+  data %>% 
+    add_predictions(model) %>% 
+    add_rstudent(model) %>% 
+    ggplot(data, mapping = aes(x = pred, y = .stud.resid)) +
+    geom_ref_line(h = 0) +
+    geom_point(...)
+}
+```
+
+```{r cemrsplot, fig.cap="Residual plot for regression with cement data set"}
+residplot(cem, cem_fit) +
+  labs(
+    x = "Fitted values",
+    y = "Residuals"
+  )
+```
+
+Denote that
+
+$$r_i \stackrel{iid}{\approx} N(0, 1)$$
+
+So we can deduct some ideal behavior of $r_i$.
+
+```{remark}
+Ideally, residual plot should be
+
+\begin{itemize}
+  \item have \textit{no systematic pattern}
+  \item equal variance, i.e. \textit{variability of} $r_i$ \textit{shows constancy}, independent of $\hat{Y_i}$
+  \item most $r_i$s fall between $-2$ and $2$, approximately $95\%$
+\end{itemize}
+```
+
+Now consider various scenarios and see how to interpret this plot.
+
+```{r, include=FALSE}
+hetero <- 
+  tibble(
+    x = seq_len(500),
+    y = 1 + 2 * x,
+  ) %>% 
+  arrange(y) %>% 
+  mutate(y = y + rnorm(500, sd = 1:n()))
+hetero_fit <- lm(y ~ x, data = hetero)
+```
+
+```{r heteropt, fig.cap="Heteroskedasticity"}
+residplot(hetero, hetero_fit)
+```
+
+As $i$ grows, variance becomes larger. Constant variance assumption is violated.
+
+```{r, include=FALSE}
+cubic <- 
+  tibble(
+    x = rnorm(500),
+    y = 1 + 2 * x + x^2 + 3 * x^3 + rnorm(500)
+  )
+cubic_fit <- lm(y ~ x, data = cubic)
+```
+
+```{r nonlinpt, fig.cap="Non-linear relationship and autocorrelation"}
+residplot(cubic, cubic_fit)
+```
+
+By its definition, residuals are values after removing linear effects. If the data embeds non-linear relationships, it would not be removed and it would be still remained as pattern. Figure \@ref(fig:nonlinpt) indicates that $Y$ and $x$ have non-linear relationship.
+
+```{r, include=FALSE}
+outlier <- 
+  tibble(
+    x = seq_len(500),
+    y = 1 + 2 * x + rnorm(500)
+  ) %>% 
+  add_row(x = c(-10, 12), y = c(0, 2)) %>% 
+  mutate(isout = c(rep(FALSE, 500), rep(TRUE, 2)))
+outlier_fit <- lm(y ~ x, data = outlier)
+```
+
+```{r outpt, fig.cap="Existence of outlier"}
+residplot(outlier, outlier_fit) +
+  geom_point(aes(colour = isout), na.rm = TRUE, shape = 1, size = 3, show.legend = FALSE) +
+  scale_colour_manual(values = c("TRUE" = "red", "FALSE" = NA))
+```
+
+Large values of residuals implies they are outliers.
+
+### Normal quantile-quantile plot
+
+We expect that
+
+$$r_i \iid N(0, 1)$$
+
+Normal quantile-quantile plot (q-q plot) or normal probability plot can tell us whether observations of $r_i$ is closed to *Normal distribution*.
+
+```{definition, qqpt, name = "Normal q-q plot"}
+Normal Q-Q plot is the plot of \textit{ordered studentized residuals} $r_{(1)} < r_{(2)} < \cdots < r_{(n)}$ versus \textit{theoretical normal quantiles} $\Phi^{+}\bigg( \frac{i - \frac{3}{8}}{n + \frac{1}{4}} \bigg)$.
+```
+
+*If Q-Q plot is close to a  straight line, this supports the Normality of residuals.* Otherwise, we can say that the assumption is violated.
+
+`ggplot2` provides `stat_qq_line()` and `stat_qq()`. One draws the guide line and the other draws a points of q-q plot. There is an argument `distribution`. We can compare observations with any distribution function. The default, of course, is `stats::qnorm`, i.e. normal distribution.
+
+```{r qqcement, fig.cap="Q-Q plot for cement residuals"}
+cem %>% 
+  add_rstudent(cem_fit) %>% 
+  ggplot(aes(sample = .stud.resid)) +
+  stat_qq_line(
+    distribution = stats::qnorm,
+    col = I("white"),
+    size = 2
+  ) +
+  stat_qq(distribution = stats::qnorm)
+```
+
+In general, we filter *skewness* here.
+
+```{r}
+draw_qq <- function(data, model, distribution = stats::qnorm, ...) {
+  data %>% 
+    add_rstudent(model) %>% 
+    ggplot(aes(sample = .stud.resid)) +
+    stat_qq_line(distribution = distribution, ...) +
+    stat_qq(distribution = distribution) +
+    xlab("Theoretical Quantiles")
+}
+```
+
+```{r, include=FALSE}
+ideal <- 
+  tibble(
+    x = seq_len(500),
+    y = 1 + 2 * x + rnorm(500)
+  )
+ideal_fit <- lm(y ~ x, data = ideal)
+```
+
+```{r idqq, fig.cap="Q-Q plot - Ideal case"}
+draw_qq(ideal, ideal_fit, col = I("white"), size = 2)
+```
+
+Figure \@ref(fig:idqq) shows the ideal case. Observations resemble the straight line.
+
+```{r, include=FALSE}
+fat <- 
+  tibble(
+    x = seq_len(500),
+    y = 1 + 2 * x + rt(500, df = 5)
+  )
+fat_fit <- lm(y ~ x, data = fat)
+```
+
+```{r qqt, fig.cap="Q-Q plot - Heavy-tailed distribution"}
+draw_qq(fat, fat_fit, col = I("white"), size = 2)
+```
+
+Recall that the $x$-axis is *theoretical* normal quantile and $y$-axis is the *observed* ordered studentized residuals. In case of small values of $r_i$, i.e. *left tail*, observed values indicating empirical quantiles are less than theoretical quantiles. *Smaller quantiles at left tail means heavier left tail*. At *right tail*, on the other hand, observed values indicating empirical quantiles are larger than theoretical quantiles. *Larger quantiles at right tail means heavier right tail*. In sum, Figure \@ref(fig:qqt) form is of heavy-tailed distribution.
+
+```{r, include=FALSE}
+thin <- 
+  tibble(
+    x = seq_len(500),
+    y = 1 + 2 * x + runif(500)
+  )
+thin_fit <- lm(y ~ x, data = thin)
+```
+
+```{r qqunif, fig.cap="Q-Q plot - Light-tailed distribution"}
+draw_qq(thin, thin_fit, col = I("white"), size = 2)
+```
+
+This is exactly opposite result with Figure \@ref(fig:qqt). Larger empirical quantiles at left tail implies light left tail. Smaller empirical quantiles at right tail implies light right tail. This is the form of light-tailed distribution.
+
+```{r, include=FALSE}
+right <- 
+  tibble(
+    x = seq_len(500),
+    y = 1 + 2 * x + rchisq(500, df = 1)
+  )
+right_fit <- lm(y ~ x, data = right)
+```
+
+```{r qqchisq, fig.cap="Q-Q plot - Positive skew"}
+draw_qq(right, right_fit, col = I("white"), size = 2)
+```
+
+In this case, $r_i$ is observed as heavier right tail than left. This is called *positive skew* or *right skew*, i.e. its mass leans to the left.
+
+```{r, include=FALSE}
+left <- 
+  tibble(
+    x = seq_len(500),
+    y = 1 + 2 * x + sn::rsn(500, alpha = -5)
+  )
+left_fit <- lm(y ~ x, data = left)
+```
+
+```{r qqskewn, fig.cap="Q-Q plot - Negative skew"}
+draw_qq(left, left_fit, col = I("white"), size = 2)
+```
+
+Left tail is observed heavier than right. This is called *negative skew* or *left skew*. Its mass leans to the right.
+
+### Partial residual plots
+
+
+## Outliers
+
+An outlier is an extreme observation. Outliers occurr in two direction: $X$ and $Y$. There exist appropriate measures to find outliers in corresponding direction.
+
+### Leverage
+
+Consider the design matrix and its row vectors
+
+$$
+X = \begin{bmatrix}
+  \mathbf{x}_1^T \\
+  \mathbf{x}_2^T \\
+  \vdots \\
+  \mathbf{x}_n^T
+\end{bmatrix}
+$$
+
+Note that each $\mathbf{x}_i^T = (1, x_{i1}, x_{i2}, \ldots, x_{ip})^T$ represents $i$-th observation.
+
+```{definition, hati, name = "Leverage"}
+Let $H$ be hat matrix, i.e. projection onto $Col(X)$. Then leverage is defined by its $i$-th diagonal element.
+
+$$h_{ii} := \mathbf{x}_i^T (X^T X)^{-1} \mathbf{x}_i$$
+```
+
+Let us consider the simple linear regression model, $p = 1$. Then we have
+
+$$
+(X^T X)^{-1} = \frac{1}{\sigma^2} Var(\hb) = \begin{bmatrix}
+  \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{xx}}) & - \frac{\overline{x}}{S_{xx}} \\
+  \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
+\end{bmatrix}
+$$
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    h_{ii} & = \begin{bmatrix}
+      1 & x_i
+    \end{bmatrix} \begin{bmatrix}
+    \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{xx}}) & - \frac{\overline{x}}{S_{xx}} \\
+    \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
+  \end{bmatrix} \begin{bmatrix}
+    1 \\
+    x_i
+  \end{bmatrix} \\
+  & = \frac{1}{n} + \frac{(x_i - \overline{x})^2}{S_{xx}}
+  \end{split}
+\end{equation*}
+
+$(x_i - \overline{x})^2$ implies that $h_{ii}$ becomes larger as $x_i$ is far from $\overline{x}$. In other words, $h_{ii}$ represents how far $x_i$ is away from the center. Extending to $p$, $h_{ii}$ represents *how far* $\mathbf{x}_i$ *is away from the center of observations*.
+
+```{proposition, hii, name = "Properties of $h_{ii}$"}
+Leverage values $h_{ii}$ possess several properties
+
+\begin{enumerate}
+  \item $\frac{1}{n} \le h_{ii} \le 1$
+  \item $\sum\limits_{i = 1}^n h_{ii} = p + 1 \Rightarrow \overline{h} = \frac{1}{n} \sum h_{ii} = \frac{p + 1}{n}$
+  \item $Var(\hat{Y_i}) = h_{ii}\sigma^2$
+\end{enumerate}
+```
+
+```{conjecture, highlev, name = "High leverage point"}
+If $h_{ii} > 2\overline{h} = \frac{2(p + 1)}{n}$ (twice the average value), then we regard $i$-th observation as \textbf{\textit{high leverage point}}.
+
+If $i$-th observation is a high leverage point, we can consider that this observation is \textbf{\textit{unusual}} in $X$-space.
+```
+
+In `R`, $h_{ii}$ can be get in various ways. `influence()` returns `list` including `hat` which is leverage values. `broom::augment()` has a column `.hat` and this is the leverage values.
+
+```{r}
+broom::augment(cem_fit) %>% 
+  select(.hat)
+```
+
+High leverage point is potentially dangerous for estimation of regression coefficients.
+
+$$\hat{Y}_i = h_{i1} Y_1 + h_{i2} Y_2 + \cdots + {\color{red}{h_{ii}}} Y_i + \cdots + h_{in} Y_n$$
+
+$h_{ii}$ is a function of $\mathbf{x}_i$. By construction, it measures a role of each $\mathbf{x}_i$ in weight of observation $Y_i$ in determining $\hat{Y}_i$. So a small change of $Y_i$ corresponding to a high leverage can dramatically change the estimators. However, *high leverage points are not always influential points*.
+
+### Influence measure
+
+Influence points are the points that can change the values of estimates by their existence. To see the influence of each data point, we can focus on this meaning. *How much would the regression results change if the* $i$*-th observation were deleted?*
+
+Consdier $D_{(-i)}$. Let $X_{(-i)} \in (n - 1) \times (p + 1)$ be the design matrix from this data set, i.e. design matrix without $i$-th observation.
+
+```{lemma, xtranx}
+Let $X$ be any design matrix. Then
+
+$$
+X = \begin{bmatrix}
+  \mathbf{x}_1^T \\
+  \vdots \\
+  \mathbf{x}_i^T \\
+  \vdots \\
+  \mathbf{x}_n^T
+\end{bmatrix}
+$$
+
+where $\mathbf{x}_i = (1, \mathbf{x}_{i1}, \ldots, \mathbf{x}_{ip})^T$. By construction,
+
+$$X^T X = \sum_{i = 1}^n \mathbf{x}_i \mathbf{x}_i^T$$
+
+Let $Y = (Y_1, \ldots, Y_n)^T$ be any observation vector. Then
+
+$$X^T \mathbf{Y} = \sum_{i = 1}^n \mathbf{x}_i Y_i$$
+```
+
+```{proof}
+It is just arithmetic.
+
+$$
+X^TX = \begin{bmatrix}
+  \mathbf{x}_1 & \cdots & \mathbf{x}_i & \cdots & \mathbf{x}_n
+\end{bmatrix} \begin{bmatrix}
+  \mathbf{x}_1^T \\
+  \vdots \\
+  \mathbf{x}_i^T \\
+  \vdots \\
+  \mathbf{x}_n^T
+\end{bmatrix} = \sum_{i = 1}^n \mathbf{x}_i \mathbf{x}_i^T
+$$
+
+and
+
+$$
+X^T \mathbf{Y} = \begin{bmatrix}
+  \mathbf{x}_1 & \cdots & \mathbf{x}_i & \cdots & \mathbf{x}_n
+\end{bmatrix} \begin{bmatrix}
+  Y_1 \\
+  \vdots \\
+  Y_i \\
+  \vdots \\
+  Y_n
+\end{bmatrix} = \sum_{i = 1}^n \mathbf{x}_i Y_i
+$$
+```
+
+```{lemma, suminv}
+It can be shown that
+
+$$(A + BCB)^{-1} = A^{-1} - A^{-1}B(C^{-1} + B^TA^{-1}B)^{-1}B^TA^{-1}$$
+```
+
+From Lemma \@ref(lem:xtranx),
+
+\begin{equation}
+  \begin{split}
+    \hb_{(-i)} & = (X_{(-i)}^T X_{(-i)})^{-1} X_{(-i)}^T \mathbf{Y}_{(-i)} \\
+    & = \bigg(\sum_{j \neq i} \mathbf{x}_j \mathbf{x}_j^T \bigg)^{-1} \bigg( \sum_{j \neq i} \mathbf{x}_j Y_j \bigg) \\
+    & = (X^TX - \mathbf{x}_i \mathbf{x}_i^T)^{-1} (X^T\mathbf{Y} - \mathbf{x}_i Y_i)
+  \end{split}
+  (\#eq:hbnoi)
+\end{equation}
+
+In Lemma \@ref(lem:suminv), take $A = X^TX$, $B = \mathbf{x}_i$, and $C = -1$. It gives that
+
+\begin{equation*}
+  \begin{split}
+    (X^TX - \mathbf{x}_i \mathbf{x}_i^T)^{-1} & = (X^TX)^{-1} - (X^TX)^{-1}\mathbf{x}_i (-1 + \mathbf{x}_i^T (X^TX)^{-1}\mathbf{x}_i )^{-1} \mathbf{x}_i^T (X^TX)^{-1} \\
+    & = (X^TX)^{-1} + \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i \mathbf{x}_i^T (X^TX)^{-1}
+  \end{split}
+\end{equation*}
+
+Thus,
+
+\begin{equation*}
+  \begin{split}
+    \hb_{(-i)} & = (X^TX - \mathbf{x}_i \mathbf{x}_i^T)^{-1} (X^T\mathbf{Y} - \mathbf{x}_i Y_i) \\
+    & = \bigg[ (X^TX)^{-1} + \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i \mathbf{x}_i^T (X^TX)^{-1} \bigg] (X^T\mathbf{Y} - \mathbf{x}_i Y_i) \\
+    & = (X^TX)^{-1}X^T\mathbf{Y} - (X^TX)^{-1}\mathbf{x}_i Y_i \\
+    & \qquad + \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i \mathbf{x}_i^T (X^TX)^{-1} X^T \mathbf{Y} -  \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i \mathbf{x}_i^T (X^TX)^{-1} \mathbf{x}_i Y_i \\
+    & = \hb - (X^TX)^{-1}\mathbf{x}_i Y_i + \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i \mathbf{x}_i^T \hb - \frac{h_{ii}}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i Y_i \\
+    & = \hb - \bigg[ 1 + \frac{h_{ii}}{1 - h_{ii}} \bigg] (X^TX)^{-1} \mathbf{x}_i Y_i + \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i \hat{Y}_i \quad \because \mathbf{x}_i^T \hb = \hat{Y}_i \\
+    & = \hb - \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i ( Y_i - \hat{Y}_i) \quad \because 1 + \frac{h_{ii}}{1 - h_{ii}} = \frac{1}{1 - h_{ii}} \\
+    & = \hb - \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i
+  \end{split}
+\end{equation*}
+
+```{theorem, hbnoithm}
+Regression coefficient without $i$-th observation can come from the original desing matrix. Also, it is affected by $i$-th residual.
+
+$$\hb_{(-i)} = \hb - \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i$$
+```
+
+### PRESS residual
+
+See Theorem \@ref(thm:hbnoithm). Previous residuals might be able to detect outliers. However, other kind of residuals can be considered here.
+
+```{definition, prsresid, name = "PRESS residuals"}
+$PRESS$ residuals are defined by
+
+$$e_{i, -i} = Y_i - \hat{Y}_{i, -i}$$
+
+where $\hat{Y}_{i, -i} = \mathbf{x}_i^T \hb_{(-i)}$ is the fitted value of the $i$-th response without $i$-th observation.
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## Remedial Measures
+
+### Quick remedies for violations
+
+
+
 
 
 
