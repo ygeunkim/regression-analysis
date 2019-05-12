@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{11 May, 2019}
+    \date{12 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6658,7 +6658,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f9753ec8df0>}
+\CommentTok{#> <bytecode: 0x7faa8774f650>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -7165,11 +7165,283 @@ See Theorem \ref{thm:hbnoithm}. Previous residuals might be able to detect outli
 where \(\hat{Y}_{i, -i} = \mathbf{x}_i^T \boldsymbol{\hat\beta}_{(-i)}\) is the fitted value of the \(i\)-th response without \(i\)-th observation.
 \EndKnitrBlock{definition}
 
+Note that
+
+\[\hat{Y}_{i, -i} = \mathbf{x}_i^T \boldsymbol{\hat\beta}_{(-i)}\]
+
+From Theorem \ref{thm:hbnoithm}, we can get a useful identity about PRESS residual.
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:prsraw}{}{\label{thm:prsraw} }PRESS residuals are related to Raw residuals \(e_i\) and leverage values \(h_{ii}\).
+
+\[e_{i, -i} = \frac{e_i}{1 - h_{ii}}\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Theorem \ref{thm:hbnoithm} implies that
+
+\begin{equation*}
+  \begin{split}
+    e_{i, -i} & = Y_i - \hat{Y}_{i, -i} \\
+    & = Y_i - \mathbf{x}_i^T \boldsymbol{\hat\beta}_{(-i)} \\
+    & = Y_i - \mathbf{x}_i^T \bigg[  \boldsymbol{\hat\beta}- \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \bigg] \\
+    & = Y_i - \mathbf{x}_i^T \boldsymbol{\hat\beta}+ \frac{h_{ii}}{1 - h_{ii}}e_i \\
+    & = \frac{e_i}{1 - h_{ii}} \quad \because Y_i - \mathbf{x}_i^T \boldsymbol{\hat\beta}= e_i
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+Althogh the definition of PRESS requires refitting different models, this Thoerem \ref{thm:prsraw} let us easily compute \(e_{i, -i}\) without refitting data.
+
+\BeginKnitrBlock{remark}[Standardized PRESS residual]
+\iffalse{} {Remark (Standardized PRESS residual). } \fi{}We standardize PRESS residuals \(e_{i, -i}\) by
+
+\[\frac{e_{i, -i}}{\sqrt{Var(e_{i, -i})}} = \frac{e_i / 1 - h_{ii}}{\sqrt{\sigma^2 / (1 - h_{ii})}} = \frac{e_i}{\sigma \sqrt{1 - h_{ii}}}\]
+
+It is same as \textit{standardized residuals} if replacing \(\sigma^2\) with \(\hat\sigma^2\).
+\EndKnitrBlock{remark}
+
+\hypertarget{dffits}{%
+\subsection{DFFITS}\label{dffits}}
+
+\BeginKnitrBlock{definition}[DFFITS]
+\protect\hypertarget{def:dff}{}{\label{def:dff} \iffalse (DFFITS) \fi{} }\[(DFFITS)_i := \frac{\hat{Y}_i - \hat{Y}_{i, -i}}{\hat\sigma_{(-i)} \sqrt{h_{ii}}}\]
+
+where \(\hat{Y}_i = \mathbf{x}_i^T \boldsymbol{\hat\beta}\) and \(\hat{Y}_{i, -i} = \mathbf{x}_i^T \boldsymbol{\hat\beta}_{(-i)}\)
+\EndKnitrBlock{definition}
+
+\BeginKnitrBlock{corollary}
+\protect\hypertarget{cor:dffrepresent}{}{\label{cor:dffrepresent} }\[(DFFITS)_i = \frac{e_i}{\hat\sigma_{(-i)\sqrt{h_{ii}}}} \times \sqrt{\frac{h_{ii}}{1 - h_{ii}}} = \text{studentized residual} \times \text{leverage measure}\]
+\EndKnitrBlock{corollary}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}\begin{equation*}
+  \begin{split}
+    \hat{Y}_i - \hat{Y}_{i, -i} & = (Y_i - \hat{Y}_i) - (Y_i - \hat{Y}_{i, -i}) \\
+    & = e_{i, -i} - e_i \\
+    & = \frac{h_{ii}}{1 - h_{ii}} e_i
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+The second part represents leverage. As leverage values become large, i.e.~\(h_{ii} \rightarrow 1\) (Proposition \ref{prp:hii}), this becomes \(\infty\). This form of function expressed by \(h_{ii}\) is called \emph{potential function}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/levmeasure-1} 
+
+}
+
+\caption{Shape of potential function}\label{fig:levmeasure}
+\end{figure}
+
+\BeginKnitrBlock{conjecture}[Rule of thumb]
+\protect\hypertarget{cnj:dffthumb}{}{\label{cnj:dffthumb} \iffalse (Rule of thumb) \fi{} }If \(\lvert (DFFITS)_i \rvert > 2 \sqrt{\frac{p + 1}{n - p - 1}}\), then \(i\)-th observation is considered to be influential.
+\EndKnitrBlock{conjecture}
+
+There is \texttt{dffits()} so that we can easilty get only \((DFFITS)_i\) for every \(i\)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{tibble}\NormalTok{(}\DataTypeTok{DFFITS =} \KeywordTok{dffits}\NormalTok{(cem_fit)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{i =} \DecValTok{1}\OperatorTok{:}\KeywordTok{n}\NormalTok{()) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ i, }\DataTypeTok{y =}\NormalTok{ DFFITS)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_ref_line}\NormalTok{(}\DataTypeTok{h =} \DecValTok{2} \OperatorTok{*}\StringTok{ }\KeywordTok{sqrt}\NormalTok{( (}\DecValTok{4} \OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{/}\StringTok{ }\NormalTok{(}\KeywordTok{nrow}\NormalTok{(cem) }\OperatorTok{-}\StringTok{ }\DecValTok{4} \OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{) )) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_linerange}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin =}\NormalTok{ DFFITS, }\DataTypeTok{ymax =} \DecValTok{0}\NormalTok{), }\DataTypeTok{col =} \KeywordTok{gg_hcl}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/dffdat-1} 
+
+}
+
+\caption{DFFITS for fitted cement dataset}\label{fig:dffdat}
+\end{figure}
+
+\hypertarget{cooks-distance}{%
+\subsection{Cook's Distance}\label{cooks-distance}}
+
+\BeginKnitrBlock{definition}[Cook\'s distance]
+\protect\hypertarget{def:cook}{}{\label{def:cook} \iffalse (Cook's distance) \fi{} }\[C_i := \frac{\sum\limits_{j = 1}^n (\hat{Y}_j - \hat{Y}_{j, -i})^2}{\hat\sigma (p + 1)}\]
+
+where \(\hat{Y}_{j, -i} = \mathbf{x}_j^T \boldsymbol{\hat\beta}_{(-i)}\).
+\EndKnitrBlock{definition}
+
+Cook's distnace is related to the distance between \(\mathbf{\hat{Y}}\) and \(\mathbf{\hat{Y}}_{(-i)}\).
+
+\BeginKnitrBlock{corollary}
+\protect\hypertarget{cor:cookrepresent}{}{\label{cor:cookrepresent} }Cooks's distance is related to the distance between \(\boldsymbol{\hat\beta}\) and \(\boldsymbol{\hat\beta}_{(-i)}\).
+
+\[C_i = \frac{(\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})^T X^T X (\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})}{\hat\sigma (p + 1)}\]
+\EndKnitrBlock{corollary}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}It is just arithmetic if plug-in \(\hat{Y}_{j} = \mathbf{x}_j^T \boldsymbol{\hat\beta}\) \(\hat{Y}_{j, -i} = \mathbf{x}_j^T \boldsymbol{\hat\beta}_{(-i)}\).
+
+\begin{equation*}
+  \begin{split}
+    C_i & = \frac{(\mathbf{Y} - \mathbf{Y}_{-i})^T(\mathbf{Y} - \mathbf{Y}_{-i})}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{(X\boldsymbol{\hat\beta}- X\boldsymbol{\hat\beta}_{(-i)})^T(X\boldsymbol{\hat\beta}- X\boldsymbol{\hat\beta}_{(-i)})}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{(\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})}{\hat\sigma^2 (p + 1)}
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}\(C_i\) can be represented by internally studentized residual and potential function
+
+\[C_i = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}}\]
+\EndKnitrBlock{remark}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}From Theorem \ref{thm:hbnoithm} (\(\boldsymbol{\hat\beta}_{(-i)} = \boldsymbol{\hat\beta}- \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i\)) and Corollary \ref{cor:cookrepresent},
+
+\begin{equation*}
+  \begin{split}
+    C_i & = \frac{(\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{\Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]^T X^TX \Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{\frac{e_i^2}{(1 - h_{ii})^2} \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i}{\hat\sigma^2 (p + 1)} \\
+    & = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}} \quad \because \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i = h_{ii} \\
+    & = (\text{internally studentized residual})^2 \times \frac{1}{p + 1} \times \text{leverage measure}
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{conjecture}
+\protect\hypertarget{cnj:cookthumb}{}{\label{cnj:cookthumb} }In practice, if \(C_i > 1\), \(i\)-th observation is considered to be influential.
+\EndKnitrBlock{conjecture}
+
+Corollary \ref{cor:cookrepresent} is form of \(F\)-statistic. More specifically, \(F(p, n - p)\). \(1\) is actually come from \(F_{0.5} (p, n - p)\). If the case is out of 50th percentile of \(F\)-distribution, then we will say that it is influential point.
+
+In \texttt{R}, \texttt{cooks.distance()} gives \(C_i\) alone.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{tibble}\NormalTok{(}\DataTypeTok{cook =} \KeywordTok{cooks.distance}\NormalTok{(cem_fit)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{i =} \DecValTok{1}\OperatorTok{:}\KeywordTok{n}\NormalTok{()) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ i, }\DataTypeTok{y =}\NormalTok{ cook)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_ref_line}\NormalTok{(}\DataTypeTok{h =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_linerange}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin =}\NormalTok{ cook, }\DataTypeTok{ymax =} \DecValTok{0}\NormalTok{), }\DataTypeTok{col =} \KeywordTok{gg_hcl}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/cidat-1} 
+
+}
+
+\caption{Cook\'s Distance for fitted cement dataset}\label{fig:cidat}
+\end{figure}
+
+In fact, we can get every influential statistic at once. \texttt{influence()} gives as \texttt{list} object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{influence}\NormalTok{(cem_fit)}
+\CommentTok{#> $hat}
+\CommentTok{#>     1     2     3     4     5     6     7     8     9    10    11    12 }
+\CommentTok{#> 0.550 0.333 0.577 0.295 0.358 0.124 0.367 0.409 0.294 0.700 0.426 0.263 }
+\CommentTok{#>    13 }
+\CommentTok{#> 0.304 }
+\CommentTok{#> }
+\CommentTok{#> $coefficients}
+\CommentTok{#>    (Intercept)        x1        x2        x3        x4}
+\CommentTok{#> 1      -0.0797  0.000615  0.000865  0.000563  0.000923}
+\CommentTok{#> 2      14.3977 -0.188059 -0.144479 -0.166288 -0.130195}
+\CommentTok{#> 3     -76.1808  0.763715  0.777935  0.811840  0.772107}
+\CommentTok{#> 4     -16.9320  0.135355  0.183354  0.170637  0.163203}
+\CommentTok{#> 5      -1.4097  0.002222  0.018383  0.002002  0.017145}
+\CommentTok{#> 6      11.3466 -0.078436 -0.114107 -0.113965 -0.119354}
+\CommentTok{#> 7       3.8884 -0.003697 -0.053510 -0.042756 -0.031897}
+\CommentTok{#> 8      25.1599 -0.328637 -0.223616 -0.416775 -0.248256}
+\CommentTok{#> 9      18.0763 -0.202827 -0.182419 -0.176212 -0.185153}
+\CommentTok{#> 10     -3.9568  0.092798  0.031933  0.063502  0.035052}
+\CommentTok{#> 11    -22.6795  0.278931  0.213431  0.345600  0.217330}
+\CommentTok{#> 12    -10.0419  0.106271  0.107888  0.101899  0.098533}
+\CommentTok{#> 13     24.5346 -0.219201 -0.274452 -0.214449 -0.247089}
+\CommentTok{#> }
+\CommentTok{#> $sigma}
+\CommentTok{#>    1    2    3    4    5    6    7    8    9   10   11   12   13 }
+\CommentTok{#> 2.61 2.52 2.43 2.50 2.61 2.08 2.52 2.10 2.54 2.61 2.42 2.58 2.40 }
+\CommentTok{#> }
+\CommentTok{#> $wt.res}
+\CommentTok{#>        1        2        3        4        5        6        7        8 }
+\CommentTok{#>  0.00476  1.51120 -1.67094 -1.72710  0.25076  3.92544 -1.44867 -3.17499 }
+\CommentTok{#>        9       10       11       12       13 }
+\CommentTok{#>  1.37835  0.28155  1.99098  0.97299 -2.29433}
+\end{Highlighting}
+\end{Shaded}
+
+On the other hand, \texttt{influence.measures()} gives \texttt{matrix}. Its class is \texttt{infl} and we can extract \texttt{matrix} by \texttt{\$infmat}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{influence.measures}\NormalTok{(cem_fit)}
+\CommentTok{#> Influence measures of}
+\CommentTok{#>   lm(formula = y ~ ., data = cem) :}
+\CommentTok{#> }
+\CommentTok{#>      dfb.1_    dfb.x1   dfb.x2    dfb.x3   dfb.x4   dffit cov.r   cook.d}
+\CommentTok{#> 1  -0.00106  0.000773  0.00112  0.000698  0.00122  0.0030 4.335 2.06e-06}
+\CommentTok{#> 2   0.19947 -0.245131 -0.19378 -0.213899 -0.17826  0.5193 2.017 5.72e-02}
+\CommentTok{#> 3  -1.09529  1.033072  1.08281  1.083708  1.09704 -1.2356 2.195 3.01e-01}
+\CommentTok{#> 4  -0.23674  0.178058  0.24819  0.221515  0.22551 -0.5333 1.741 5.93e-02}
+\CommentTok{#> 5  -0.01884  0.002793  0.02378  0.002484  0.02264  0.0894 3.004 1.82e-03}
+\CommentTok{#> 6   0.19047 -0.123878 -0.18544 -0.177619 -0.19800  0.7594 0.225 8.34e-02}
+\CommentTok{#> 7   0.05380 -0.004812 -0.07168 -0.054930 -0.04362 -0.5497 2.151 6.43e-02}
+\CommentTok{#> 8   0.41856 -0.514380 -0.36015 -0.643741 -0.40814 -1.6352 0.365 3.94e-01}
+\CommentTok{#> 9   0.24840 -0.262227 -0.24268 -0.224818 -0.25144  0.4171 2.068 3.75e-02}
+\CommentTok{#> 10 -0.05297  0.116875  0.04138  0.078926  0.04637  0.3016 6.330 2.07e-02}
+\CommentTok{#> 11 -0.32727  0.378689  0.29816  0.463023  0.30992  0.9345 1.558 1.71e-01}
+\CommentTok{#> 12 -0.13589  0.135302  0.14134  0.128027  0.13177  0.2625 2.309 1.53e-02}
+\CommentTok{#> 13  0.35692 -0.300024 -0.38654 -0.289655 -0.35523 -0.7568 1.185 1.10e-01}
+\CommentTok{#>      hat inf}
+\CommentTok{#> 1  0.550   *}
+\CommentTok{#> 2  0.333    }
+\CommentTok{#> 3  0.577   *}
+\CommentTok{#> 4  0.295    }
+\CommentTok{#> 5  0.358   *}
+\CommentTok{#> 6  0.124    }
+\CommentTok{#> 7  0.367    }
+\CommentTok{#> 8  0.409    }
+\CommentTok{#> 9  0.294    }
+\CommentTok{#> 10 0.700   *}
+\CommentTok{#> 11 0.426    }
+\CommentTok{#> 12 0.263    }
+\CommentTok{#> 13 0.304}
+\end{Highlighting}
+\end{Shaded}
+
+In \texttt{broom} package, \texttt{broom::augment()} includes influene measures. To use \texttt{tibble}, we can use this function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{broom}\OperatorTok{::}\KeywordTok{augment}\NormalTok{(cem_fit)}
+\CommentTok{#> # A tibble: 13 x 12}
+\CommentTok{#>       y    x1    x2    x3    x4 .fitted .se.fit   .resid  .hat .sigma}
+\CommentTok{#>   <dbl> <dbl> <dbl> <dbl> <dbl>   <dbl>   <dbl>    <dbl> <dbl>  <dbl>}
+\CommentTok{#> 1  78.5     7    26     6    60    78.5   1.81   0.00476 0.550   2.61}
+\CommentTok{#> 2  74.3     1    29    15    52    72.8   1.41   1.51    0.333   2.52}
+\CommentTok{#> 3 104.     11    56     8    20   106.    1.86  -1.67    0.577   2.43}
+\CommentTok{#> 4  87.6    11    31     8    47    89.3   1.33  -1.73    0.295   2.50}
+\CommentTok{#> 5  95.9     7    52     6    33    95.6   1.46   0.251   0.358   2.61}
+\CommentTok{#> 6 109.     11    55     9    22   105.    0.862  3.93    0.124   2.08}
+\CommentTok{#> # ... with 7 more rows, and 2 more variables: .cooksd <dbl>,}
+\CommentTok{#> #   .std.resid <dbl>}
+\end{Highlighting}
+\end{Shaded}
+
 \hypertarget{remedial-measures}{%
 \section{Remedial Measures}\label{remedial-measures}}
 
-\hypertarget{quick-remedies-for-violations}{%
-\subsection{Quick remedies for violations}\label{quick-remedies-for-violations}}
+\hypertarget{transformations}{%
+\subsection{Transformations}\label{transformations}}
+
+As quick remedies for violations, transformations can be conducted.
 
 \bibliography{book.bib,packages.bib}
 

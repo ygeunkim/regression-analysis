@@ -751,20 +751,182 @@ $$e_{i, -i} = Y_i - \hat{Y}_{i, -i}$$
 where $\hat{Y}_{i, -i} = \mathbf{x}_i^T \hb_{(-i)}$ is the fitted value of the $i$-th response without $i$-th observation.
 ```
 
+Note that
+
+$$\hat{Y}_{i, -i} = \mathbf{x}_i^T \hb_{(-i)}$$
+
+From Theorem \@ref(thm:hbnoithm), we can get a useful identity about PRESS residual.
+
+```{theorem, prsraw}
+PRESS residuals are related to Raw residuals $e_i$ and leverage values $h_{ii}$.
+
+$$e_{i, -i} = \frac{e_i}{1 - h_{ii}}$$
+```
+
+```{proof}
+Theorem \@ref(thm:hbnoithm) implies that
+
+\begin{equation*}
+  \begin{split}
+    e_{i, -i} & = Y_i - \hat{Y}_{i, -i} \\
+    & = Y_i - \mathbf{x}_i^T \hb_{(-i)} \\
+    & = Y_i - \mathbf{x}_i^T \bigg[  \hb - \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \bigg] \\
+    & = Y_i - \mathbf{x}_i^T \hb + \frac{h_{ii}}{1 - h_{ii}}e_i \\
+    & = \frac{e_i}{1 - h_{ii}} \quad \because Y_i - \mathbf{x}_i^T \hb = e_i
+  \end{split}
+\end{equation*}
+```
+
+Althogh the definition of PRESS requires refitting different models, this Thoerem \@ref(thm:prsraw) let us easily compute $e_{i, -i}$ without refitting data.
+
+```{remark, name = "Standardized PRESS residual"}
+We standardize PRESS residuals $e_{i, -i}$ by
+
+$$\frac{e_{i, -i}}{\sqrt{Var(e_{i, -i})}} = \frac{e_i / 1 - h_{ii}}{\sqrt{\sigma^2 / (1 - h_{ii})}} = \frac{e_i}{\sigma \sqrt{1 - h_{ii}}}$$
+
+It is same as \textit{standardized residuals} if replacing $\sigma^2$ with $\hat\sigma^2$.
+```
 
 
+### DFFITS
+
+```{definition, dff, name = "DFFITS"}
+$$(DFFITS)_i := \frac{\hat{Y}_i - \hat{Y}_{i, -i}}{\hat\sigma_{(-i)} \sqrt{h_{ii}}}$$
+
+where $\hat{Y}_i = \mathbf{x}_i^T \hb$ and $\hat{Y}_{i, -i} = \mathbf{x}_i^T \hb_{(-i)}$
+```
+
+```{corollary, dffrepresent}
+$$(DFFITS)_i = \frac{e_i}{\hat\sigma_{(-i)\sqrt{h_{ii}}}} \times \sqrt{\frac{h_{ii}}{1 - h_{ii}}} = \text{studentized residual} \times \text{leverage measure}$$
+```
+
+```{proof}
+\begin{equation*}
+  \begin{split}
+    \hat{Y}_i - \hat{Y}_{i, -i} & = (Y_i - \hat{Y}_i) - (Y_i - \hat{Y}_{i, -i}) \\
+    & = e_{i, -i} - e_i \\
+    & = \frac{h_{ii}}{1 - h_{ii}} e_i
+  \end{split}
+\end{equation*}
+```
+
+The second part represents leverage. As leverage values become large, i.e. $h_{ii} \rightarrow 1$ (Proposition \@ref(prp:hii)), this becomes $\infty$. This form of function expressed by $h_{ii}$ is called *potential function*
+
+```{r levmeasure, echo=FALSE, fig.cap="Shape of potential function"}
+tibble(x = c(0, .99)) %>% 
+  ggplot(aes(x = x)) +
+  stat_function(fun = function(x) {
+    sqrt(x / (1 - x))
+  }) +
+  xlab(expression(h[ii])) +
+  ylab(expression(sqrt(h[ii] / (1 - h[ii]))))
+```
+
+```{conjecture, dffthumb, name = "Rule of thumb"}
+If $\lvert (DFFITS)_i \rvert > 2 \sqrt{\frac{p + 1}{n - p - 1}}$, then $i$-th observation is considered to be influential.
+```
+
+There is `dffits()` so that we can easilty get only $(DFFITS)_i$ for every $i$
+
+```{r dffdat, fig.cap="DFFITS for fitted cement dataset"}
+tibble(DFFITS = dffits(cem_fit)) %>% 
+  mutate(i = 1:n()) %>% 
+  ggplot(aes(x = i, y = DFFITS)) +
+  geom_ref_line(h = 2 * sqrt( (4 + 1) / (nrow(cem) - 4 - 1) )) +
+  geom_point() +
+  geom_linerange(aes(ymin = DFFITS, ymax = 0), col = gg_hcl(1), linetype = "dotted")
+```
 
 
+### Cook's Distance
 
+```{definition, cook, name = "Cook\\'s distance"}
+$$C_i := \frac{\sum\limits_{j = 1}^n (\hat{Y}_j - \hat{Y}_{j, -i})^2}{\hat\sigma (p + 1)}$$
 
+where $\hat{Y}_{j, -i} = \mathbf{x}_j^T \hb_{(-i)}$.
+```
 
+Cook's distnace is related to the distance between $\mathbf{\hat{Y}}$ and $\mathbf{\hat{Y}}_{(-i)}$.
 
+```{corollary, cookrepresent}
+Cooks's distance is related to the distance between $\hb$ and $\hb_{(-i)}$.
 
+$$C_i = \frac{(\hb - \hb_{(-i)})^T X^T X (\hb - \hb_{(-i)})}{\hat\sigma (p + 1)}$$
+```
+
+```{proof}
+It is just arithmetic if plug-in $\hat{Y}_{j} = \mathbf{x}_j^T \hb$ $\hat{Y}_{j, -i} = \mathbf{x}_j^T \hb_{(-i)}$.
+
+\begin{equation*}
+  \begin{split}
+    C_i & = \frac{(\mathbf{Y} - \mathbf{Y}_{-i})^T(\mathbf{Y} - \mathbf{Y}_{-i})}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{(X\hb - X\hb_{(-i)})^T(X\hb - X\hb_{(-i)})}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{(\hb - \hb_{(-i)})^T X^TX (\hb - \hb_{(-i)})}{\hat\sigma^2 (p + 1)}
+  \end{split}
+\end{equation*}
+```
+
+```{remark}
+$C_i$ can be represented by internally studentized residual and potential function
+
+$$C_i = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}}$$
+```
+
+```{proof}
+From Theorem \@ref(thm:hbnoithm) ($\hb_{(-i)} = \hb - \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i$) and Corollary \@ref(cor:cookrepresent),
+
+\begin{equation*}
+  \begin{split}
+    C_i & = \frac{(\hb - \hb_{(-i)})^T X^TX (\hb - \hb_{(-i)})}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{\Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]^T X^TX \Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]}{\hat\sigma^2 (p + 1)} \\
+    & = \frac{\frac{e_i^2}{(1 - h_{ii})^2} \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i}{\hat\sigma^2 (p + 1)} \\
+    & = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}} \quad \because \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i = h_{ii} \\
+    & = (\text{internally studentized residual})^2 \times \frac{1}{p + 1} \times \text{leverage measure}
+  \end{split}
+\end{equation*}
+```
+
+```{conjecture, cookthumb}
+In practice, if $C_i > 1$, $i$-th observation is considered to be influential.
+```
+
+Corollary \@ref(cor:cookrepresent) is form of $F$-statistic. More specifically, $F(p, n - p)$. $1$ is actually come from $F_{0.5} (p, n - p)$. If the case is out of 50th percentile of $F$-distribution, then we will say that it is influential point.
+
+In `R`, `cooks.distance()` gives $C_i$ alone.
+
+```{r cidat, fig.cap="Cook\\'s Distance for fitted cement dataset"}
+tibble(cook = cooks.distance(cem_fit)) %>% 
+  mutate(i = 1:n()) %>% 
+  ggplot(aes(x = i, y = cook)) +
+  geom_ref_line(h = 1) +
+  geom_point() +
+  geom_linerange(aes(ymin = cook, ymax = 0), col = gg_hcl(1), linetype = "dotted")
+```
+
+In fact, we can get every influential statistic at once. `influence()` gives as `list` object.
+
+```{r}
+influence(cem_fit)
+```
+
+On the other hand, `influence.measures()` gives `matrix`. Its class is `infl` and we can extract `matrix` by `$infmat`.
+
+```{r}
+influence.measures(cem_fit)
+```
+
+In `broom` package, `broom::augment()` includes influene measures. To use `tibble`, we can use this function.
+
+```{r}
+broom::augment(cem_fit)
+```
 
 
 ## Remedial Measures
 
-### Quick remedies for violations
+### Transformations
+
+As quick remedies for violations, transformations can be conducted.
 
 
 
