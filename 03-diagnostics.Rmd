@@ -924,22 +924,497 @@ broom::augment(cem_fit)
 
 ## Remedial Measures
 
+In many times, given data set violates our assumptions. We have seen some of those scenarios. In that case, typical procedure will not be welcomed.
+
 ### Transformations
 
-As quick remedies for violations, transformations can be conducted.
+As quick remedies for violations, transformations of variables can be conducted.
+
+First, See Figure \@ref(fig:heteropt). When **variance becomes larger** as $\hat{Y}_i$ increases, transform $Y_i$ into
+
+$$\ln Y_i \quad \text{or} \quad \sqrt{Y_i}$$
+
+i.e. the model becomes
+
+$$
+\begin{cases}
+\ln Y_i = \beta_0 + \beta_1 x_{i1} + \cdots \beta_p x_{ip} + \epsilon_i \\
+\sqrt{Y_i} = \beta_0 + \beta_1 x_{i1} + \cdots \beta_p x_{ip} + \epsilon_i
+\end{cases}
+$$
+
+Since $\ln(.)$ and $\sqrt{.}$ is increasing with decreasing derivative, it might be able to suppress increasing variance which is depending on $\hat{Y}_i$.
+
+```{r}
+hetero_scale <- 
+  hetero %>% 
+  mutate(
+    logy = log(y - min(y) + .1),
+    sqy = sqrt(y - min(y) + .1)
+  )
+#--------------
+hetero_log <- lm(logy ~ x, data = hetero_scale)
+hetero_sqrt <- lm(sqy ~ x, data = hetero_scale)
+```
+
+```{r heterolog, fig.cap="Log transformation against increasing variance"}
+residplot(hetero_scale, hetero_log)
+```
+
+```{r heterosqrt, fig.cap="Square root transformation against increasing variance"}
+residplot(hetero_scale, hetero_sqrt)
+```
+
+See Figures \@ref(fig:heterolog) and \@ref(fig:heterosqrt). In this example, log-transformation was more affective. This might be because log function is smaller than square root function in large values.
+
+Second, see Figure \@ref(fig:nonlinpt). Sometimes we observe a **certain pattern** in residual plot. Here, non-linear - cubic. Then transform $x_i$ into corresponding non-linear function of $x_i$.
+
+```{r cubicregress, fig.cap="Cubic transformation against cubic pattern"}
+cubic_poly <- lm(y ~ poly(x, 3), data = cubic) # cubic polynomial
+residplot(cubic, cubic_poly)
+```
+
+Third, consider the case when Q-Q plot shows **non-normality**. Of course it depends on a situation, but
+
+$$\ln Y_i$$
+
+helpful sometimes.
+
+### Variance stabilizing transformation
+
+Suppose that the variance is **not constant** and it is the **function of mean**.
+
+$$Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}, \quad \epsilon_i \sim N(0, f^2(\mu_i))$$
+
+where $\mu_i = E(Y_i)$ and $f$ is a smooth function for *standard deviation*. Before looking at how to deal with this heteroskedasticity, review a theorem from mathematical statistics.
+
+```{theorem, delthm, name = "Delta Method of moments"}
+Let $h(Y_i)$ be any change of variable.
+
+$$E[h(Y_i)] \approx h(Y_i)$$
+
+and
+
+$$Var[h(Y_i)] \approx \Big(h^{\prime}(\mu_i)\Big)^2 Var(Y_i)$$
+```
+
+```{proof}
+Taylor formula implies that
+
+$$h(Y_i) \approx h(\mu_i) + h^{\prime}(\mu_i)(Y_i - \mu_i)$$
+
+Then by taking mean and variance,
+
+$$Eh(Y_i) \approx h(Y_i)$$
+
+$$Var h(Y_i) \approx \Big( h^{\prime}(\mu_i) \Big)^2 Var(Y_i)$$
+```
+
+We try to find some *variance stabilizing transformation* $h(Y_i)$ such that
+
+$$Var[h(Y_i)] = \sigma^2$$
+
+From Theorem \@ref(thm:delthm),
+
+\begin{equation}
+  \sigma^2 \approx \Big( h^{\prime}(\mu_i) \Big)^2 f^2 (\mu_i)
+  (\#eq:vstsig)
+\end{equation}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    & h^{\prime}(\mu_i) \approx \frac{\sigma}{f(\mu_i)} \\
+    & \Rightarrow h^{\prime}(\mu_i) \propto \frac{1}{f(\mu_i)} \\
+    & \Rightarrow h(\mu_i) \propto \int \frac{1}{f(\mu_i)} d\mu_i
+  \end{split}
+\end{equation*}
+
+```{theorem, vst, name = "Variance stabilizing transformation"}
+$h$ can be calculated by
+
+$$h(\mu_i) \propto \int \frac{1}{f(\mu_i)} d\mu_i$$
+```
+
+Theorem \@ref(thm:vst) shows how we can stabilize variance using the direct pattern of variance.
+
+```{example, poiserr, name = "Poisson error term"}
+$$Y_i \mid \mathbf{x}_i \indep Poisson(\lambda(\mathbf{x}_i))$$
+```
+
+```{r, include=FALSE}
+vst_pois <- 
+  tibble(
+    x = seq_len(500),
+    y = rpois(500, lambda = 1 + 2 * x),
+  )
+pois_fit <- lm(y ~ x, data = vst_pois)
+```
+
+```{r vstpois1, fig.cap="Residual plot after fitting Poisson error model"}
+residplot(vst_pois, pois_fit)
+```
+
+```{solution}
+Poisson error term results in non-constant variance. It is natural because the variance is the same as mean
+
+$$Var(Y_i \mid \mathbf{x}_i) = E(Y_i \mid \mathbf{x}_i) = \lambda(\mathbf{x}_i)$$
+
+Let $\lambda_i \equiv \lambda(\mathbf{x}_i)$. Applying VST,
+
+$$h(\lambda_i) \propto \int \frac{1}{\sqrt{\lambda_i}} d\lambda_i \propto 2 \sqrt{\lambda_i}$$
+
+Hence, we set VST by
+
+$$h(Y_i) = \sqrt{Y_i}$$
+```
+
+```{r vstpois2, fig.cap="Poisson error term model residuals after VST"}
+vst_pois <- 
+  vst_pois %>% 
+  mutate(ysq = sqrt(y))
+vstpois_fit <- lm(ysq ~ x, data = vst_pois)
+#--------------
+residplot(vst_pois, vstpois_fit)
+```
+
+In fact, a *better way is to fit Poisson regression model, as a special case of generalized linera models*. This can explain Poisson random error with random component.
+
+<!-- ```{example, binerr, name = "Binomial error term"} -->
+<!-- Let -->
+
+<!-- $$ -->
+<!-- Y_i = \begin{cases} -->
+<!-- 1 & \text{if pass with probability}\: p(x_i) \\ -->
+<!-- 0 & \text{if fail with probability}\: 1 - p(x_i) -->
+<!-- \end{cases} -->
+<!-- $$ -->
+
+<!-- Then -->
+
+<!-- $$Y_i \mid x_i \indep Bernoulli(p(x_i))$$ -->
+<!-- ``` -->
+
+<!-- ```{solution} -->
+
+<!-- ``` -->
+
+<!-- Note that -->
+
+<!-- $$E(Y_i \mid x_i) = p(x_i)$$ -->
+
+<!-- and -->
+
+<!-- $$Var(Y_i \mid x_i) = p(x_i)(1 - p(x_i))$$ -->
+
+<!-- Then apply VST for $f = p_i(1 - p_i)$ -->
+
+<!-- $$h(p_i) \propto \int \frac{1}{p_i(1 - p_i)} dp_i \propto$$ -->
+
+In general, we do not know $f$. In this case, we just
+
+1. trial and error
+2. previous results
+3. If replications (multiple observations of $Y_i$ at same $\mathbf{x}_i$ values) exist
+    1. compute sd $S_i$ and average $\overline{Y}_i$
+    2. simple linear regression $S_i = \alpha + \lambda \overline{Y}_i$
+    3. $f(\mu_i) = \hat\alpha \mu_i^{\hat\lambda}$
+4. If no replication, group
+
+### Box-Cox Transformation
+
+*Box-Cox transformation* is usually considered when Normality assumption is violated.
+
+$$
+Y^{\prime} = \begin{cases}
+  \frac{Y^{\lambda} - 1}{\lambda} & \text{if}\: \lambda \neq 0 \\
+  \ln Y & \text{if}\: \lambda = 0
+\end{cases}
+$$
+
+How can we decide $\lambda$? $\lambda$ can be estimated by ML method. Note that $Y^{\prime}$ become gaussian. Assume that
+
+$$Y^{\prime} \sim N(\mathbf{x}_i \B, \sigma^2)$$
+
+Then
+
+$$L(\lambda) = \prod_{i = 1}^n \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \bigg( - \frac{(Y_i^{\prime}(\lambda) - \mathbf{x}_i^T \B)^2}{\sigma^2} \bigg)$$
 
 
+## Generalized and Weighted Least Squares
+
+We can meet diverse values of $\sigma_i^2$. As advanced approaches, we can fit method of **generalized least squares** (GLS). One of special cases of GLS, **weighted least squares** is also widely used.
+
+### Generalized least squares
+
+When the errors do not have equal variance or they are not independent, we change our previous least squares procedure, so-called *ordinary least squres* (OLS) method. Our assumption for variance is $\sigma^2 I$, i.e. constant variance. Combined with normality, this also implies independence. Suppose that these two assumptions are violated. Let
+
+$$Var(\E) = \sigma^2 V$$
+
+where $V \neq I$ known. Assume that $V$ is *positive definite*. Consider the following transformation
+
+\begin{equation}
+  \underset{\LARGE \mathbf{Y}^{\prime}}{V^{- \frac{1}{2}} \mathbf{Y}} = \underset{\LARGE X^{\prime}}{V^{- \frac{1}{2}} X} \underset{\LARGE \B}{\B} + \underset{\LARGE \E^{\prime}}{V^{- \frac{1}{2}} \E}
+  (\#eq:glsmod)
+\end{equation}
+
+Then
+
+\begin{equation}
+  \begin{split}
+    Var(\E^{\prime}) & = Var(V^{- \frac{1}{2}} \E) \\
+    & = V^{- \frac{1}{2}} Var(\E) V^{- \frac{1}{2}} \quad \because V \:\text{symmetric} \\
+    & = \sigma^2 I
+  \end{split}
+  (\#eq:glssig)
+\end{equation}
+
+i.e. the errors become to have constant variance and independent. We now decide to find solution for our estimator. As in OLS,
+
+$$\hb_G := \argmin_{\B \in \R^{p + 1}} (\mathbf{Y}^{\prime} - X^{\prime}\B)^T(\mathbf{Y}^{\prime} - X^{\prime}\B)$$
+
+From Equation \@ref(eq:glsmod),
+
+$$(\mathbf{Y}^{\prime} - X^{\prime}\B)^T(\mathbf{Y}^{\prime} - X^{\prime}\B) = (\mathbf{Y} - X\B)^T V^{-1} (\mathbf{Y} - X\B)$$
+
+```{corollary, glsc, name = "GLS criterion"}
+GLS estimator finds
+
+$$\hb_G = \argmin_{\B \in \R^{p + 1}} (\mathbf{Y} - X\B)^T V^{-1} (\mathbf{Y} - X\B)$$
+```
+
+From Corollary \@ref(cor:glsc), GLS estimator is
+
+\begin{equation}
+  \hb_G = (X^T V^{-1} X)^{-1} X^T V^{-1} \mathbf{Y}
+  (\#eq:glsest)
+\end{equation}
+
+```{proposition, glsprop, name = "Properties of $\\hb_G$"}
+$\hb_G$ satisfies following properties.
+
+\begin{enumerate}[label=\roman*]
+  \item $E\hb_G = \B$ and $Var\hb_G = \sigma^2(X^T V^{-1} X)^{-1}$
+  \item $X \hb_G$ is the projection of $\mathbf{Y}$ onto $Col(X)$ when we define a normed space $(\R^n, \lVert \cdot \rVert_{V^{-1}})$ with $\lVert \mathbf{u} \rVert_{V^{-1}}^2 := \mathbf{u}^T V^{-1} \mathbf{u}$
+\end{enumerate}
+```
+
+```{proof}
+(i)-1
+
+\begin{equation*}
+  \begin{split}
+    E\hb_G & = E \Big[(X^T V^{-1} X)^{-1} X^T V^{-1} \mathbf{Y} \Big] \\
+    & = (X^T V^{-1} X)^{-1} X^T V^{-1} E\mathbf{Y} \\
+    & = (X^T V^{-1} X)^{-1} X^T V^{-1} X\B \\
+    & = \B
+  \end{split}
+\end{equation*}
+
+(i)-2
+
+Note that
+
+$$Var\mathbf{Y} = \sigma^2 V$$
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    Var\hb_G & = Var \Big[(X^T V^{-1} X)^{-1} X^T V^{-1} \mathbf{Y} \Big] \\
+    & = (X^T V^{-1} X)^{-1} X^T V^{-1} Var(\mathbf{Y}) V^{-1}X (X^T V^{-1} X)^{-1} \\
+    & = \sigma^2 (X^T V^{-1} X)^{-1} (X^T V^{-1} X) (X^T V^{-1} X)^{-1} \\
+    & = \sigma^2 (X^T V^{-1} X)^{-1}
+  \end{split}
+\end{equation*}
+```
+
+Remember the definition of normed space.
+
+```{definition, normed, name = "Normed space"}
+A \textit{normed space} is a vector space $X$ with a \textbf{\textit{norm}} $\lVert \cdot \rVert: X \rightarrow \R$ satisfying for all $x, y \in X$ and $\alpha \in K$
+
+\begin{enumerate}[label={(N\arabic*)}]
+  \item \label{item:n1} $\lVert x \rVert \ge 0$
+  \item \label{item:n2} $\lVert x \rVert = 0 \Leftrightarrow x = 0$
+  \item \label{item:n3} $\lVert \alpha x \rVert = \lvert \alpha \rvert \lVert x \rVert$
+  \item \label{item:n4} $\lVert x + y \rVert \le \lVert x \rVert + \lVert y \rVert$
+\end{enumerate}
+```
+
+```{remark}
+Consider Definition \@ref(def:normed).
+
+\begin{enumerate}
+  \item $\ref{item:n3}$ and $\ref{item:n4}$ imply $\ref{item:n1}$. Hence, it is enough for any $X$ to satisfy $\ref{item:n2}$, $\ref{item:n3}$ and $\ref{item:n4}$ to show that it is normed space.
+  \item $x = 0$ implies $\lVert x \rVert = 0$, i.e. proving \textit{only if} part is enough for $\ref{item:n2}$.
+\end{enumerate}
+```
+
+```{proof}
+1
+
+Let $x \in X$. Then
+
+\begin{equation*}
+  \begin{split}
+    0 = \lVert 0 \Vert & = \lVert x + (-x) \Vert \\
+    & \le \lVert x \Vert + \lVert -x \Vert \quad \because \ref{item:n4} \\
+    & = 2 \lVert x \Vert \quad \because \ref{item:n3}
+  \end{split}
+\end{equation*}
+
+Thus,
+
+$$\lVert x \Vert \ge 0$$
+
+2
+
+$$\lVert 0 \rVert = \lVert 0 x \rVert \stackrel{\ref{item:n3}}{=} \lvert 0 \rvert \lVert x \rVert = 0$$
+```
+
+Denote that in our regression setting, $K = \R$. Now continue the proof of Proposition \@ref(prp:glsprop).
+
+```{proof}
+(ii) normed space
+
+Let $\mathbf{u} \in \R^n$ and let $\lVert \mathbf{u} \rVert_{V^{-1}}^2 := \mathbf{u}^T V^{-1} \mathbf{u}$.
+
+Want 1: $\lVert \mathbf{u} \rVert = 0 \Rightarrow \mathbf{u} = \mathbf{0}$
+
+Suppose that $\lVert \mathbf{u} \rVert = 0$. Then by definition,
+
+$$\mathbf{u}^T V^{-1} \mathbf{u} = 0$$
+
+Since $V$ is positive defintie, $V^{-1}$ is also positive definite. Thus,
+
+$$\mathbf{u} = 0$$
+
+and $\ref{item:n1}$ holds.
+
+Want 2: $\ref{item:n3}$
+
+Let $c \in \R$. Then
+
+\begin{equation*}
+  \begin{split}
+    \lVert c \mathbf{u} \rVert_{V^{-1}}^2 & = (c \mathbf{u})^T V^{-1} (c\mathbf{u}) \\
+    & = c^2 \mathbf{u}^T V^{-1} \mathbf{u}
+  \end{split}
+\end{equation*}
+
+Thus,
+
+$$\lVert c \mathbf{u} \rVert_{V^{-1}} = \lvert c \rvert \lVert \mathbf{u} \rVert_{V^{-1}}$$
+
+Want 3: $\ref{item:n4}$
+
+Let $\mathbf{u}, \mathbf{v} \in \R^n$. Then we have
+
+\begin{equation*}
+  \begin{split}
+    \lVert \mathbf{u} + \mathbf{v} \rVert_{V^{-1}}^2 & = (\mathbf{u} + \mathbf{v})^T V^{-1} (\mathbf{u} + \mathbf{v}) \\
+    & = \bigg\lvert (\mathbf{u} + \mathbf{v})^T \Big( V^{-1} (\mathbf{u} + \mathbf{v}) \Big) \bigg\rvert \\
+    & \le \lVert \mathbf{u} + \mathbf{v} \rVert \cdot \lVert V^{-1} (\mathbf{u} + \mathbf{v}) \rVert \quad \leftarrow \text{Cauchy-Schwarz inequality in}\: (\R^n, < \cdot, \cdot >)
+  \end{split}
+\end{equation*}
+```
 
 
+Refer to the GLS model \@ref(eq:glsmod). In fact, this is a transformed model, so $\B$ here is the different coefficient with the original model. By Equation \@ref(eq:glsest) and Proposition \@ref(prp:glsprop), $\hb_G$ is a linear unbiased estimator for $\B$. Then is this the BLUE, i.e. is
+
+$$Var\hb_G = \sigma^2(X^T V^{-1} X)^{-1}$$
+
+the smallest variance among of the linear unbiased estimators?
+
+```{theorem, glsblue}
+GLS estimator $\hb_G$ is the best linear unbiased estimator of $\B$, i.e. \textbf{\textit{BLUE}}.
+```
+
+```{proof}
+One proceeds in a similar way to the proof of Theorem \@ref(thm:multgm).
+
+Let $\tilde{\B} \in \Omega \equiv \{ \tilde{\B} : \tilde{\B} = C \mathbf{Y}, E\tilde{\B} = \B \}$.
+
+Claim: $Var\tilde{\B} - Var\hb_G$ is non-negative definite.
+
+Set $D := C - (X^T V^{-1} X)^{-1} X^T V^{- \frac{1}{2}}$. From unbiasedness,
+
+\begin{equation*}
+  \begin{split}
+    E\tilde{\B} & = C E\mathbf{Y} \\
+    & = C V^{ -\frac{1}{2}} X \B \\
+    & = \Big( (X^T V^{-1} X)^{-1} X^T V^{- \frac{1}{2}} + D \Big) V^{- \frac{1}{2}} X \B \\
+    & = \B + D V^{- \frac{1}{2}} X \B \\
+    & = \B
+  \end{split}
+\end{equation*}
+
+It implies that
+
+$$D V^{- \frac{1}{2}} X = 0$$
+
+\begin{equation*}
+  \begin{split}
+    Var\tilde{\B} & = Var(C\mathbf{Y}) \\
+    & = \sigma^2 CC^T \\
+    & = \sigma^2 \Big( (X^T V^{-1} X)^{-1} X^T V^{- \frac{1}{2}} + D \Big) \Big( (X^T V^{-1} X)^{-1} X^T V^{- \frac{1}{2}} + D \Big)^T \\
+    & = \sigma^2 \Big( (X^T V^{-1} X)^{-1} + DV^{- \frac{1}{2}}X(X^T V^{-1} X)^{-1} + (X^T V^{-1} X)^{-1} X^T V^{- \frac{1}{2}} D^T + DD^T \Big) \\
+    & = \sigma^2 \Big( (X^T V^{-1} X)^{-1} + DD^T \Big) \\
+    & = Var\hb_G + \sigma^2 DD^T
+  \end{split}
+\end{equation*}
+
+Note that $\sigma^2 DD^T$ is a non-negative definite matrix. Hence,
+
+$$Var\tilde{\B} - Var\hb_G = \sigma^2 DD^T$$
+
+is non-negative. This completes the proof.
+```
+
+In practice, however, we do not know what $V$ is.
 
 
+### Weighted least squares
 
+As mentioned, WLS is a special case of GLS. Set $W := V^{-1}$ in GLS by
 
+$$W = diag\Big(\frac{1}{w_1}, \frac{1}{w_2}, \ldots, \frac{1}{w_n}\Big)$$
 
+with $w_i > 0$. This method is appropriate to the *uncorrelated error term of unequal variances with*
 
+$$Var(\epsilon_i) = \frac{\sigma^2}{w_i}$$
 
+As in GLS, weighted least squares deals with the model of the form
 
+\begin{equation}
+  W^{\frac{1}{2}} \mathbf{Y} = W^{\frac{1}{2}} X \B + W^{\frac{1}{2}} \E
+  (\#eq:wlsmod)
+\end{equation}
 
+From Corollary \@ref(cor:glsc), it minimizes
+
+$$(\mathbf{Y} - X\B)^T W (\mathbf{Y} - X\B)$$
+
+This is equivalent to the next corollary.
+
+```{corollary, wlsc, name = "WLS criterion"}
+WLS minimizes the weighted sum of squred errors
+
+$$\sum_{i = 1}^n w_i (Y_i - \beta_0 - \beta_1 x_{i1} - \cdots - \beta_p x_{ip})^2$$
+```
+
+Corollary \@ref(cor:wlsc) means that each data point is *weighted by inversely proportional to the variance of the corresponding response*. The estimator would be computed as
+
+\begin{equation}
+  \hb^{WLS} = (X^T W X) X^T W \mathbf{Y}
+  (\#eq:wlsest)
+\end{equation}
+
+Since we do not know each $\sigma_i$ in typical analysis, we should estimate each $w_i$.
+
+This weights of WLS is specified in `weights` argument of `lm()`.
 
 
 
