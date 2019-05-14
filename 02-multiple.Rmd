@@ -2340,9 +2340,9 @@ which is equivalent to the above $\mu_1 = \cdots = \mu_k$ by construction.
 
 Note that we have $k + 1$ parameters in the model \@ref(eq:effmod). Write the parameter vector as
 
-$$\B \equiv (\mu, \tau_1, \ldots, \tau_k)^T$$
+$$\boldsymbol\theta \equiv (\mu, \tau_1, \ldots, \tau_k)^T$$
 
-Then we can build the regression model as
+Then we can express the model as
 
 $$
 \underset{\huge \mathbf{Y}}{\begin{bmatrix}
@@ -2369,7 +2369,7 @@ $$
   1 & 0 & 0 & \cdots & 1 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
   1 & 0 & 0 & \cdots & 1
-\end{bmatrix}} \underset{\huge \B}{\begin{bmatrix}
+\end{bmatrix}} \underset{\huge \boldsymbol\theta}{\begin{bmatrix}
   \mu \\
   \tau_1 \\
   \vdots \\
@@ -2431,9 +2431,9 @@ $$H_0: \mu_1 = \cdots = \mu_k \quad \text{vs} \quad H_1: \text{not}\: H_0$$
 
 Write a parameter vector by
 
-$$\B^{\ast} \equiv (\mu_1, \ldots, \mu_k)^T \in \R^k$$
+$$\boldsymbol\theta^{\ast} \equiv (\mu_1, \ldots, \mu_k)^T \in \R^k$$
 
-One proceeds in a similar way for this $\B^{\ast}$,
+One proceeds in a similar way for this $\boldsymbol\theta^{\ast}$,
 
 $$
 \underset{\huge \mathbf{Y}}{\begin{bmatrix}
@@ -2460,7 +2460,7 @@ $$
   0 & 0 & 0 & \cdots & 1 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
   0 & 0 & 0 & \cdots & 1
-\end{bmatrix}} \underset{\huge \B^{\ast}}{\begin{bmatrix}
+\end{bmatrix}} \underset{\huge \boldsymbol\theta^{\ast}}{\begin{bmatrix}
   \mu_1 \\
   \mu_2 \\
   \vdots \\
@@ -2488,7 +2488,15 @@ X^{\ast} = \begin{bmatrix}
 \end{bmatrix} \in \R^{N \times k}
 $$
 
-where $N = \sum n_j$. Note that $\{ \mathbf{x}_1, \ldots, \mathbf{x}_k \}$ is orthogonal. Normalize each column matrix by
+where $N = \sum n_j$. The regression model *without an intercept* can be built using these indicator variables as
+
+$$Y_{ij} = \beta_1 x_{i1} + \cdots + \beta_k x_{ik} + \epsilon_{ij}$$
+
+The two models have corresponding parameters such that
+
+$$\beta_j = \mu_j$$
+
+So we now estimate $\boldsymbol\theta$. Note that $\{ \mathbf{x}_1, \ldots, \mathbf{x}_k \}$ is orthogonal. Normalize each column matrix by
 
 $$\mathbf{u}_j = \frac{1}{\sqrt{n_j}} \mathbf{x}_j$$
 
@@ -2506,9 +2514,11 @@ $$X^{\ast T} X^{\ast} = R^TQ^TQR = R^TT$$
 
 Normal equation gives that
 
-$$\hb = R^{-1}Q^T\mathbf{Y}^T = (\overline{Y}_{1.}, \overline{Y}_{2.}, \ldots, \overline{Y}_{k.})^T$$
+$$\hat{\boldsymbol\theta} = R^{-1}Q^T\mathbf{Y}^T = (\overline{Y}_{1.}, \overline{Y}_{2.}, \ldots, \overline{Y}_{k.})^T$$
 
-where $\overline{Y}_{j.} = \sum\limits_{i = 1}^{n_j} Y_{ij}$, $j$-the treatment mean.
+where $\overline{Y}_{j.} = \sum\limits_{i = 1}^{n_j} Y_{ij}$, $j$-the treatment mean. Hence, each estimate of regression coefficient is a treatment mean, i.e.
+
+$$\hb = (\overline{Y}_{1.}, \overline{Y}_{2.}, \ldots, \overline{Y}_{k.})^T$$
 
 <!-- ```{r} -->
 <!-- medicine %>%  -->
@@ -2538,7 +2548,7 @@ $$
 
 Since $\tau_k$ is redundant, parameter vector is given by
 
-$$\B^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \R^k$$
+$$\boldsymbol\theta^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \R^k$$
 
 *Assume balanced setting*, i.e. $n_1 = n_2 = \cdots = n_k = n$.
 
@@ -2570,7 +2580,7 @@ $$
   1 & -1 & -1 & \cdots & -1 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
   1 & -1 & -1 & \cdots & -1
-\end{bmatrix}} \underset{\huge \B^{\ast}}{\begin{bmatrix}
+\end{bmatrix}} \underset{\huge \boldsymbol\theta^{\ast}}{\begin{bmatrix}
   \mu \\
   \tau_1 \\
   \vdots \\
@@ -2590,7 +2600,23 @@ $$
 \end{bmatrix}}
 $$
 
-with $X^{\ast} \in \R^{N \times k}$. This is called *effect coding*.
+with $X^{\ast} \in \R^{N \times k}$. This is called *effect coding*. From the second column of design matrix, the variable is coded by
+
+$$
+x_{ij} = \begin{cases}
+  1 & j\text{-th treatment} \\
+  -1 & k\text{-th treatment} \\
+  0 & \text{otherwise}
+\end{cases}
+$$
+
+This results in the regression model of the form
+
+$$Y_{ij} = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{k - 1} x_{i, k - 1} + \epsilon_{ij}$$
+
+Here, each parameter corresponds to
+
+$$\beta_0 = \mu, \quad \beta_j = \tau_j$$
 
 Let $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix}$.
 
@@ -2602,7 +2628,7 @@ Then
 
 \begin{equation*}
   \begin{split}
-    X^{\ast} \hb^{\ast} & = \hat\mu \mathbf{1} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
+    X^{\ast} \hat{\boldsymbol\theta}^{\ast} & = \hat\mu \mathbf{1} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
     & = \mathbf{1} \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \mathbb{X}_A \Pi(\mathbf{Y} \mid R(\mathbb{X}_A)) \\
     & = \overline{Y}_{..}\mathbf{1} + \mathbb{X}_A (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T \mathbf{Y}
   \end{split}
@@ -2647,7 +2673,7 @@ $$Y_{ik} = \mu + \epsilon_{ik}$$
 
 Since the baseline $\tau_k$ is redundant, we have reduced parameter vector
 
-$$\B^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \R^k$$
+$$\boldsymbol\theta^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \R^k$$
 
 This implies that
 
@@ -2682,7 +2708,7 @@ $$
   1 & 0 & 0 & \cdots & 0 \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
   1 & 0 & 0 & \cdots & 0
-\end{bmatrix}} \underset{\huge \B^{\ast}}{\begin{bmatrix}
+\end{bmatrix}} \underset{\huge \boldsymbol\theta^{\ast}}{\begin{bmatrix}
   \mu \\
   \tau_1 \\
   \vdots \\
@@ -2705,69 +2731,134 @@ $$
 \end{bmatrix}}
 $$
 
-where $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \R^{N \times k}$. Let
+where $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbf{x}_1 \mid \cdots \mid \mathbf{x}_{k - 1} \end{bmatrix} \in \R^{N \times k}$. This makes $k - 1$ indicator variables such that
 
-$$\mathbf{u}_j = \frac{\mathbf{x}_j}{\lVert \mathbf{x}_j \rVert} = \frac{1}{\sqrt{n}_j} \mathbf{x}_j, \quad j = 1, \ldots k - 1$$
+$$
+x_{ij} = \begin{cases}
+  1 & j\text{-th treatment} \\
+  0 & \text{otherwise}
+\end{cases}
+$$
 
-Denote that every column but the first one is orthogonal and that
+Then the regression model becomes
 
-$$\mathbf{v} = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T = \mathbf{1} - <\mathbf{1}, \mathbf{u}_1> \mathbf{u}_1 - \cdots - <\mathbf{1}, \mathbf{u}_{k - 1}> \mathbf{u}_{k - 1}$$
+$$Y_{ij} = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{k - 1} x_{i, k - 1} + \epsilon_{ij}$$
+
+with
+
+$$\beta_0 = \mu, \quad \beta_j = \tau_j$$
+
+Write $X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix}$. Define $\mathbf{1}_{\perp}$ by
+
+$$\mathbf{1}_{\perp} := \mathbf{1} - \Pi_{\mathbb{X}_1}\mathbf{1}$$
+
+so that $\mathbf{1}_{\perp} \perp \mathbb{X}_A$. Since each pair of column in $\mathbb{X}_A$ is orthogonal, we can make
+
+$$\mathbb{X}_A = QR$$
+
+where $Q$ is orthogonal matrix and $R = diag(\sqrt{n_1}, \ldots, \sqrt{n_{k - 1}})$. Then
+
+$$\Pi_{\mathbb{X}_A} = \mathbb{X}_A (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T = QQ^T$$
+
+and so
+
+$$\mathbf{1}_{\perp} = \mathbf{1} - Q (\sqrt{n_1}, \sqrt{n_2}, \ldots, \sqrt{n_{k - 1}})^T = (0, 0, \ldots, 0 \mid \underset{n_k}{\underline{1, \ldots, 1}})^T$$
+
+Using these two $\mathbf{1}_{\perp}$ and $\mathbb{X}_A$,
+
+\begin{equation*}
+  \begin{split}
+    X^{\ast} \hat{\boldsymbol\theta}^{\ast} & = \hat\mu \mathbf{1}_{\perp} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
+    & = \mathbf{1}_{\perp} \Pi(\mathbf{Y} \mid R(\mathbf{1_{\perp}})) + \mathbb{X}_A \Pi(\mathbf{Y} \mid R(\mathbb{X}_A)) \\
+    & = \overline{Y}_{k.}\mathbf{1} + R^{-1}Q^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$\hat\beta_0 = \overline{Y}_{k.}$$
+
+and
+
+\begin{equation*}
+  \begin{split}
+    (\beta_1, \ldots, \beta_{k - 1})^T & = R^{-1}Q^T\mathbf{Y} \\
+    & = R^{-1} \bigg(\frac{1}{\sqrt{n_1}}\sum Y_{i1}, \ldots, \frac{1}{\sqrt{n_{k - 1}}} \sum Y_{i, k - 1} \bigg)^T \\
+    & = (\overline{Y}_{1.}, \ldots, \overline{Y}_{k - 1, .})^T
+  \end{split}
+\end{equation*}
+
+*needs correction*
+
+
+<!-- Let -->
+
+<!-- $$\mathbf{u}_j = \frac{\mathbf{x}_j}{\lVert \mathbf{x}_j \rVert} = \frac{1}{\sqrt{n}_j} \mathbf{x}_j, \quad j = 1, \ldots k - 1$$ -->
+
+<!-- Denote that every column but the first one is orthogonal and that -->
+
+<!-- $$\mathbf{v} = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T = \mathbf{1} - <\mathbf{1}, \mathbf{u}_1> \mathbf{u}_1 - \cdots - <\mathbf{1}, \mathbf{u}_{k - 1}> \mathbf{u}_{k - 1}$$ -->
 
 <!-- It follows that -->
 
 <!-- $$\mathbf{v} = \mathbf{1} - (1, 1, \ldots, \underset{n_k}{\underline{0, \ldots, 0}})^T = (0, 0, \ldots, \underset{n_k}{\underline{1, \ldots, 1}})^T$$ -->
 
-Set
+<!-- Set -->
 
-$$\mathbf{u}_k = \frac{1}{\sqrt{n_k}} \mathbf{v}$$
+<!-- $$\mathbf{u}_k = \frac{1}{\sqrt{n_k}} \mathbf{v}$$ -->
 
-$$
-X^{\ast} = \begin{bmatrix}
-  \mathbf{u}_k & \mathbf{u}_1 & \cdots & \mathbf{u}_{k - 1}
-\end{bmatrix} \begin{bmatrix}
-  \sqrt{n_k} & <1, \mathbf{u}_1> = \sqrt{n_1} & <1, \mathbf{u}_2> = \sqrt{n_2} & \cdots & <1, \mathbf{u}_{k - 1}> = \sqrt{n_{k - 1}} \\
-  0 & \sqrt{n_1} & 0 & \cdots & 0 \\
-  0 & 0 & \sqrt{n_2} & \cdots & 0 \\
-  \vdots & \vdots & \vdots & \vdots & \vdots \\
-  0 & 0 & 0 & \cdots & \sqrt{n_{k - 1}}
-\end{bmatrix} \equiv QR
-$$
+<!-- $$ -->
+<!-- X^{\ast} = \begin{bmatrix} -->
+<!--   \mathbf{u}_k & \mathbf{u}_1 & \cdots & \mathbf{u}_{k - 1} -->
+<!-- \end{bmatrix} \begin{bmatrix} -->
+<!--   \sqrt{n_k} & <1, \mathbf{u}_1> = \sqrt{n_1} & <1, \mathbf{u}_2> = \sqrt{n_2} & \cdots & <1, \mathbf{u}_{k - 1}> = \sqrt{n_{k - 1}} \\ -->
+<!--   0 & \sqrt{n_1} & 0 & \cdots & 0 \\ -->
+<!--   0 & 0 & \sqrt{n_2} & \cdots & 0 \\ -->
+<!--   \vdots & \vdots & \vdots & \vdots & \vdots \\ -->
+<!--   0 & 0 & 0 & \cdots & \sqrt{n_{k - 1}} -->
+<!-- \end{bmatrix} \equiv QR -->
+<!-- $$ -->
 
-\begin{equation*}
-  \begin{split}
-    R^{-1} & = \left[\begin{array}{cccc|cccc}
-      \sqrt{n_k} & \sqrt{n_1} & \cdots & \sqrt{n_{k - 1}} & 1 & 0 & \cdots & 0 \\
-    0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\
-    0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\
-    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-    0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1
-    \end{array}\right] \\
-    & \leftrightarrow \left[\begin{array}{cccc|cccc}
-      \sqrt{n_k} & 0 & \cdots & 0 & 1 & -1 & \cdots & -1 \\
-    0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\
-    0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\
-    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-    0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1
-    \end{array}\right] \\
-    & \leftrightarrow \left[\begin{array}{cccc|cccc}
-      1 & 0 & \cdots & 0 & \frac{1}{\sqrt{n_k}} & -\frac{1}{\sqrt{n_k}} & \cdots & -\frac{1}{\sqrt{n_k}} \\
-    0 & 1 & \cdots & 0 & 0 & \frac{1}{\sqrt{n_1}} & \cdots & 0 \\
-    0 & 0 & 1 & \cdots & 0 & 0 & \cdots & 0 \\
-    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-    0 & 0 & \cdots & 1 & 0 & 0 & \cdots & \frac{1}{\sqrt{n_{k - 1}}}
-    \end{array}\right]
-  \end{split}
-\end{equation*}
+<!-- $$ -->
+<!-- \begin{equation*} -->
+<!--   \begin{split} -->
+<!--     R & = \left[\begin{array}{cccc|cccc} -->
+<!--       \sqrt{n_k} & \sqrt{n_1} & \cdots & \sqrt{n_{k - 1}} & 1 & 0 & \cdots & 0 \\ -->
+<!--     0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\ -->
+<!--     0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\ -->
+<!--     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ -->
+<!--     0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1 -->
+<!--     \end{array}\right] \\ -->
+<!--     & \leftrightarrow \left[\begin{array}{cccc|cccc} -->
+<!--       \sqrt{n_k} & 0 & \cdots & 0 & 1 & -1 & \cdots & -1 \\ -->
+<!--     0 & \sqrt{n_1} & \cdots & 0 & 0 & 1 & \cdots & 0 \\ -->
+<!--     0 & 0 & \sqrt{n_2} & \cdots & 0 & 0 & \cdots & 0 \\ -->
+<!--     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ -->
+<!--     0 & 0 & \cdots & \sqrt{n_{k - 1}} & 0 & 0 & \cdots & 1 -->
+<!--     \end{array}\right] \\ -->
+<!--     & \leftrightarrow \left[\begin{array}{cccc|cccc} -->
+<!--       1 & 0 & \cdots & 0 & \frac{1}{\sqrt{n_k}} & -\frac{1}{\sqrt{n_k}} & \cdots & -\frac{1}{\sqrt{n_k}} \\ -->
+<!--     0 & 1 & \cdots & 0 & 0 & \frac{1}{\sqrt{n_1}} & \cdots & 0 \\ -->
+<!--     0 & 0 & 1 & \cdots & 0 & 0 & \cdots & 0 \\ -->
+<!--     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ -->
+<!--     0 & 0 & \cdots & 1 & 0 & 0 & \cdots & \frac{1}{\sqrt{n_{k - 1}}} -->
+<!--     \end{array}\right] = R^{-1} -->
+<!--   \end{split} -->
+<!-- \end{equation*} -->
+<!-- $$ -->
 
-It follows that
 
-\begin{equation*}
-  \begin{split}
-    \hb & = R^{-1}Q^T \mathbf{Y} \\
-    & =
-  \end{split}
-\end{equation*}
+<!-- It follows that -->
 
+<!-- $$ -->
+<!-- \begin{equation*} -->
+<!--   \begin{split} -->
+<!--     \hat{\boldsymbol\theta}^{\ast} & = R^{-1}Q^T \mathbf{Y} \\ -->
+<!--     & = R^{-1} \Big( \sqrt{n_k} \sum Y_{ik}, \ldots, \sqrt{n_{k - 1}} \sum Y_{i, k - 1} \Big)^T \\ -->
+<!--     & = -->
+<!--   \end{split} -->
+<!-- \end{equation*} -->
+<!-- $$ -->
 
 <!-- $$ -->
 <!-- \begin{equation*} -->
