@@ -126,14 +126,14 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{14 May, 2019}
+    \date{15 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{pdfpages}
-\usepackage[linesnumbered]{algorithm2e}
+\usepackage[linesnumbered, ruled]{algorithm2e}
 \usepackage[normalem]{ulem}
 
 \newcommand{\iid}{\stackrel{iid}{\sim}}
@@ -146,6 +146,9 @@
 \newcommand{\E}{\boldsymbol\epsilon}
 \newcommand{\msout}[1]{\text{\sout{\ensuremath{#1}}}}
 \DeclareMathOperator*{\argmin}{argmin}
+
+\setlength{\algoheightrule}{0pt}
+\setlength{\algotitleheightrule}{0pt}
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
@@ -6684,7 +6687,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7feee3c7fff8>}
+\CommentTok{#> <bytecode: 0x7fbbc94895e0>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -7892,10 +7895,16 @@ Let \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\). Then we have
 \begin{equation*}
   \begin{split}
     \lVert \mathbf{u} + \mathbf{v} \rVert_{V^{-1}}^2 & = (\mathbf{u} + \mathbf{v})^T V^{-1} (\mathbf{u} + \mathbf{v}) \\
-    & = \bigg\lvert (\mathbf{u} + \mathbf{v})^T \Big( V^{-1} (\mathbf{u} + \mathbf{v}) \Big) \bigg\rvert \\
-    & \le \lVert \mathbf{u} + \mathbf{v} \rVert \cdot \lVert V^{-1} (\mathbf{u} + \mathbf{v}) \rVert \quad \leftarrow \text{Cauchy-Schwarz inequality in}\: (\mathbb{R}^n, < \cdot, \cdot >)
+    & = \mathbf{u}^TV^{-1}\mathbf{u} + \mathbf{v}^TV^{-1}\mathbf{v} + \mathbf{u}^TV^{-1}\mathbf{v} + \mathbf{v}^TV^{-1}\mathbf{u} \\
+    & = \mathbf{u}^TV^{-1}\mathbf{u} + \mathbf{v}^TV^{-1}\mathbf{v} + (V^{-\frac{1}{2}}\mathbf{u})^TV^{-\frac{1}{2}}\mathbf{v} + (V^{-\frac{1}{2}}\mathbf{v})^TV^{-\frac{1}{2}}\mathbf{u} \\
+    & \le \lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}} + 2 \lVert V^{-\frac{1}{2}}\mathbf{u} \rVert \cdot \lVert V^{-\frac{1}{2}}\mathbf{v} \rVert \quad \leftarrow \text{Cauchy-Schwarz inequality in}\: (\mathbb{R}^n, < \cdot, \cdot >) \\
+    & = \lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}} + 2 \bigg( \mathbf{u}^TV^{-1}\mathbf{u} \cdot \mathbf{v}^TV^{-1}\mathbf{v} \bigg) \\
+    & = \lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}} + 2 \lVert \mathbf{u} \rVert_{V^{-1}}  \lVert \mathbf{v} \rVert_{V^{-1}} \\
+    & = (\lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}})^2
   \end{split}
 \end{equation*}
+
+This completes the proof.
 \EndKnitrBlock{proof}
 
 Refer to the GLS model \eqref{eq:glsmod}. In fact, this is a transformed model, so \(\boldsymbol\beta\) here is the different coefficient with the original model. By Equation \eqref{eq:glsest} and Proposition \ref{prp:glsprop}, \(\boldsymbol{\hat\beta}_G\) is a linear unbiased estimator for \(\boldsymbol\beta\). Then is this the BLUE, i.e.~is

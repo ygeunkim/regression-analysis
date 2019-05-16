@@ -1315,11 +1315,20 @@ Let $\mathbf{u}, \mathbf{v} \in \R^n$. Then we have
 \begin{equation*}
   \begin{split}
     \lVert \mathbf{u} + \mathbf{v} \rVert_{V^{-1}}^2 & = (\mathbf{u} + \mathbf{v})^T V^{-1} (\mathbf{u} + \mathbf{v}) \\
-    & = \bigg\lvert (\mathbf{u} + \mathbf{v})^T \Big( V^{-1} (\mathbf{u} + \mathbf{v}) \Big) \bigg\rvert \\
-    & \le \lVert \mathbf{u} + \mathbf{v} \rVert \cdot \lVert V^{-1} (\mathbf{u} + \mathbf{v}) \rVert \quad \leftarrow \text{Cauchy-Schwarz inequality in}\: (\R^n, < \cdot, \cdot >)
+    & = \mathbf{u}^TV^{-1}\mathbf{u} + \mathbf{v}^TV^{-1}\mathbf{v} + \mathbf{u}^TV^{-1}\mathbf{v} + \mathbf{v}^TV^{-1}\mathbf{u} \\
+    & = \mathbf{u}^TV^{-1}\mathbf{u} + \mathbf{v}^TV^{-1}\mathbf{v} + (V^{-\frac{1}{2}}\mathbf{u})^TV^{-\frac{1}{2}}\mathbf{v} + (V^{-\frac{1}{2}}\mathbf{v})^TV^{-\frac{1}{2}}\mathbf{u} \\
+    & \le \lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}} + 2 \lVert V^{-\frac{1}{2}}\mathbf{u} \rVert \cdot \lVert V^{-\frac{1}{2}}\mathbf{v} \rVert \quad \leftarrow \text{Cauchy-Schwarz inequality in}\: (\R^n, < \cdot, \cdot >) \\
+    & = \lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}} + 2 \bigg( \mathbf{u}^TV^{-1}\mathbf{u} \cdot \mathbf{v}^TV^{-1}\mathbf{v} \bigg) \\
+    & = \lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}} + 2 \lVert \mathbf{u} \rVert_{V^{-1}}  \lVert \mathbf{v} \rVert_{V^{-1}} \\
+    & = (\lVert \mathbf{u} \rVert_{V^{-1}} + \lVert \mathbf{v} \rVert_{V^{-1}})^2
   \end{split}
 \end{equation*}
+
+This completes the proof.
 ```
+
+
+
 
 
 Refer to the GLS model \@ref(eq:glsmod). In fact, this is a transformed model, so $\B$ here is the different coefficient with the original model. By Equation \@ref(eq:glsest) and Proposition \@ref(prp:glsprop), $\hb_G$ is a linear unbiased estimator for $\B$. Then is this the BLUE, i.e. is

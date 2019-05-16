@@ -3,7 +3,7 @@
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{pdfpages}
-\usepackage[linesnumbered]{algorithm2e}
+\usepackage[linesnumbered, ruled]{algorithm2e}
 \usepackage[normalem]{ulem}
 
 \newcommand{\iid}{\stackrel{iid}{\sim}}
@@ -16,6 +16,9 @@
 \newcommand{\E}{\boldsymbol\epsilon}
 \newcommand{\msout}[1]{\text{\sout{\ensuremath{#1}}}}
 \DeclareMathOperator*{\argmin}{argmin}
+
+\setlength{\algoheightrule}{0pt}
+\setlength{\algotitleheightrule}{0pt}
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
