@@ -1,4 +1,4 @@
-# Model Adequacy and Regression Diagnostics
+# Model Adequacy and Regression Diagnostics {#regdiag}
 
 $$Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}, \quad \epsilon_i \iid N(0, \sigma^2)$$
 

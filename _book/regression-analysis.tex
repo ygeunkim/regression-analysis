@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{15 May, 2019}
+    \date{22 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -187,7 +187,7 @@
 \chapter*{Welcome}\label{welcome}}
 \addcontentsline{toc}{chapter}{Welcome}
 
-This book aims at covering materials of regression analysis. Also, there will be R programming for regression.
+ This book aims at covering materials of regression analysis. Also, there will be R programming for regression.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -312,7 +312,7 @@ It gives the problem of estimating three parameters \((\beta_0, \beta_1, \sigma^
 \item
   \(\epsilon_i\)s are independent
 \item
-  \(\epsilon_i\)s are identically destributed, i.e.~\emph{constant variance}
+  \(\epsilon_i\)s are identically destributed, i.e. \emph{constant variance}
 \item
   In some setting, \(\epsilon_i \sim N\)
 \end{enumerate}
@@ -714,7 +714,7 @@ It follows that
 \EndKnitrBlock{solution}
 
 \hypertarget{estimation-of-sigma2}{%
-\subsection{\texorpdfstring{Estimation of \(\sigma^2\)}{Estimation of \textbackslash sigma\^{}2}}\label{estimation-of-sigma2}}
+\subsection{\texorpdfstring{Estimation of \(\sigma^2\)}{Estimation of \textbackslash{}sigma\^{}2}}\label{estimation-of-sigma2}}
 
 There is the last parameter, \(\sigma^2 = Var(Y_i)\). In the \emph{least squares estimation literary}, we estimate \(\sigma^2\) by
 
@@ -867,7 +867,7 @@ While \(\hat\sigma^{2LSE}\) is an unbiased, above \emph{MLE is not an unbiased e
 where \(I_n(\theta) = -E\bigg(\frac{\partial^2 l(\theta)}{\partial \theta^2} \bigg)\)
 \EndKnitrBlock{theorem}
 
-To apply this theorem \ref{thm:rclb} in the simple linear regression setting, i.e.~\((\beta_0, \beta_1)\), we need to look at the \emph{bivariate case}.
+To apply this theorem \ref{thm:rclb} in the simple linear regression setting, i.e. \((\beta_0, \beta_1)\), we need to look at the \emph{bivariate case}.
 
 \BeginKnitrBlock{theorem}[Rao-Cramer Lower Bound, bivariate case]
 \protect\hypertarget{thm:rclb2}{}{\label{thm:rclb2} \iffalse (Rao-Cramer Lower Bound, bivariate case) \fi{} }Let \(X_1, \ldots, X_n \stackrel{iid}{\sim} f(x ; \theta1, \theta_2)\) and let \(\boldsymbol{\theta} = (\theta_1, \theta_2)^T\). If each \(\hat\theta_1\), \(\hat\theta_2\) is an unbiased estimator of \(\theta_1\) and \(\theta_2\), then
@@ -1442,7 +1442,7 @@ These two relation give
 
 \[\mathbf{Y} - (\hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}) \perp sp(\{ \mathbf{1}, \mathbf{x} \})^{\perp}\]
 
-i.e.~\(\mathbf{\hat{Y}} = \hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}\) is the projection of \(\mathbf{Y}\).
+i.e. \(\mathbf{\hat{Y}} = \hat\beta_0 \mathbf{1} + \hat\beta_1 \mathbf{x}\) is the projection of \(\mathbf{Y}\).
 
 Theorem \ref{thm:projection} can give the same result.
 
@@ -1784,7 +1784,7 @@ where \(\hat\sigma^2 = MSE\)
 \hypertarget{response}{%
 \subsection{Response}\label{response}}
 
-Our goal is to predict each response at each point, i.e.~\(Y_x = \beta_0 + \beta_1 x + \epsilon_x\). \(\epsilon_x \sim N(0, \sigma^2)\) is independent of the given data (\(\epsilon_1, \ldots, \epsilon_n\)). In this sense, this prediction is called \emph{out of sample prediction}. This setting makes difference between the \emph{residuals, which are correlated to the data}. See Proposition \ref{prp:resprop} for this. This is occurred because each \(\hat\beta_0\) and \(\hat\beta_1\) is linear combination of \(Y_1, \ldots, Y_n\), not \(Y_x\).
+Our goal is to predict each response at each point, i.e. \(Y_x = \beta_0 + \beta_1 x + \epsilon_x\). \(\epsilon_x \sim N(0, \sigma^2)\) is independent of the given data (\(\epsilon_1, \ldots, \epsilon_n\)). In this sense, this prediction is called \emph{out of sample prediction}. This setting makes difference between the \emph{residuals, which are correlated to the data}. See Proposition \ref{prp:resprop} for this. This is occurred because each \(\hat\beta_0\) and \(\hat\beta_1\) is linear combination of \(Y_1, \ldots, Y_n\), not \(Y_x\).
 
 While \(Cov(Y_i, \hat{Y_i}) > 0, i = 1, \ldots, n\) (See Equation \eqref{eq:yyhat}), in case of out-of-sample \(Y_x\),
 
@@ -1862,7 +1862,7 @@ This proposition gives clue to distribution of prediction error.
   \end{split}
 \end{equation*}
 
-i.e.~\(\hat{Y_x} - Y_x\) is a linear combination of \((\hat\beta_0, \hat\beta_1, \epsilon_x)^T\). From prosition \ref{prp:bepsmvn},
+i.e. \(\hat{Y_x} - Y_x\) is a linear combination of \((\hat\beta_0, \hat\beta_1, \epsilon_x)^T\). From prosition \ref{prp:bepsmvn},
 
 \begin{equation}
   \begin{split}
@@ -1895,7 +1895,7 @@ Now we know the standard error of this out-of-sample prediction error.
 
 \[SE(\hat{Y_x} - Y_x) = \sigma \sqrt{\bigg( 1 + \frac{1}{n} + \frac{(x - \overline{x})^2}{S_{XX}} \bigg)}\]
 
-We can see this standard error is \emph{always larger than of mean response estimator} due to \(1\) in the bracket, i.e.~\(\sigma^2\). As mentioned, this is due to \(\epsilon\) term. When we estimate or predict the mean response the model have been assumed to be true. In this out-of-sample prediction setting, however, the model can be wrong. This assumption error is also included in \(\epsilon\) term and it is called \emph{irreducible error}, which cannot be reduced anymore.
+We can see this standard error is \emph{always larger than of mean response estimator} due to \(1\) in the bracket, i.e. \(\sigma^2\). As mentioned, this is due to \(\epsilon\) term. When we estimate or predict the mean response the model have been assumed to be true. In this out-of-sample prediction setting, however, the model can be wrong. This assumption error is also included in \(\epsilon\) term and it is called \emph{irreducible error}, which cannot be reduced anymore.
 
 \BeginKnitrBlock{remark}
 \iffalse{} {Remark. } \fi{}\[SE(\hat\mu_x - \mu_x) < SE(\hat{Y_x} - Y_x)\]
@@ -2447,7 +2447,7 @@ Hence by partitioning \(X = [\mathbf{1} \mid \mathbf{x}]\),
 \BeginKnitrBlock{proof}
 \iffalse{} {Proof. } \fi{}Note that both \(SSE\) and \(SSR\) are quadratic forms of \(\mathbf{Y} \sim MVN(X\boldsymbol\beta, \sigma^2 I)\) and that each \(I - \Pi_X\) and \(\Pi_X - \Pi_{\mathbf{1}}\) is symmetric. Then from Proposition \ref{prp:quadmvn},
 
-Claim: \((I - \Pi_X)(\sigma^2I)(\Pi_X - \Pi_{\mathbf{1}}) = 0\), i.e.~\((I - \Pi_X)(\Pi_X - \Pi_{\mathbf{1}}) = 0\)
+Claim: \((I - \Pi_X)(\sigma^2I)(\Pi_X - \Pi_{\mathbf{1}}) = 0\), i.e. \((I - \Pi_X)(\Pi_X - \Pi_{\mathbf{1}}) = 0\)
 
 It is obvious that
 
@@ -2479,7 +2479,7 @@ This completes the proof.
 
 Since \(I - \Pi_X\) of \(SSE\) is symmetric, from Proposition \ref{prp:quadmvn},
 
-Claim: \(((X^TX)^{-1}X^T)(\sigma^2I)(I - \Pi_X) = 0\), i.e.~\(((X^TX)^{-1}X^T)(I - \Pi_X) = 0\)
+Claim: \(((X^TX)^{-1}X^T)(\sigma^2I)(I - \Pi_X) = 0\), i.e. \(((X^TX)^{-1}X^T)(I - \Pi_X) = 0\)
 
 Since \(\Pi_X = X(X^TX)^{-1}X^T\),
 
@@ -2851,7 +2851,7 @@ Now recap the section \ref{solproj}. Fundamental subspaces theorem \ref{thm:fund
 
 \[\mathbf{Y} - X \boldsymbol{\hat\beta}\in Col(X)^{\perp} = N(X^T)\]
 
-From the second part of subset, i.e.~\(N(X^T)\), we now have \emph{Normal equation}
+From the second part of subset, i.e. \(N(X^T)\), we now have \emph{Normal equation}
 
 \begin{equation}
   X^T(\mathbf{Y} - X \boldsymbol{\hat\beta}) = \mathbf{0}
@@ -2945,7 +2945,7 @@ To decompose subspace \(R(X)\), we try to orthogonalize \(\mathbf{1}\) and \(\ma
 
 \[\mathbf{1} \perp \mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\]
 
-In fact, the right one \(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\) is the \emph{residual after simple linear regression} \(\mathbb{X}_A\) onto \(\mathbf{1}\). We have seen in Figure \ref{fig:simpledraw2} of section \ref{matnot} that the \emph{residual is orthogonal to predictor vector}. In this procedure, we choose residual as new predictor instead of response in simple linear regression, i.e.~\(\mathbb{X}_A\). If this is done to individual predictor variables, it is called \emph{successive orthogonalization} and it will be coved next section with QR decomposition.
+In fact, the right one \(\mathbb{X}_A - \Pi_{\mathbf{1}}\mathbb{X}_A\) is the \emph{residual after simple linear regression} \(\mathbb{X}_A\) onto \(\mathbf{1}\). We have seen in Figure \ref{fig:simpledraw2} of section \ref{matnot} that the \emph{residual is orthogonal to predictor vector}. In this procedure, we choose residual as new predictor instead of response in simple linear regression, i.e. \(\mathbb{X}_A\). If this is done to individual predictor variables, it is called \emph{successive orthogonalization} and it will be coved next section with QR decomposition.
 
 Theorem \ref{thm:dsum} implies that
 
@@ -3392,7 +3392,7 @@ As in simple linear regression setting, we define \emph{residuals} and explain \
 \[\mathbf{e} := (\ldots,Y_i - \hat\beta_0 - \hat\beta_1 x_{i1} - \cdots - \hat\beta_px_{ip}, \ldots)^T = \mathbf{Y} - \hat{\mathbf{Y}} \in \mathbb{R}^n\]
 \EndKnitrBlock{definition}
 
-Extending the simple setting, we estimate \(\sigma^2\) with inner product of residuals divided by its degrees of freedom, i.e.~\emph{MSE}. The degrees of freedom becomes \(n - \text{the number of coefficients}\). Thus, \(n - (p + 1) = n - p - 1\).
+Extending the simple setting, we estimate \(\sigma^2\) with inner product of residuals divided by its degrees of freedom, i.e. \emph{MSE}. The degrees of freedom becomes \(n - \text{the number of coefficients}\). Thus, \(n - (p + 1) = n - p - 1\).
 
 \BeginKnitrBlock{proposition}[Estimation of $\sigma^2$]
 \protect\hypertarget{prp:multsigma}{}{\label{prp:multsigma} \iffalse (Estimation of \(\sigma^2\)) \fi{} }Let \(\mathbf{e} = \mathbf{Y} - \hat{\mathbf{Y}}\) be residuals as in Definition \ref{def:multres}. Then
@@ -4439,10 +4439,10 @@ From the first part, we can get the confidence region for \(\boldsymbol\beta\).
 \caption{Confidence region for $(\beta_0, \beta_1)$}\label{fig:ellip}
 \end{figure}
 
-Look again corollary \ref{cor:bvech0}. Compare this to ANOVA. Something is different. When testing significance in ANOVA, degrees of freedom of \(SSR\) was \(p\). Because when testing regression relation, we only need \(\beta_1\) to \(\beta_p\), i.e.~\(p\) parameters. How can we do this here?
+Look again corollary \ref{cor:bvech0}. Compare this to ANOVA. Something is different. When testing significance in ANOVA, degrees of freedom of \(SSR\) was \(p\). Because when testing regression relation, we only need \(\beta_1\) to \(\beta_p\), i.e. \(p\) parameters. How can we do this here?
 
 \hypertarget{regression-coefficient-vector-boldsymbolbeta_a}{%
-\subsection{\texorpdfstring{Regression coefficient vector \(\boldsymbol\beta_A\)}{Regression coefficient vector \textbackslash boldsymbol\textbackslash beta\_A}}\label{regression-coefficient-vector-boldsymbolbeta_a}}
+\subsection{\texorpdfstring{Regression coefficient vector \(\boldsymbol\beta_A\)}{Regression coefficient vector \textbackslash{}boldsymbol\textbackslash{}beta\_A}}\label{regression-coefficient-vector-boldsymbolbeta_a}}
 
 Consider \(\boldsymbol\beta_A = (\beta_1, \ldots, \beta_p)^T\). In fact, these tell us significance of variables. We can use \(\mathbb{X}_{A, \perp}\) defined before. From Equation \eqref{eq:orthbeta},
 
@@ -5132,7 +5132,7 @@ However, we want to explain linear relationship between response variable and qu
   \end{split}
 \end{equation*}
 
-In other words, the last level ADV(\texttt{3}) has value of \(E_{i1} = E_{i2} = 0\). This is called \emph{dummy coding} of the last level as baseline. The following function gives how the coding is happened. In \texttt{R}, baseline is set to be the first level, i.e.~\texttt{base\ =\ 1} by default.
+In other words, the last level ADV(\texttt{3}) has value of \(E_{i1} = E_{i2} = 0\). This is called \emph{dummy coding} of the last level as baseline. The following function gives how the coding is happened. In \texttt{R}, baseline is set to be the first level, i.e. \texttt{base\ =\ 1} by default.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -5157,7 +5157,7 @@ MGT_i = \begin{cases}
 \end{cases}
 \]
 
-This is the case when \texttt{base\ =\ 1}, i.e.~\texttt{0}(None) in our data set.
+This is the case when \texttt{base\ =\ 1}, i.e. \texttt{0}(None) in our data set.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -5765,7 +5765,7 @@ Since \(\tau_k\) is redundant, parameter vector is given by
 
 \[\boldsymbol\theta^{\ast} \equiv (\mu, \tau_1, \ldots, \tau_{k - 1})^T \in \mathbb{R}^k\]
 
-\emph{Assume balanced setting}, i.e.~\(n_1 = n_2 = \cdots = n_k = n\).
+\emph{Assume balanced setting}, i.e. \(n_1 = n_2 = \cdots = n_k = n\).
 
 \[
 \underset{\huge \mathbf{Y}}{\begin{bmatrix}
@@ -6265,8 +6265,8 @@ By construction,
 
 In other words, it is still valid that \(I_n^{-1}(\boldsymbol\beta)\) implies minimum variance of \(\boldsymbol{\hat\beta}\).
 
-\hypertarget{model-adequacy-and-regression-diagnostics}{%
-\chapter{Model Adequacy and Regression Diagnostics}\label{model-adequacy-and-regression-diagnostics}}
+\hypertarget{regdiag}{%
+\chapter{Model Adequacy and Regression Diagnostics}\label{regdiag}}
 
 \[Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_{i}, \quad \epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\]
 
@@ -6371,7 +6371,7 @@ As mentioned many times, \(\epsilon_j\) cannot be observed. Instead, we gain inf
 \begin{itemize}
 \tightlist
 \item
-  \textbf{Non-random}: While \(Y\) is random variable, \(X_1, \ldots, X_p\) are not. They are assumed fixed or conditioned, i.e.~\(E(Y \mid \mathbf{X} = \mathbf{x})\).
+  \textbf{Non-random}: While \(Y\) is random variable, \(X_1, \ldots, X_p\) are not. They are assumed fixed or conditioned, i.e. \(E(Y \mid \mathbf{X} = \mathbf{x})\).
 \item
   \textbf{measured without error}: We assume here that \(x_{i1}, \ldots, x_{ip}\) are measured without error, i.e.~there is \emph{no measurement error}. If there is, the measurement error will affect every residual variance, regression coefficient, et cetera. Let \(w_i\) be the measurement error of \(i\)-th observation. Then what we observe is \(Z_i = x_i + w_i\), not \(x_i\). In turn, we estimate regression coefficient and the others using \((Z_i, Y_i)\), i.e.~relationship between \(Z_i\) and \(Y_i\). \emph{Residual variance will increase by construction}. Additionaly, correlation coefficients will be reduced.
 
@@ -6687,7 +6687,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fbbc94895e0>}
+\CommentTok{#> <bytecode: 0x7fda4e9ae708>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -6718,7 +6718,7 @@ Plots that have scatter plot in the matrix form and pairwise correlation such as
 \hypertarget{residual-plot}{%
 \subsection{Residual plot}\label{residual-plot}}
 
-Direct illustration of \(Y\) and \(X_1, \ldots, X_p\) is helpful, but has its limit to check the assumptions. Residuals might be more informative. Among the three we have defined, we often draw \emph{externally studentized residual} \ref{def:studresid}, i.e.~\texttt{rstudent()}.
+Direct illustration of \(Y\) and \(X_1, \ldots, X_p\) is helpful, but has its limit to check the assumptions. Residuals might be more informative. Among the three we have defined, we often draw \emph{externally studentized residual} \ref{def:studresid}, i.e. \texttt{rstudent()}.
 
 \[r_i := \frac{e_i}{\hat\sigma_{(-i)} \sqrt{1 - h_{ii}}}\]
 
@@ -6923,7 +6923,7 @@ Figure \ref{fig:idqq} shows the ideal case. Observations resemble the straight l
 \caption{Q-Q plot - Heavy-tailed distribution}\label{fig:qqt}
 \end{figure}
 
-Recall that the \(x\)-axis is \emph{theoretical} normal quantile and \(y\)-axis is the \emph{observed} ordered studentized residuals. In case of small values of \(r_i\), i.e.~\emph{left tail}, observed values indicating empirical quantiles are less than theoretical quantiles. \emph{Smaller quantiles at left tail means heavier left tail}. At \emph{right tail}, on the other hand, observed values indicating empirical quantiles are larger than theoretical quantiles. \emph{Larger quantiles at right tail means heavier right tail}. In sum, Figure \ref{fig:qqt} form is of heavy-tailed distribution.
+Recall that the \(x\)-axis is \emph{theoretical} normal quantile and \(y\)-axis is the \emph{observed} ordered studentized residuals. In case of small values of \(r_i\), i.e. \emph{left tail}, observed values indicating empirical quantiles are less than theoretical quantiles. \emph{Smaller quantiles at left tail means heavier left tail}. At \emph{right tail}, on the other hand, observed values indicating empirical quantiles are larger than theoretical quantiles. \emph{Larger quantiles at right tail means heavier right tail}. In sum, Figure \ref{fig:qqt} form is of heavy-tailed distribution.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -7253,7 +7253,7 @@ where \(\hat{Y}_i = \mathbf{x}_i^T \boldsymbol{\hat\beta}\) and \(\hat{Y}_{i, -i
 \end{equation*}
 \EndKnitrBlock{proof}
 
-The second part represents leverage. As leverage values become large, i.e.~\(h_{ii} \rightarrow 1\) (Proposition \ref{prp:hii}), this becomes \(\infty\). This form of function expressed by \(h_{ii}\) is called \emph{potential function}
+The second part represents leverage. As leverage values become large, i.e. \(h_{ii} \rightarrow 1\) (Proposition \ref{prp:hii}), this becomes \(\infty\). This form of function expressed by \(h_{ii}\) is called \emph{potential function}
 
 \begin{figure}[H]
 
@@ -7914,7 +7914,7 @@ Refer to the GLS model \eqref{eq:glsmod}. In fact, this is a transformed model, 
 the smallest variance among of the linear unbiased estimators?
 
 \BeginKnitrBlock{theorem}
-\protect\hypertarget{thm:glsblue}{}{\label{thm:glsblue} }GLS estimator \(\boldsymbol{\hat\beta}_G\) is the best linear unbiased estimator of \(\boldsymbol\beta\), i.e.~\textbf{\textit{BLUE}}.
+\protect\hypertarget{thm:glsblue}{}{\label{thm:glsblue} }GLS estimator \(\boldsymbol{\hat\beta}_G\) is the best linear unbiased estimator of \(\boldsymbol\beta\), i.e. \textbf{\textit{BLUE}}.
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{proof}
@@ -8000,6 +8000,173 @@ Corollary \ref{cor:wlsc} means that each data point is \emph{weighted by inverse
 Since we do not know each \(\sigma_i\) in typical analysis, we should estimate each \(w_i\).
 
 This weights of WLS is specified in \texttt{weights} argument of \texttt{lm()}.
+
+\hypertarget{coll}{%
+\chapter{Multicollinearity}\label{coll}}
+
+\hypertarget{multicollinearity}{%
+\section{Multicollinearity}\label{multicollinearity}}
+
+See a dataset about equal opportunity in public education.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(eeo <-}\StringTok{ }\NormalTok{haven}\OperatorTok{::}\KeywordTok{read_sav}\NormalTok{(}\StringTok{"data/p228.sav"}\NormalTok{))}
+\CommentTok{#> # A tibble: 70 x 4}
+\CommentTok{#>     ACHV    FAM    PEER SCHOOL}
+\CommentTok{#>    <dbl>  <dbl>   <dbl>  <dbl>}
+\CommentTok{#> 1 -0.431  0.608  0.0351  0.166}
+\CommentTok{#> 2  0.800  0.794  0.479   0.534}
+\CommentTok{#> 3 -0.925 -0.826 -0.620  -0.786}
+\CommentTok{#> 4 -2.19  -1.25  -1.22   -1.04 }
+\CommentTok{#> 5 -2.85   0.174 -0.185   0.142}
+\CommentTok{#> 6 -0.662  0.202  0.128   0.273}
+\CommentTok{#> # ... with 64 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+In 1965, 70 schools were selected at random. 4 measurements were taken for each school.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{ACHV}: student achievements, \emph{response variable}
+\item
+  \texttt{FAM}: faculty credentials
+\item
+  \texttt{PEER}: influence of their peer group in the school
+\item
+  \texttt{SCHOOL}: school facilities
+\end{itemize}
+
+\citep{Chatterjee:2015aa}.
+
+\BeginKnitrBlock{definition}[Multicollinearity]
+\protect\hypertarget{def:colldef}{}{\label{def:colldef} \iffalse (Multicollinearity) \fi{} }A set of predictors \(\{ X_1, X_2, \ldots, X_p \}\) is said to have \textbf{\textit{multicollinearity}} iff there exist linear or near-linear dependencies among predictors.
+\EndKnitrBlock{definition}
+
+\hypertarget{effects-of-multicollinearity}{%
+\subsection{Effects of multicollinearity}\label{effects-of-multicollinearity}}
+
+Consider design matrix
+
+\[X = \begin{bmatrix} \mathbf{1} & \mathbf{x}_1 & \cdots & \mathbf{x}_p \end{bmatrix} \in \mathbb{R}^{n \times (p + 1)}\]
+
+When there exists any linear dependency among the predictors, column vectors of \(X\) are \emph{lineary dependent}. Or equivalently, centered columns \(\{ \mathbf{x}_1 - \overline{x}_1 \mathbf{1}, \ldots, \mathbf{x}_p - \overline{x}_p \mathbf{1} \}\) are lineary dependent. Then
+
+\[rank(X) < p + 1 \le n\]
+
+i.e.~rank deficient. From either Theorem \ref{thm:fullrank} or \ref{thm:fullrank2}, \(X^TX\) can be \emph{singular}. In this case, we cannot get the LSE solution. It is not only the problem of computing but also the variance. Consider \emph{total variance}, sum of every coefficient variance. From Proposition \ref{prp:multbmoment},
+
+\begin{equation*}
+  \begin{split}
+    \sum_{j = 0}^p Var(\hat\beta_j) & = trace \Big( Var(\boldsymbol{\hat\beta}) \Big) \\
+    & = trace \Big( \sigma^2(X^TX)^{-1} \Big) \\
+    & = \sigma^2 trace \Big( (X^TX)^{-1} \Big) \\
+    & = \sigma^2 \sum_{j = 0}^p \frac{1}{\kappa_j} \quad \kappa_j := \text{eigenvalues of}\: X^TX = \text{singular values}^2
+  \end{split}
+\end{equation*}
+
+If \(X\) is not of full rank, \(X^T X\) is not of full rank. In other words,
+
+\[\exists j : \kappa_j = 0\]
+
+By construction, even one \(\kappa_j = 0\) results in
+
+\[\sum_{j = 0}^p Var(\hat\beta_j) = \infty\]
+
+It is found that \emph{linear dependency leads to increasing variance of the estimates}. This variance problem occurs when nearly-linear dependeny situation, of course. So we should detect and remedy this.
+
+\hypertarget{multicollinearity-diagnostics}{%
+\subsection{Multicollinearity diagnostics}\label{multicollinearity-diagnostics}}
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:varbr}{}{\label{lem:varbr} }Consider regression model \(j\)-th predictor \(X_j\) on the remaing \(X_k, \: k \neq j\), i.e.
+
+\[X_{ij} = \alpha_0 + \alpha_1 x_{i1} + \cdots + \alpha_{j - 1} x_{i, j - 1} + \alpha_{j + 1} x_{i, j + 1} + \cdots + \alpha_p x_{ip} + \epsilon_i\]
+
+Let \(s_{jj} = \sum\limits_{i = 1}^n (x_{ij} - \overline{x}_j)^2\) be corrected sum of squares and let \(R_j^2\) be the coefficient of determination. Then
+
+\[Var(\hat\beta_j) = \frac{1}{1 - R_j^2} \frac{\sigma^2}{s_{jj}}, \quad 1 \le j \le p\]
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Assume \(j = 1\) without loss of generality. Write
+
+\[X = \begin{bmatrix} \mathbf{x}_1 & X_B \end{bmatrix}\]
+
+Then we have
+
+\begin{equation}
+  X \boldsymbol\beta= \mathbf{x}_1 \boldsymbol\beta_{A} + X_{B} \boldsymbol\beta_{B}
+  \label{eq:xabsplit}
+\end{equation}
+
+Orthogonalize \(\mathbf{x}_1\) by projecting onto \(X_B\) as before.
+
+\[\mathbf{x}_{1, \perp} := \mathbf{x}_1 - \Pi_B \mathbf{x}_1\]
+
+where \(\Pi_1 = X_B (X_B^T X_B)^{-1} X_B^T\). It follows that
+
+\begin{equation*}
+  \begin{split}
+    X \boldsymbol{\hat\beta}& = \mathbf{x}_1 \boldsymbol{\hat\beta}_1 + X_B \boldsymbol{\hat\beta}_{B} \\
+    & = \mathbf{x}_{1, \perp} \boldsymbol{\hat\beta}_1 + X_B \Big( \boldsymbol{\hat\beta}_{B} + (X_B^T X_B)^{-1} X_B^T \mathbf{x}_1 \boldsymbol{\hat\beta}_{1} \Big) \\
+    & = \Pi(\mathbf{Y} \mid R(\mathbf{x}_{1, \perp})) + \Pi(\mathbf{Y} \mid R(X_B))
+  \end{split}
+\end{equation*}
+
+Thus,
+
+\[
+\begin{cases}
+  \boldsymbol{\hat\beta}_{1, \perp} = (\mathbf{x}_1^T \mathbf{x}_1)^{-1} \mathbf{x}_1^T \mathbf{Y} \\
+  \boldsymbol{\hat\beta}_B = (X_B^T X_B)^{-1} X_B^T (\mathbf{Y} - \mathbf{x}_1 \boldsymbol{\hat\beta}_{1})
+\end{cases}
+\]
+
+Note that \(\mathbf{x}_{1, \perp}\) is the \emph{residual vector in our previous resgression model} in the statement. By construction,
+
+\[\mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp} = SSE\]
+
+Since \(SST = s_{11}\),
+
+\[R_{1}^2 = \frac{SST - SSE}{SST} = \frac{s_{11} - \mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp}}{s_{11}}\]
+
+Therefore,
+
+\begin{equation}
+  \mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp} = s_{11} (1 - R_1^2)
+  \label{eq:s11r}
+\end{equation}
+
+From Equation \eqref{eq:s11r},
+
+\[Var(\hat\beta_1) = \sigma^2(\mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp})^{-1} = \frac{\sigma^2}{s_{11}(1 - R_1^2)}\]
+
+One proceeds in a similary way for the other \(j\).
+
+\begin{equation}
+  \mathbf{x}_{j, \perp}^T \mathbf{x}_{j, \perp} = s_{j} (1 - R_j^2)
+  \label{eq:sjjr}
+\end{equation}
+\EndKnitrBlock{proof}
+
+What does Lemma \ref{lem:varbr} mean? Recall that in simple linear regression setting,
+
+\[Var(\hat\beta_j) = \frac{\sigma^2}{s_{jj}}\]
+
+When multicollinearity occurs, one term is multiplied so that
+
+\[Var(\hat\beta_j) = \frac{1}{1 - R_j^2} \frac{\sigma^2}{s_{jj}}\]
+
+Naturally, we can think of \(\frac{1}{1 - R_j^2}\) detecting multicollinearity.
+
+\BeginKnitrBlock{definition}[Variance inflation factor]
+\protect\hypertarget{def:vif}{}{\label{def:vif} \iffalse (Variance inflation factor) \fi{} }Let \(R_j^2\) be the coefficient of determination that results when \(X_j\) is regressed against remaining \(X_k, \: k \neq j\). Then the variance inflation factor for \(X_j\) is defined by
+
+\[VIF_j := \frac{1}{1 - R_j^2}, \: j = 1, \ldots, p\]
+\EndKnitrBlock{definition}
 
 \bibliography{book.bib,packages.bib}
 
