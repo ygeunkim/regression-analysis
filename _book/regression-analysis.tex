@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{22 May, 2019}
+    \date{24 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6687,7 +6687,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fda4e9ae708>}
+\CommentTok{#> <bytecode: 0x7fc187c7c0c0>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -8041,6 +8041,12 @@ In 1965, 70 schools were selected at random. 4 measurements were taken for each 
 
 \citep{Chatterjee:2015aa}.
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{eeo_fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(ACHV }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ eeo)}
+\end{Highlighting}
+\end{Shaded}
+
 \BeginKnitrBlock{definition}[Multicollinearity]
 \protect\hypertarget{def:colldef}{}{\label{def:colldef} \iffalse (Multicollinearity) \fi{} }A set of predictors \(\{ X_1, X_2, \ldots, X_p \}\) is said to have \textbf{\textit{multicollinearity}} iff there exist linear or near-linear dependencies among predictors.
 \EndKnitrBlock{definition}
@@ -8078,7 +8084,26 @@ By construction, even one \(\kappa_j = 0\) results in
 It is found that \emph{linear dependency leads to increasing variance of the estimates}. This variance problem occurs when nearly-linear dependeny situation, of course. So we should detect and remedy this.
 
 \hypertarget{multicollinearity-diagnostics}{%
-\subsection{Multicollinearity diagnostics}\label{multicollinearity-diagnostics}}
+\section{Multicollinearity diagnostics}\label{multicollinearity-diagnostics}}
+
+\hypertarget{correlation-matrix}{%
+\subsection{Correlation matrix}\label{correlation-matrix}}
+
+Multicollinearity leads to unstable regression coefficients. From Equation \eqref{eq:rsqangle}, we know that \(\boldsymbol{\hat\beta}\) is related to sample correlation between response and predictors. Pairwise correlation gives information about linear relationship between \(X_j\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cor}\NormalTok{(eeo)}
+\CommentTok{#>         ACHV   FAM  PEER SCHOOL}
+\CommentTok{#> ACHV   1.000 0.419 0.440  0.418}
+\CommentTok{#> FAM    0.419 1.000 0.960  0.986}
+\CommentTok{#> PEER   0.440 0.960 1.000  0.982}
+\CommentTok{#> SCHOOL 0.418 0.986 0.982  1.000}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{variance-inflation-factor}{%
+\subsection{Variance inflation factor}\label{variance-inflation-factor}}
 
 \BeginKnitrBlock{lemma}
 \protect\hypertarget{lem:varbr}{}{\label{lem:varbr} }Consider regression model \(j\)-th predictor \(X_j\) on the remaing \(X_k, \: k \neq j\), i.e.
@@ -8112,7 +8137,7 @@ where \(\Pi_1 = X_B (X_B^T X_B)^{-1} X_B^T\). It follows that
   \begin{split}
     X \boldsymbol{\hat\beta}& = \mathbf{x}_1 \boldsymbol{\hat\beta}_1 + X_B \boldsymbol{\hat\beta}_{B} \\
     & = \mathbf{x}_{1, \perp} \boldsymbol{\hat\beta}_1 + X_B \Big( \boldsymbol{\hat\beta}_{B} + (X_B^T X_B)^{-1} X_B^T \mathbf{x}_1 \boldsymbol{\hat\beta}_{1} \Big) \\
-    & = \Pi(\mathbf{Y} \mid R(\mathbf{x}_{1, \perp})) + \Pi(\mathbf{Y} \mid R(X_B))
+    & = \Pi(\mathbf{x}_1 \mid R(\mathbf{x}_{1, \perp})) + \Pi(\mathbf{x}_1 \mid R(X_B))
   \end{split}
 \end{equation*}
 
@@ -8167,6 +8192,108 @@ Naturally, we can think of \(\frac{1}{1 - R_j^2}\) detecting multicollinearity.
 
 \[VIF_j := \frac{1}{1 - R_j^2}, \: j = 1, \ldots, p\]
 \EndKnitrBlock{definition}
+
+\BeginKnitrBlock{corollary}
+\protect\hypertarget{cor:vifcorr}{}{\label{cor:vifcorr} }\(VIF_j\) is simple the inflation rate of \(Var(\hat\beta_j)\) in comparison with the case where \(X_j\) is not correlated with other predictors, i.e.
+
+\[s_{jk} = \sum_{i = 1}^n (x_{ij} - \overline{x}_j)(x_{ik} - \overline{x}_k) = 0 \quad \forall k \neq j\]
+\EndKnitrBlock{corollary}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}By definition,
+
+\begin{equation*}
+  \begin{split}
+    & VIF_j^2 = 1 \\
+    & \Leftrightarrow R_j^2 = 0 \\
+    & \Leftrightarrow s_{jj} - \mathbf{x}_{j, \perp}^T \mathbf{x}_{j, \perp} = \sum_{i = 1}^n (x_{ij} - \overline{x}_j)^2 - \sum_{i^{\prime} = 1}^n (x_{i^{\prime}j} - \overline{x}_j) (x_{i^{\prime}k} - \overline{x}_k) = 0 \\
+    & \Leftrightarrow s_{jk} = \sum_{i^{\prime} = 1}^n (x_{ij} - \overline{x}_j) (x_{ik} - \overline{x}_k) = 0 \quad \forall k \neq j
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+For example, suppose that
+
+\[x_1 \approx c_0 + c_2 x_2 + \cdots + c_p x_p\]
+
+Then
+
+\[R_1^2 \approx 1\]
+
+and so
+
+\[VIF_1 \rightarrow \infty\]
+
+\BeginKnitrBlock{conjecture}
+\protect\hypertarget{cnj:bigvif}{}{\label{cnj:bigvif} }Large \(VIF_j\) for one or multiple \(j\)s indicate multicollinearity.
+\EndKnitrBlock{conjecture}
+
+\texttt{car} library has a function \texttt{vif()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{car}\OperatorTok{::}\KeywordTok{vif}\NormalTok{(eeo_fit)}
+\CommentTok{#>    FAM   PEER SCHOOL }
+\CommentTok{#>   37.6   30.2   83.2}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{condition-number}{%
+\subsection{Condition number}\label{condition-number}}
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:symeigen}{}{\label{thm:symeigen} }Let \(\Sigma \in \mathbb{R}^{p \times p}\). Then the eigenvalues of \(\Sigma\) are all real.
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Let
+
+\[\Sigma \mathbf{x} = \lambda \mathbf{x}\]
+
+Then
+
+\[\mathbf{x}^T \Sigma \mathbf{x} = \lambda \mathbf{x}^T \mathbf{x} = \lambda \lVert \mathbf{x} \rVert^2\]
+
+Write \(\alpha := \mathbf{x}^T \Sigma \mathbf{x}\).
+
+Claim: \(\alpha \in \mathbb{R}\)
+
+Since \(\mathbf{x} \in \mathbb{R}^p\) and \(\Sigma \in \mathbb{R}^{p \times p}\), i.e.~real matrix, it is obvious that \(\alpha\) is real.
+
+Since \(\lVert \mathbf{x} \rVert^2 \neq 0\),
+
+\[\lambda = \frac{\alpha}{\lVert \mathbf{x} \rVert^2}\]
+
+is also a real number.
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:xtxeigen}{}{\label{thm:xtxeigen} }Let \(X \in \mathbb{R}^{n \times p}\). Then the eigenvalues of \(X^T X\) are all non-negative real number.
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Since \(X \in \mathbb{R}^{n \times p}\), \(X^T X \in \mathbb{R}^{n \times n}\) and is symmetric. Let
+
+\[(X^T X) \boldsymbol\beta= \lambda \boldsymbol\beta, \quad \boldsymbol\beta\neq \mathbf{0}\]
+
+Since \(X^T X\) is symmetric, every \(\lambda \in \mathbb{R}\).
+
+\begin{equation*}
+  \begin{split}
+    \lVert X \boldsymbol\beta\rVert^2 & = (X \boldsymbol\beta)^T (X \boldsymbol\beta) \\
+    & = \boldsymbol\beta^T X^T X \boldsymbol\beta\\
+    & = \lambda \boldsymbol\beta^T \boldsymbol\beta\qquad X^T X \boldsymbol\beta= \lambda \boldsymbol\beta\\
+    & = \lambda \lVert \boldsymbol\beta\rVert^2
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\begin{equation}
+  \lambda = \frac{\lVert X \boldsymbol\beta\rVert^2}{\lVert \boldsymbol\beta\rVert^2} \ge 0
+  \label{eq:nonegeigen}
+\end{equation}
+\EndKnitrBlock{proof}
 
 \bibliography{book.bib,packages.bib}
 

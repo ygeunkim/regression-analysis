@@ -17,6 +17,10 @@ In 1965, 70 schools were selected at random. 4 measurements were taken for each 
 
 [@Chatterjee:2015aa].
 
+```{r}
+eeo_fit <- lm(ACHV ~ ., data = eeo)
+```
+
 ```{definition, colldef, name = "Multicollinearity"}
 A set of predictors $\{ X_1, X_2, \ldots, X_p \}$ is said to have \textbf{\textit{multicollinearity}} iff there exist linear or near-linear dependencies among predictors.
 ```
@@ -52,7 +56,17 @@ $$\sum_{j = 0}^p Var(\hat\beta_j) = \infty$$
 
 It is found that *linear dependency leads to increasing variance of the estimates*. This variance problem occurs when nearly-linear dependeny situation, of course. So we should detect and remedy this.
 
-### Multicollinearity diagnostics
+## Multicollinearity diagnostics
+
+### Correlation matrix
+
+Multicollinearity leads to unstable regression coefficients. From Equation \@ref(eq:rsqangle), we know that $\hb$ is related to sample correlation between response and predictors. Pairwise correlation gives information about linear relationship between $X_j$.
+
+```{r}
+cor(eeo)
+```
+
+### Variance inflation factor
 
 ```{lemma, varbr}
 Consider regression model $j$-th predictor $X_j$ on the remaing $X_k, \: k \neq j$, i.e.
@@ -86,7 +100,7 @@ where $\Pi_1 = X_B (X_B^T X_B)^{-1} X_B^T$. It follows that
   \begin{split}
     X \hb & = \mathbf{x}_1 \hb_1 + X_B \hb_{B} \\
     & = \mathbf{x}_{1, \perp} \hb_1 + X_B \Big( \hb_{B} + (X_B^T X_B)^{-1} X_B^T \mathbf{x}_1 \hb_{1} \Big) \\
-    & = \Pi(\mathbf{Y} \mid R(\mathbf{x}_{1, \perp})) + \Pi(\mathbf{Y} \mid R(X_B))
+    & = \Pi(\mathbf{x}_1 \mid R(\mathbf{x}_{1, \perp})) + \Pi(\mathbf{x}_1 \mid R(X_B))
   \end{split}
 \end{equation*}
 
@@ -141,6 +155,105 @@ Let $R_j^2$ be the coefficient of determination that results when $X_j$ is regre
 
 $$VIF_j := \frac{1}{1 - R_j^2}, \: j = 1, \ldots, p$$
 ```
+
+```{corollary, vifcorr}
+$VIF_j$ is simple the inflation rate of $Var(\hat\beta_j)$ in comparison with the case where $X_j$ is not correlated with other predictors, i.e.
+
+$$s_{jk} = \sum_{i = 1}^n (x_{ij} - \overline{x}_j)(x_{ik} - \overline{x}_k) = 0 \quad \forall k \neq j$$
+```
+
+```{proof}
+By definition,
+
+\begin{equation*}
+  \begin{split}
+    & VIF_j^2 = 1 \\
+    & \Leftrightarrow R_j^2 = 0 \\
+    & \Leftrightarrow s_{jj} - \mathbf{x}_{j, \perp}^T \mathbf{x}_{j, \perp} = \sum_{i = 1}^n (x_{ij} - \overline{x}_j)^2 - \sum_{i^{\prime} = 1}^n (x_{i^{\prime}j} - \overline{x}_j) (x_{i^{\prime}k} - \overline{x}_k) = 0 \\
+    & \Leftrightarrow s_{jk} = \sum_{i^{\prime} = 1}^n (x_{ij} - \overline{x}_j) (x_{ik} - \overline{x}_k) = 0 \quad \forall k \neq j
+  \end{split}
+\end{equation*}
+```
+
+For example, suppose that
+
+$$x_1 \approx c_0 + c_2 x_2 + \cdots + c_p x_p$$
+
+Then
+
+$$R_1^2 \approx 1$$
+
+and so
+
+$$VIF_1 \rightarrow \infty$$
+
+```{conjecture, bigvif}
+Large $VIF_j$ for one or multiple $j$s indicate multicollinearity.
+```
+
+`car` library has a function `vif()`.
+
+```{r}
+car::vif(eeo_fit)
+```
+
+### Condition number
+
+```{theorem, symeigen}
+Let $\Sigma \in \R^{p \times p}$. Then the eigenvalues of $\Sigma$ are all real.
+```
+
+```{proof}
+Let
+
+$$\Sigma \mathbf{x} = \lambda \mathbf{x}$$
+
+Then
+
+$$\mathbf{x}^T \Sigma \mathbf{x} = \lambda \mathbf{x}^T \mathbf{x} = \lambda \lVert \mathbf{x} \rVert^2$$
+
+Write $\alpha := \mathbf{x}^T \Sigma \mathbf{x}$. 
+
+Claim: $\alpha \in \R$
+
+Since $\mathbf{x} \in \R^p$ and $\Sigma \in \R^{p \times p}$, i.e. real matrix, it is obvious that $\alpha$ is real.
+
+Since $\lVert \mathbf{x} \rVert^2 \neq 0$,
+
+$$\lambda = \frac{\alpha}{\lVert \mathbf{x} \rVert^2}$$
+
+is also a real number.
+```
+
+```{theorem, xtxeigen}
+Let $X \in \R^{n \times p}$. Then the eigenvalues of $X^T X$ are all non-negative real number.
+```
+
+```{proof}
+Since $X \in \R^{n \times p}$, $X^T X \in \R^{n \times n}$ and is symmetric. Let
+
+$$(X^T X) \B = \lambda \B, \quad \B \neq \mathbf{0}$$
+
+Since $X^T X$ is symmetric, every $\lambda \in \R$.
+
+\begin{equation*}
+  \begin{split}
+    \lVert X \B \rVert^2 & = (X \B)^T (X \B) \\
+    & = \B^T X^T X \B \\
+    & = \lambda \B^T \B \qquad X^T X \B = \lambda \B \\
+    & = \lambda \lVert \B \rVert^2
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\begin{equation}
+  \lambda = \frac{\lVert X \B \rVert^2}{\lVert \B \rVert^2} \ge 0
+  (\#eq:nonegeigen)
+\end{equation}
+```
+
+
 
 
 
