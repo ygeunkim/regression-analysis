@@ -146,7 +146,11 @@ $$Var(\hat\beta_j) = \frac{\sigma^2}{s_{jj}}$$
 
 When multicollinearity occurs, one term is multiplied so that
 
-$$Var(\hat\beta_j) = \frac{1}{1 - R_j^2} \frac{\sigma^2}{s_{jj}}$$
+\begin{equation}
+  Var(\hat\beta_j) = \frac{1}{1 - R_j^2} \frac{\sigma^2}{s_{jj}}
+  (\#eq:vifmotif)
+\end{equation}
+
 
 Naturally, we can think of $\frac{1}{1 - R_j^2}$ detecting multicollinearity.
 
@@ -155,6 +159,15 @@ Let $R_j^2$ be the coefficient of determination that results when $X_j$ is regre
 
 $$VIF_j := \frac{1}{1 - R_j^2}, \: j = 1, \ldots, p$$
 ```
+
+From Equation \@ref(eq:vifmotif),
+
+\begin{equation}
+  Var(\hat\beta_j) \propto (VIF_j) \sigma^2
+  (\#eq:vifprop)
+\end{equation}
+
+Variance of $j$-th regression coefficient is proportion to $VIF_j$. The term *variance inflation factor* originated from this fact.
 
 ```{corollary, vifcorr}
 $VIF_j$ is simple the inflation rate of $Var(\hat\beta_j)$ in comparison with the case where $X_j$ is not correlated with other predictors, i.e.
@@ -187,8 +200,48 @@ and so
 
 $$VIF_1 \rightarrow \infty$$
 
-```{conjecture, bigvif}
+```{remark}
 Large $VIF_j$ for one or multiple $j$s indicate multicollinearity.
+```
+
+@Rawlings:2006aa and @Chatterjee:2015aa suggest some thresholds with references.
+
+```{conjecture, vifthres1}
+If $$VIF_j > 10$$,
+then $\beta_j$ would be poorly estimated
+```
+
+Note that the *precision of OLS* is measured by its variance. Using the proportionality \@ref(eq:vifprop), let $D^2$ be the *expected squred distance of OLS* estimators [@Chatterjee:2015aa].
+
+$$D^2 = \sigma^2 \sum_{j = 1}^p VIF_j$$
+
+The smaller, the more accurate OLS is.
+
+```{remark}
+If predictor variables are orthogonal, then
+
+$$\forall j : VIF_j = 1$$
+
+and so
+
+$$D^2 = p\sigma^2$$
+```
+
+Consider the ratio of $D^2$ to orthogonal $D^2$.
+
+$$\frac{\sigma^2 \sum VIF_j}{p \sigma^2} = \frac{1}{p} \sum VIF_j \equiv \overline{VIF}$$
+
+```{definition, vifbar}
+Write average of every $VIF_j$ by
+
+$$\overline{VIF} := \frac{1}{p} \sum_{j = 1}^p VIF_j$$
+```
+
+$\overline{VIF}$ is not just average. The remark implies that $\overline{VIF}$ estimates the ratio of the true multicollinearity to a model when predictors are uncorrelated. Hence, this can also be used as an criterion of multicollinearity.
+
+```{conjecture, vifthres2}
+If $$\overline{VIF} >> 1$$,
+then serious multicollinearity might occur.
 ```
 
 `car` library has a function `vif()`.
@@ -252,6 +305,143 @@ Hence,
   (\#eq:nonegeigen)
 \end{equation}
 ```
+
+From Theorem \@ref(thm:xtxeigen), let
+
+$$\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_{p + 1} \ge 0$$
+
+be eigenvalues of $X^T X$. Then we have
+
+$$\lambda_{p + 1} > 0$$
+
+guarantees existence of $(X^T X)^{-1}$. Reversely,
+
+$$\lambda_{p + 1} \approx 0$$
+
+results in nearly-non-invertibility.
+
+```{definition, kondition, name = "Condition number"}
+Let $\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_{p + 1} \ge 0$ be eigenvalues of $X^T X$. Then \textbf{\textit{Condition number}} of $X^T X$ is defined by
+
+$$\kappa := \frac{\lambda_1}{\lambda_{p + 1}} = \frac{(\text{maximal eigenvalue of} \: X^TX)}{(\text{minimal eigenvalue of} \: X^TX)}$$
+```
+
+Some textbooks such as @Chatterjee:2015aa define this measure additional square root, i.e. singular values of $X$. Since how large is important, it does not matter much. $\kappa$ measures *how small minimal eigenvalue compared to maximal eigenvalue*. This means spread of the eigenvalue spectrum of $X^T X$.
+
+```{conjecture, kappathres}
+The larger $\kappa$, the more serious multicollinearity is. ($\lambda_{p + 1} \approx 0 \Rightarrow \kappa \rightarrow \infty$)
+
+\begin{enumerate}
+  \item Weak dependence $\kappa \approx 100$
+  \item Moderate to strong $100 \le \kappa \le 1000$
+  \item Severe $\kappa \ge 1000$
+\end{enumerate}
+```
+
+There is a base function called `kappa()` calculating the condition number of a `matrix`. Since this function has a `S3` method for `lm`, we can just provide `lm` object to get $\kappa$ of our model.
+
+```{r}
+kappa(eeo_fit)
+```
+
+
+## Principal Component Analysis
+
+Multicollinearity violates the assumption of OLS model. This makes the estimator unstable - large variance. Sometimes we cannot even get the solution. In a linear regression frame, there exist some alternative to OLS dealing with large variance. Here we present two methods.
+
+1. **Principal component regression**: By construction, principal components are uncorrelated.
+2. Shrinkage methods: **Ridge regression** enables least squres get the solution and shrinks its variance.
+
+Before looking at principal component analysis (PCA), we see some preliminary matrix algebra theorems: spectral decomposition and singular value decomposition.
+
+### Spectral decomposition
+
+```{theorem, specdecomp, name = "Spectral Decomposition"}
+If $A \in \R^{p \times p}$ is a real symmetric matrix, then $A$ is diagonalizable as
+
+$$A = P \Lambda P^T$$
+
+where
+
+$$
+P = \begin{bmatrix}
+  \mathbf{v}_1 & \mathbf{v}_2 & \cdots & \mathbf{v}_p
+\end{bmatrix} = \begin{bmatrix}
+  v_{11} & \cdots & v_{1p} \\
+  \vdots & \cdots & \vdots \\
+  v_{p1} & \cdots & v_{pp}
+\end{bmatrix} \: \text{orthogonal}
+$$
+
+and
+
+$$\Lambda = diag(\lambda_1, \ldots, \lambda_p)$$
+
+with eigenvalue and corresponding orthonormal eigenvector of $A$ $(\lambda_j, \mathbf{v}_j), \: j = 1, \ldots, p$.
+```
+
+The theorem satisfies when a matrix is *symmetric*. For example, covariance matrix or correlation matrix. The matrix decomposition can also be expressed as following corollary.
+
+```{corollary, specdecomp2}
+If $A \in \R^{p \times p}$ is a real symmetric matrix, then
+
+$$A = \lambda_1 \mathbf{v}_1 \mathbf{v}_1^T + \cdots + \lambda_p \mathbf{v}_p \mathbf{v}_p^T$$
+
+where each $(\lambda_j, \mathbf{v}_j)$ is defined as in Theorem \@ref(thm:specdecomp).
+```
+
+Spectral decomposition $A = P \Lambda P^T$ gives some useful facts to $A$.
+
+```{proposition, specprop, name = "Properties of spectral decomposition"}
+Let $A \in \R^{p \times p}$ be a real symmetric matrix. Then $A = P \Lambda P^T$.
+
+\begin{itemize}
+  \item $PP^T = P^T P = I$ so that $P^{-1} = P^T$
+  \item $A^{-1} = P \Lambda^{-1} P^T$ with $\Lambda = diag \Big(\frac{1}{\lambda_1}, \ldots, \frac{1}{lambda_p} \Big)$
+  \item $A^k = P \Lambda^k P^T$ with $\Lambda = diag(\lambda_1^k, \ldots, \lambda_p^k)$
+\end{itemize}
+```
+
+```{proof}
+Since eigenvectors are orthonormalized, $P$ is orthogonal.
+
+$$A^{-1} = (P^T)^{-1} \Lambda^{-1} P^{-1} = P \Lambda^{-1} P^T$$
+
+$$A^k = (P \Lambda \underset{= I}{\underline{P^T) (P}} \Lambda P^T) \cdots (P \Lambda \underset{= I}{\underline{P^T) (P}} \Lambda P^T) = P \Lambda^k P^T$$
+
+Recall that $\Lambda$ is diagonal.
+```
+
+Collaborating with quadrating form, spectral decomposition can give a geometric meaning.
+
+```{theorem, pat, name = "Principal Axes Theorem"}
+If $A \in \R^{p \times p}$ is a real symmetric matrix, then
+
+$$\exists \: \text{change of variables} \: \mathbf{u} = P^T \mathbf{X} \quad\text{such that} \quad \mathbf{X}^T A \mathbf{X} = \mathbf{u}^T \Lambda \mathbf{u}$$
+
+where $\Lambda$ is a diagonal matrix.
+```
+
+```{proof}
+Spectral decomposition \@ref(thm:specdecomp) implies that
+
+$$P^T AP = \Lambda$$
+
+Then
+
+$$\mathbf{X}^T A \mathbf{X} = \mathbf{u}^T P^T A P \mathbf{u} = \mathbf{u}^T \Lambda \mathbf{u}$$
+```
+
+```{corollary, pat2}
+If $A \in \R^{p \times p}$ is a real symmetric matrix, then there exists a change of variables $\mathbf{u} = P^T \mathbf{X}$ s.t.
+
+$$\mathbf{X}^T A \mathbf{X} = \lambda_1 \mathbf{v}_1^T \mathbf{X} + \cdots + \lambda_p \mathbf{v}_p^T \mathbf{X}$$
+```
+
+Above Theorem \@ref(thm:pat) and Corollary \@ref(cor:pat2) is linearly transforming its coordinates of conic section. The directions of coordinate are $\mathbf{v}_j$, orthonormal eigenvectors. Axes are determined by corresponding egenvalues.
+
+### Singular value decomposition
+
 
 
 

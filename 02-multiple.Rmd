@@ -1986,7 +1986,7 @@ See the example data set from @Chatterjee:2015aa.
 salary <- haven::read_sav("data/p124.sav")
 (salary <-
   salary %>% 
-  mutate_at(.vars = vars("E", "M"), .funs = list(~factor)))
+  mutate_at(.vars = vars("E", "M"), .funs = factor))
 ```
 
 - `S`: salary (*response variable*)
