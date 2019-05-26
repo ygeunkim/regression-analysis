@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fdb598078f8>}
+\CommentTok{#> <bytecode: 0x7ff97018b2e0>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -8793,11 +8793,6 @@ Now consider linear transformation
 
 \[V^T \mathbf{b}\]
 
-\begin{verbatim}
-#> Warning: `as_tibble.matrix()` requires a matrix with column names or a `.name_repair` argument. Using compatibility `.name_repair`.
-#> This warning is displayed once per session.
-\end{verbatim}
-
 \begin{figure}[H]
 
 {\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/circle2-1} 
@@ -9101,6 +9096,335 @@ Hence, PCA is a linear transformation of coordinate
 
 \caption{Ellipse with respect to principal components}\label{fig:mvnellips2}
 \end{figure}
+
+\hypertarget{sample-principal-components}{%
+\subsection{Sample principal components}\label{sample-principal-components}}
+
+Our aim is to find principal components given observed sample. In this case,
+
+\[\widetilde{X} = [x_{ij} - \overline{x}_j] \in \mathbb{R}^{n \times p}\]
+
+\BeginKnitrBlock{remark}[Sample covariance matrix]
+\iffalse{} {Remark (Sample covariance matrix). } \fi{}For centered input \(\widetilde{X}\), empirical covariance matrix is given by
+
+\[S = \frac{1}{n - 1} \widetilde{X}^T \widetilde{X} = \bigg[ \frac{1}{n - 1} \sum_{i = 1}^n (x_{ij} - \overline{x}_j)(x_{ik} - \overline{x}_k) \bigg]_{j \times k} \in \mathbb{R}^{p \times p}\]
+\EndKnitrBlock{remark}
+
+Conduct the spectral decomposition for \(S\), i.e.
+
+\[S = P\Lambda P^T\]
+
+where
+
+\[
+\Lambda = diag(\lambda_1, \ldots, \lambda_p) \qquad \text{and} \qquad P = \begin{bmatrix}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_p
+\end{bmatrix}
+\]
+
+with eigenvalue-orthonormal eigenvector pair \((\lambda_j, \mathbf{v}_j)\), \(\lambda_1 \ge \cdots \ge \lambda_p \ge 0\). We can get an observed vector for \(j\)-th PC using Theorem \ref{thm:poppcasol}
+
+\begin{equation}
+  \mathbf{z}_j = \widetilde{X} \mathbf{v}_j = \begin{bmatrix}
+    z_{1j} \\
+    z_{2j} \\
+    \vdots \\
+    z_{nj}
+  \end{bmatrix} \in \mathbb{R}^n
+  \label{eq:jthscore}
+\end{equation}
+
+This is called the \(j\)-th \emph{principal component scores}.
+
+\BeginKnitrBlock{theorem}[Sample principal components]
+\protect\hypertarget{thm:pcascore}{}{\label{thm:pcascore} \iffalse (Sample principal components) \fi{} }Given observed sample \(\widetilde{X}\), entire principal component scrore matrix can be computed by
+
+\[
+\begin{aligned}
+  Z & = \widetilde{X} P \in \mathbb{R}^{n \times p} \\
+  & = \begin{bmatrix}
+    z_{11} & z_{12} & \cdots & z_{1p} \\
+    z_{21} & z_{22} & \cdots & z_{2p} \\
+    \vdots & \vdots & \vdots & \vdots \\
+    z_{n1} & z_{n2} & \cdots & z_{np}
+  \end{bmatrix} \\
+  & = \begin{bmatrix}
+    \mathbf{z}_1 & \mathbf{z}_2 & \cdots & \mathbf{z}_p
+  \end{bmatrix} \\
+  & = \text{linear combination for observations}
+\end{aligned}
+\]
+\EndKnitrBlock{theorem}
+
+To reduce dimension, we just use the first \(q < p\) columns of \(P\).
+
+\[Z = \widetilde{X} P_q\]
+
+where \(P_q\) consists of the first \(q\) column of \(P\). Or we just discard the last columns after calculating \(Z\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{eeo_cent <-}\StringTok{ }\KeywordTok{scale}\NormalTok{(eeo, }\DataTypeTok{scale =} \OtherTok{FALSE}\NormalTok{)}
+\CommentTok{#------------------------------------}
+\NormalTok{eeo_p <-}\StringTok{ }\KeywordTok{eigen}\NormalTok{(}\KeywordTok{var}\NormalTok{(eeo_cent))}\OperatorTok{$}\NormalTok{vectors}
+\KeywordTok{colnames}\NormalTok{(eeo_p) <-}\StringTok{ }\KeywordTok{colnames}\NormalTok{(eeo)}
+\NormalTok{eeo_p}
+\CommentTok{#>       ACHV    FAM     PEER   SCHOOL}
+\CommentTok{#> [1,] 0.876  0.483  0.00834  0.00648}
+\CommentTok{#> [2,] 0.296 -0.544  0.67029 -0.40931}
+\CommentTok{#> [3,] 0.258 -0.450 -0.74023 -0.42715}
+\CommentTok{#> [4,] 0.280 -0.518 -0.05197  0.80621}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{eeo_cent }\OperatorTok{%*%}\StringTok{ }\NormalTok{eeo_p }\OperatorTok{%>%}\StringTok{ }\CommentTok{# XP}
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{()}
+\CommentTok{#> # A tibble: 70 x 4}
+\CommentTok{#>     ACHV    FAM    PEER  SCHOOL}
+\CommentTok{#>    <dbl>  <dbl>   <dbl>   <dbl>}
+\CommentTok{#> 1 -0.194 -0.586  0.372  -0.119 }
+\CommentTok{#> 2  1.16  -0.483  0.159  -0.0801}
+\CommentTok{#> 3 -1.49   0.744 -0.0594 -0.0230}
+\CommentTok{#> 4 -2.95   0.766  0.0992  0.194 }
+\CommentTok{#> 5 -2.50  -1.40   0.225   0.118 }
+\CommentTok{#> 6 -0.463 -0.574  0.0242  0.0926}
+\CommentTok{#> # ... with 64 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+In \texttt{R}, \texttt{princomp()} conduct PCA through spectral decomposition.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{princomp}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ eeo)}\OperatorTok{$}\NormalTok{scores }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{()}
+\CommentTok{#> # A tibble: 70 x 4}
+\CommentTok{#>   Comp.1 Comp.2  Comp.3  Comp.4}
+\CommentTok{#>    <dbl>  <dbl>   <dbl>   <dbl>}
+\CommentTok{#> 1 -0.194 -0.586  0.372  -0.119 }
+\CommentTok{#> 2  1.16  -0.483  0.159  -0.0801}
+\CommentTok{#> 3 -1.49   0.744 -0.0594 -0.0230}
+\CommentTok{#> 4 -2.95   0.766  0.0992  0.194 }
+\CommentTok{#> 5 -2.50  -1.40   0.225   0.118 }
+\CommentTok{#> 6 -0.463 -0.574  0.0242  0.0926}
+\CommentTok{#> # ... with 64 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+This function implements \texttt{eigen()}. Of course, the result is the same as we calculated directly.
+
+\hypertarget{pc-as-linear-manifolds}{%
+\subsection{PC as linear manifolds}\label{pc-as-linear-manifolds}}
+
+Principal components finds linear combination having maximal variances in order. We can find another components. In fact, these are equivalent. Find the closest hyperplane to the points \citep{Hastie:2013aa}.
+
+\[\mathbf{f}(\mathbf{z}) = \boldsymbol\mu + V_q \mathbf{z}, \quad V_q \in \mathbb{R}^{p \times q} \: \text{orthogonal}\]
+
+with \(V_q = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_q \end{bmatrix}\).
+
+This find least squres solution minimizing the errors between the hyperplane. In OLS, loss was calculated with respect to the original coordinate but here it is calculated vertical to the hyperplane.
+
+\BeginKnitrBlock{definition}[Reconstruction error]
+\protect\hypertarget{def:re}{}{\label{def:re} \iffalse (Reconstruction error) \fi{} }PCA deals with reconstruction error.
+
+\[RE := \sum_{i = 1}^n \lVert \mathbf{x}_i - \mathbf{f}(\mathbf{z}_i) \rVert^2\]
+\EndKnitrBlock{definition}
+
+PCA corresponds to the problem of finding least squares for
+
+\begin{equation}
+  (\hat{\boldsymbol\mu}, \{ \mathbf{z}_i \}, \hat{P}_q) = \argmin_{\boldsymbol\mu, \{ \mathbf{z}_i \}, V_q} \sum_{i = 1}^n \lVert \mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i \rVert^2
+  \label{eq:pcare}
+\end{equation}
+
+First partially optimize for \(\boldsymbol\mu\) and \(\{ \mathbf{z}_i \}\).
+
+Since
+
+\[RE = \sum (\mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i)^T (\mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i)\]
+
+\[\frac{\partial RE}{\partial \boldsymbol\mu} = -2 \sum (\mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i)\]
+
+Setting it to be \(\mathbf{0}\),
+
+\begin{equation}
+  \hat{\boldsymbol\mu} = \overline{\mathbf{x}} - V_q \overline{\mathbf{z}}
+  \label{eq:pcamuhat}
+\end{equation}
+
+Since
+
+\[RE = \sum \Big\{ \lVert \mathbf{x}_i - \boldsymbol\mu \rVert^2 - 2(\mathbf{x}_i - \boldsymbol\mu)^T V_q \mathbf{z}_i + \mathbf{z}_i^T \mathbf{z}_i \Big\}\]
+
+\[\frac{\partial RE}{\partial \mathbf{z}_i} = -2 V_q^T (\mathbf{x}_i - \boldsymbol\mu) + 2 \mathbf{z}_i\]
+
+Setting this to be \(\mathbf{0}\),
+
+\begin{equation}
+  \hat{\mathbf{z}}_i = V_q^T (\mathbf{x}_i - \boldsymbol\mu)
+  \label{eq:pcasclin}
+\end{equation}
+
+From Equations \eqref{eq:pcamuhat} and \eqref{eq:pcasclin},
+
+\begin{equation*}
+  \begin{split}
+    & \hat{\boldsymbol\mu} = \overline{\mathbf{x}} - V_q V_q^T (\overline{\mathbf{x}} - \hat{\boldsymbol\mu}) \\
+    & \Leftrightarrow V_q V_q^T (\overline{\mathbf{x}} - \hat{\boldsymbol\mu}) = \overline{\mathbf{x}} - \hat{\boldsymbol\mu} \\
+    & = (I - V_q V_q^T) (\overline{\mathbf{x}} - \hat{\boldsymbol\mu}) = \mathbf{0}
+  \end{split}
+\end{equation*}
+
+Since \(V_q\) is orthogonal, \(V_q V_q^T = V_q (V_q^T V_q)^{-1} V_q^T\) is a projection onto \(R(V_q)\). Theorem \ref{thm:fundsub} implies that \(I - V_q V_q^T\) is a projection onto \(R(V_q)^{\perp}\). Thus,
+
+\[\hat{\boldsymbol\mu} = \overline{\mathbf{x}} + \mathbf{h}, \quad \mathbf{h} \in R(V_q)^{\perp}\]
+
+Setting \(\mathbf{h} = \mathbf{0}\),
+
+\begin{equation}
+  \begin{cases}
+    \hat{\boldsymbol\mu} = \overline{\mathbf{x}} \\
+    \hat{\mathbf{z}}_i = V_q^T (\mathbf{x}_i - \overline{\mathbf{x}})
+  \end{cases}
+  \label{eq:pcamuaz}
+\end{equation}
+
+We are using centered input, so
+
+\[\boldsymbol\mu = \mathbf{0}, \quad \overline{\mathbf{x}} = \mathbf{0}\]
+
+Denote that we do not know \(V_q\) yet. Partially optimized,
+
+\[RE = \sum_{i = 1}^n \lVert \widetilde{\mathbf{x}}_i - V_q V_q^T \widetilde{\mathbf{x}}_i \rVert^2\]
+
+To get \(V_q\), solve
+
+\begin{equation}
+  \hat{P}_q = \argmin_{V_q} \sum_{i = 1}^n \lVert \widetilde{\mathbf{x}}_i - V_q V_q^T \widetilde{\mathbf{x}}_i \rVert^2
+  \label{eq:pcapq}
+\end{equation}
+
+Again, \(V_q V_q^T\) is a projection onto \(Col(V_q)\). It is easy to realize that we might use Equation \eqref{eq:svdfit}.
+
+\BeginKnitrBlock{theorem}[Principal components by SVD]
+\protect\hypertarget{thm:svdpc}{}{\label{thm:svdpc} \iffalse (Principal components by SVD) \fi{} }Given centered input \(\widetilde{\mathbb{X}}_A\), SVD is conducted. Then
+
+\[
+\begin{aligned}
+  \widetilde{\mathbb{X}}_A P = UD & = Z \\
+  & = \begin{bmatrix}
+    \mathbf{z}_1 & \cdots & \mathbf{z}_p
+  \end{bmatrix}
+\end{aligned}
+\]
+
+with dimension reduction
+
+\[
+\hat{V_q} = \begin{bmatrix}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_q
+\end{bmatrix}
+\]
+\EndKnitrBlock{theorem}
+
+In fact, this linear approximation approach is equivalent to variance maximization.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/pcaequiv} 
+
+}
+
+\caption{Equivalence of two approaches}\label{fig:pcaequiv}
+\end{figure}
+
+See Figure \ref{fig:pcaequiv}. By the Pythagorean law,
+
+\begin{equation*}
+  \begin{split}
+    \lVert \widetilde{\mathbf{x}}_i \rVert^2 & = \lVert V_q V_q^T \widetilde{\mathbf{x}}_i \rVert^2 + \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2 \\
+     & = \lVert V_q^T  \widetilde{\mathbf{x}}_i \rVert^2 + \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2
+  \end{split}
+\end{equation*}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    & Var(\widetilde{\mathbf{x}}_i) = Var(V_q^T \widetilde{\mathbf{x}}_i) + \sum_{i = 1}^n \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2 \\
+    & \sum_{j = 1}^p \mathbf{v}_j^T S \mathbf{v}_j = \sum_{j = 1}^q \mathbf{v}_j^T S \mathbf{v}_j + \sum_{i = 1}^n \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2 \\
+    & \sum_{j = 1}^p \mathbf{v}_j^T S \mathbf{v}_j = \text{maximal variance} + \text{minimal reconstruction error} \\
+    & \sum_{j = 1}^p \mathbf{v}_j^T S \mathbf{v}_j = \text{Spectral decomposition} + \text{reduced SVD}
+  \end{split}
+\end{equation*}
+
+In fact, spectral decomposition is just a special case of SVD. Recall that
+
+\[S = \frac{1}{n - 1} \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A\]
+
+The only difference in eigenvalues of \(S\) and \(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A\) is proportion \(\frac{1}{n - 1}\). Arithmetically, the two calculations are equivalent.
+
+\hypertarget{variance}{%
+\subsection{Variance}\label{variance}}
+
+\BeginKnitrBlock{theorem}[Sample variance of PC]
+\protect\hypertarget{thm:samplepcvar}{}{\label{thm:samplepcvar} \iffalse (Sample variance of PC) \fi{} }Let \(\mathbf{z}_j\) be \(j\)-th PC score. Then
+
+\begin{itemize}
+  \item Total variance $$\sum_{j = 1}^p Var(\mathbf{Z}_j) = \sum_{j = 1}^p Var(\widetilde{\mathbf{X}}_j) = \frac{1}{n} \sum \sigma_j^2$$
+  \item Sample variance explained by $\mathbf{z}_j$ $$Var(\mathbf{z}_j) = \frac{\sigma_j^2}{n}$$
+  \item Proportion of variance explained using $q$ PCs $$PVE_q = \frac{\sigma_1^2 + \cdots + \sigma_q^2}{\sum\limits_{j = 1}^p \sigma_j^2}$$
+\end{itemize}
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Consider principal component scores
+
+\[Z = \widetilde{\mathbb{X}}_A P = UD = \widetilde{\mathbb{X}}_A V\]
+
+Then
+
+\[\mathbf{z}_j = \sigma_j \mathbf{u}_j\]
+
+and so
+
+\begin{equation*}
+  \begin{split}
+    Var(\mathbf{z}_j) & = \frac{1}{n} < \mathbf{z}_j, \mathbf{z}_j > \\
+    & = \frac{1}{n} < \sigma_j \mathbf{u}_j, \sigma_j \mathbf{u}_j > \\
+    & = \frac{\sigma^2}{n}
+  \end{split}
+\end{equation*}
+
+In turn,
+
+\begin{equation*}
+  \begin{split}
+    \sum Var(\widetilde{\mathbf{X}}_j) & = \frac{1}{n} \sum_{i, j} \widetilde{x}_{ij}^2 \\
+    & = \frac{1}{n} tr(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A) \\
+    & = \frac{1}{n} tr(VD^2 V^T) \\
+    & = \frac{1}{n} tr(V^T V D^2) \\
+    & = \frac{1}{n} tr(D^2) = \sum_j \frac{\sigma_j}{n} \\
+    & = \sum_{j = 1}^p Var(\mathbf{Z}_j) \\
+    & > \sum_{j = 1}^q Var(\mathbf{Z}_j), \quad q < p
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\[PVE_q = \frac{Var(\mathbf{Z}_1) + \cdots + Var(\mathbf{Z}_q)}{\sum Var(\mathbf{Z})} = \frac{\sigma_1^2 + \cdots + \sigma_q^2}{\sum\limits_{j = 1}^p \sigma_j^2}\]
+\EndKnitrBlock{proof}
+
+\hypertarget{principal-components-regression}{%
+\subsection{Principal components regression}\label{principal-components-regression}}
+
+Using principal components of centered inputs
+
+\[Z = \widetilde{\mathbb{X}}_A P = UD = \widetilde{\mathbb{X}}_A V\]
+
+one may rewrite the regression equation.
 
 \bibliography{book.bib,packages.bib}
 

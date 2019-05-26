@@ -657,7 +657,7 @@ d_exm <- diag(svd(circ_dat)$d)
 v_exm <- svd(circ_dat)$v
 ```
 
-```{r circle1, echo=FALSE, fig.cap="A circle with radius 1"}
+```{r circle1, warning=FALSE, echo=FALSE, fig.cap="A circle with radius 1"}
 circ_dat %>% 
   draw_circle(aes(x, y))
 ```
@@ -666,7 +666,7 @@ Now consider linear transformation
 
 $$V^T \mathbf{b}$$
 
-```{r circle2, message=FALSE, echo=FALSE, fig.cap="$V^T \\mathbf{b}$"}
+```{r circle2, warning=FALSE, echo=FALSE, fig.cap="$V^T \\mathbf{b}$"}
 as.matrix(circ_dat) %*% v_exm %>% 
   as_tibble() %>% 
   draw_circle(aes(V1, V2))
@@ -676,7 +676,7 @@ In Figure \@ref(fig:circle2), we can see that $V$ maintains length and angle, bu
 
 $$D (V^T \mathbf{b})$$
 
-```{r circle3, message=FALSE, echo=FALSE, fig.cap="$D(V^T\\mathbf{b})$"}
+```{r circle3, warning=FALSE, echo=FALSE, fig.cap="$D(V^T\\mathbf{b})$"}
 as.matrix(circ_dat) %*% v_exm %*% t(d_exm) %>% 
   as_tibble() %>% 
   draw_circle(aes(V1, V2))
@@ -686,7 +686,7 @@ In Figure \@ref(fig:circle3), length has changed. In fact, angle has also change
 
 $$U (DV^T \mathbf{b})$$
 
-```{r circle4, message=FALSE, echo=FALSE, fig.cap="$U(DV^T\\mathbf{b})$"}
+```{r circle4, warning=FALSE, echo=FALSE, fig.cap="$U(DV^T\\mathbf{b})$"}
 as.matrix(circ_dat) %*% v_exm %*% t(d_exm) %*% t(u_exm) %>% 
   as_tibble() %>% 
   draw_circle(aes(V1, V2))
@@ -999,6 +999,319 @@ mvn_ellip %>%
   ) +
   coord_fixed()
 ```
+
+### Sample principal components
+
+Our aim is to find principal components given observed sample. In this case,
+
+$$\widetilde{X} = [x_{ij} - \overline{x}_j] \in \R^{n \times p}$$
+
+```{remark, name = "Sample covariance matrix"}
+For centered input $\widetilde{X}$, empirical covariance matrix is given by
+
+$$S = \frac{1}{n - 1} \widetilde{X}^T \widetilde{X} = \bigg[ \frac{1}{n - 1} \sum_{i = 1}^n (x_{ij} - \overline{x}_j)(x_{ik} - \overline{x}_k) \bigg]_{j \times k} \in \R^{p \times p}$$
+```
+
+Conduct the spectral decomposition for $S$, i.e.
+
+$$S = P\Lambda P^T$$
+
+where
+
+$$
+\Lambda = diag(\lambda_1, \ldots, \lambda_p) \qquad \text{and} \qquad P = \begin{bmatrix}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_p
+\end{bmatrix}
+$$
+
+with eigenvalue-orthonormal eigenvector pair $(\lambda_j, \mathbf{v}_j)$, $\lambda_1 \ge \cdots \ge \lambda_p \ge 0$. We can get an observed vector for $j$-th PC using Theorem \@ref(thm:poppcasol)
+
+\begin{equation}
+  \mathbf{z}_j = \widetilde{X} \mathbf{v}_j = \begin{bmatrix}
+    z_{1j} \\
+    z_{2j} \\
+    \vdots \\
+    z_{nj}
+  \end{bmatrix} \in \R^n
+  (\#eq:jthscore)
+\end{equation}
+
+This is called the $j$-th *principal component scores*.
+
+```{theorem, pcascore, name = "Sample principal components"}
+Given observed sample $\widetilde{X}$, entire principal component scrore matrix can be computed by
+
+$$
+\begin{aligned}
+  Z & = \widetilde{X} P \in \R^{n \times p} \\
+  & = \begin{bmatrix}
+    z_{11} & z_{12} & \cdots & z_{1p} \\
+    z_{21} & z_{22} & \cdots & z_{2p} \\
+    \vdots & \vdots & \vdots & \vdots \\
+    z_{n1} & z_{n2} & \cdots & z_{np}
+  \end{bmatrix} \\
+  & = \begin{bmatrix}
+    \mathbf{z}_1 & \mathbf{z}_2 & \cdots & \mathbf{z}_p
+  \end{bmatrix} \\
+  & = \text{linear combination for observations}
+\end{aligned}
+$$
+```
+
+To reduce dimension, we just use the first $q < p$ columns of $P$.
+
+$$Z = \widetilde{X} P_q$$
+
+where $P_q$ consists of the first $q$ column of $P$. Or we just discard the last columns after calculating $Z$.
+
+```{r}
+eeo_cent <- scale(eeo, scale = FALSE)
+#------------------------------------
+eeo_p <- eigen(var(eeo_cent))$vectors
+colnames(eeo_p) <- colnames(eeo)
+eeo_p
+```
+
+```{r}
+eeo_cent %*% eeo_p %>% # XP
+  as_tibble()
+```
+
+In `R`, `princomp()` conduct PCA through spectral decomposition.
+
+```{r}
+princomp(~ ., data = eeo)$scores %>% 
+  as_tibble()
+```
+
+This function implements `eigen()`. Of course, the result is the same as we calculated directly.
+
+### PC as linear manifolds
+
+Principal components finds linear combination having maximal variances in order. We can find another components. In fact, these are equivalent. Find the closest hyperplane to the points [@Hastie:2013aa].
+
+$$\mathbf{f}(\mathbf{z}) = \boldsymbol\mu + V_q \mathbf{z}, \quad V_q \in \R^{p \times q} \: \text{orthogonal}$$
+
+with $V_q = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_q \end{bmatrix}$.
+
+<!-- ```{r} -->
+<!-- eeo_load <- prcomp(eeo)$rotation[c("SCHOOL", "PEER"),1] -->
+<!-- #------------------------------- -->
+<!-- eeo_cent %>%  -->
+<!--   as_tibble() %>%  -->
+<!--   bind_cols( -->
+<!--     as_tibble(prcomp(eeo)$x[,1:2]) -->
+<!--   ) %>%  -->
+<!--   gg_scatter(aes(SCHOOL, PEER)) + -->
+<!--   geom_abline( -->
+<!--     aes( -->
+<!--       slope = eeo_load[2] / eeo_load[1], -->
+<!--       intercept = 0 -->
+<!--     ), -->
+<!--     alpha = .7 -->
+<!--   ) + -->
+<!--   geom_linerange( -->
+<!--     aes(x = SCHOOL, ymin = PEER, ymax = eeo_load[2] / eeo_load[1] * (SCHOOL)), -->
+<!--     col = I("red"), -->
+<!--     alpha = .5 -->
+<!--   ) -->
+<!-- ``` -->
+
+This find least squres solution minimizing the errors between the hyperplane. In OLS, loss was calculated with respect to the original coordinate but here it is calculated vertical to the hyperplane.
+
+```{definition, re, name = "Reconstruction error"}
+PCA deals with reconstruction error.
+
+$$RE := \sum_{i = 1}^n \lVert \mathbf{x}_i - \mathbf{f}(\mathbf{z}_i) \rVert^2$$
+```
+
+PCA corresponds to the problem of finding least squares for
+
+\begin{equation}
+  (\hat{\boldsymbol\mu}, \{ \mathbf{z}_i \}, \hat{P}_q) = \argmin_{\boldsymbol\mu, \{ \mathbf{z}_i \}, V_q} \sum_{i = 1}^n \lVert \mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i \rVert^2
+  (\#eq:pcare)
+\end{equation}
+
+First partially optimize for $\boldsymbol\mu$ and $\{ \mathbf{z}_i \}$.
+
+Since
+
+$$RE = \sum (\mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i)^T (\mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i)$$
+
+$$\frac{\partial RE}{\partial \boldsymbol\mu} = -2 \sum (\mathbf{x}_i - \boldsymbol\mu - V_q \mathbf{z}_i)$$
+
+Setting it to be $\mathbf{0}$,
+
+\begin{equation}
+  \hat{\boldsymbol\mu} = \overline{\mathbf{x}} - V_q \overline{\mathbf{z}}
+  (\#eq:pcamuhat)
+\end{equation}
+
+Since
+
+$$RE = \sum \Big\{ \lVert \mathbf{x}_i - \boldsymbol\mu \rVert^2 - 2(\mathbf{x}_i - \boldsymbol\mu)^T V_q \mathbf{z}_i + \mathbf{z}_i^T \mathbf{z}_i \Big\}$$
+
+$$\frac{\partial RE}{\partial \mathbf{z}_i} = -2 V_q^T (\mathbf{x}_i - \boldsymbol\mu) + 2 \mathbf{z}_i$$
+
+Setting this to be $\mathbf{0}$,
+
+\begin{equation}
+  \hat{\mathbf{z}}_i = V_q^T (\mathbf{x}_i - \boldsymbol\mu)
+  (\#eq:pcasclin)
+\end{equation}
+
+From Equations \@ref(eq:pcamuhat) and \@ref(eq:pcasclin),
+
+\begin{equation*}
+  \begin{split}
+    & \hat{\boldsymbol\mu} = \overline{\mathbf{x}} - V_q V_q^T (\overline{\mathbf{x}} - \hat{\boldsymbol\mu}) \\
+    & \Leftrightarrow V_q V_q^T (\overline{\mathbf{x}} - \hat{\boldsymbol\mu}) = \overline{\mathbf{x}} - \hat{\boldsymbol\mu} \\
+    & = (I - V_q V_q^T) (\overline{\mathbf{x}} - \hat{\boldsymbol\mu}) = \mathbf{0}
+  \end{split}
+\end{equation*}
+
+Since $V_q$ is orthogonal, $V_q V_q^T = V_q (V_q^T V_q)^{-1} V_q^T$ is a projection onto $R(V_q)$. Theorem \@ref(thm:fundsub) implies that $I - V_q V_q^T$ is a projection onto $R(V_q)^{\perp}$. Thus,
+
+$$\hat{\boldsymbol\mu} = \overline{\mathbf{x}} + \mathbf{h}, \quad \mathbf{h} \in R(V_q)^{\perp}$$
+
+Setting $\mathbf{h} = \mathbf{0}$,
+
+\begin{equation}
+  \begin{cases}
+    \hat{\boldsymbol\mu} = \overline{\mathbf{x}} \\
+    \hat{\mathbf{z}}_i = V_q^T (\mathbf{x}_i - \overline{\mathbf{x}})
+  \end{cases}
+  (\#eq:pcamuaz)
+\end{equation}
+
+We are using centered input, so
+
+$$\boldsymbol\mu = \mathbf{0}, \quad \overline{\mathbf{x}} = \mathbf{0}$$
+
+Denote that we do not know $V_q$ yet. Partially optimized,
+
+$$RE = \sum_{i = 1}^n \lVert \widetilde{\mathbf{x}}_i - V_q V_q^T \widetilde{\mathbf{x}}_i \rVert^2$$
+
+To get $V_q$, solve
+
+\begin{equation}
+  \hat{P}_q = \argmin_{V_q} \sum_{i = 1}^n \lVert \widetilde{\mathbf{x}}_i - V_q V_q^T \widetilde{\mathbf{x}}_i \rVert^2
+  (\#eq:pcapq)
+\end{equation}
+
+Again, $V_q V_q^T$ is a projection onto $Col(V_q)$. It is easy to realize that we might use Equation \@ref(eq:svdfit).
+
+```{theorem, svdpc, name = "Principal components by SVD"}
+Given centered input $\widetilde{\mathbb{X}}_A$, SVD is conducted. Then
+
+$$
+\begin{aligned}
+  \widetilde{\mathbb{X}}_A P = UD & = Z \\
+  & = \begin{bmatrix}
+    \mathbf{z}_1 & \cdots & \mathbf{z}_p
+  \end{bmatrix}
+\end{aligned}
+$$
+
+with dimension reduction
+
+$$
+\hat{V_q} = \begin{bmatrix}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_q
+\end{bmatrix}
+$$
+```
+
+In fact, this linear approximation approach is equivalent to variance maximization.
+
+```{r pcaequiv, echo=FALSE, fig.cap="Equivalence of two approaches"}
+knitr::include_graphics("images/pcaequiv.png")
+```
+
+See Figure \@ref(fig:pcaequiv). By the Pythagorean law,
+
+\begin{equation*}
+  \begin{split}
+    \lVert \widetilde{\mathbf{x}}_i \rVert^2 & = \lVert V_q V_q^T \widetilde{\mathbf{x}}_i \rVert^2 + \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2 \\
+     & = \lVert V_q^T  \widetilde{\mathbf{x}}_i \rVert^2 + \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2
+  \end{split}
+\end{equation*}
+
+It follows that
+
+\begin{equation*}
+  \begin{split}
+    & Var(\widetilde{\mathbf{x}}_i) = Var(V_q^T \widetilde{\mathbf{x}}_i) + \sum_{i = 1}^n \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2 \\
+    & \sum_{j = 1}^p \mathbf{v}_j^T S \mathbf{v}_j = \sum_{j = 1}^q \mathbf{v}_j^T S \mathbf{v}_j + \sum_{i = 1}^n \lVert ( I - V_q V_q^T ) \widetilde{\mathbf{x}}_i \rVert^2 \\
+    & \sum_{j = 1}^p \mathbf{v}_j^T S \mathbf{v}_j = \text{maximal variance} + \text{minimal reconstruction error} \\
+    & \sum_{j = 1}^p \mathbf{v}_j^T S \mathbf{v}_j = \text{Spectral decomposition} + \text{reduced SVD}
+  \end{split}
+\end{equation*}
+
+In fact, spectral decomposition is just a special case of SVD. Recall that
+
+$$S = \frac{1}{n - 1} \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A$$
+
+The only difference in eigenvalues of $S$ and $\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A$ is proportion $\frac{1}{n - 1}$. Arithmetically, the two calculations are equivalent.
+
+### Variance
+
+```{theorem, samplepcvar, name = "Sample variance of PC"}
+Let $\mathbf{z}_j$ be $j$-th PC score. Then
+
+\begin{itemize}
+  \item Total variance $$\sum_{j = 1}^p Var(\mathbf{Z}_j) = \sum_{j = 1}^p Var(\widetilde{\mathbf{X}}_j) = \frac{1}{n} \sum \sigma_j^2$$
+  \item Sample variance explained by $\mathbf{z}_j$ $$Var(\mathbf{z}_j) = \frac{\sigma_j^2}{n}$$
+  \item Proportion of variance explained using $q$ PCs $$PVE_q = \frac{\sigma_1^2 + \cdots + \sigma_q^2}{\sum\limits_{j = 1}^p \sigma_j^2}$$
+\end{itemize}
+```
+
+```{proof}
+Consider principal component scores
+
+$$Z = \widetilde{\mathbb{X}}_A P = UD = \widetilde{\mathbb{X}}_A V$$
+
+Then
+
+$$\mathbf{z}_j = \sigma_j \mathbf{u}_j$$
+
+and so
+
+\begin{equation*}
+  \begin{split}
+    Var(\mathbf{z}_j) & = \frac{1}{n} < \mathbf{z}_j, \mathbf{z}_j > \\
+    & = \frac{1}{n} < \sigma_j \mathbf{u}_j, \sigma_j \mathbf{u}_j > \\
+    & = \frac{\sigma^2}{n}
+  \end{split}
+\end{equation*}
+
+In turn,
+
+\begin{equation*}
+  \begin{split}
+    \sum Var(\widetilde{\mathbf{X}}_j) & = \frac{1}{n} \sum_{i, j} \widetilde{x}_{ij}^2 \\
+    & = \frac{1}{n} tr(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A) \\
+    & = \frac{1}{n} tr(VD^2 V^T) \\
+    & = \frac{1}{n} tr(V^T V D^2) \\
+    & = \frac{1}{n} tr(D^2) = \sum_j \frac{\sigma_j}{n} \\
+    & = \sum_{j = 1}^p Var(\mathbf{Z}_j) \\
+    & > \sum_{j = 1}^q Var(\mathbf{Z}_j), \quad q < p
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$PVE_q = \frac{Var(\mathbf{Z}_1) + \cdots + Var(\mathbf{Z}_q)}{\sum Var(\mathbf{Z})} = \frac{\sigma_1^2 + \cdots + \sigma_q^2}{\sum\limits_{j = 1}^p \sigma_j^2}$$
+```
+
+### Principal components regression
+
+Using principal components of centered inputs
+
+$$Z = \widetilde{\mathbb{X}}_A P = UD = \widetilde{\mathbb{X}}_A V$$
+
+one may rewrite the regression equation.
+
 
 
 
