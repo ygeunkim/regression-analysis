@@ -6687,7 +6687,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fd36c126a50>}
+\CommentTok{#> <bytecode: 0x7fc7f7b6c510>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -8431,7 +8431,51 @@ and
 with eigenvalue and corresponding orthonormal eigenvector of \(A\) \((\lambda_j, \mathbf{v}_j), \: j = 1, \ldots, p\).
 \EndKnitrBlock{theorem}
 
-The theorem satisfies when a matrix is \emph{symmetric}. For example, covariance matrix or correlation matrix. The matrix decomposition can also be expressed as following corollary.
+The theorem satisfies when a matrix is \emph{symmetric}. For example, covariance matrix or correlation matrix.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(spec_exm <-}\StringTok{ }\KeywordTok{cov}\NormalTok{(eeo) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{eigen}\NormalTok{())}
+\CommentTok{#> eigen() decomposition}
+\CommentTok{#> $values}
+\CommentTok{#> [1] 6.09834 2.09533 0.03927 0.00808}
+\CommentTok{#> }
+\CommentTok{#> $vectors}
+\CommentTok{#>       [,1]   [,2]     [,3]     [,4]}
+\CommentTok{#> [1,] 0.876  0.483  0.00834  0.00648}
+\CommentTok{#> [2,] 0.296 -0.544  0.67029 -0.40931}
+\CommentTok{#> [3,] 0.258 -0.450 -0.74023 -0.42715}
+\CommentTok{#> [4,] 0.280 -0.518 -0.05197  0.80621}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{\$values} are eigenvalues. \(\Lambda\) is a diagonal matrix with these elements.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{diag}\NormalTok{(spec_exm}\OperatorTok{$}\NormalTok{values)}
+\CommentTok{#>      [,1] [,2]   [,3]    [,4]}
+\CommentTok{#> [1,]  6.1  0.0 0.0000 0.00000}
+\CommentTok{#> [2,]  0.0  2.1 0.0000 0.00000}
+\CommentTok{#> [3,]  0.0  0.0 0.0393 0.00000}
+\CommentTok{#> [4,]  0.0  0.0 0.0000 0.00808}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{\$vectors} is \(P\) whose column vectors are corresponding orthonormal eigenvectors to \texttt{\$values}. We can check the theory in the eye.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{near}\NormalTok{(spec_exm}\OperatorTok{$}\NormalTok{vectors }\OperatorTok{%*%}\StringTok{ }\KeywordTok{diag}\NormalTok{(spec_exm}\OperatorTok{$}\NormalTok{values) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(spec_exm}\OperatorTok{$}\NormalTok{vectors), }\KeywordTok{cov}\NormalTok{(eeo))}
+\CommentTok{#>        ACHV  FAM PEER SCHOOL}
+\CommentTok{#> ACHV   TRUE TRUE TRUE   TRUE}
+\CommentTok{#> FAM    TRUE TRUE TRUE   TRUE}
+\CommentTok{#> PEER   TRUE TRUE TRUE   TRUE}
+\CommentTok{#> SCHOOL TRUE TRUE TRUE   TRUE}
+\end{Highlighting}
+\end{Shaded}
+
+The matrix decomposition can also be expressed as following corollary.
 
 \BeginKnitrBlock{corollary}
 \protect\hypertarget{cor:specdecomp2}{}{\label{cor:specdecomp2} }If \(A \in \mathbb{R}^{p \times p}\) is a real symmetric matrix, then
@@ -8493,6 +8537,281 @@ Above Theorem \ref{thm:pat} and Corollary \ref{cor:pat2} is linearly transformin
 
 \hypertarget{singular-value-decomposition}{%
 \subsection{Singular value decomposition}\label{singular-value-decomposition}}
+
+Let \(X \in \mathbb{R}^{n \times (p + 1)}\) be any real matrix. Note that by Theorem \ref{thm:xtxeigen}, every eigenvalue of \(X^T X\) is non-negative real number. Then we can compute its square root.
+
+\BeginKnitrBlock{definition}[Singular values of a real matrix]
+\protect\hypertarget{def:sv}{}{\label{def:sv} \iffalse (Singular values of a real matrix) \fi{} }Let \(X \in \mathbb{R}^{n \times (p + 1)}\) be any real matrix and let \(\lambda_j\) be eigenvalues of \(X^T X\), \(j = 1, \ldots, p + 1\). Then signular values of \(X\) is
+
+\[\sigma_j := \sqrt{\lambda_j}, \quad j = 1, \ldots, p + 1\]
+\EndKnitrBlock{definition}
+
+Singular value decomposition decomposes any matrix \(X\) into
+
+\[X = UDV^T\]
+
+\(D\) is a diagonal matrix which consists of singular values. There are several types of SVD according to shape of \(D\). One is \emph{full SVD} and the other is \emph{reduced SVD}. In general, the latter is frequently used in regression literature. First, in full SVD, \(D\) has same dimension as \(X\) \citep{Leon:2014aa}.
+
+\BeginKnitrBlock{theorem}[Full SVD]
+\protect\hypertarget{thm:fullsvd}{}{\label{thm:fullsvd} \iffalse (Full SVD) \fi{} }If \(X \in \mathbb{R}^{n \times (p + 1)}\) be any real matrix, then \(X\) has a full SVD
+
+\[X = UDV^T\] with
+
+\[
+D = \left[\begin{array}{ccc|ccc}
+  \sigma_1 & 0 & 0 & 0 & \cdots & 0 \\
+  0 & \sigma_2 & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & \cdots & \sigma_{p + 1}& 0 & \cdots & 0 \\ \hline
+  0 & \cdots & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & \cdots & 0 & 0 & \cdots & 0
+\end{array}\right] \in \mathbb{R}^{n \times (p + 1)}
+\]
+
+where
+
+\[\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0\]
+
+are singular values of \(X\), \(U \in \mathbb{R}^{n \times n}\) orthogonal, and \(V \in \mathbb{R}^{(p + 1) \times (p + 1)}\) also orthogonal.
+\EndKnitrBlock{theorem}
+
+Other \(U\) and \(V\) is not unique.
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:fullsvd2}{}{\label{thm:fullsvd2} }Let \(X \in \mathbb{R}^{n \times (p + 1)}\) be any real matrix and let \(\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0\) be its singular values. Suppose that
+
+\[\sigma_1 \ge \sigma \ge \cdots \ge \sigma_r > 0\]
+
+with \(r \le p + 1\). If
+
+\[
+U = \left[\begin{array}{ccc|ccc}
+  \mathbf{u}_1 & \cdots & \mathbf{u}_r & \mathbf{u}_{r + 1} & \cdots & \mathbf{u}_n
+\end{array}\right]
+\]
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{u}_1, \ldots, \mathbf{u}_r \}$ is an orthonormal basis for $R(X)$
+  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_n \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
+  \item Thus, $U = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+\[
+V = \left[\begin{array}{ccc|ccc}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_r & \mathbf{v}_{r + 1} & \cdots & \mathbf{v}_{p + 1}
+\end{array}\right]
+\]
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{v}_1, \ldots, \mathbf{v}_r \}$ is an orthonormal eigenvectors of $X^T X$, which in fact is orthonormal basis for $Row(X)$
+  \item $\{ \mathbf{v}_{r + 1}, \ldots, \mathbf{v}_{p + 1} \}$ is an orthonormal eigenvectors of $X^T X$ belonging to $\lambda = 0$, which is orthonormal basis for $N(X) = Row(X)^{\perp}$
+  \item Thus, $V = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+then
+
+\[X = UDV^T\]
+\EndKnitrBlock{theorem}
+
+We call each \(\mathbf{v}_j\) and \(\mathbf{u}_j\) \emph{right singular vector} and \emph{left singular vector}. Next, we see reduced SVD. This uses left upper block of \(D\), i.e.~it has dimension of \((p + 1) \times (p + 1)\).
+
+\BeginKnitrBlock{theorem}[Reduced SVD]
+\protect\hypertarget{thm:redsvd}{}{\label{thm:redsvd} \iffalse (Reduced SVD) \fi{} }If \(X \in \mathbb{R}^{n \times (p + 1)}\) be any real matrix, then \(X\) has a reduced SVD
+
+\[X = UDV^T\] with
+
+\[D = diag(\sigma_1, \sigma_2, \ldots, \sigma_{p + 1}) \in \mathbb{R}^{(p + 1) \times (p + 1)}\]
+
+where
+
+\[\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0\]
+
+are singular values of \(X\), \(U \in \mathbb{R}^{n \times (p + 1)}\) orthogonal, and \(V \in \mathbb{R}^{(p + 1) \times (p + 1)}\) also orthogonal.
+\EndKnitrBlock{theorem}
+
+Since \(D\) is diagonal matrix, \(U\) has different dimension with previous SVD.
+
+\BeginKnitrBlock{theorem}
+\protect\hypertarget{thm:redsvd2}{}{\label{thm:redsvd2} }Let \(X \in \mathbb{R}^{n \times (p + 1)}\) be any real matrix and let \(\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0\) be its singular values. Suppose that
+
+\[\sigma_1 \ge \sigma \ge \cdots \ge \sigma_r > 0\]
+
+with \(r \le p + 1\). If
+
+\[
+U = \left[\begin{array}{ccc|ccc}
+  \mathbf{u}_1 & \cdots & \mathbf{u}_r & \mathbf{u}_{r + 1} & \cdots & \mathbf{u}_n
+\end{array}\right]
+\]
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{u}_1, \ldots, \mathbf{u}_r \}$ is an orthonormal basis for $R(X)$
+  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_n \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
+  \item Thus, $U = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+\[
+V = \left[\begin{array}{ccc|ccc}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_r & \mathbf{v}_{r + 1} & \cdots & \mathbf{v}_{p + 1}
+\end{array}\right]
+\]
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{v}_1, \ldots, \mathbf{v}_r \}$ is an orthonormal eigenvectors of $X^T X$, which in fact is orthonormal basis for $Row(X)$
+  \item $\{ \mathbf{v}_{r + 1}, \ldots, \mathbf{v}_{p + 1} \}$ is an orthonormal eigenvectors of $X^T X$ belonging to $\lambda = 0$, which is orthonormal basis for $N(X) = Row(X)^{\perp}$
+  \item Thus, $V = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+then
+
+\[X = UDV^T\]
+\EndKnitrBlock{theorem}
+
+In \texttt{R}, \texttt{svd()} produces this form of decomposition by default.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svd}\NormalTok{(eeo)}
+\CommentTok{#> $d}
+\CommentTok{#> [1] 20.518 12.033  1.646  0.756}
+\CommentTok{#> }
+\CommentTok{#> $u}
+\CommentTok{#>           [,1]     [,2]     [,3]     [,4]}
+\CommentTok{#>  [1,] -0.00690  0.05326 -0.22433  0.17599}
+\CommentTok{#>  [2,]  0.05894  0.04462 -0.09485  0.12443}
+\CommentTok{#>  [3,] -0.06997 -0.05721  0.03781  0.04957}
+\CommentTok{#>  [4,] -0.14117 -0.05892 -0.05872 -0.23628}
+\CommentTok{#>  [5,] -0.11939  0.12146 -0.13529 -0.13771}
+\CommentTok{#>  [6,] -0.01998  0.05228 -0.01315 -0.10405}
+\CommentTok{#>  [7,]  0.11553 -0.09623 -0.15080  0.00498}
+\CommentTok{#>  [8,]  0.11905 -0.03743 -0.13980 -0.12862}
+\CommentTok{#>  [9,] -0.06268 -0.03666  0.01520  0.07240}
+\CommentTok{#> [10,]  0.06035  0.08449 -0.09853 -0.11151}
+\CommentTok{#> [11,]  0.09800  0.09452 -0.01231 -0.03544}
+\CommentTok{#> [12,]  0.10288 -0.00447  0.16010 -0.01966}
+\CommentTok{#> [13,]  0.02701  0.10078  0.01617  0.10398}
+\CommentTok{#> [14,] -0.14969  0.03293  0.01437 -0.14010}
+\CommentTok{#> [15,]  0.15737 -0.18913  0.06356 -0.08148}
+\CommentTok{#> [16,]  0.23906 -0.00966 -0.03734 -0.09601}
+\CommentTok{#> [17,]  0.12660  0.11946 -0.05121  0.10874}
+\CommentTok{#> [18,]  0.16035 -0.18531  0.06480 -0.01929}
+\CommentTok{#> [19,]  0.09712  0.11181  0.05970  0.09287}
+\CommentTok{#> [20,] -0.08336 -0.15010  0.00513 -0.08016}
+\CommentTok{#> [21,] -0.03822 -0.00900  0.12366  0.14732}
+\CommentTok{#> [22,] -0.10196  0.03368 -0.11999  0.24609}
+\CommentTok{#> [23,] -0.02128  0.18663 -0.11713  0.18227}
+\CommentTok{#> [24,]  0.15232 -0.07111 -0.07595 -0.07378}
+\CommentTok{#> [25,] -0.14961 -0.08608  0.15842  0.16188}
+\CommentTok{#> [26,]  0.11459  0.02395  0.09186  0.08478}
+\CommentTok{#> [27,] -0.15323 -0.00663  0.06278 -0.00687}
+\CommentTok{#> [28,] -0.34718  0.06231 -0.02012  0.16642}
+\CommentTok{#> [29,]  0.04636  0.03081  0.10077  0.22808}
+\CommentTok{#> [30,] -0.01085 -0.01021  0.13241  0.09381}
+\CommentTok{#> [31,] -0.11897  0.05215 -0.03983  0.01440}
+\CommentTok{#> [32,] -0.14383  0.11954  0.03977 -0.22294}
+\CommentTok{#> [33,] -0.18174 -0.13472  0.00262 -0.01183}
+\CommentTok{#> [34,]  0.10970  0.01414  0.10006  0.04811}
+\CommentTok{#> [35,]  0.20978 -0.22341  0.12869  0.14858}
+\CommentTok{#> [36,]  0.06108 -0.14862 -0.14610 -0.00321}
+\CommentTok{#> [37,]  0.00784 -0.02109  0.00440  0.13452}
+\CommentTok{#> [38,] -0.19574 -0.09842  0.20952 -0.00292}
+\CommentTok{#> [39,] -0.10492 -0.08540 -0.13392  0.07673}
+\CommentTok{#> [40,]  0.00476  0.05062 -0.07881  0.03740}
+\CommentTok{#> [41,] -0.01485  0.13959 -0.06979  0.13048}
+\CommentTok{#> [42,] -0.11053 -0.05512 -0.07241  0.06784}
+\CommentTok{#> [43,]  0.00940 -0.07098 -0.00892  0.12019}
+\CommentTok{#> [44,]  0.06344 -0.04091  0.15783  0.16184}
+\CommentTok{#> [45,] -0.12411  0.10278  0.05589 -0.14154}
+\CommentTok{#> [46,]  0.19127 -0.07341 -0.14263  0.10051}
+\CommentTok{#> [47,] -0.19534 -0.14913 -0.03448  0.18142}
+\CommentTok{#> [48,]  0.00663  0.01195 -0.24117 -0.20325}
+\CommentTok{#> [49,] -0.02342 -0.16000  0.19426 -0.06717}
+\CommentTok{#> [50,]  0.02202 -0.04244 -0.07099 -0.04297}
+\CommentTok{#> [51,]  0.09884 -0.12388  0.02242  0.27041}
+\CommentTok{#> [52,]  0.05379  0.05924  0.16078 -0.03502}
+\CommentTok{#> [53,] -0.02698 -0.18979  0.10155  0.08442}
+\CommentTok{#> [54,] -0.09002 -0.10432 -0.22834  0.09920}
+\CommentTok{#> [55,]  0.00628  0.08315  0.29747 -0.02728}
+\CommentTok{#> [56,] -0.12627  0.04514 -0.10000 -0.17134}
+\CommentTok{#> [57,]  0.06228  0.18790  0.18247 -0.08109}
+\CommentTok{#> [58,]  0.14704  0.02233  0.00744  0.01677}
+\CommentTok{#> [59,] -0.20980  0.07850  0.14361  0.11547}
+\CommentTok{#> [60,]  0.12021  0.03307 -0.12879 -0.01103}
+\CommentTok{#> [61,] -0.02504 -0.29292 -0.14482 -0.13992}
+\CommentTok{#> [62,]  0.10318  0.34753  0.04735 -0.04666}
+\CommentTok{#> [63,]  0.05664  0.23366 -0.00399 -0.03063}
+\CommentTok{#> [64,] -0.13139 -0.02086  0.12511 -0.12123}
+\CommentTok{#> [65,]  0.20635  0.01377 -0.05582  0.03845}
+\CommentTok{#> [66,]  0.05582  0.00585 -0.14121  0.01831}
+\CommentTok{#> [67,]  0.15660 -0.06033  0.24952 -0.18930}
+\CommentTok{#> [68,] -0.02031  0.26505  0.11598  0.00286}
+\CommentTok{#> [69,]  0.10601  0.21614  0.03125  0.09715}
+\CommentTok{#> [70,] -0.03703  0.18843 -0.17869  0.11882}
+\CommentTok{#> }
+\CommentTok{#> $v}
+\CommentTok{#>       [,1]   [,2]     [,3]    [,4]}
+\CommentTok{#> [1,] 0.875 -0.483 -0.00833 -0.0064}
+\CommentTok{#> [2,] 0.297  0.543 -0.66982  0.4099}
+\CommentTok{#> [3,] 0.259  0.450  0.74072  0.4260}
+\CommentTok{#> [4,] 0.281  0.518  0.05092 -0.8065}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{ols-via-svd}{%
+\subsection{OLS via SVD}\label{ols-via-svd}}
+
+Using reduced SVD \ref{thm:redsvd2}, it is possible to solve OLS problem. Before applying it, consider centered input.
+
+\BeginKnitrBlock{lemma}[Centered input]
+\protect\hypertarget{lem:centering}{}{\label{lem:centering} \iffalse (Centered input) \fi{} }Let
+
+\[\widetilde{X} = \Big[ x_{ij} - \overline{x}_j \Big]\]
+
+be centered design matrix and let
+
+\[\mathbb{X}_{A, \perp} = \mathbb{X}_A - \Pi_{\mathbf{1}} \mathbb{X}_A\]
+
+be an projection of predictor variable observations into \(R(\mathbf{1})\). Two are equivalent, i.e.
+
+\[\widetilde{X} = \mathbb{X}_{A, \perp}\]
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Note that
+
+\[\Pi_{\mathbf{1}} = \frac{1}{n} \mathbf{1}\mathbf{1}^T\]
+
+Then
+
+\[
+\Pi_1 \mathbb{X}_A = \frac{1}{n} \mathbf{1}\mathbf{1}^T X = \begin{bmatrix}
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p \\
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p \\
+  \vdots & \vdots & \cdots & \vdots \\
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p
+\end{bmatrix}
+\]
+
+where \(\overline{x}_j\) is the sample average for observations of \(j\)-th variable. It follows that
+
+\[
+\mathbb{X}_A - \Pi_1 \mathbb{X}_A= \begin{bmatrix}
+  x_{11} - \overline{x}_1 & x_{12} - \overline{x}_2 & \cdots & x_{1p} - \overline{x}_p \\
+  x_{21} - \overline{x}_1 & x_{22} - \overline{x}_2 & \cdots & x_{2p} - \overline{x}_p \\
+  \vdots & \vdots & \cdots & \vdots \\
+  x_{n1} - \overline{x}_1 & x_{n2} - \overline{x}_2 & \cdots & x_{np} - \overline{x}_p
+\end{bmatrix} = \widetilde{X}
+\]
+\EndKnitrBlock{proof}
 
 \bibliography{book.bib,packages.bib}
 

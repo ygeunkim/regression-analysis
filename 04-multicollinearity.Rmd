@@ -380,7 +380,25 @@ $$\Lambda = diag(\lambda_1, \ldots, \lambda_p)$$
 with eigenvalue and corresponding orthonormal eigenvector of $A$ $(\lambda_j, \mathbf{v}_j), \: j = 1, \ldots, p$.
 ```
 
-The theorem satisfies when a matrix is *symmetric*. For example, covariance matrix or correlation matrix. The matrix decomposition can also be expressed as following corollary.
+The theorem satisfies when a matrix is *symmetric*. For example, covariance matrix or correlation matrix.
+
+```{r}
+(spec_exm <- cov(eeo) %>% eigen())
+```
+
+`$values` are eigenvalues. $\Lambda$ is a diagonal matrix with these elements.
+
+```{r}
+diag(spec_exm$values)
+```
+
+`$vectors` is $P$ whose column vectors are corresponding orthonormal eigenvectors to `$values`. We can check the theory in the eye.
+
+```{r}
+near(spec_exm$vectors %*% diag(spec_exm$values) %*% t(spec_exm$vectors), cov(eeo))
+```
+
+The matrix decomposition can also be expressed as following corollary.
 
 ```{corollary, specdecomp2}
 If $A \in \R^{p \times p}$ is a real symmetric matrix, then
@@ -442,8 +460,195 @@ Above Theorem \@ref(thm:pat) and Corollary \@ref(cor:pat2) is linearly transform
 
 ### Singular value decomposition
 
+Let $X \in \R^{n \times (p + 1)}$ be any real matrix. Note that by Theorem \@ref(thm:xtxeigen), every eigenvalue of $X^T X$ is non-negative real number. Then we can compute its square root.
 
+```{definition, sv, name = "Singular values of a real matrix"}
+Let $X \in \R^{n \times (p + 1)}$ be any real matrix and let $\lambda_j$ be eigenvalues of $X^T X$, $j = 1, \ldots, p + 1$. Then signular values of $X$ is
 
+$$\sigma_j := \sqrt{\lambda_j}, \quad j = 1, \ldots, p + 1$$
+```
+
+Singular value decomposition decomposes any matrix $X$ into
+
+$$X = UDV^T$$
+
+$D$ is a diagonal matrix which consists of singular values. There are several types of SVD according to shape of $D$. One is *full SVD* and the other is *reduced SVD*. In general, the latter is frequently used in regression literature. First, in full SVD, $D$ has same dimension as $X$ [@Leon:2014aa].
+
+```{theorem, fullsvd, name = "Full SVD"}
+If $X \in \R^{n \times (p + 1)}$ be any real matrix, then $X$ has a full SVD
+
+$$X = UDV^T$$ with
+
+$$
+D = \left[\begin{array}{ccc|ccc}
+  \sigma_1 & 0 & 0 & 0 & \cdots & 0 \\
+  0 & \sigma_2 & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & \cdots & \sigma_{p + 1}& 0 & \cdots & 0 \\ \hline
+  0 & \cdots & 0 & 0 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+  0 & \cdots & 0 & 0 & \cdots & 0
+\end{array}\right] \in \R^{n \times (p + 1)}
+$$
+
+where
+
+$$\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0$$
+
+are singular values of $X$, $U \in \R^{n \times n}$ orthogonal, and $V \in \R^{(p + 1) \times (p + 1)}$ also orthogonal.
+```
+
+Other $U$ and $V$ is not unique.
+
+```{theorem, fullsvd2}
+Let $X \in \R^{n \times (p + 1)}$ be any real matrix and let $\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0$ be its singular values. Suppose that
+
+$$\sigma_1 \ge \sigma \ge \cdots \ge \sigma_r > 0$$
+
+with $r \le p + 1$. If
+
+$$
+U = \left[\begin{array}{ccc|ccc}
+  \mathbf{u}_1 & \cdots & \mathbf{u}_r & \mathbf{u}_{r + 1} & \cdots & \mathbf{u}_n
+\end{array}\right]
+$$
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{u}_1, \ldots, \mathbf{u}_r \}$ is an orthonormal basis for $R(X)$
+  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_n \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
+  \item Thus, $U = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+$$
+V = \left[\begin{array}{ccc|ccc}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_r & \mathbf{v}_{r + 1} & \cdots & \mathbf{v}_{p + 1}
+\end{array}\right]
+$$
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{v}_1, \ldots, \mathbf{v}_r \}$ is an orthonormal eigenvectors of $X^T X$, which in fact is orthonormal basis for $Row(X)$
+  \item $\{ \mathbf{v}_{r + 1}, \ldots, \mathbf{v}_{p + 1} \}$ is an orthonormal eigenvectors of $X^T X$ belonging to $\lambda = 0$, which is orthonormal basis for $N(X) = Row(X)^{\perp}$
+  \item Thus, $V = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+then
+
+$$X = UDV^T$$
+```
+
+We call each $\mathbf{v}_j$ and $\mathbf{u}_j$ *right singular vector* and *left singular vector*. Next, we see reduced SVD. This uses left upper block of $D$, i.e. it has dimension of $(p + 1) \times (p + 1)$.
+
+```{theorem, redsvd, name = "Reduced SVD"}
+If $X \in \R^{n \times (p + 1)}$ be any real matrix, then $X$ has a reduced SVD
+
+$$X = UDV^T$$ with
+
+$$D = diag(\sigma_1, \sigma_2, \ldots, \sigma_{p + 1}) \in \R^{(p + 1) \times (p + 1)}$$
+
+where
+
+$$\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0$$
+
+are singular values of $X$, $U \in \R^{n \times (p + 1)}$ orthogonal, and $V \in \R^{(p + 1) \times (p + 1)}$ also orthogonal.
+```
+
+Since $D$ is diagonal matrix, $U$ has different dimension with previous SVD.
+
+```{theorem, redsvd2}
+Let $X \in \R^{n \times (p + 1)}$ be any real matrix and let $\sigma_1 \ge \sigma \ge \cdots \ge \sigma_{p + 1} \ge 0$ be its singular values. Suppose that
+
+$$\sigma_1 \ge \sigma \ge \cdots \ge \sigma_r > 0$$
+
+with $r \le p + 1$. If
+
+$$
+U = \left[\begin{array}{ccc|ccc}
+  \mathbf{u}_1 & \cdots & \mathbf{u}_r & \mathbf{u}_{r + 1} & \cdots & \mathbf{u}_n
+\end{array}\right]
+$$
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{u}_1, \ldots, \mathbf{u}_r \}$ is an orthonormal basis for $R(X)$
+  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_n \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
+  \item Thus, $U = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+$$
+V = \left[\begin{array}{ccc|ccc}
+  \mathbf{v}_1 & \cdots & \mathbf{v}_r & \mathbf{v}_{r + 1} & \cdots & \mathbf{v}_{p + 1}
+\end{array}\right]
+$$
+
+where
+
+\begin{itemize}
+  \item $\{ \mathbf{v}_1, \ldots, \mathbf{v}_r \}$ is an orthonormal eigenvectors of $X^T X$, which in fact is orthonormal basis for $Row(X)$
+  \item $\{ \mathbf{v}_{r + 1}, \ldots, \mathbf{v}_{p + 1} \}$ is an orthonormal eigenvectors of $X^T X$ belonging to $\lambda = 0$, which is orthonormal basis for $N(X) = Row(X)^{\perp}$
+  \item Thus, $V = [ \cdots \mid \cdots ]$ is orthogonal
+\end{itemize}
+
+then
+
+$$X = UDV^T$$
+```
+
+In `R`, `svd()` produces this form of decomposition by default.
+
+```{r}
+svd(eeo)
+```
+
+### OLS via SVD
+
+Using reduced SVD \@ref(thm:redsvd2), it is possible to solve OLS problem. Before applying it, consider centered input.
+
+```{lemma, centering, name = "Centered input"}
+Let
+
+$$\widetilde{X} = \Big[ x_{ij} - \overline{x}_j \Big]$$
+
+be centered design matrix and let
+
+$$\mathbb{X}_{A, \perp} = \mathbb{X}_A - \Pi_{\mathbf{1}} \mathbb{X}_A$$
+
+be an projection of predictor variable observations into $R(\mathbf{1})$. Two are equivalent, i.e.
+
+$$\widetilde{X} = \mathbb{X}_{A, \perp}$$
+```
+
+```{proof}
+Note that
+
+$$\Pi_{\mathbf{1}} = \frac{1}{n} \mathbf{1}\mathbf{1}^T$$
+
+Then
+
+$$
+\Pi_1 \mathbb{X}_A = \frac{1}{n} \mathbf{1}\mathbf{1}^T X = \begin{bmatrix}
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p \\
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p \\
+  \vdots & \vdots & \cdots & \vdots \\
+  \overline{x}_1 & \overline{x}_2 & \cdots & \overline{x}_p
+\end{bmatrix}
+$$
+
+where $\overline{x}_j$ is the sample average for observations of $j$-th variable. It follows that
+
+$$
+\mathbb{X}_A - \Pi_1 \mathbb{X}_A= \begin{bmatrix}
+  x_{11} - \overline{x}_1 & x_{12} - \overline{x}_2 & \cdots & x_{1p} - \overline{x}_p \\
+  x_{21} - \overline{x}_1 & x_{22} - \overline{x}_2 & \cdots & x_{2p} - \overline{x}_p \\
+  \vdots & \vdots & \cdots & \vdots \\
+  x_{n1} - \overline{x}_1 & x_{n2} - \overline{x}_2 & \cdots & x_{np} - \overline{x}_p
+\end{bmatrix} = \widetilde{X}
+$$
+```
 
 
 
