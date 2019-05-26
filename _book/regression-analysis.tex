@@ -146,6 +146,7 @@
 \newcommand{\E}{\boldsymbol\epsilon}
 \newcommand{\msout}[1]{\text{\sout{\ensuremath{#1}}}}
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
 
 \setlength{\algoheightrule}{0pt}
 \setlength{\algotitleheightrule}{0pt}
@@ -6687,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fc7f7b6c510>}
+\CommentTok{#> <bytecode: 0x7fdb598078f8>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -8492,7 +8493,7 @@ Spectral decomposition \(A = P \Lambda P^T\) gives some useful facts to \(A\).
 
 \begin{itemize}
   \item $PP^T = P^T P = I$ so that $P^{-1} = P^T$
-  \item $A^{-1} = P \Lambda^{-1} P^T$ with $\Lambda = diag \Big(\frac{1}{\lambda_1}, \ldots, \frac{1}{lambda_p} \Big)$
+  \item $A^{-1} = P \Lambda^{-1} P^T$ with $\Lambda = diag \Big(\frac{1}{\lambda_1}, \ldots, \frac{1}{\lambda_p} \Big)$
   \item $A^k = P \Lambda^k P^T$ with $\Lambda = diag(\lambda_1^k, \ldots, \lambda_p^k)$
 \end{itemize}
 \EndKnitrBlock{proposition}
@@ -8530,7 +8531,7 @@ Then
 \BeginKnitrBlock{corollary}
 \protect\hypertarget{cor:pat2}{}{\label{cor:pat2} }If \(A \in \mathbb{R}^{p \times p}\) is a real symmetric matrix, then there exists a change of variables \(\mathbf{u} = P^T \mathbf{X}\) s.t.
 
-\[\mathbf{X}^T A \mathbf{X} = \lambda_1 \mathbf{v}_1^T \mathbf{X} + \cdots + \lambda_p \mathbf{v}_p^T \mathbf{X}\]
+\[\mathbf{X}^T A \mathbf{X} = \lambda_1 (\mathbf{v}_1^T \mathbf{X})^2 + \cdots + \lambda_p (\mathbf{v}_p^T \mathbf{X})^2\]
 \EndKnitrBlock{corollary}
 
 Above Theorem \ref{thm:pat} and Corollary \ref{cor:pat2} is linearly transforming its coordinates of conic section. The directions of coordinate are \(\mathbf{v}_j\), orthonormal eigenvectors. Axes are determined by corresponding egenvalues.
@@ -8618,7 +8619,14 @@ then
 \[X = UDV^T\]
 \EndKnitrBlock{theorem}
 
-We call each \(\mathbf{v}_j\) and \(\mathbf{u}_j\) \emph{right singular vector} and \emph{left singular vector}. Next, we see reduced SVD. This uses left upper block of \(D\), i.e.~it has dimension of \((p + 1) \times (p + 1)\).
+From the equation, it is easy to get
+
+\begin{equation}
+  XV = UD
+  \label{eq:svdiag}
+\end{equation}
+
+From this equation, we call each \(\mathbf{v}_j\) and \(\mathbf{u}_j\) \emph{right singular vector} and \emph{left singular vector}. Next, we see reduced SVD. This uses left upper block of \(D\), i.e.~it has dimension of \((p + 1) \times (p + 1)\).
 
 \BeginKnitrBlock{theorem}[Reduced SVD]
 \protect\hypertarget{thm:redsvd}{}{\label{thm:redsvd} \iffalse (Reduced SVD) \fi{} }If \(X \in \mathbb{R}^{n \times (p + 1)}\) be any real matrix, then \(X\) has a reduced SVD
@@ -8766,15 +8774,80 @@ In \texttt{R}, \texttt{svd()} produces this form of decomposition by default.
 \end{Highlighting}
 \end{Shaded}
 
+Let \(X = UDV^T\). Then for every \(\mathbf{b} \in \mathbb{R}^{p + 1}\),
+
+\[X \mathbf{b} = UDV^T \mathbf{b}\]
+
+Each \(V\), \(D\), and \(U\) linearly transform \(\mathbf{b}\). How? For reproducibility, think about a circle.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/circle1-1} 
+
+}
+
+\caption{A circle with radius 1}\label{fig:circle1}
+\end{figure}
+
+Now consider linear transformation
+
+\[V^T \mathbf{b}\]
+
+\begin{verbatim}
+#> Warning: `as_tibble.matrix()` requires a matrix with column names or a `.name_repair` argument. Using compatibility `.name_repair`.
+#> This warning is displayed once per session.
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/circle2-1} 
+
+}
+
+\caption{$V^T \mathbf{b}$}\label{fig:circle2}
+\end{figure}
+
+In Figure \ref{fig:circle2}, we can see that \(V\) maintains length and angle, but just rotate axes. Next,
+
+\[D (V^T \mathbf{b})\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/circle3-1} 
+
+}
+
+\caption{$D(V^T\mathbf{b})$}\label{fig:circle3}
+\end{figure}
+
+In Figure \ref{fig:circle3}, length has changed. In fact, angle has also changed a little bit while rotating. Finally,
+
+\[U (DV^T \mathbf{b})\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/circle4-1} 
+
+}
+
+\caption{$U(DV^T\mathbf{b})$}\label{fig:circle4}
+\end{figure}
+
+Figure \ref{fig:circle4} is the final result of SVD. Coordinate is rotated each.
+
 \hypertarget{ols-via-svd}{%
 \subsection{OLS via SVD}\label{ols-via-svd}}
 
-Using reduced SVD \ref{thm:redsvd2}, it is possible to solve OLS problem. Before applying it, consider centered input.
+Using reduced SVD \ref{thm:redsvd2}, it is possible to solve OLS problem \citep{Hastie:2013aa}. Before applying it, consider centered input. Write
+
+\[X = [ \mathbf{1} \mid \mathbb{X}_A ]\]
+
+as before.
 
 \BeginKnitrBlock{lemma}[Centered input]
 \protect\hypertarget{lem:centering}{}{\label{lem:centering} \iffalse (Centered input) \fi{} }Let
 
-\[\widetilde{X} = \Big[ x_{ij} - \overline{x}_j \Big]\]
+\[\widetilde{\mathbb{X}_A} = \Big[ x_{ij} - \overline{x}_j \Big]\]
 
 be centered design matrix and let
 
@@ -8782,7 +8855,7 @@ be centered design matrix and let
 
 be an projection of predictor variable observations into \(R(\mathbf{1})\). Two are equivalent, i.e.
 
-\[\widetilde{X} = \mathbb{X}_{A, \perp}\]
+\[\widetilde{\mathbb{X}_A} = \mathbb{X}_{A, \perp}\]
 \EndKnitrBlock{lemma}
 
 \BeginKnitrBlock{proof}
@@ -8809,9 +8882,225 @@ where \(\overline{x}_j\) is the sample average for observations of \(j\)-th vari
   x_{21} - \overline{x}_1 & x_{22} - \overline{x}_2 & \cdots & x_{2p} - \overline{x}_p \\
   \vdots & \vdots & \cdots & \vdots \\
   x_{n1} - \overline{x}_1 & x_{n2} - \overline{x}_2 & \cdots & x_{np} - \overline{x}_p
-\end{bmatrix} = \widetilde{X}
+\end{bmatrix} = \widetilde{\mathbb{X}_A}
 \]
 \EndKnitrBlock{proof}
+
+Note that
+
+\[\mathbf{1} \perp \mathbb{X}_{A, \perp} = \widetilde{\mathbb{X}_A}\]
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    X \boldsymbol{\hat\beta}& = \mathbf{1} \hat\beta_0^{\ast} + \widetilde{\mathbb{X}_A} \boldsymbol{\hat\beta}_{A} \\
+    & = \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \Pi(\mathbf{Y} \mid R(\widetilde{\mathbb{X}_A}))
+  \end{split}
+\end{equation*}
+
+Hence,
+
+\[
+\begin{cases}
+  \hat\beta_0^{\ast} = \overline{Y} \\
+  \boldsymbol{\hat\beta}_{A} = (\widetilde{\mathbb{X}_A}^T\widetilde{\mathbb{X}_A})^{-1}\widetilde{\mathbb{X}_A}^T\mathbf{Y}
+\end{cases}
+\]
+
+Since the intercept is estimated as response average, we only need to care about input part from now on. Apply SVD to \(\widetilde{\mathbb{X}_A}\).
+
+\[\widetilde{\mathbb{X}_A} = UDV^T\]
+
+Then the LSE becomes
+
+\begin{equation}
+  \begin{split}
+    \boldsymbol{\hat\beta}_{A} & = (\widetilde{\mathbb{X}_A}^T\widetilde{\mathbb{X}_A})^{-1}\widetilde{\mathbb{X}_A}^T\mathbf{Y} \\
+    & = (VD^2 V^T)^{-1} VDU^T \mathbf{Y} \\
+    & = VD^{-1} U^T \mathbf{Y} \\
+    & = V diag\Big( \frac{1}{\sigma_j} \Big) U^T \mathbf{Y}
+  \end{split}
+  \label{eq:svdlse}
+\end{equation}
+
+This implies that rank deficiency, i.e.~existence of \(\sigma_j = 0\), makes OLS not properly work. In turn, fitted values can be computed in a compact form. Suppose that \(\sigma_j \neq 0\).
+
+\begin{equation}
+  \begin{split}
+    \hat{\mathbf{Y}} & = \mathbf{1} \overline{Y} + \widetilde{\mathbb{X}_A} \boldsymbol{\hat\beta}_{A} \\
+    & = \mathbf{1} \overline{Y} + UDV^T VD^{-1} U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + UDD^{-1} U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + U U^T \mathbf{Y}
+  \end{split}
+  \label{eq:svdfit}
+\end{equation}
+
+Here, \(U^T \mathbf{Y}\) are the coordinates of \(\mathbf{Y}\) with respect to the orthonormal basis \(U\), i.e.~of \(Col(X)\). For more details, rewrite the Equation \eqref{eq:svdfit}. If \(\sigma_j \neq 0\), then
+
+\[\hat{\mathbf{Y}} = U U^T \mathbf{Y} = \sum_{j = 1}^p \mathbf{u}_j \mathbf{u}^T \mathbf{Y}\]
+
+Each \(\mathbf{u_j}\) indicating basis of \(Col(X)\) is a coordinate. In other words, we can think of SVD as another orthogonalization process with QR decomposition in estimating regression model. The fitted value, which is projection onto \(Col(X)\) and \(\hat\theta_j = \mathbf{u}^T \mathbf{Y}\) are corresponding coordinates of \(\mathbf{Y}\). Summing every \(\hat\theta_j\), we can get the fitted value.
+
+\hypertarget{principal-component-analysis-1}{%
+\subsection{Principal component analysis}\label{principal-component-analysis-1}}
+
+Principal component analysis (PCA) finds a set of \(p\) orthogonal variables made by linear combination of original variables. Furthermore, we try to reduce the dimension \(M < p\). It is called \emph{dimension reduction} method. For instance, scatterplot needs at most two or three dimension. PCA enables us to visualize more easily. Since we remove some elements, we should preserve information of the data as much as possible. What are the information of data? How to preserve them?
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/varinf-1} 
+
+}
+
+\caption{Summarizing the features}\label{fig:varinf}
+\end{figure}
+
+See Figure \ref{fig:varinf}. With \(X_1 = x_{i1}\), it is hard to distinguish the observations.
+
+\BeginKnitrBlock{conjecture}
+\protect\hypertarget{cnj:varinf2}{}{\label{cnj:varinf2} }Small variance of a variable implies small information about the data.
+\EndKnitrBlock{conjecture}
+
+Thus, we try to find the direction having the largest variance. For consistency, here we also use centered predictors. Let \(\mathbf{X} = (X_1, \ldots, X_p)^T\) be a random vector with a mean \(\boldsymbol\mu = (\mu_1, \ldots, \mu_p)^T\) and a variance \(\Sigma\). Then \(\widetilde{\mathbf{X}} = (X_1 - \mu_1, \ldots, X_p - \mu_p)^T\) has a mean \(\mathbf{0}\) and a variance \(\Sigma\).
+
+\BeginKnitrBlock{definition}[Population principal components]
+\protect\hypertarget{def:poppca}{}{\label{def:poppca} \iffalse (Population principal components) \fi{} }Consider \(\widetilde{\mathbf{X}}\). \(Z_1, \ldots, Z_p\) are said to be \textbf{\textit{principal components}} of \(\widetilde{\mathbf{X}}\) iff
+
+\begin{enumerate}
+  \item First PC $Z_1 = \argmax\limits_{\mathbf{a}_1^T \widetilde{\mathbf{X}}} \mathbf{a}_1^T \Sigma \mathbf{a}_1$ subject to $\mathbf{a}_1^T \mathbf{a}_1 = 1$
+  \item Second PC $Z_2 = \argmax\limits_{\mathbf{a}_2^T \widetilde{\mathbf{X}}} \mathbf{a}_2^T \Sigma \mathbf{a}_2$ subject to $\mathbf{a}_2^T \mathbf{a}_2 = 1$ and $\mathbf{a}_2^T \mathbf{a}_1 = 0$
+  \item $\vdots$
+  \item Last PC $Z_p = \argmax\limits_{\mathbf{a}_p^T \widetilde{\mathbf{X}}} \mathbf{a}_p^T \Sigma \mathbf{a}_1$ subject to $\mathbf{a}_p^T \mathbf{a}_p = 1$ and $\forall k < p : \mathbf{a}_p^T \mathbf{a}_k = 0$
+\end{enumerate}
+\EndKnitrBlock{definition}
+
+By construction, PCA aims to finding uncorrelated set of linear combinations. How to find the solution \(\mathbf{a}_j = (a_{1j}, \ldots, a_{pj})^T\)? It can be shown that \emph{Spectral decomposition} of \(\Sigma\) gives it \citep{Johnson:2013aa}.
+
+\BeginKnitrBlock{theorem}[Population PC with covariance]
+\protect\hypertarget{thm:poppcasol}{}{\label{thm:poppcasol} \iffalse (Population PC with covariance) \fi{} }Continuing the PCA of \(\widetilde{\mathbf{X}}\), let
+
+\[\lambda_1 \ge \cdots \ge \lambda_p \ge 0\]
+
+be the eigenvalues of \(\Sigma\), and let \(\mathbf{v}_1, \ldots, \mathbf{v}_p\) be the corresponding orthonormal eigenvectors. Then each \(j\)-th principal components is computed by
+
+\[Z_j = \mathbf{v}_j \widetilde{\mathbf{X}}\] with
+
+\[
+\begin{cases}
+  Var(Z_j) = \lambda_j \\
+  \forall j \neq k : Cov(Z_j, Z_k) = 0
+\end{cases}
+\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Note that covariance matrix \(\Sigma\) is symmetric. Then by spectral decomposition,
+
+\[\Sigma = P \Lambda P^T\]
+
+where \(P = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_p \end{bmatrix} \in \mathbb{R}^{p \times p}\) and \(\Lambda = diag(\lambda_1, \ldots, \lambda_p) \in \mathbb{R}^{p \times p}\)
+
+Step 1: First PC
+
+Let \(\mathbf{a} \in \mathbb{R}^p\). Then
+
+\begin{equation*}
+  \begin{split}
+    Var(\mathbf{a}^T \widetilde{\mathbf{X}}) & = \mathbf{a}^T \Sigma \mathbf{a} \\
+    & = \mathbf{a}^T P\Lambda P^T \mathbf{a} \\
+    & = \mathbf{b}^T \Lambda \mathbf{b} \quad \leftarrow \text{Set}\: \mathbf{b} := \mathbf{a}^T P \\
+    & = \lambda_1 b_1^2 + \cdots + \lambda_p b_p^2 \\
+    & {\color{red}{\le}} \:\: \lambda_1 (b_1^2 + \cdots + b_p^2) \quad \because \lambda_1 \ge \lambda_2, \ldots, \lambda_p \\
+    & = \lambda_1 \mathbf{b}^T \mathbf{b} \\
+    & = \lambda_1 \mathbf{a}^T P P^T \mathbf{a} \\
+    & = \lambda_1 \mathbf{a}^T \mathbf{a} \\
+    & = \lambda_1 \quad \because \text{construction}
+  \end{split}
+\end{equation*}
+
+Thus, \(\lambda_1\) is the upper bound of \(Var(\mathbf{a}^T \widetilde{\mathbf{X}})\) subject to \(\mathbf{a}^T \mathbf{a} = 1\).
+
+Claim: \(\mathbf{a} = \mathbf{v}_1\)
+
+This is quite trivial. Set \(\mathbf{a} = \mathbf{v}_1\). Then
+
+\[\mathbf{v}_1^T \Sigma \mathbf{v}_1 = \lambda_1 \mathbf{v}_1^T\mathbf{v}_1 = \lambda_1\]
+
+Hence,
+
+\[Z_1 = \mathbf{v}_1 \widetilde{\mathbf{X}}\]
+
+with \(Var(Z_1) = \lambda_1\).
+
+Step 2: Find \(\mathbf{a}_2 = \argmax\limits_{\mathbf{a} \in \mathbb{R}^p} \mathbf{a}_2^T \Sigma \mathbf{a}_2\) subject to \(\mathbf{a}_2^T \mathbf{a}_2 = 1\) and \(\mathbf{a}_2^T \Sigma \mathbf{v}_1 = 0\)
+
+Assume that \(\mathbf{a}_2^T \mathbf{a}_2 = 1\) and that \(\mathbf{a}_2 \perp \mathbf{v}_2\). Since \(\{ \mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_p \}\) is an orthonormal basis of \(\mathbb{R}^p\),
+
+\[\mathbf{a}_2 \in \{ \mathbf{v}_2, \ldots, \mathbf{v}_p \}\]
+
+Then we now have
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{a}_2^T \Sigma \mathbf{a}_2 & = \lambda_j \quad \text{for some}\: j \in \{ 2, \ldots, p \} \\
+    & \le \lambda_2 \quad \because \lambda_2 \ge \lambda_3, \ldots, \lambda_p
+  \end{split}
+\end{equation*}
+
+By symmetry, we can get the upper bound \(\lambda_2\) at \(\mathbf{a}_2 = \mathbf{v}_2\). Therefore,
+
+\[Z_2 = \mathbf{v}_2^T \widetilde{\mathbf{X}}\]
+
+with \(Var(Z_2) = \lambda_2\). In addition,
+
+\[Cov(Z_2, Z_1) = \mathbf{v}_2^T \Sigma \mathbf{v}_1 = \lambda_1 \mathbf{v}_2^T \mathbf{v}_1 = 0\]
+
+One proceeds in a similar way for the next \(j = 3, \ldots, p\). Since
+
+\[\mathbf{a}^T \Sigma \mathbf{a} \le \lambda_j\]
+
+in each step,
+
+\[Z_j = \mathbf{v}_j^T \widetilde{\mathbf{X}}\]
+
+, \(Var(Z_j) = \lambda_j\), and \(Cov(Z_j, Z_k)\) for every \(k < j\).
+\EndKnitrBlock{proof}
+
+Using Principal axes theorem \ref{thm:pat}, we can understand this covariance PCA better. Recall that a gaussian random variable \(\mathbf{X} \sim MVN(\boldsymbol\mu, \Sigma)\) can be represented by ellipse \(\widetilde{\mathbf{X}}^T \Sigma^{-1} \widetilde{\mathbf{X}} = c^2\).
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/mvnellips-1} 
+
+}
+
+\caption{Ellipse for some bivariate normal distribution}\label{fig:mvnellips}
+\end{figure}
+
+From Corollary \ref{cor:pat2},
+
+\begin{equation}
+  \begin{split}
+    c^2 & = \widetilde{\mathbf{X}}^T \Sigma^{-1} \widetilde{\mathbf{X}} \\
+    & = \frac{1}{\lambda_1} (\mathbf{v}_1 \widetilde{\mathbf{X}})^2 + \cdots + \frac{1}{\lambda_p} (\mathbf{v}_p \widetilde{\mathbf{X}})^2 \\
+    & = \frac{1}{\lambda_1} Z_1^2 + \cdots + \frac{1}{\lambda_p} Z_p^2 \quad \leftarrow Z_j = j \text{-th }\: PC
+  \end{split}
+  \label{eq:patpca}
+\end{equation}
+
+Hence, PCA is a linear transformation of coordinate
+
+\[V^T \widetilde{\mathbf{X}}\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/mvnellips2-1} 
+
+}
+
+\caption{Ellipse with respect to principal components}\label{fig:mvnellips2}
+\end{figure}
 
 \bibliography{book.bib,packages.bib}
 

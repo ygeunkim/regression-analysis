@@ -415,7 +415,7 @@ Let $A \in \R^{p \times p}$ be a real symmetric matrix. Then $A = P \Lambda P^T$
 
 \begin{itemize}
   \item $PP^T = P^T P = I$ so that $P^{-1} = P^T$
-  \item $A^{-1} = P \Lambda^{-1} P^T$ with $\Lambda = diag \Big(\frac{1}{\lambda_1}, \ldots, \frac{1}{lambda_p} \Big)$
+  \item $A^{-1} = P \Lambda^{-1} P^T$ with $\Lambda = diag \Big(\frac{1}{\lambda_1}, \ldots, \frac{1}{\lambda_p} \Big)$
   \item $A^k = P \Lambda^k P^T$ with $\Lambda = diag(\lambda_1^k, \ldots, \lambda_p^k)$
 \end{itemize}
 ```
@@ -453,7 +453,7 @@ $$\mathbf{X}^T A \mathbf{X} = \mathbf{u}^T P^T A P \mathbf{u} = \mathbf{u}^T \La
 ```{corollary, pat2}
 If $A \in \R^{p \times p}$ is a real symmetric matrix, then there exists a change of variables $\mathbf{u} = P^T \mathbf{X}$ s.t.
 
-$$\mathbf{X}^T A \mathbf{X} = \lambda_1 \mathbf{v}_1^T \mathbf{X} + \cdots + \lambda_p \mathbf{v}_p^T \mathbf{X}$$
+$$\mathbf{X}^T A \mathbf{X} = \lambda_1 (\mathbf{v}_1^T \mathbf{X})^2 + \cdots + \lambda_p (\mathbf{v}_p^T \mathbf{X})^2$$
 ```
 
 Above Theorem \@ref(thm:pat) and Corollary \@ref(cor:pat2) is linearly transforming its coordinates of conic section. The directions of coordinate are $\mathbf{v}_j$, orthonormal eigenvectors. Axes are determined by corresponding egenvalues.
@@ -540,7 +540,14 @@ then
 $$X = UDV^T$$
 ```
 
-We call each $\mathbf{v}_j$ and $\mathbf{u}_j$ *right singular vector* and *left singular vector*. Next, we see reduced SVD. This uses left upper block of $D$, i.e. it has dimension of $(p + 1) \times (p + 1)$.
+From the equation, it is easy to get
+
+\begin{equation}
+  XV = UD
+  (\#eq:svdiag)
+\end{equation}
+
+From this equation, we call each $\mathbf{v}_j$ and $\mathbf{u}_j$ *right singular vector* and *left singular vector*. Next, we see reduced SVD. This uses left upper block of $D$, i.e. it has dimension of $(p + 1) \times (p + 1)$.
 
 ```{theorem, redsvd, name = "Reduced SVD"}
 If $X \in \R^{n \times (p + 1)}$ be any real matrix, then $X$ has a reduced SVD
@@ -604,14 +611,101 @@ In `R`, `svd()` produces this form of decomposition by default.
 svd(eeo)
 ```
 
+Let $X = UDV^T$. Then for every $\mathbf{b} \in \R^{p + 1}$,
+
+$$X \mathbf{b} = UDV^T \mathbf{b}$$
+
+Each $V$, $D$, and $U$ linearly transform $\mathbf{b}$. How? For reproducibility, think about a circle.
+
+```{r, include=FALSE}
+gen_circle <- function(cen = c(0, 0), radius = 1, npoints = 100) {
+  # idx <- seq(0, 2 * pi, length.out = npoints)
+  # x <- cen[1] + radius * cos(idx)
+  # y <- cen[2] + radius * sin(idx)
+  circle <- 
+    tibble(idx = seq(0, 2 * pi, length.out = npoints)) %>% 
+    mutate_all(.funs = list(x = ~cos(.) + cen[1], y = ~sin(.) + cen[2])) %>% 
+    select(x, y)
+  rad1 <- 
+    tibble(
+      x = seq(cen[1], cen[1] + radius, length.out = npoints / 2),
+      y = 0
+    )
+  rad2 <- 
+    tibble(
+      x = 0,
+      y = seq(cen[2], cen[2] + radius, length.out = npoints / 2)
+    )
+  circle %>% 
+    bind_rows(rad1, rad2)
+}
+#-------------------------
+draw_circle <- function(data, mapping = aes()) {
+  data %>% 
+    ggplot(mapping = mapping) +
+    geom_path() +
+    coord_fixed() +
+    labs(
+      x = expression(b[1]),
+      y = expression(b[2])
+    )
+}
+#------------------------
+circ_dat <- gen_circle()
+u_exm <- svd(circ_dat)$u
+d_exm <- diag(svd(circ_dat)$d)
+v_exm <- svd(circ_dat)$v
+```
+
+```{r circle1, echo=FALSE, fig.cap="A circle with radius 1"}
+circ_dat %>% 
+  draw_circle(aes(x, y))
+```
+
+Now consider linear transformation
+
+$$V^T \mathbf{b}$$
+
+```{r circle2, message=FALSE, echo=FALSE, fig.cap="$V^T \\mathbf{b}$"}
+as.matrix(circ_dat) %*% v_exm %>% 
+  as_tibble() %>% 
+  draw_circle(aes(V1, V2))
+```
+
+In Figure \@ref(fig:circle2), we can see that $V$ maintains length and angle, but just rotate axes. Next,
+
+$$D (V^T \mathbf{b})$$
+
+```{r circle3, message=FALSE, echo=FALSE, fig.cap="$D(V^T\\mathbf{b})$"}
+as.matrix(circ_dat) %*% v_exm %*% t(d_exm) %>% 
+  as_tibble() %>% 
+  draw_circle(aes(V1, V2))
+```
+
+In Figure \@ref(fig:circle3), length has changed. In fact, angle has also changed a little bit while rotating. Finally,
+
+$$U (DV^T \mathbf{b})$$
+
+```{r circle4, message=FALSE, echo=FALSE, fig.cap="$U(DV^T\\mathbf{b})$"}
+as.matrix(circ_dat) %*% v_exm %*% t(d_exm) %*% t(u_exm) %>% 
+  as_tibble() %>% 
+  draw_circle(aes(V1, V2))
+```
+
+Figure \@ref(fig:circle4) is the final result of SVD. Coordinate is rotated each.
+
 ### OLS via SVD
 
-Using reduced SVD \@ref(thm:redsvd2), it is possible to solve OLS problem. Before applying it, consider centered input.
+Using reduced SVD \@ref(thm:redsvd2), it is possible to solve OLS problem [@Hastie:2013aa]. Before applying it, consider centered input. Write
+
+$$X = [ \mathbf{1} \mid \mathbb{X}_A ]$$
+
+as before.
 
 ```{lemma, centering, name = "Centered input"}
 Let
 
-$$\widetilde{X} = \Big[ x_{ij} - \overline{x}_j \Big]$$
+$$\widetilde{\mathbb{X}_A} = \Big[ x_{ij} - \overline{x}_j \Big]$$
 
 be centered design matrix and let
 
@@ -619,7 +713,7 @@ $$\mathbb{X}_{A, \perp} = \mathbb{X}_A - \Pi_{\mathbf{1}} \mathbb{X}_A$$
 
 be an projection of predictor variable observations into $R(\mathbf{1})$. Two are equivalent, i.e.
 
-$$\widetilde{X} = \mathbb{X}_{A, \perp}$$
+$$\widetilde{\mathbb{X}_A} = \mathbb{X}_{A, \perp}$$
 ```
 
 ```{proof}
@@ -646,9 +740,267 @@ $$
   x_{21} - \overline{x}_1 & x_{22} - \overline{x}_2 & \cdots & x_{2p} - \overline{x}_p \\
   \vdots & \vdots & \cdots & \vdots \\
   x_{n1} - \overline{x}_1 & x_{n2} - \overline{x}_2 & \cdots & x_{np} - \overline{x}_p
-\end{bmatrix} = \widetilde{X}
+\end{bmatrix} = \widetilde{\mathbb{X}_A}
 $$
 ```
+
+Note that
+
+$$\mathbf{1} \perp \mathbb{X}_{A, \perp} = \widetilde{\mathbb{X}_A}$$
+
+Then
+
+\begin{equation*}
+  \begin{split}
+    X \hb & = \mathbf{1} \hat\beta_0^{\ast} + \widetilde{\mathbb{X}_A} \hb_{A} \\
+    & = \Pi(\mathbf{Y} \mid R(\mathbf{1})) + \Pi(\mathbf{Y} \mid R(\widetilde{\mathbb{X}_A}))
+  \end{split}
+\end{equation*}
+
+Hence,
+
+$$
+\begin{cases}
+  \hat\beta_0^{\ast} = \overline{Y} \\
+  \hb_{A} = (\widetilde{\mathbb{X}_A}^T\widetilde{\mathbb{X}_A})^{-1}\widetilde{\mathbb{X}_A}^T\mathbf{Y}
+\end{cases}
+$$
+
+Since the intercept is estimated as response average, we only need to care about input part from now on. Apply SVD to $\widetilde{\mathbb{X}_A}$.
+
+$$\widetilde{\mathbb{X}_A} = UDV^T$$
+
+Then the LSE becomes
+
+\begin{equation}
+  \begin{split}
+    \hb_{A} & = (\widetilde{\mathbb{X}_A}^T\widetilde{\mathbb{X}_A})^{-1}\widetilde{\mathbb{X}_A}^T\mathbf{Y} \\
+    & = (VD^2 V^T)^{-1} VDU^T \mathbf{Y} \\
+    & = VD^{-1} U^T \mathbf{Y} \\
+    & = V diag\Big( \frac{1}{\sigma_j} \Big) U^T \mathbf{Y}
+  \end{split}
+  (\#eq:svdlse)
+\end{equation}
+
+This implies that rank deficiency, i.e. existence of $\sigma_j = 0$, makes OLS not properly work. In turn, fitted values can be computed in a compact form. Suppose that $\sigma_j \neq 0$.
+
+\begin{equation}
+  \begin{split}
+    \hat{\mathbf{Y}} & = \mathbf{1} \overline{Y} + \widetilde{\mathbb{X}_A} \hb_{A} \\
+    & = \mathbf{1} \overline{Y} + UDV^T VD^{-1} U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + UDD^{-1} U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + U U^T \mathbf{Y}
+  \end{split}
+  (\#eq:svdfit)
+\end{equation}
+
+Here, $U^T \mathbf{Y}$ are the coordinates of $\mathbf{Y}$ with respect to the orthonormal basis $U$, i.e. of $Col(X)$. For more details, rewrite the Equation \@ref(eq:svdfit). If $\sigma_j \neq 0$, then
+
+$$\hat{\mathbf{Y}} = U U^T \mathbf{Y} = \sum_{j = 1}^p \mathbf{u}_j \mathbf{u}^T \mathbf{Y}$$
+
+Each $\mathbf{u_j}$ indicating basis of $Col(X)$ is a coordinate. In other words, we can think of SVD as another orthogonalization process with QR decomposition in estimating regression model. The fitted value, which is projection onto $Col(X)$ and $\hat\theta_j = \mathbf{u}^T \mathbf{Y}$ are corresponding coordinates of $\mathbf{Y}$. Summing every $\hat\theta_j$, we can get the fitted value.
+
+### Principal component analysis
+
+Principal component analysis (PCA) finds a set of $p$ orthogonal variables made by linear combination of original variables. Furthermore, we try to reduce the dimension $M < p$. It is called *dimension reduction* method. For instance, scatterplot needs at most two or three dimension. PCA enables us to visualize more easily. Since we remove some elements, we should preserve information of the data as much as possible. What are the information of data? How to preserve them?
+
+```{r varinf, echo=FALSE, fig.cap="Summarizing the features"}
+tibble(
+  x = runif(100),
+  y = rnorm(100, sd = 5)
+) %>% 
+  gg_scatter(aes(x, y)) +
+  xlim(c(-10, 10)) +
+  labs(
+    x = expression(x[1]),
+    y = expression(x[2])
+  )
+```
+
+See Figure \@ref(fig:varinf). With $X_1 = x_{i1}$, it is hard to distinguish the observations.
+
+```{conjecture, varinf2}
+Small variance of a variable implies small information about the data.
+```
+
+Thus, we try to find the direction having the largest variance. For consistency, here we also use centered predictors. Let $\mathbf{X} = (X_1, \ldots, X_p)^T$ be a random vector with a mean $\boldsymbol\mu = (\mu_1, \ldots, \mu_p)^T$ and a variance $\Sigma$. Then $\widetilde{\mathbf{X}} = (X_1 - \mu_1, \ldots, X_p - \mu_p)^T$ has a mean $\mathbf{0}$ and a variance $\Sigma$.
+
+```{definition, poppca, name = "Population principal components"}
+Consider $\widetilde{\mathbf{X}}$. $Z_1, \ldots, Z_p$ are said to be \textbf{\textit{principal components}} of $\widetilde{\mathbf{X}}$ iff
+
+\begin{enumerate}
+  \item First PC $Z_1 = \argmax\limits_{\mathbf{a}_1^T \widetilde{\mathbf{X}}} \mathbf{a}_1^T \Sigma \mathbf{a}_1$ subject to $\mathbf{a}_1^T \mathbf{a}_1 = 1$
+  \item Second PC $Z_2 = \argmax\limits_{\mathbf{a}_2^T \widetilde{\mathbf{X}}} \mathbf{a}_2^T \Sigma \mathbf{a}_2$ subject to $\mathbf{a}_2^T \mathbf{a}_2 = 1$ and $\mathbf{a}_2^T \mathbf{a}_1 = 0$
+  \item $\vdots$
+  \item Last PC $Z_p = \argmax\limits_{\mathbf{a}_p^T \widetilde{\mathbf{X}}} \mathbf{a}_p^T \Sigma \mathbf{a}_1$ subject to $\mathbf{a}_p^T \mathbf{a}_p = 1$ and $\forall k < p : \mathbf{a}_p^T \mathbf{a}_k = 0$
+\end{enumerate}
+```
+
+By construction, PCA aims to finding uncorrelated set of linear combinations. How to find the solution $\mathbf{a}_j = (a_{1j}, \ldots, a_{pj})^T$? It can be shown that *Spectral decomposition* of $\Sigma$ gives it [@Johnson:2013aa].
+
+```{theorem, poppcasol, name = "Population PC with covariance"}
+Continuing the PCA of $\widetilde{\mathbf{X}}$, let
+
+$$\lambda_1 \ge \cdots \ge \lambda_p \ge 0$$
+
+be the eigenvalues of $\Sigma$, and let $\mathbf{v}_1, \ldots, \mathbf{v}_p$ be the corresponding orthonormal eigenvectors. Then each $j$-th principal components is computed by
+
+$$Z_j = \mathbf{v}_j \widetilde{\mathbf{X}}$$ with
+
+$$
+\begin{cases}
+  Var(Z_j) = \lambda_j \\
+  \forall j \neq k : Cov(Z_j, Z_k) = 0
+\end{cases}
+$$
+```
+
+```{proof}
+Note that covariance matrix $\Sigma$ is symmetric. Then by spectral decomposition,
+
+$$\Sigma = P \Lambda P^T$$
+
+where $P = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_p \end{bmatrix} \in \R^{p \times p}$ and $\Lambda = diag(\lambda_1, \ldots, \lambda_p) \in \R^{p \times p}$
+
+Step 1: First PC
+
+Let $\mathbf{a} \in \R^p$. Then
+
+\begin{equation*}
+  \begin{split}
+    Var(\mathbf{a}^T \widetilde{\mathbf{X}}) & = \mathbf{a}^T \Sigma \mathbf{a} \\
+    & = \mathbf{a}^T P\Lambda P^T \mathbf{a} \\
+    & = \mathbf{b}^T \Lambda \mathbf{b} \quad \leftarrow \text{Set}\: \mathbf{b} := \mathbf{a}^T P \\
+    & = \lambda_1 b_1^2 + \cdots + \lambda_p b_p^2 \\
+    & {\color{red}{\le}} \:\: \lambda_1 (b_1^2 + \cdots + b_p^2) \quad \because \lambda_1 \ge \lambda_2, \ldots, \lambda_p \\
+    & = \lambda_1 \mathbf{b}^T \mathbf{b} \\
+    & = \lambda_1 \mathbf{a}^T P P^T \mathbf{a} \\
+    & = \lambda_1 \mathbf{a}^T \mathbf{a} \\
+    & = \lambda_1 \quad \because \text{construction}
+  \end{split}
+\end{equation*}
+
+Thus, $\lambda_1$ is the upper bound of $Var(\mathbf{a}^T \widetilde{\mathbf{X}})$ subject to $\mathbf{a}^T \mathbf{a} = 1$.
+
+Claim: $\mathbf{a} = \mathbf{v}_1$
+
+This is quite trivial. Set $\mathbf{a} = \mathbf{v}_1$. Then
+
+$$\mathbf{v}_1^T \Sigma \mathbf{v}_1 = \lambda_1 \mathbf{v}_1^T\mathbf{v}_1 = \lambda_1$$
+
+Hence,
+
+$$Z_1 = \mathbf{v}_1 \widetilde{\mathbf{X}}$$
+
+with $Var(Z_1) = \lambda_1$.
+
+Step 2: Find $\mathbf{a}_2 = \argmax\limits_{\mathbf{a} \in \R^p} \mathbf{a}_2^T \Sigma \mathbf{a}_2$ subject to $\mathbf{a}_2^T \mathbf{a}_2 = 1$ and $\mathbf{a}_2^T \Sigma \mathbf{v}_1 = 0$
+
+Assume that $\mathbf{a}_2^T \mathbf{a}_2 = 1$ and that $\mathbf{a}_2 \perp \mathbf{v}_2$. Since $\{ \mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_p \}$ is an orthonormal basis of $\R^p$,
+
+$$\mathbf{a}_2 \in \{ \mathbf{v}_2, \ldots, \mathbf{v}_p \}$$
+
+Then we now have
+
+\begin{equation*}
+  \begin{split}
+    \mathbf{a}_2^T \Sigma \mathbf{a}_2 & = \lambda_j \quad \text{for some}\: j \in \{ 2, \ldots, p \} \\
+    & \le \lambda_2 \quad \because \lambda_2 \ge \lambda_3, \ldots, \lambda_p
+  \end{split}
+\end{equation*}
+
+By symmetry, we can get the upper bound $\lambda_2$ at $\mathbf{a}_2 = \mathbf{v}_2$. Therefore,
+
+$$Z_2 = \mathbf{v}_2^T \widetilde{\mathbf{X}}$$
+
+with $Var(Z_2) = \lambda_2$. In addition,
+
+$$Cov(Z_2, Z_1) = \mathbf{v}_2^T \Sigma \mathbf{v}_1 = \lambda_1 \mathbf{v}_2^T \mathbf{v}_1 = 0$$
+
+One proceeds in a similar way for the next $j = 3, \ldots, p$. Since
+
+$$\mathbf{a}^T \Sigma \mathbf{a} \le \lambda_j$$
+
+in each step,
+
+$$Z_j = \mathbf{v}_j^T \widetilde{\mathbf{X}}$$
+
+, $Var(Z_j) = \lambda_j$, and $Cov(Z_j, Z_k)$ for every $k < j$.
+```
+
+Using Principal axes theorem \@ref(thm:pat), we can understand this covariance PCA better. Recall that a gaussian random variable $\mathbf{X} \sim MVN(\boldsymbol\mu, \Sigma)$ can be represented by ellipse $\widetilde{\mathbf{X}}^T \Sigma^{-1} \widetilde{\mathbf{X}} = c^2$.
+
+```{r mvnellips, echo=FALSE, fig.cap="Ellipse for some bivariate normal distribution"}
+sig_exm <- matrix(c(.1, .2, .2, 1), nrow = 2)
+mvn_ellip <- 
+  ellipse::ellipse(x = solve(sig_exm)) %>% 
+  as_tibble()
+mvn_p <- eigen(sig_exm)$vectors
+mvn_lam <- diag(eigen(sig_exm)$values)
+#------------
+mvn_ellip %>% 
+  ggplot(aes(x, y)) +
+  geom_path() +
+  geom_segment(
+    data = mvn_p %>% t() %>% as_tibble(),
+    aes(x = 0, y = 0, xend = V1, yend = V2),
+    arrow = arrow(length = unit(.1, "inches"))
+  ) +
+  labs(
+    x = expression(tilde(x)[1]),
+    y = expression(tilde(x)[2])
+  ) +
+  coord_fixed()
+```
+
+From Corollary \@ref(cor:pat2),
+
+\begin{equation}
+  \begin{split}
+    c^2 & = \widetilde{\mathbf{X}}^T \Sigma^{-1} \widetilde{\mathbf{X}} \\
+    & = \frac{1}{\lambda_1} (\mathbf{v}_1 \widetilde{\mathbf{X}})^2 + \cdots + \frac{1}{\lambda_p} (\mathbf{v}_p \widetilde{\mathbf{X}})^2 \\
+    & = \frac{1}{\lambda_1} Z_1^2 + \cdots + \frac{1}{\lambda_p} Z_p^2 \quad \leftarrow Z_j = j \text{-th }\: PC
+  \end{split}
+  (\#eq:patpca)
+\end{equation}
+
+Hence, PCA is a linear transformation of coordinate
+
+$$V^T \widetilde{\mathbf{X}}$$
+
+```{r mvnellips2, echo=FALSE, fig.cap="Ellipse with respect to principal components"}
+mvn_pca <- 
+  as.matrix(mvn_ellip) %*% mvn_p %>% 
+  as_tibble() %>% 
+  rename(x = V1, y = V2) %>% 
+  mutate(pca = TRUE)
+mvn_ellip %>% 
+  mutate(pca = FALSE) %>% 
+  bind_rows(mvn_pca) %>% 
+  ggplot(aes(x, y, colour = pca)) +
+  geom_path() +
+  geom_segment(
+    data = mvn_p %>% t() %>% as_tibble(),
+    aes(x = 0, y = 0, xend = V1, yend = V2),
+    arrow = arrow(length = unit(.1, "inches")),
+    inherit.aes = FALSE,
+    col = gg_hcl(1)
+  ) +
+  geom_segment(
+    data = mvn_lam %>% t() %>% as_tibble(),
+    aes(x = 0, y = 0, xend = V1, yend = V2),
+    arrow = arrow(length = unit(.1, "inches")),
+    inherit.aes = FALSE,
+    col = gg_hcl(2)[2]
+  ) +
+  labs(
+    x = expression(tilde(x)[1]),
+    y = expression(tilde(x)[2])
+  ) +
+  coord_fixed()
+```
+
+
 
 
 
