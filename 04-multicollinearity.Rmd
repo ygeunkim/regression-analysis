@@ -1222,7 +1222,32 @@ $$
 $$
 ```
 
-In fact, this linear approximation approach is equivalent to variance maximization.
+While `princomp()` does it with `eigen()`, `prcomp()` conduct PCA using singular value decomposition. `R` is recommending this function more that the former.
+
+> The calculation is done by a singular value decomposition of the (centered and possibly scaled) data matrix, not by using eigen on the covariance matrix. This is generally the preferred method for numerical accuracy. The print method for these objects prints the results in a nice format and the plot method produces a scree plot.
+
+The following is the result of $UD$
+
+```{r}
+eeo_svd <- svd(eeo_cent)
+eeo_svd$u %*% diag(eeo_svd$d) %>% 
+  head()
+```
+
+Of course, $\widetilde{\mathbb{X}}_A V$ gives the same result.
+
+```{r}
+head(eeo_cent %*% eeo_svd$v)
+```
+
+Try `prcomp()`. `$x` has PC score.
+
+```{r}
+prcomp(eeo)$x %>% 
+  as_tibble()
+```
+
+Recall that these results are same as previous spectral decomposition. In fact, linear approximation approach is equivalent to variance maximization.
 
 ```{r pcaequiv, echo=FALSE, fig.cap="Equivalence of two approaches"}
 knitr::include_graphics("images/pcaequiv.png")
@@ -1311,6 +1336,206 @@ Using principal components of centered inputs
 $$Z = \widetilde{\mathbb{X}}_A P = UD = \widetilde{\mathbb{X}}_A V$$
 
 one may rewrite the regression equation.
+
+\begin{equation}
+  \begin{split}
+    X \B & = \mathbf{1} \beta_0^{\ast} + \mathbb{X}_{A, \perp} \B_{A} \\
+    & = \mathbf{1} \beta_0^{\ast} + \mathbb{X}_{A, \perp} V V^T \B_{A} \\
+    & = \mathbf{1} \beta_0^{\ast} + Z (V^T \B_{A}) \\
+    & = \mathbf{1} \beta_0^{\ast} + Z \boldsymbol\alpha, \quad \alpha \equiv V^T \B_{A} \\
+  \end{split}
+  (\#eq:pcrmeanres)
+\end{equation}
+
+It is trivial that
+
+$$\hat\beta_0^{\ast} = \overline{Y}$$
+
+In case of $\boldsymbol\alpha$,
+
+\begin{equation}
+  \begin{split}
+    \hat{\boldsymbol\alpha} & = (Z^T Z)^{-1} Z^T \mathbf{Y} \\
+    & = (D^TU^TUD)^{-1}D^TU^T \mathbf{Y} \\
+    & = D^{-1}U^T\mathbf{Y}
+  \end{split}
+  (\#eq:pcralpha)
+\end{equation}
+
+```{r pcrfig, echo=FALSE, fig.cap="Geometry of PCR"}
+knitr::include_graphics("images/pcrfit.png")
+```
+
+Figure \@ref(fig:pcrfig) presents what $\hat{\boldsymbol\alpha}$ indicates. It also holds when dimension is reduced by $q \le p$. Unlike G-S process, PCA rotates the original axes and make orthogonal axes. Since orthogonal estimating process is same. But to use this properly, $\hb_{A}$ should be same as LSE. Is it?
+
+```{remark}
+Let $\hb_{A}^{PCR}$ be $\hb_{A}$ in Equation \@ref(eq:pcrmeanres). If $q = p$, then
+
+$$\hb_{A}^{PCR} = \hb_{A}^{LSE}$$
+```
+
+```{proof}
+From Equation \@ref(eq:pcralpha),
+
+\begin{equation}
+  \hb_{A} = V \hat{\boldsymbol\alpha} = VD^{-1}U^T \mathbf{Y}
+  (\#eq:pcrlse)
+\end{equation}
+```
+
+Hence, when we use every component in PCR, it is guaranteed that the regression coefficient is same as LSE. Practically, we sometimes discard some components. Or in the presence of multicollinearity, $\sigma_j \approx 0$ for some $j$. We do not have to use these $j$. Choose the first $q$ PCs $Z_1, \ldots, Z_q$ with $q < p$.
+
+\begin{equation}
+  \begin{split}
+    \widetilde{\mathbb{X}}_A \left[\begin{array}{cccc|cc}
+      \mathbf{v}_1 & \mathbf{v}_2 & \cdots & \mathbf{v}_q & \cdots & \mathbf{v}_p
+    \end{array}\right] & = U diag(\sigma_1, \sigma_2, \ldots, \sigma_q \: \bigg\vert \ldots, \sigma_p ) \\
+    & = \widetilde{\mathbb{X}}_A \left[\begin{array}{cccc|cc}
+      \mathbf{v}_1 & \mathbf{v}_2 & \cdots & \mathbf{v}_q & \cdots & \mathbf{v}_p
+    \end{array}\right] \quad \text{from}\: P\Lambda P^T \\
+    & = \left[\begin{array}{cccc|cc}
+      \mathbf{z}_1 & \mathbf{z}_2 & \cdots & \mathbf{z}_q & \cdots & \mathbf{z}_p
+    \end{array}\right] \\
+    & = \Big[ Z_q \quad \Big\vert \quad \text{discard}\: q - p \: \text{smallest}\: \sigma_j \Big]
+  \end{split}
+  (\#eq:pcrdimred)
+\end{equation}
+
+We just remove entire columns with the smallest $\sigma_j$, or equivalently $\lambda_j$. How does this removal work? One can worry that removal negatively affect the other variable. Recall that
+
+$$\forall j \neq k : \quad <\mathbf{z}_j, \mathbf{z}_k> = 0$$
+
+i.e. principal components are uncorrelated. Thus, we can freely remove any component.
+
+Look at the Equation \@ref(eq:pcrmeanres) and Figure \@ref(fig:pcrfig).
+
+\begin{equation}
+  \hat{\mathbf{Y}}^{PCR} = \mathbf{1} \overline{Y} + \sum_{j = 1}^p \frac{< \mathbf{z}_j, \mathbf{Y} >}{< \mathbf{z}_j, \mathbf{z}_j >} \mathbf{z}_j
+  (\#eq:pcrsimple)
+\end{equation}
+
+Here, when $q = p$,
+
+$$\hat\alpha_j = \frac{< \mathbf{z}_j, \mathbf{Y} >}{< \mathbf{z}_j, \mathbf{z}_j >}$$
+
+and
+
+$$\hb^{PCR} = \sum_{j = 1}^p \hat\alpha_j \mathbf{v}_j$$
+
+is same as regression coefficient estimate. Furthermore, each element is of simple LSE, $\hat\beta_j^{LSE}$. Since uncorrelated, try to remove the last $p - q$.
+
+$$
+\hat{\mathbf{Y}}^{PCR}(q) = \mathbf{1} \overline{Y} + \begin{bmatrix}
+  \hat\alpha_1 \\
+  \vdots \\
+  \hat\alpha_q
+\end{bmatrix} \begin{bmatrix}
+  \mathbf{z}_1 & \cdots & \mathbf{z}_q
+\end{bmatrix}
+$$
+
+In this case, each $\hat\alpha_j$ still has same value. However,
+
+$$\hb^{PCR} = \sum_{j = 1}^{\color{red}{q}} \hat\alpha_j \mathbf{v}_j \neq \hb^{LSE}$$
+
+Refer to Equation \@ref(eq:svdfit). LSE can be interpreted by principal components.
+
+$$\hat{\mathbf{Y}}^{LSE} = \mathbf{1} \overline{Y} + UDD^{-1} U^T \mathbf{Y} = \mathbf{1} \overline{Y} + \sum_{j = 1}^p \mathbf{z}_j \frac{\mathbf{u}^T \mathbf{Y}}{d_j}$$
+
+```{r lsepc, echo=FALSE, fig.cap="LSE and PC"}
+knitr::include_graphics("images/pcrlse.png")
+```
+
+See Figure \@ref(fig:lsepc). LSE projects the response vector onto principal components hyperplane.
+
+Principal components are chosen in direction of maximal variance of predictors. In other words, it is determined only by predictors, not response.
+
+```{conjecture, pcrmotif, name = "Key idea of PCR"}
+The directions in which $X_1, \ldots, X_p$ show the most variation are \textit{probably going to be associated with} $Y$.
+```
+
+Conjecture \@ref(cnj:pcrmotif) is just hunch. It is not guaranteed the best performance of the model [@James:2013aa]. Against this kind of disadvantages, alternative methods such as *partial least squares* are sometimes used.
+
+
+## Ridge Regression
+
+Consider centered input $\widetilde{\mathbb{X}}_A = \mathbb{X}_{A, \perp}$ facing with multicollinearity. Multicollinearity makes estimation unstable. **Ridge regression** shrinks unstable variance of coefficient $\frac{1}{\epsilon}$ to $\frac{1}{\epsilon + \kappa}$.
+
+### Original motivation of ridge regression
+
+Originally, ridge regression is developed to deal with singularity of $X^T X$ due to linear dependency. When multicollinearity occurs, the matrix becomes rank deficient. Then $(X^T X)^{-1}$ does not exist. In this situation, LSE does not have unique solution.
+
+To make it possible to get the inverse matrix, *add positive values to the diagonal element*.
+
+```{remark, name = "Ridge estimator"}
+Ridge estimator always has unique solution even when $(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A)^{-1}$ does not exist.
+
+\begin{equation}
+  \hb_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \mathbf{Y}
+  (\#eq:ridgemotif)
+\end{equation}
+
+with $\kappa > 0$.
+```
+
+This is called *biased regression* in that the model has sacrificed biasedness condition for smaller variance.
+
+### Ridge penalty
+
+Nowadays, ridge estimator is defined to be the minimizer of penalized least square estimation problem.
+
+```{remark, name = "Regularized estimates"}
+Let $\kappa$ be a tuning parameter for penalty, which controls complexity of the model.
+
+\begin{itemize}
+  \item $$LSE^R = \argmin_{\B} \Big[ RSS + \kappa \text{penalty} \Big]$$
+  \item $$MLE^R = \argmax_{\B} \Big[ L(\B) - \kappa \text{penalty} \Big]$$
+\end{itemize}
+```
+
+In ridge regression, $L_2$ penalty is used.
+
+```{definition, l2p, name = "Ridge penalty"}
+Let $\beta_1, \ldots, \beta_p$ be the regression coefficients. Then \textbf{\textit{ridge penalty}} is squared $l_2$ norm compted by
+
+$$\lVert \B_A \rVert^2 = \sum_{j = 1}^p \beta_j^2$$
+```
+
+Thus, ridge estimator becomes
+
+\begin{equation}
+  \B_{A, R} = \argmin_{\B_A} \bigg\{ (\mathbf{Y} - \widetilde{\mathbb{X}}_A \B_A)^T (\mathbf{Y} - \widetilde{\mathbb{X}}_A \B_A) + \kappa \B_A^T \B_A \bigg\}
+  (\#eq:ridgeargmin)
+\end{equation}
+
+```{theorem, ridgesol, name = "Ridge solution"}
+Solution to the penalized least squares estimation problem \@ref(eq:ridgeargmin) gives exactly same solution as the original one \@ref(eq:ridgemotif).
+
+$$\hb_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \mathbf{Y}$$
+```
+
+```{proof}
+Write
+
+$$Q(\kappa) \equiv (\mathbf{Y} - \widetilde{\mathbb{X}}_A \B_A)^T (\mathbf{Y} - \widetilde{\mathbb{X}}_A \B_A) + \kappa \B_A^T \B_A$$
+
+Note that
+
+$$
+\frac{\partial}{\partial \B_A} Q(\kappa) = -2 \widetilde{\mathbb{X}}_A \mathbf{Y} + 2 \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \B_A + 2 \kappa \B_A
+$$
+
+Setting it to $\mathbf{0}$, we obtain normal equation
+
+$$(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I) \hb_{A, R} = \widetilde{\mathbb{X}}_A^T \mathbf{Y}$$
+
+Hence,
+
+$$\hb_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \mathbf{Y}$$
+```
+
+
+
 
 
 
