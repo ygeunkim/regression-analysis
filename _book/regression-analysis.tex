@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{27 May, 2019}
+    \date{28 May, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7ff4b2c6d5a0>}
+\CommentTok{#> <bytecode: 0x7f87b6e22ba8>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -8830,8 +8830,8 @@ In Figure \ref{fig:circle3}, length has changed. In fact, angle has also changed
 
 Figure \ref{fig:circle4} is the final result of SVD. Coordinate is rotated each.
 
-\hypertarget{ols-via-svd}{%
-\subsection{OLS via SVD}\label{ols-via-svd}}
+\hypertarget{olssvd}{%
+\subsection{OLS via SVD}\label{olssvd}}
 
 Using reduced SVD \ref{thm:redsvd2}, it is possible to solve OLS problem \citep{Hastie:2013aa}. Before applying it, consider centered input. Write
 
@@ -9637,6 +9637,18 @@ with \(\kappa > 0\).
 
 This is called \emph{biased regression} in that the model has sacrificed biasedness condition for smaller variance.
 
+\BeginKnitrBlock{theorem}[Expectation of ridge estimator]
+\protect\hypertarget{thm:biasreg}{}{\label{thm:biasreg} \iffalse (Expectation of ridge estimator) \fi{} }The ridge estimator \(\boldsymbol{\hat\beta}_{A, R}\) is biased when \(\kappa > 0\).
+
+\[E \boldsymbol{\hat\beta}_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \neq \boldsymbol{\hat\beta}_A\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Note that ridge estimator is linear function of \(\mathbf{Y}\). Since \(E\mathbf{Y} = \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A}\),
+
+\[E \boldsymbol{\hat\beta}_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A}\]
+\EndKnitrBlock{proof}
+
 \hypertarget{ridge-penalty}{%
 \subsection{Ridge penalty}\label{ridge-penalty}}
 
@@ -9662,7 +9674,7 @@ In ridge regression, \(L_2\) penalty is used.
 Thus, ridge estimator becomes
 
 \begin{equation}
-  \boldsymbol\beta_{A, R} = \argmin_{\boldsymbol\beta_A} \bigg\{ (\mathbf{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) + \kappa \boldsymbol\beta_A^T \boldsymbol\beta_A \bigg\}
+  \boldsymbol\beta_{A, R} = \argmin_{\boldsymbol\beta_A} \bigg\{ (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) + \kappa \boldsymbol\beta_A^T \boldsymbol\beta_A \bigg\}
   \label{eq:ridgeargmin}
 \end{equation}
 
@@ -9675,7 +9687,7 @@ Thus, ridge estimator becomes
 \BeginKnitrBlock{proof}
 \iffalse{} {Proof. } \fi{}Write
 
-\[Q(\kappa) \equiv (\mathbf{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) + \kappa \boldsymbol\beta_A^T \boldsymbol\beta_A\]
+\[Q(\kappa) \equiv (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) + \kappa \boldsymbol\beta_A^T \boldsymbol\beta_A\]
 
 Note that
 
@@ -9691,6 +9703,225 @@ Hence,
 
 \[\boldsymbol{\hat\beta}_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \mathbf{Y}\]
 \EndKnitrBlock{proof}
+
+As in section \ref{olssvd}, we might implement SVD for ridge solution formula. For \(\widetilde{\mathbb{X}}_A\), we have
+
+\[\widetilde{\mathbb{X}}_A = UDV^T\]
+
+Then we have
+
+\[\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A = VD^2 V^T\]
+
+It follows that
+
+\begin{equation}
+  \begin{split}
+    \boldsymbol{\hat\beta}_{A, R} & = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \mathbf{Y} \\
+    & = (VD^2V + \kappa I)^{-1} VDU^T \mathbf{Y} \\
+    & = \Big( (VD)^{-1} VD^2 V^T + \kappa (VD)^{-1} \Big)^{-1} U^T \mathbf{Y} \\
+    & = (DV^T + \kappa D^{-1}V^T)^{-1} U^T \mathbf{Y} \\
+    & = V ( D + \kappa D^{-1})^{-1} D^{-1}D U^T \mathbf{Y} \\
+    & = V ( D^2 + \kappa I)^{-1} D U^T \mathbf{Y} \\
+    & = V diag\Big( \frac{\sigma_j}{\sigma_j^2 \: {\color{red}{+ \kappa}}} \Big) U^T \mathbf{Y}
+  \end{split}
+  \label{eq:ridgesvd}
+\end{equation}
+
+Compare this to OLS \eqref{eq:svdlse}.
+
+\BeginKnitrBlock{remark}[Regression coefficents via SVD]
+\iffalse{} {Remark (Regression coefficents via SVD). } \fi{}Ridge estimator shrinks OLS estimator.
+
+\textbackslash begin\{itemize\}
+
+\item
+
+\(\boldsymbol{\hat\beta}_{A} = V diag\Big( \frac{1}{\sigma_j} \Big) U^T \mathbf{Y}\)
+
+\item
+
+\(\boldsymbol{\hat\beta}_{A, R} = V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \mathbf{Y}\)
+\textbackslash end\{itemzie\}
+\EndKnitrBlock{remark}
+
+The difference between the two is \(\kappa\) in denominator. Look at OLS. As mentioned, if \(\sigma_j = 0\), we cannot get a unique solution. On the other hand, ridge solution adds \(\kappa > 0\), so \(\frac{1}{\sigma_j^2 + \kappa} < \infty\) is certified. Also, if
+
+\[\kappa \rightarrow \infty\]
+
+\(\boldsymbol{\hat\beta}_{A, B}\) goes close to zero, i.e.~\emph{As we give larger penalty, the coefficient shrinks.}
+
+One proceeds in a similar way for \textbf{fitted values}.
+
+\begin{equation}
+  \begin{split}
+    \hat{\mathbf{Y}}_R & = \mathbf{1} \overline{Y} + \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A, R} \\
+    & = \mathbf{1} \overline{Y} + UDV^T V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + UD diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + U diag\Big( \frac{\sigma_j^2}{\sigma_j^2 + \kappa} \Big) U^T \mathbf{Y}
+  \end{split}
+  \label{eq:ridgefit}
+\end{equation}
+
+In OLS \eqref{eq:svdfit}, \(UU^T\) means projection. However, this is derived only when \(DD^{-1} = I\), i.e.~when \(\sigma_j \neq 0\). However, ridge regression always project. In fact, ridge regression projects the response vector \emph{into PC hyperplane}. Re-express Equation \eqref{eq:ridgefit}.
+
+\begin{equation}
+  \begin{split}
+    \hat{\mathbf{Y}}_R & = \mathbf{1} \overline{Y} + U diag\Big( \frac{\sigma_j^2}{\sigma_j + \kappa} \Big) U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + UD diag\Big( \frac{1}{\sigma_j + \kappa} \Big) D U^T \mathbf{Y} \\
+    & = \mathbf{1} \overline{Y} + \sum_{j = 1}^p \mathbf{z}_j \bigg(\frac{1}{\sigma_j^2 + \kappa} \bigg) \mathbf{z}_j^T \mathbf{Y} \quad \mathbf{z}_j = d_j \mathbf{u}_j = j\text{-th}\: PC \: \text{score}
+  \end{split}
+  \label{eq:ridgepc}
+\end{equation}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{images/ridgepc} 
+
+}
+
+\caption{Ridge regression and PC}\label{fig:ridgepc}
+\end{figure}
+
+Note that
+
+\[<\mathbf{z}_j, \mathbf{z}_j> = 1\]
+
+Then in Equation \eqref{eq:ridgepc}, we have
+
+\[\hat\alpha_j = \mathbf{z}_j^T \mathbf{Y}\]
+
+Observe that \(\bigg(\frac{1}{\sigma_j^2 + \kappa} \bigg)\) shrinks each PC coefficient \(\hat\alpha_j\). For more detail, look at Figure \ref{fig:ridgepc}.
+
+\hypertarget{variance-of-ridge-estimator}{%
+\subsection{Variance of ridge estimator}\label{variance-of-ridge-estimator}}
+
+Theorem \ref{thm:biasreg} shows that the ridge estimator is biased. However, it has much smaller variance.
+
+\BeginKnitrBlock{theorem}[Variance of ridge estimator]
+\protect\hypertarget{thm:ridgevariance}{}{\label{thm:ridgevariance} \iffalse (Variance of ridge estimator) \fi{} }Suppose that \(Var \mathbf{Y} = \sigma^2 I\). Then
+
+\begin{itemize}
+  \item $$Var\boldsymbol{\hat\beta}_A = \sigma^2 V diag\bigg( \frac{1}{\sigma_j^2} \bigg) V^T$$
+  \item $$Var\boldsymbol{\hat\beta}_{A, R} = \sigma^2 V diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) V^T$$
+\end{itemize}
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Consider SVD expression \eqref{eq:svdlse} and \eqref{eq:ridgesvd}.
+
+\begin{equation*}
+  \begin{split}
+    Var\boldsymbol{\hat\beta}_A & = \sigma^2 (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A)^{-1} \\
+    & = \sigma^2 (VD^2 V^T)^{-1} \\
+    & = \sigma^2 V diag\bigg( \frac{1}{\sigma_j^2} \bigg) V^T
+  \end{split}
+\end{equation*}
+
+\begin{equation*}
+  \begin{split}
+    Var\boldsymbol{\hat\beta}_{A, R} & = \bigg( V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \bigg) Var \mathbf{Y} \bigg( V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \bigg)^T \\
+    & = \sigma^2 V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T U diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) V^T \\
+    & = \sigma^2 V diag\Big( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \Big) V^T
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+When we face multicollinearity problem, there exist \(j\) such that
+
+\[\sigma_j \approx 0\]
+
+It makes
+
+\[Var\boldsymbol{\hat\beta}_A \rightarrow \infty\]
+
+i.e.~very unstable. However, \(Var\boldsymbol{\hat\beta}_{A, R}\) has \(\kappa > 0\) in denominator. Denote that
+
+\[\frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \rightarrow 0 \quad \text{as} \quad \sigma_j \rightarrow 0\]
+
+Hence, multicollinearity does not make variance large. It has small variance in the cost of bias.
+
+\BeginKnitrBlock{theorem}[Total variance]
+\protect\hypertarget{thm:ridgetot}{}{\label{thm:ridgetot} \iffalse (Total variance) \fi{} }Let \(\kappa > 0\). Then total variance of ridge regression is always smaller than of OLS.
+
+\[\sum_{j = 1}^p Var(\hat\beta_{j, R}) = \sigma^2 \sum_{j = 1}^p \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} < \sum_{j = 1}^p Var(\hat\beta_j) = \sigma^2 \sum_{j = 1}^p \frac{1}{\sigma_j^2}\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Note that
+
+\[\sum_j Var(\hat\beta_j) = tr\Big(Var\boldsymbol{\hat\beta}_{A} \Big)\]
+
+Then
+
+\begin{equation}
+  \begin{split}
+    \sum_j Var(\hat\beta_j) & = \sigma^2 tr \bigg( V diag\bigg( \frac{1}{\sigma_j^2} \bigg) V^T \bigg) \\
+    & = \sigma^2 tr \bigg( V^T V diag\bigg( \frac{1}{\sigma_j^2} \bigg) \bigg) \\
+    & = \sigma^2 tr \bigg( diag\bigg( \frac{1}{\sigma_j^2} \bigg) \bigg) \\
+    & = \sigma^2 \sum_j \frac{1}{\sigma_j^2}
+  \end{split}
+\end{equation}
+
+One proceeds in a similar way for ridge estimator that
+
+\begin{equation}
+  \begin{split}
+    \sum_j Var(\hat\beta_{j, R}) & = tr\Big( Var\boldsymbol{\hat\beta}_{A, R} \Big) \\
+    & = \sigma^2 tr \bigg( V diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) V^T \bigg) \\
+    & = \sigma^2 tr \bigg( diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) \bigg) \\
+    & = \sigma^2 \sum_j \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2}
+  \end{split}
+\end{equation}
+
+Since \(\kappa > 0\),
+
+\[\frac{1}{\sigma_j^2} > \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2}\]
+
+for all \(\kappa\).
+
+Hence,
+
+\[\sum_j Var(\hat\beta_j) > \sum_j Var(\hat\beta_{j, R})\]
+\EndKnitrBlock{proof}
+
+\hypertarget{ivanov-regularization}{%
+\subsection{Ivanov regularization}\label{ivanov-regularization}}
+
+Refer to \(L_2\) penalization \eqref{eq:ridgeargmin}.
+
+\begin{equation}
+  \boldsymbol\beta_{A, R} = \argmin_{\boldsymbol\beta_A} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + \kappa \lVert \boldsymbol\beta_A \rVert^2 \bigg\}
+  \label{eq:ridgetikhonov}
+\end{equation}
+
+This form of regularization is called \emph{Tikhonov regularization}. Recall that this constraint has shrinked the coefficients. There is another regularization that directly gives constraint on the size of the coefficients.
+
+\BeginKnitrBlock{remark}[Ivavnov regularization]
+\iffalse{} {Remark (Ivavnov regularization). } \fi{}An equivalent way to write the ridge problem is
+
+\begin{equation}
+  \boldsymbol\beta_{A, R} = \argmin_{\boldsymbol\beta_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 \le d
+  \label{eq:ridgeivanov}
+\end{equation}
+
+which makes \textit{explicit the size constraint} on the parameters.
+\EndKnitrBlock{remark}
+
+Following the definitions of \citet{Wade:2017aa}, we first presents the \emph{lagrangian multipliers} to show two regularizations are equivalent.
+
+\BeginKnitrBlock{lemma}[Lagrange Multipliers]
+\protect\hypertarget{lem:lagrang}{}{\label{lem:lagrang} \iffalse (Lagrange Multipliers) \fi{} }Let \(n > p\), \(V\) be open in \(\mathbb{R}^n\), and \(f, g_j: V \rightarrow \mathbb{R}\) be \(\mathcal{C}^1\) on \(V\) for \(j = 1, \ldots, p\). Suppose that
+
+\[\exists \: \mathbf{a} \in V : \quad \frac{\partial (g_1, \ldots, g_p)}{\partial(x_1, \ldots, x_p)}(\mathbf{a}) \neq \mathbf{0}\]
+
+If \(f(\mathbf{a})\) is a local extremum of \(f\) subject to the constraints
+
+\[g_k (\mathbf{a}) = 0, \quad k = 1, \ldots, p\]
+
+then
+
+\[\exists \: \text{scalars} \: \lambda_1, \ldots, \lambda_p : \quad \triangledown f(\mathbf{a}) + \sum_{j = 1}^p \lambda_j \triangledown g_j(\mathbf{a}) = \mathbf{0}\]
+\EndKnitrBlock{lemma}
 
 \bibliography{book.bib,packages.bib}
 
