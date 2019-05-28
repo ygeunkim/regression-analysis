@@ -582,7 +582,7 @@ where
 
 \begin{itemize}
   \item $\{ \mathbf{u}_1, \ldots, \mathbf{u}_r \}$ is an orthonormal basis for $R(X)$
-  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_n \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
+  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_{p + 1} \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
   \item Thus, $U = [ \cdots \mid \cdots ]$ is orthogonal
 \end{itemize}
 
@@ -655,6 +655,9 @@ circ_dat <- gen_circle()
 u_exm <- svd(circ_dat)$u
 d_exm <- diag(svd(circ_dat)$d)
 v_exm <- svd(circ_dat)$v
+dimnames(u_exm) <- list(paste0("V", 1:200), c("x", "y"))
+dimnames(d_exm) <- list(c("x", "y"), c("x", "y"))
+dimnames(v_exm) <- list(c("x", "y"), c("x", "y"))
 ```
 
 ```{r circle1, warning=FALSE, echo=FALSE, fig.cap="A circle with radius 1"}
@@ -669,7 +672,7 @@ $$V^T \mathbf{b}$$
 ```{r circle2, warning=FALSE, echo=FALSE, fig.cap="$V^T \\mathbf{b}$"}
 as.matrix(circ_dat) %*% v_exm %>% 
   as_tibble() %>% 
-  draw_circle(aes(V1, V2))
+  draw_circle(aes(x, y))
 ```
 
 In Figure \@ref(fig:circle2), we can see that $V$ maintains length and angle, but just rotate axes. Next,
@@ -679,7 +682,7 @@ $$D (V^T \mathbf{b})$$
 ```{r circle3, warning=FALSE, echo=FALSE, fig.cap="$D(V^T\\mathbf{b})$"}
 as.matrix(circ_dat) %*% v_exm %*% t(d_exm) %>% 
   as_tibble() %>% 
-  draw_circle(aes(V1, V2))
+  draw_circle(aes(x, y))
 ```
 
 In Figure \@ref(fig:circle3), length has changed. In fact, angle has also changed a little bit while rotating. Finally,
@@ -799,6 +802,12 @@ Here, $U^T \mathbf{Y}$ are the coordinates of $\mathbf{Y}$ with respect to the o
 $$\hat{\mathbf{Y}} = U U^T \mathbf{Y} = \sum_{j = 1}^p \mathbf{u}_j \mathbf{u}^T \mathbf{Y}$$
 
 Each $\mathbf{u_j}$ indicating basis of $Col(X)$ is a coordinate. In other words, we can think of SVD as another orthogonalization process with QR decomposition in estimating regression model. The fitted value, which is projection onto $Col(X)$ and $\hat\theta_j = \mathbf{u}^T \mathbf{Y}$ are corresponding coordinates of $\mathbf{Y}$. Summing every $\hat\theta_j$, we can get the fitted value.
+
+Compare this with QR decomposition
+
+$$\hat{\mathbf{Y}} = Q Q^T \mathbf{Y}$$
+
+whose orthonormal basis is $Q$. Observe that $Q$ and $U$ are generally different orthonormal bases for $Col(X)$ [@Hastie:2013aa].
 
 ### Principal component analysis
 
@@ -1459,7 +1468,13 @@ Conjecture \@ref(cnj:pcrmotif) is just hunch. It is not guaranteed the best perf
 
 ## Ridge Regression
 
-Consider centered input $\widetilde{\mathbb{X}}_A = \mathbb{X}_{A, \perp}$ facing with multicollinearity. Multicollinearity makes estimation unstable. **Ridge regression** shrinks unstable variance of coefficient $\frac{1}{\epsilon}$ to $\frac{1}{\epsilon + \kappa}$.
+Consider centered input $\widetilde{\mathbb{X}}_A = \mathbb{X}_{A, \perp}$ facing with multicollinearity. Multicollinearity makes estimation unstable.
+
+```{r}
+summary(eeo_fit)
+```
+
+Look at `Std. Error`. These values of standard error can be thought to be large compared to `Estimate`. **Ridge regression** shrinks unstable variance of coefficient $\frac{1}{\epsilon}$ to $\frac{1}{\epsilon + \kappa}$.
 
 ### Original motivation of ridge regression
 
@@ -1539,7 +1554,10 @@ $$
 
 Setting it to $\mathbf{0}$, we obtain normal equation
 
-$$(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I) \hb_{A, R} = \widetilde{\mathbb{X}}_A^T \mathbf{Y}$$
+\begin{equation}
+  (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I) \hb_{A, R} = \widetilde{\mathbb{X}}_A^T \mathbf{Y}
+  (\#eq:ridgenormal)
+\end{equation}
 
 Hence,
 
@@ -1741,7 +1759,10 @@ Following the definitions of @Wade:2017aa, we first presents the *lagrangian mul
 ```{lemma, lagrang, name = "Lagrange Multipliers"}
 Let $n > p$, $V$ be open in $\R^n$, and $f, g_j: V \rightarrow \R$ be $\mathcal{C}^1$ on $V$ for $j = 1, \ldots, p$. Suppose that
 
-$$\exists \: \mathbf{a} \in V : \quad \frac{\partial (g_1, \ldots, g_p)}{\partial(x_1, \ldots, x_p)}(\mathbf{a}) \neq \mathbf{0}$$
+\begin{equation}
+  \exists \: \mathbf{a} \in V : \quad \frac{\partial (g_1, \ldots, g_p)}{\partial(x_1, \ldots, x_p)}(\mathbf{a}) \neq \mathbf{0}
+  (\#eq:ridgelagrange)
+\end{equation}
 
 If $f(\mathbf{a})$ is a local extremum of $f$ subject to the constraints
 
@@ -1752,16 +1773,312 @@ then
 $$\exists \: \text{scalars} \: \lambda_1, \ldots, \lambda_p : \quad \triangledown f(\mathbf{a}) + \sum_{j = 1}^p \lambda_j \triangledown g_j(\mathbf{a}) = \mathbf{0}$$
 ```
 
+```{definition, nestparam, name = "Nested parameter space"}
+Ivanov regularization is constraint by nested parameter space defined by
 
+\begin{equation*}
+  \begin{split}
+    \Omega_d & := \overline{B_d(\mathbf{0})} \\
+    & = \{ \B_A \in \R^p : \lVert \B_{A} \rVert^2 \le d \}
+  \end{split}
+\end{equation*}
+```
 
+```{remark}
+If $d_1 < d_2 < \cdots < \infty$, then
 
+$$\Omega_{d_1} \subset \Omega_{d_2} \subset \cdots \subset \Omega_{\infty}$$
+```
 
+```{proof, name = "Equivalence between Ivanov regularization and Tikhonov regularization"}
+Consider Ivanov regularization.
 
+\begin{equation*}
+  \begin{split}
+    \B_{A, R} & = \argmin_{\B_A \in \R^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 \le d \\
+    & = \argmin_{\B_A \in \Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2
+  \end{split}
+\end{equation*}
 
+If $\B_{A, d_1} \in \Omega_d$ and $\B_{A, d_2}$ with $d_1 < d_2$, then
 
+$$\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_{A, d_1} \rVert^2 \le \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_{A, d_2} \rVert^2$$
 
+by construction. It follows that
 
+\begin{equation}
+  \begin{split}
+    \B_{A, R} & = \argmin_{\B_A \in {\color{blue}{\partial}}\Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \\
+    & = \argmin_{\B_A \in \R^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 {\color{blue}{=}} d
+  \end{split}
+  (\#eq:ivanovbeta)
+\end{equation}
 
+We now have minimization problem with constraint
+
+$$\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 - d = 0$$
+
+From Lagrangian multipliers \@ref(lem:lagrang),
+
+$$
+\exists \: k \in \R : \quad \frac{\partial}{\partial \B_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 + k \frac{\partial}{\partial \B_A} (\lVert \B_A \rVert^2 - d) = \mathbf{0}
+$$
+
+Then
+
+$$-2 \widetilde{\mathbb{X}}_A^T \mathbf{Y} + 2 \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \B_A + 2 k \B_A = \mathbf{0}$$
+
+and so
+
+$$(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + kI)\hb_{A, R} = \widetilde{\mathbb{X}}_A^T \mathbf{Y}$$
+
+which is same as normal equation dervied from Tikhonov regularization. This completes the proof.
+```
+
+```{corollary, ivtik}
+$\kappa$ of Tikhonov regualrization and $d$ of Ivanov regularization have ono-to-one correspondence.
+```
+
+```{proof}
+From our previous result, we have
+
+\begin{equation*}
+  \begin{split}
+    \hb_{A, R} & = \argmin_{\B_A \in \R^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 \le d \\
+    & = \argmin_{\B_A \in \R^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 = d \\
+    & = \argmin_{\B_A \in \R^p} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 + \kappa \lVert \B_A \rVert^2 \bigg\} \\
+    & = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \mathbf{Y} \\
+    & = V diag\bigg( \frac{\sigma_j}{\sigma_j^2 + \kappa} \bigg) U^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+
+Then
+
+\begin{equation}
+  \lVert \hb_{A} \rVert^2 = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} = d
+  (\#eq:dvskappa)
+\end{equation}
+
+Suppose that $\kappa_1 \neq \kappa_2$ corresponding to each $d_1$ and $d_2$. Then
+
+\begin{equation*}
+  \begin{split}
+    d_1 - d_2 & = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_1)^2} \bigg) U^T \mathbf{Y} - \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_2)^2} \bigg) U^T \mathbf{Y} \\
+    & = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_1)^2} - \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_2)^2} \bigg) U^T \mathbf{Y} \\
+    & = \mathbf{Y}^T UD diag\bigg( \frac{1}{(\sigma_j^2 + \kappa_1)^2} - \frac{1}{(\sigma_j^2 + \kappa_2)^2} \bigg) D U^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+
+Since
+
+$$DU^T \mathbf{Y} = \begin{bmatrix} \sigma_1 \mathbf{u}_1^T \mathbf{Y} & \cdots & \sigma_p \mathbf{u}_p^T \mathbf{Y} \end{bmatrix}$$
+
+and
+
+$$\sigma_j \mathbf{u}_j = \mathbf{z}_j \quad : j\text{-th principal component score}$$
+
+$$d_1 - d_2 = \sum_{j = 1}^p \bigg\{ \frac{1}{(\sigma_j^2 + \kappa_1)^2} - \frac{1}{(\sigma_j^2 + \kappa_2)^2} \bigg\} (\mathbf{z}_j^T \mathbf{Y})^2$$
+
+Assuming that
+
+$$\hat\alpha_j = \mathbf{z}_j^T \mathbf{Y} \neq 0$$
+
+we have
+
+$$d_1 - d_2 \neq 0$$
+
+Hence, $\kappa$ and $d$ has one-to-one correspondence.
+```
+
+<!-- Recall that for $r = rank(\widetilde{\mathbb{X}}_A)$, $\{ \mathbf{u}_1, \ldots, \mathbf{u}_r \}$ is a basis for $R(\widetilde{\mathbb{X}}_A) = Col(\widetilde{\mathbb{X}}_A)$ and $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_n \}$ is a basis for $N(\widetilde{\mathbb{X}}_A^T) = R(\widetilde{\mathbb{X}}_A)^{\perp}$. Then for every $j = 1, \ldots, n$, -->
+
+<!-- $$\mathbf{u}_j \neq \mathbf{0}$$ -->
+
+Consider the decomposition of sums of squares.
+
+\begin{equation*}
+  \begin{split}
+    \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 & = (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A) \\
+    & = \Big(\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A (\B_A - \hb_{A}) - \widetilde{\mathbb{X}}_A \hb_{A} \Big)^T \Big(\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A (\B_A - \hb_{A}) - \widetilde{\mathbb{X}}_A \hb_{A} \Big) \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \hb_{A} \rVert^2 + (\B_A - \hb_{A})^T \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A (\B_A - \hb_{A}) \\
+    & \qquad - (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \hb_{A})^T \widetilde{\mathbb{X}}_A (\B_A - \hb_{A}) - \widetilde{\mathbb{X}}_A^T (\B_A - \hb_{A})^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \hb_{A}) \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \hb_{A} \rVert^2 + (\B_A - \hb_{A})^T \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A (\B_A - \hb_{A})
+  \end{split}
+\end{equation*}
+
+Write the function of error by
+
+\begin{equation}
+  f(\B_A) := (\B_A - \hb_{A})^T \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A (\B_A - \hb_{A})
+  (\#eq:olsfn)
+\end{equation}
+
+Denote that ridge regression gives a constraint to this error such that
+
+$$\lVert \B_A \rVert^2 \le d$$
+
+As in Definition \@ref(def:nestparam), write the constraint region by
+
+$$\Omega_d = \{ \B_A : \lVert \B_A \rVert^2 \le d \}$$
+
+By construction, this is a *closed ball*.
+
+```{r ridgepen, echo=FALSE, message=FALSE, fig.cap="Contours of the error and constraint function for ridge regression"}
+gen_circle <- function(cen = c(0, 0), radius = 1, npoints = 100) {
+  tibble(idx = seq(0, 2 * pi, length.out = npoints)) %>% 
+    mutate_all(.funs = list(x = ~cos(.) + cen[1], y = ~sin(.) + cen[2])) %>% 
+    select(x, y)
+}
+#-----------------------------------
+gen_ellipse <- function(cen = c(0, 0), major = 1, minor = 1, npoints = 100, rot = 0) {
+  polar <- 
+    tibble(idx = seq(0, 2 * pi, length.out = npoints)) %>% 
+    mutate(r = (major * minor) / sqrt((minor * cos(idx))^2 + (major * sin(idx))^2))
+  polar %>% 
+    mutate_at(
+      .vars = vars("idx"),
+      .funs = list(
+        x = ~cos(idx) * r,
+        y = ~sin(idx) * r
+      )
+    ) %>% 
+    mutate(
+      rot_x = cos(rot) * x + sin(rot) * y + cen[1],
+      rot_y = -sin(rot) * x + cos(rot) * y + cen[2]
+    ) %>% 
+    select(x = rot_x, y = rot_y)
+}
+#------------------------------------
+library(foreach)
+elip_dat <-
+  foreach(i = 1:5, major = 1:5, minor = c(.2, .4, .6, .8, 1), .combine = bind_rows) %do% {
+    gen_ellipse(cen = c(6 / sqrt(2), 6 / sqrt(2)), major = major, minor = minor, npoints = 500, rot = - pi / 4) %>% 
+      mutate(cr = paste0("el", i))
+  }
+#-----------------------------------
+elip_label <- 
+  tibble(
+    x = c(sqrt(2) / 2, 6 / sqrt(2)),
+    y = c(sqrt(2) / 2, 6 / sqrt(2)),
+    b = c("hat(beta)[AR]", "hat(beta)[A]"),
+    cr = c("cir", "el1")
+  )
+#-----------------------------------
+gen_circle() %>% 
+  add_column(cr = "cir") %>% 
+  bind_rows(elip_dat) %>% 
+  ggplot(aes(x, y, colour = cr)) +
+  geom_path() +
+  geom_point(
+    data = elip_label,
+    aes(x = x, y = y),
+    size = 3
+  ) +
+  ggrepel::geom_label_repel(
+    data = elip_label,
+    aes(x = x, y = y, label = b, fill = cr),
+    size = 3.5,
+    col = I("white"),
+    segment.colour = I("black"),
+    box.padding = unit(0.35, "lines"),
+    point.padding = unit(0.5, "lines"),
+    inherit.aes = FALSE,
+    parse = TRUE
+  ) +
+  labs(
+    x = expression(beta[1]),
+    y = expression(beta[2])
+  ) +
+  theme(
+    legend.position = "none",
+    axis.ticks = element_blank(),
+    axis.text = element_blank()
+  )
+```
+
+See Figure \@ref(fig:ridgepen). In two dimensional situation, the constraint space, i.e.
+
+$$\Omega_d = \{ \B_A : \beta_1^2 + \beta_2^2 \le d \}$$
+
+the closed ball $\Omega_d$ becomes a circle. It can be shown that OLS $\hb_{A}$ is outside of $\Omega_d$, i.e.
+
+$$\hb_{A} > d$$
+
+Equation \@ref(eq:ridgelagrange) implies that $\hb_{A, R}$ is the minimizer of
+
+$$\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 + k ( \lVert \B_A \rVert^2 - d)$$
+
+Then we have
+
+\begin{equation*}
+  \begin{split}
+    \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 & \ge \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 + k ( \underset{\color{red}{< 0}}{\underline{\lVert \B_A \rVert^2 - d}} ) \\
+    & \ge \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A {\color{blue}{\hb_{A, R}}} \rVert^2 + k ( \lVert {\color{blue}{\hb_{A, R}}} \rVert^2 - d) \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A {\color{blue}{\hb_{A, R}}} \rVert^2
+  \end{split}
+\end{equation*}
+
+Now *claim that* $\lVert \hb_{A} \rVert^2 > d$. Hence from Equation \@ref(eq:dvskappa),
+
+\begin{equation*}
+  \begin{split}
+    d & = \lVert \hb_{A, R} \rVert^2 \\
+    & = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} \\
+    & = \sum_{j = 1}^p \bigg\{ \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg\} (\mathbf{u}_j^T \mathbf{Y})^2 \\
+    & < \sum_{j = 1}^p \bigg\{ \frac{1}{\sigma_j^2} \bigg\} (\mathbf{u}_j^T \mathbf{Y})^2 \quad \leftarrow \text{if}\: \sigma_j \neq 0 \\
+    & = \mathbf{Y}^T U diag\bigg( \frac{1}{\sigma_j^2} \bigg) U^T \mathbf{Y} \\
+    & = \mathbf{Y}^TUD^{-1}V^TVD^{-1}U^T \mathbf{Y} \\
+    & = \hb_{A}^T \hb_{A} \\
+    & = \lVert \hb_{A} \rVert^2
+  \end{split}
+\end{equation*}
+
+Figure \@ref(fig:ridgepen) presents these relationship of OLS and ridge estimator. OLS is optimized outside of the closed ball, ridge constraint. The contours are of OLS error $f(\B_A)$ \@ref(eq:olsfn). These are contours of same RSS values. $\hb_{A}$ makes it the smallest and it locate in the smallest RSS. $\hb_{A, R}$, however, must be in $\Omega_d$, while optimizing $f(\B_A)$ as possible as it can. As a result, $\hb_{A, R}$ *minimizes the penalized RSS at the contact point of the circle and ellipse*.
+
+Think about smaller and smaller $d$. Then we get smaller size of $\hb_{A, R}$. Thus, smaller value of $d$ shrinks $\hb_{A, R}$ toward $\mathbf{0}$. Since it is larger than $0$, it may not be exactly zero.
+
+### Ridge regression in `R`
+
+In general, we use `glmnet` package to fit ridge regression. In fact this implements maximum likelihood, not least squares. `glmnet::glmnet()` can fit a penalization model called *elasticnet* which has both $L_2$ penalty and $L_1$ penalty (of LASSO). The penalty weight is controlled by `alpha = 1`. Here, we use ridge regression, so we should change it to `alpha = 0`. Furthermore, this function does not accept `data.frame` as input. We should give `matrix` to `x` and `y`. In `lambda`, $\kappa$ can be specified.
+
+```{r}
+eeo_mat <- 
+  eeo %>% 
+  scale() %>% 
+  as_tibble() %>% 
+  model.matrix(ACHV ~ .-1, data = .)
+#------------------------------------
+eeo_ridge <- glmnet::glmnet(x = eeo_mat, y = eeo$ACHV, alpha = 0)
+```
+
+`coef(glmnet)` gives a sparse Matrix object `dgCMatrix` which contains ridge estimates for each `lambda`. Rows are variables.
+
+```{r ridgepath, fig.cap="Ridge regression path along $\\log \\kappa$"}
+coef(eeo_ridge) %>% 
+  Matrix::t() %>% 
+  as.matrix() %>% 
+  as_tibble() %>% 
+  add_column(s = eeo_ridge$lambda) %>% 
+  rename_all(.funs = list(~str_remove_all(., pattern = "\\(|\\)"))) %>% # (Intercept) to Intercept
+  gather(-s, key = "coeff", value = "b") %>% 
+  ggplot(aes(x = s, y = b, colour = coeff)) +
+  geom_ref_line(h = 0) +
+  geom_path() +
+  scale_x_log10() +
+  labs(
+    colour = "Variables",
+    x = expression(Log ~ kappa),
+    y = expression(hat(beta)[AR])
+  )
+```
+
+Observe that each coefficient is shrinking as $\kappa$ enlarging in Figure \@ref(fig:ridgepath).
+
+In the above code, I manually made coefficient matrix to draw a plot. Actually, `broom::tidy()` perform this all at once. If `return_zeros =TRUE` is added, zero estimates are also included in the output.
+
+```{r}
+broom::tidy(eeo_ridge, return_zeros = TRUE)
+```
 
 
 

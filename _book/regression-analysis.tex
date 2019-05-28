@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f87b6e22ba8>}
+\CommentTok{#> <bytecode: 0x7ff40af555c0>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -8661,7 +8661,7 @@ where
 
 \begin{itemize}
   \item $\{ \mathbf{u}_1, \ldots, \mathbf{u}_r \}$ is an orthonormal basis for $R(X)$
-  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_n \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
+  \item $\{ \mathbf{u}_{r + 1}, \ldots, \mathbf{u}_{p + 1} \}$ is an orthonormal basis for $N(X^T) = R(X)^{\perp}$
   \item Thus, $U = [ \cdots \mid \cdots ]$ is orthogonal
 \end{itemize}
 
@@ -8937,6 +8937,12 @@ Here, \(U^T \mathbf{Y}\) are the coordinates of \(\mathbf{Y}\) with respect to t
 
 Each \(\mathbf{u_j}\) indicating basis of \(Col(X)\) is a coordinate. In other words, we can think of SVD as another orthogonalization process with QR decomposition in estimating regression model. The fitted value, which is projection onto \(Col(X)\) and \(\hat\theta_j = \mathbf{u}^T \mathbf{Y}\) are corresponding coordinates of \(\mathbf{Y}\). Summing every \(\hat\theta_j\), we can get the fitted value.
 
+Compare this with QR decomposition
+
+\[\hat{\mathbf{Y}} = Q Q^T \mathbf{Y}\]
+
+whose orthonormal basis is \(Q\). Observe that \(Q\) and \(U\) are generally different orthonormal bases for \(Col(X)\) \citep{Hastie:2013aa}.
+
 \hypertarget{principal-component-analysis-1}{%
 \subsection{Principal component analysis}\label{principal-component-analysis-1}}
 
@@ -9063,6 +9069,11 @@ in each step,
 \EndKnitrBlock{proof}
 
 Using Principal axes theorem \ref{thm:pat}, we can understand this covariance PCA better. Recall that a gaussian random variable \(\mathbf{X} \sim MVN(\boldsymbol\mu, \Sigma)\) can be represented by ellipse \(\widetilde{\mathbf{X}}^T \Sigma^{-1} \widetilde{\mathbf{X}} = c^2\).
+
+\begin{verbatim}
+#> Warning: `as_tibble.matrix()` requires a matrix with column names or a `.name_repair` argument. Using compatibility `.name_repair`.
+#> This warning is displayed once per session.
+\end{verbatim}
 
 \begin{figure}[H]
 
@@ -9615,7 +9626,33 @@ Conjecture \ref{cnj:pcrmotif} is just hunch. It is not guaranteed the best perfo
 \hypertarget{ridge-regression}{%
 \section{Ridge Regression}\label{ridge-regression}}
 
-Consider centered input \(\widetilde{\mathbb{X}}_A = \mathbb{X}_{A, \perp}\) facing with multicollinearity. Multicollinearity makes estimation unstable. \textbf{Ridge regression} shrinks unstable variance of coefficient \(\frac{1}{\epsilon}\) to \(\frac{1}{\epsilon + \kappa}\).
+Consider centered input \(\widetilde{\mathbb{X}}_A = \mathbb{X}_{A, \perp}\) facing with multicollinearity. Multicollinearity makes estimation unstable.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(eeo_fit)}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = ACHV ~ ., data = eeo)}
+\CommentTok{#> }
+\CommentTok{#> Residuals:}
+\CommentTok{#>    Min     1Q Median     3Q    Max }
+\CommentTok{#> -5.210 -1.393 -0.295  1.142  4.588 }
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#>             Estimate Std. Error t value Pr(>|t|)}
+\CommentTok{#> (Intercept)   -0.070      0.251   -0.28     0.78}
+\CommentTok{#> FAM            1.101      1.411    0.78     0.44}
+\CommentTok{#> PEER           2.322      1.481    1.57     0.12}
+\CommentTok{#> SCHOOL        -2.281      2.220   -1.03     0.31}
+\CommentTok{#> }
+\CommentTok{#> Residual standard error: 2.07 on 66 degrees of freedom}
+\CommentTok{#> Multiple R-squared:  0.206,  Adjusted R-squared:  0.17 }
+\CommentTok{#> F-statistic: 5.72 on 3 and 66 DF,  p-value: 0.00153}
+\end{Highlighting}
+\end{Shaded}
+
+Look at \texttt{Std.\ Error}. These values of standard error can be thought to be large compared to \texttt{Estimate}. \textbf{Ridge regression} shrinks unstable variance of coefficient \(\frac{1}{\epsilon}\) to \(\frac{1}{\epsilon + \kappa}\).
 
 \hypertarget{original-motivation-of-ridge-regression}{%
 \subsection{Original motivation of ridge regression}\label{original-motivation-of-ridge-regression}}
@@ -9697,7 +9734,10 @@ Note that
 
 Setting it to \(\mathbf{0}\), we obtain normal equation
 
-\[(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I) \boldsymbol{\hat\beta}_{A, R} = \widetilde{\mathbb{X}}_A^T \mathbf{Y}\]
+\begin{equation}
+  (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I) \boldsymbol{\hat\beta}_{A, R} = \widetilde{\mathbb{X}}_A^T \mathbf{Y}
+  \label{eq:ridgenormal}
+\end{equation}
 
 Hence,
 
@@ -9912,7 +9952,10 @@ Following the definitions of \citet{Wade:2017aa}, we first presents the \emph{la
 \BeginKnitrBlock{lemma}[Lagrange Multipliers]
 \protect\hypertarget{lem:lagrang}{}{\label{lem:lagrang} \iffalse (Lagrange Multipliers) \fi{} }Let \(n > p\), \(V\) be open in \(\mathbb{R}^n\), and \(f, g_j: V \rightarrow \mathbb{R}\) be \(\mathcal{C}^1\) on \(V\) for \(j = 1, \ldots, p\). Suppose that
 
-\[\exists \: \mathbf{a} \in V : \quad \frac{\partial (g_1, \ldots, g_p)}{\partial(x_1, \ldots, x_p)}(\mathbf{a}) \neq \mathbf{0}\]
+\begin{equation}
+  \exists \: \mathbf{a} \in V : \quad \frac{\partial (g_1, \ldots, g_p)}{\partial(x_1, \ldots, x_p)}(\mathbf{a}) \neq \mathbf{0}
+  \label{eq:ridgelagrange}
+\end{equation}
 
 If \(f(\mathbf{a})\) is a local extremum of \(f\) subject to the constraints
 
@@ -9922,6 +9965,271 @@ then
 
 \[\exists \: \text{scalars} \: \lambda_1, \ldots, \lambda_p : \quad \triangledown f(\mathbf{a}) + \sum_{j = 1}^p \lambda_j \triangledown g_j(\mathbf{a}) = \mathbf{0}\]
 \EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{definition}[Nested parameter space]
+\protect\hypertarget{def:nestparam}{}{\label{def:nestparam} \iffalse (Nested parameter space) \fi{} }Ivanov regularization is constraint by nested parameter space defined by
+
+\begin{equation*}
+  \begin{split}
+    \Omega_d & := \overline{B_d(\mathbf{0})} \\
+    & = \{ \boldsymbol\beta_A \in \mathbb{R}^p : \lVert \boldsymbol\beta_{A} \rVert^2 \le d \}
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{definition}
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}If \(d_1 < d_2 < \cdots < \infty\), then
+
+\[\Omega_{d_1} \subset \Omega_{d_2} \subset \cdots \subset \Omega_{\infty}\]
+\EndKnitrBlock{remark}
+
+\BeginKnitrBlock{proof}[Equivalence between Ivanov regularization and Tikhonov regularization]
+\iffalse{} {Proof (Equivalence between Ivanov regularization and Tikhonov regularization). } \fi{}Consider Ivanov regularization.
+
+\begin{equation*}
+  \begin{split}
+    \boldsymbol\beta_{A, R} & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 \le d \\
+    & = \argmin_{\boldsymbol\beta_A \in \Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2
+  \end{split}
+\end{equation*}
+
+If \(\boldsymbol\beta_{A, d_1} \in \Omega_d\) and \(\boldsymbol\beta_{A, d_2}\) with \(d_1 < d_2\), then
+
+\[\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_{A, d_1} \rVert^2 \le \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_{A, d_2} \rVert^2\]
+
+by construction. It follows that
+
+\begin{equation}
+  \begin{split}
+    \boldsymbol\beta_{A, R} & = \argmin_{\boldsymbol\beta_A \in {\color{blue}{\partial}}\Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \\
+    & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 {\color{blue}{=}} d
+  \end{split}
+  \label{eq:ivanovbeta}
+\end{equation}
+
+We now have minimization problem with constraint
+
+\[\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 - d = 0\]
+
+From Lagrangian multipliers \ref{lem:lagrang},
+
+\[
+\exists \: k \in \mathbb{R}: \quad \frac{\partial}{\partial \boldsymbol\beta_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + k \frac{\partial}{\partial \boldsymbol\beta_A} (\lVert \boldsymbol\beta_A \rVert^2 - d) = \mathbf{0}
+\]
+
+Then
+
+\[-2 \widetilde{\mathbb{X}}_A^T \mathbf{Y} + 2 \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol\beta_A + 2 k \boldsymbol\beta_A = \mathbf{0}\]
+
+and so
+
+\[(\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + kI)\boldsymbol{\hat\beta}_{A, R} = \widetilde{\mathbb{X}}_A^T \mathbf{Y}\]
+
+which is same as normal equation dervied from Tikhonov regularization. This completes the proof.
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{corollary}
+\protect\hypertarget{cor:ivtik}{}{\label{cor:ivtik} }\(\kappa\) of Tikhonov regualrization and \(d\) of Ivanov regularization have ono-to-one correspondence.
+\EndKnitrBlock{corollary}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}From our previous result, we have
+
+\begin{equation*}
+  \begin{split}
+    \boldsymbol{\hat\beta}_{A, R} & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 \le d \\
+    & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 = d \\
+    & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + \kappa \lVert \boldsymbol\beta_A \rVert^2 \bigg\} \\
+    & = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \mathbf{Y} \\
+    & = V diag\bigg( \frac{\sigma_j}{\sigma_j^2 + \kappa} \bigg) U^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+
+Then
+
+\begin{equation}
+  \lVert \boldsymbol{\hat\beta}_{A} \rVert^2 = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} = d
+  \label{eq:dvskappa}
+\end{equation}
+
+Suppose that \(\kappa_1 \neq \kappa_2\) corresponding to each \(d_1\) and \(d_2\). Then
+
+\begin{equation*}
+  \begin{split}
+    d_1 - d_2 & = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_1)^2} \bigg) U^T \mathbf{Y} - \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_2)^2} \bigg) U^T \mathbf{Y} \\
+    & = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_1)^2} - \frac{\sigma_j^2}{(\sigma_j^2 + \kappa_2)^2} \bigg) U^T \mathbf{Y} \\
+    & = \mathbf{Y}^T UD diag\bigg( \frac{1}{(\sigma_j^2 + \kappa_1)^2} - \frac{1}{(\sigma_j^2 + \kappa_2)^2} \bigg) D U^T \mathbf{Y}
+  \end{split}
+\end{equation*}
+
+Since
+
+\[DU^T \mathbf{Y} = \begin{bmatrix} \sigma_1 \mathbf{u}_1^T \mathbf{Y} & \cdots & \sigma_p \mathbf{u}_p^T \mathbf{Y} \end{bmatrix}\]
+
+and
+
+\[\sigma_j \mathbf{u}_j = \mathbf{z}_j \quad : j\text{-th principal component score}\]
+
+\[d_1 - d_2 = \sum_{j = 1}^p \bigg\{ \frac{1}{(\sigma_j^2 + \kappa_1)^2} - \frac{1}{(\sigma_j^2 + \kappa_2)^2} \bigg\} (\mathbf{z}_j^T \mathbf{Y})^2\]
+
+Assuming that
+
+\[\hat\alpha_j = \mathbf{z}_j^T \mathbf{Y} \neq 0\]
+
+we have
+
+\[d_1 - d_2 \neq 0\]
+
+Hence, \(\kappa\) and \(d\) has one-to-one correspondence.
+\EndKnitrBlock{proof}
+
+Consider the decomposition of sums of squares.
+
+\begin{equation*}
+  \begin{split}
+    \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 & = (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) \\
+    & = \Big(\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A}) - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \Big)^T \Big(\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A}) - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \Big) \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \rVert^2 + (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})^T \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A}) \\
+    & \qquad - (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A})^T \widetilde{\mathbb{X}}_A (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A}) - \widetilde{\mathbb{X}}_A^T (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A}) \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \rVert^2 + (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})^T \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})
+  \end{split}
+\end{equation*}
+
+Write the function of error by
+
+\begin{equation}
+  f(\boldsymbol\beta_A) := (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})^T \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})
+  \label{eq:olsfn}
+\end{equation}
+
+Denote that ridge regression gives a constraint to this error such that
+
+\[\lVert \boldsymbol\beta_A \rVert^2 \le d\]
+
+As in Definition \ref{def:nestparam}, write the constraint region by
+
+\[\Omega_d = \{ \boldsymbol\beta_A : \lVert \boldsymbol\beta_A \rVert^2 \le d \}\]
+
+By construction, this is a \emph{closed ball}.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/ridgepen-1} 
+
+}
+
+\caption{Contours of the error and constraint function for ridge regression}\label{fig:ridgepen}
+\end{figure}
+
+See Figure \ref{fig:ridgepen}. In two dimensional situation, the constraint space, i.e.
+
+\[\Omega_d = \{ \boldsymbol\beta_A : \beta_1^2 + \beta_2^2 \le d \}\]
+
+the closed ball \(\Omega_d\) becomes a circle. It can be shown that OLS \(\boldsymbol{\hat\beta}_{A}\) is outside of \(\Omega_d\), i.e.
+
+\[\boldsymbol{\hat\beta}_{A} > d\]
+
+Equation \eqref{eq:ridgelagrange} implies that \(\boldsymbol{\hat\beta}_{A, R}\) is the minimizer of
+
+\[\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + k ( \lVert \boldsymbol\beta_A \rVert^2 - d)\]
+
+Then we have
+
+\begin{equation*}
+  \begin{split}
+    \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 & \ge \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + k ( \underset{\color{red}{< 0}}{\underline{\lVert \boldsymbol\beta_A \rVert^2 - d}} ) \\
+    & \ge \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A {\color{blue}{\boldsymbol{\hat\beta}_{A, R}}} \rVert^2 + k ( \lVert {\color{blue}{\boldsymbol{\hat\beta}_{A, R}}} \rVert^2 - d) \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A {\color{blue}{\boldsymbol{\hat\beta}_{A, R}}} \rVert^2
+  \end{split}
+\end{equation*}
+
+Now \emph{claim that} \(\lVert \boldsymbol{\hat\beta}_{A} \rVert^2 > d\). Hence from Equation \eqref{eq:dvskappa},
+
+\begin{equation*}
+  \begin{split}
+    d & = \lVert \boldsymbol{\hat\beta}_{A, R} \rVert^2 \\
+    & = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} \\
+    & = \sum_{j = 1}^p \bigg\{ \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg\} (\mathbf{u}_j^T \mathbf{Y})^2 \\
+    & < \sum_{j = 1}^p \bigg\{ \frac{1}{\sigma_j^2} \bigg\} (\mathbf{u}_j^T \mathbf{Y})^2 \quad \leftarrow \text{if}\: \sigma_j \neq 0 \\
+    & = \mathbf{Y}^T U diag\bigg( \frac{1}{\sigma_j^2} \bigg) U^T \mathbf{Y} \\
+    & = \mathbf{Y}^TUD^{-1}V^TVD^{-1}U^T \mathbf{Y} \\
+    & = \boldsymbol{\hat\beta}_{A}^T \boldsymbol{\hat\beta}_{A} \\
+    & = \lVert \boldsymbol{\hat\beta}_{A} \rVert^2
+  \end{split}
+\end{equation*}
+
+Figure \ref{fig:ridgepen} presents these relationship of OLS and ridge estimator. OLS is optimized outside of the closed ball, ridge constraint. The contours are of OLS error \(f(\boldsymbol\beta_A)\) \eqref{eq:olsfn}. These are contours of same RSS values. \(\boldsymbol{\hat\beta}_{A}\) makes it the smallest and it locate in the smallest RSS. \(\boldsymbol{\hat\beta}_{A, R}\), however, must be in \(\Omega_d\), while optimizing \(f(\boldsymbol\beta_A)\) as possible as it can. As a result, \(\boldsymbol{\hat\beta}_{A, R}\) \emph{minimizes the penalized RSS at the contact point of the circle and ellipse}.
+
+Think about smaller and smaller \(d\). Then we get smaller size of \(\boldsymbol{\hat\beta}_{A, R}\). Thus, smaller value of \(d\) shrinks \(\boldsymbol{\hat\beta}_{A, R}\) toward \(\mathbf{0}\). Since it is larger than \(0\), it may not be exactly zero.
+
+\hypertarget{ridge-regression-in-r}{%
+\subsection{\texorpdfstring{Ridge regression in \texttt{R}}{Ridge regression in R}}\label{ridge-regression-in-r}}
+
+In general, we use \texttt{glmnet} package to fit ridge regression. In fact this implements maximum likelihood, not least squares. \texttt{glmnet::glmnet()} can fit a penalization model called \emph{elasticnet} which has both \(L_2\) penalty and \(L_1\) penalty (of LASSO). The penalty weight is controlled by \texttt{alpha\ =\ 1}. Here, we use ridge regression, so we should change it to \texttt{alpha\ =\ 0}. Furthermore, this function does not accept \texttt{data.frame} as input. We should give \texttt{matrix} to \texttt{x} and \texttt{y}. In \texttt{lambda}, \(\kappa\) can be specified.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{eeo_mat <-}\StringTok{ }
+\StringTok{  }\NormalTok{eeo }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{scale}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{model.matrix}\NormalTok{(ACHV }\OperatorTok{~}\StringTok{ }\NormalTok{.}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .)}
+\CommentTok{#------------------------------------}
+\NormalTok{eeo_ridge <-}\StringTok{ }\NormalTok{glmnet}\OperatorTok{::}\KeywordTok{glmnet}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ eeo_mat, }\DataTypeTok{y =}\NormalTok{ eeo}\OperatorTok{$}\NormalTok{ACHV, }\DataTypeTok{alpha =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{coef(glmnet)} gives a sparse Matrix object \texttt{dgCMatrix} which contains ridge estimates for each \texttt{lambda}. Rows are variables.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(eeo_ridge) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{Matrix}\OperatorTok{::}\KeywordTok{t}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as.matrix}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_column}\NormalTok{(}\DataTypeTok{s =}\NormalTok{ eeo_ridge}\OperatorTok{$}\NormalTok{lambda) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_all}\NormalTok{(}\DataTypeTok{.funs =} \KeywordTok{list}\NormalTok{(}\OperatorTok{~}\KeywordTok{str_remove_all}\NormalTok{(., }\DataTypeTok{pattern =} \StringTok{"}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{(|}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{)"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# (Intercept) to Intercept}
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\OperatorTok{-}\NormalTok{s, }\DataTypeTok{key =} \StringTok{"coeff"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"b"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ s, }\DataTypeTok{y =}\NormalTok{ b, }\DataTypeTok{colour =}\NormalTok{ coeff)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_ref_line}\NormalTok{(}\DataTypeTok{h =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_path}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_log10}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{colour =} \StringTok{"Variables"}\NormalTok{,}
+    \DataTypeTok{x =} \KeywordTok{expression}\NormalTok{(Log }\OperatorTok{~}\StringTok{ }\NormalTok{kappa),}
+    \DataTypeTok{y =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{hat}\NormalTok{(beta)[AR])}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/ridgepath-1} 
+
+}
+
+\caption{Ridge regression path along $\log \kappa$}\label{fig:ridgepath}
+\end{figure}
+
+Observe that each coefficient is shrinking as \(\kappa\) enlarging in Figure \ref{fig:ridgepath}.
+
+In the above code, I manually made coefficient matrix to draw a plot. Actually, \texttt{broom::tidy()} perform this all at once. If \texttt{return\_zeros\ =TRUE} is added, zero estimates are also included in the output.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(eeo_ridge, }\DataTypeTok{return_zeros =} \OtherTok{TRUE}\NormalTok{)}
+\CommentTok{#> # A tibble: 400 x 5}
+\CommentTok{#>   term         step estimate lambda dev.ratio}
+\CommentTok{#>   <chr>       <dbl>    <dbl>  <dbl>     <dbl>}
+\CommentTok{#> 1 (Intercept)     1 1.92e- 2   992.  1.10e-36}
+\CommentTok{#> 2 FAM             1 9.63e-37   992.  1.10e-36}
+\CommentTok{#> 3 PEER            1 1.01e-36   992.  1.10e-36}
+\CommentTok{#> 4 SCHOOL          1 9.60e-37   992.  1.10e-36}
+\CommentTok{#> 5 (Intercept)     2 1.92e- 2   904.  2.69e- 3}
+\CommentTok{#> 6 FAM             2 2.36e- 3   904.  2.69e- 3}
+\CommentTok{#> # ... with 394 more rows}
+\end{Highlighting}
+\end{Shaded}
 
 \bibliography{book.bib,packages.bib}
 
