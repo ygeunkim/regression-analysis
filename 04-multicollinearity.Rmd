@@ -946,13 +946,15 @@ mvn_ellip <-
   as_tibble()
 mvn_p <- eigen(sig_exm)$vectors
 mvn_lam <- diag(eigen(sig_exm)$values)
+dimnames(mvn_p) <- list(c("x", "y"), c("x", "y"))
+dimnames(mvn_lam) <- list(c("x", "y"), c("x", "y"))
 #------------
 mvn_ellip %>% 
   ggplot(aes(x, y)) +
   geom_path() +
   geom_segment(
     data = mvn_p %>% t() %>% as_tibble(),
-    aes(x = 0, y = 0, xend = V1, yend = V2),
+    aes(x = 0, y = 0, xend = x, yend = y),
     arrow = arrow(length = unit(.1, "inches"))
   ) +
   labs(
@@ -981,7 +983,7 @@ $$V^T \widetilde{\mathbf{X}}$$
 mvn_pca <- 
   as.matrix(mvn_ellip) %*% mvn_p %>% 
   as_tibble() %>% 
-  rename(x = V1, y = V2) %>% 
+  rename(x = x, y = y) %>% 
   mutate(pca = TRUE)
 mvn_ellip %>% 
   mutate(pca = FALSE) %>% 
@@ -990,14 +992,14 @@ mvn_ellip %>%
   geom_path() +
   geom_segment(
     data = mvn_p %>% t() %>% as_tibble(),
-    aes(x = 0, y = 0, xend = V1, yend = V2),
+    aes(x = 0, y = 0, xend = x, yend = y),
     arrow = arrow(length = unit(.1, "inches")),
     inherit.aes = FALSE,
     col = gg_hcl(1)
   ) +
   geom_segment(
     data = mvn_lam %>% t() %>% as_tibble(),
-    aes(x = 0, y = 0, xend = V1, yend = V2),
+    aes(x = 0, y = 0, xend = x, yend = y),
     arrow = arrow(length = unit(.1, "inches")),
     inherit.aes = FALSE,
     col = gg_hcl(2)[2]
