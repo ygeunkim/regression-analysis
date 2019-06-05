@@ -1597,7 +1597,7 @@ Ridge estimator shrinks OLS estimator.
 \begin{itemize}
   \item $\hb_{A} = V diag\Big( \frac{1}{\sigma_j} \Big) U^T \mathbf{Y}$
   \item $\hb_{A, R} = V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \mathbf{Y}$
-\end{itemzie}
+\end{itemize}
 ```
 
 The difference between the two is $\kappa$ in denominator. Look at OLS. As mentioned, if $\sigma_j = 0$, we cannot get a unique solution. On the other hand, ridge solution adds $\kappa > 0$, so $\frac{1}{\sigma_j^2 + \kappa} < \infty$ is certified. Also, if
@@ -1857,7 +1857,7 @@ From our previous result, we have
 Then
 
 \begin{equation}
-  \lVert \hb_{A} \rVert^2 = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} = d
+  \lVert \hb_{A, R} \rVert^2 = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} = d
   (\#eq:dvskappa)
 \end{equation}
 
@@ -2062,6 +2062,7 @@ coef(eeo_ridge) %>%
   as_tibble() %>% 
   add_column(s = eeo_ridge$lambda) %>% 
   rename_all(.funs = list(~str_remove_all(., pattern = "\\(|\\)"))) %>% # (Intercept) to Intercept
+  select(-Intercept) %>% # Intercept = average of y
   gather(-s, key = "coeff", value = "b") %>% 
   ggplot(aes(x = s, y = b, colour = coeff)) +
   geom_ref_line(h = 0) +

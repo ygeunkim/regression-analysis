@@ -1,0 +1,201 @@
+# Variable Selection {#sel}
+
+## Motivation of Variable Selection
+
+Large number of variables causes problem. Extremely, consider
+
+$$n < p$$
+
+Then we have
+
+$$rank(X) \le n$$
+
+In this case, $(X^T X)^{-1}$ does not exist and OLS becomes to have no unique solution. This situation gives us
+
+$$Var \hb \rightarrow \infty$$
+
+### Full model
+
+Subsetting variables among moderate number of variables gives similar result. Assume that true regression model of no intercept with two covariates $X_1$ and $X_2$ for the data $\{ (x_{i1}, x_{i2}, Y_i) : i = 1, \ldots, n \}$
+
+\begin{equation}
+  Y_i = \beta_1 x_{i1} + \beta_2 x_{i2} + \epsilon_i
+  (\#eq:truefull)
+\end{equation}
+
+For simplicity, let the model satisfy that
+
+$$\sum_i x_{i1} = \sum_i x_{i2} = 0 \quad \text{and} \quad \sum_i x_{i1}^2 = \sum_i x_{i2}^2 = 1$$
+
+i.e. *inputs are centered* and $s_{11} = s_{22} = 1$. In the full model \@ref(eq:truefull), LSE $\hb_{F} = (\hat\beta_{F,1}, \hat\beta_{F, 2})^T$ is
+
+$$\hb_{F} = (X^T X)^{-1} X^T \mathbf{Y}$$
+
+with design matrix $X$ of the model. Denote that by the condition,
+
+$$X \perp \mathbf{1}$$
+
+Equation \@ref(eq:sjjr) implies that for each $j = 1, 2$
+
+$$\mathbf{x}_1^T \mathbf{x}_1 = 1 - R_j^2$$
+
+and that
+
+\begin{equation}
+  \begin{split}
+    Var(\hat\beta_{F,j}) & = \frac{\sigma^2}{1 - R_j^2} \\
+    & = \frac{\sigma^2}{1 - r_{12}^2}
+  \end{split}
+  (\#eq:fullbetavar)
+\end{equation}
+
+with $r_{12}$ is sample correlation coefficient. Furthermore, each coefficient estimate is unbiased.
+
+$$E(\hb_{F}) = (X^T X)^{-1} X^T X \B_{F} = \B_{F}$$
+
+### Subset model
+
+Now consider the subset model using only $x_{i1}$.
+
+\begin{equation}
+  Y_i = \beta_1 x_{i1} + \epsilon_i
+  (\#eq:truefull2)
+\end{equation}
+
+By solving normal equation, OLS gives estimate for $\beta_1$
+
+$$\hat\beta_{S, 1} = \sum_{i = 1}^n x_{i1} Y_i$$
+
+Recall that our true model is Full model \@ref(eq:truefull). Then
+
+\begin{equation}
+  \begin{split}
+    E(\hat\beta_{S, 1}) & = \sum_i x_{i1} E(Y_i) \\
+    & = \sum_i x_{i1} (\beta_1 x_{i1} + \beta_2 x_{i2}) \\
+    & = \beta_1 + r_{12} \beta_2 \quad \because \text{assumption for inputs} \\
+    & \neq \beta_1
+  \end{split}
+  (\#eq:subsetbiased)
+\end{equation}
+
+i.e. $\hat\beta_{S,1}$ is *biased*. Additionally,
+
+\begin{equation}
+  Var(\hat\beta_{S,1}) = \sum_i x_{i1}^2 \sigma^2 = \sigma^2
+  (\#eq:subsetvariance)
+\end{equation}
+
+### Comparison
+
+Now compare two different estimators of $\beta_1$ from the full and the subset models. Compute *mean squared error* (MSE). The following lemma about variance and bias can be used here.
+
+```{lemma, bvtd, name = "Bias-variance trade-off"}
+For any estimator $\hat\beta$ for $\beta$,
+
+$$
+\begin{aligned}
+  MSE(\hat\beta) & = \Big( E\hat\beta - \beta \Big)^2 + E(\hat\beta - E\hat\beta)^2 \\
+  & = bias(\hat\beta)^2 + Var(\hat\beta)
+\end{aligned}
+$$
+```
+
+```{proof}
+Plus and minus $E\hat\beta$.
+
+\begin{equation}
+  \begin{split}
+    MSE (\hat\beta) & = E (\hat\beta - \beta)^2 \\
+    & = E (\hat\beta - E\hat\beta + E\hat\beta - \beta )^2 \\
+    & = E \Big[ \underset{\text{r.v.}}{\underline{( \hat\beta - E\hat\beta )^2}} + (E\hat\beta - \beta )^2 + 2 \underset{\text{r.v.}}{\underline{( \hat\beta - E\hat\beta )}} (E\hat\beta - \beta ) \Big] \\
+    & = E(\hat\beta - E\hat\beta)^2 + (E\hat\beta - \beta)^2 + 2 (E\hat\beta - \beta ) \underset{= 0}{\underline{(E\hat\beta - E\hat\beta)}} \\
+    & = Var(\hat\beta) + bias(\hat\beta)^2
+  \end{split}
+\end{equation}
+```
+
+We now apply this lemma to each model. Note that $\hat\beta_{F,1}$ of the full model \@ref(eq:truefull) is unbiased, i.e.
+
+$$E\hat\beta_{F,1} = \beta_1$$
+
+Then from Equation \@ref(eq:fullbetavar),
+
+\begin{equation}
+  \begin{split}
+    MSE(\hat\beta_{F,1}) & = Var(\hat\beta_{F,1}) \\
+    & = \frac{\sigma^2}{1 - r_{12}^2}
+  \end{split}
+  (\#eq:truefullmse)
+\end{equation}
+
+On the other hand, $\hat\beta_{S, 1}$ of the subset model \@ref(eq:truefull2) is biased. Then from Equations \@ref(eq:subsetbiased) and \@ref(eq:subsetvariance),
+
+\begin{equation}
+  \begin{split}
+    MSE(\hat\beta_{S,1}) & = Var(\hat\beta_{S,1}) + \Big( E\hat\beta_{S,1} - \beta_1 \Big)^2 \\
+    & = \sigma^2 + (r_{12} \beta_2)^2
+  \end{split}
+  (\#eq:truefullmse2)
+\end{equation}
+
+The less $MSE$ is, the better. If
+
+\begin{equation}
+  1 + \frac{\lvert \beta_2 \rvert}{\sigma} < \frac{1}{\sqrt{1 - r_{12}^2}}
+  (\#eq:fullmsecomp)
+\end{equation}
+
+then the subset model will estimate more precisely. Note that
+
+$$\frac{1}{\sqrt{1 - r_{12}^2}} > 1$$
+
+```{remark}
+We can divide in two case for $\beta_2$.
+
+\begin{enumerate}
+  \item If $\lvert \beta_2 \rvert = 0$, then the subset model is understood as the true model so that it is preferred.
+  \item Even if $\beta_2 \neq 0$, $r_{12}^2 \approx 1$ (multicollinearity) results in the superiority of the subset model over the full model.
+\end{enumerate}
+```
+
+Sometimes we try to remove some variables. If the $\beta_j$s and $\sigma^2$ were known, deletion of variables with small $\lvert \beta_j \rvert$ compared to $\sigma$, i.e. $\frac{\lvert \beta_j \rvert}{\sigma}$ would be desirable.
+
+
+## Criteria for Selecting Subsets {#modsel}
+
+From now on, we subset variables using various criteria. This requires procedures deciding if subset is better than another, and some criteria are implemented. This is often called **model selection**. These criteria helps to choose the optimal subset size.
+
+A general approach is to implement assumed Gaussian likelihood [@Hastie:2013aa].
+
+$$\text{likelihood} + \text{penalty for the number of parameters}$$
+
+The following correspond to likelihood term.
+
+```{remark}
+Likelihood means training error based on normal distribution error.
+
+\begin{itemize}
+  \item Coefficient of determination $R^2 := \frac{SSR}{SST} = 1 - \frac{SSE}{SST}$
+  \item Residual sum of squares $SSE := \sum (y_i - \hat{y}_i)^2$
+  \item Deviance $-2 l(\hb, \hat\sigma^2)$
+\end{itemize}
+```
+
+### Adjusted $R^2$
+
+First consider $R^2$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

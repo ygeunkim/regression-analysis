@@ -6,7 +6,9 @@ rmd_files: [
   "01-intro.rmd",
   "02-multiple.rmd",
   "03-diagnostics.rmd",
-  "04-multicollinearity.rmd"
+  "04-multicollinearity.rmd",
+  "05-sel.rmd",
+  "06-lasso.rmd"
 ]
 before_chapter_script: "_common.R"
 language:

@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{28 May, 2019}
+    \date{06 Jun, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fe30e8c4308>}
+\CommentTok{#> <bytecode: 0x7fcb562fe4d8>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -9767,16 +9767,10 @@ Compare this to OLS \eqref{eq:svdlse}.
 \BeginKnitrBlock{remark}[Regression coefficents via SVD]
 \iffalse{} {Remark (Regression coefficents via SVD). } \fi{}Ridge estimator shrinks OLS estimator.
 
-\textbackslash begin\{itemize\}
-
-\item
-
-\(\boldsymbol{\hat\beta}_{A} = V diag\Big( \frac{1}{\sigma_j} \Big) U^T \mathbf{Y}\)
-
-\item
-
-\(\boldsymbol{\hat\beta}_{A, R} = V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \mathbf{Y}\)
-\textbackslash end\{itemzie\}
+\begin{itemize}
+  \item $\boldsymbol{\hat\beta}_{A} = V diag\Big( \frac{1}{\sigma_j} \Big) U^T \mathbf{Y}$
+  \item $\boldsymbol{\hat\beta}_{A, R} = V diag\Big( \frac{\sigma_j}{\sigma_j^2 + \kappa} \Big) U^T \mathbf{Y}$
+\end{itemize}
 \EndKnitrBlock{remark}
 
 The difference between the two is \(\kappa\) in denominator. Look at OLS. As mentioned, if \(\sigma_j = 0\), we cannot get a unique solution. On the other hand, ridge solution adds \(\kappa > 0\), so \(\frac{1}{\sigma_j^2 + \kappa} < \infty\) is certified. Also, if
@@ -10043,7 +10037,7 @@ which is same as normal equation dervied from Tikhonov regularization. This comp
 Then
 
 \begin{equation}
-  \lVert \boldsymbol{\hat\beta}_{A} \rVert^2 = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} = d
+  \lVert \boldsymbol{\hat\beta}_{A, R} \rVert^2 = \mathbf{Y}^T U diag\bigg( \frac{\sigma_j^2}{(\sigma_j^2 + \kappa)^2} \bigg) U^T \mathbf{Y} = d
   \label{eq:dvskappa}
 \end{equation}
 
@@ -10184,6 +10178,7 @@ In general, we use \texttt{glmnet} package to fit ridge regression. In fact this
 \StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{add_column}\NormalTok{(}\DataTypeTok{s =}\NormalTok{ eeo_ridge}\OperatorTok{$}\NormalTok{lambda) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{rename_all}\NormalTok{(}\DataTypeTok{.funs =} \KeywordTok{list}\NormalTok{(}\OperatorTok{~}\KeywordTok{str_remove_all}\NormalTok{(., }\DataTypeTok{pattern =} \StringTok{"}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{(|}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{)"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# (Intercept) to Intercept}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{Intercept) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# Intercept = average of y}
 \StringTok{  }\KeywordTok{gather}\NormalTok{(}\OperatorTok{-}\NormalTok{s, }\DataTypeTok{key =} \StringTok{"coeff"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"b"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ s, }\DataTypeTok{y =}\NormalTok{ b, }\DataTypeTok{colour =}\NormalTok{ coeff)) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_ref_line}\NormalTok{(}\DataTypeTok{h =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
@@ -10225,6 +10220,202 @@ In the above code, I manually made coefficient matrix to draw a plot. Actually, 
 \CommentTok{#> # ... with 394 more rows}
 \end{Highlighting}
 \end{Shaded}
+
+\hypertarget{sel}{%
+\chapter{Variable Selection}\label{sel}}
+
+\hypertarget{motivation-of-variable-selection}{%
+\section{Motivation of Variable Selection}\label{motivation-of-variable-selection}}
+
+Large number of variables causes problem. Extremely, consider
+
+\[n < p\]
+
+Then we have
+
+\[rank(X) \le n\]
+
+In this case, \((X^T X)^{-1}\) does not exist and OLS becomes to have no unique solution. This situation gives us
+
+\[Var \boldsymbol{\hat\beta}\rightarrow \infty\]
+
+\hypertarget{full-model}{%
+\subsection{Full model}\label{full-model}}
+
+Subsetting variables among moderate number of variables gives similar result. Assume that true regression model of no intercept with two covariates \(X_1\) and \(X_2\) for the data \(\{ (x_{i1}, x_{i2}, Y_i) : i = 1, \ldots, n \}\)
+
+\begin{equation}
+  Y_i = \beta_1 x_{i1} + \beta_2 x_{i2} + \epsilon_i
+  \label{eq:truefull}
+\end{equation}
+
+For simplicity, let the model satisfy that
+
+\[\sum_i x_{i1} = \sum_i x_{i2} = 0 \quad \text{and} \quad \sum_i x_{i1}^2 = \sum_i x_{i2}^2 = 1\]
+
+i.e.~\emph{inputs are centered} and \(s_{11} = s_{22} = 1\). In the full model \eqref{eq:truefull}, LSE \(\boldsymbol{\hat\beta}_{F} = (\hat\beta_{F,1}, \hat\beta_{F, 2})^T\) is
+
+\[\boldsymbol{\hat\beta}_{F} = (X^T X)^{-1} X^T \mathbf{Y}\]
+
+with design matrix \(X\) of the model. Denote that by the condition,
+
+\[X \perp \mathbf{1}\]
+
+Equation \eqref{eq:sjjr} implies that for each \(j = 1, 2\)
+
+\[\mathbf{x}_1^T \mathbf{x}_1 = 1 - R_j^2\]
+
+and that
+
+\begin{equation}
+  \begin{split}
+    Var(\hat\beta_{F,j}) & = \frac{\sigma^2}{1 - R_j^2} \\
+    & = \frac{\sigma^2}{1 - r_{12}^2}
+  \end{split}
+  \label{eq:fullbetavar}
+\end{equation}
+
+with \(r_{12}\) is sample correlation coefficient. Furthermore, each coefficient estimate is unbiased.
+
+\[E(\boldsymbol{\hat\beta}_{F}) = (X^T X)^{-1} X^T X \boldsymbol\beta_{F} = \boldsymbol\beta_{F}\]
+
+\hypertarget{subset-model}{%
+\subsection{Subset model}\label{subset-model}}
+
+Now consider the subset model using only \(x_{i1}\).
+
+\begin{equation}
+  Y_i = \beta_1 x_{i1} + \epsilon_i
+  \label{eq:truefull2}
+\end{equation}
+
+By solving normal equation, OLS gives estimate for \(\beta_1\)
+
+\[\hat\beta_{S, 1} = \sum_{i = 1}^n x_{i1} Y_i\]
+
+Recall that our true model is Full model \eqref{eq:truefull}. Then
+
+\begin{equation}
+  \begin{split}
+    E(\hat\beta_{S, 1}) & = \sum_i x_{i1} E(Y_i) \\
+    & = \sum_i x_{i1} (\beta_1 x_{i1} + \beta_2 x_{i2}) \\
+    & = \beta_1 + r_{12} \beta_2 \quad \because \text{assumption for inputs} \\
+    & \neq \beta_1
+  \end{split}
+  \label{eq:subsetbiased}
+\end{equation}
+
+i.e.~\(\hat\beta_{S,1}\) is \emph{biased}. Additionally,
+
+\begin{equation}
+  Var(\hat\beta_{S,1}) = \sum_i x_{i1}^2 \sigma^2 = \sigma^2
+  \label{eq:subsetvariance}
+\end{equation}
+
+\hypertarget{comparison}{%
+\subsection{Comparison}\label{comparison}}
+
+Now compare two different estimators of \(\beta_1\) from the full and the subset models. Compute \emph{mean squared error} (MSE). The following lemma about variance and bias can be used here.
+
+\BeginKnitrBlock{lemma}[Bias-variance trade-off]
+\protect\hypertarget{lem:bvtd}{}{\label{lem:bvtd} \iffalse (Bias-variance trade-off) \fi{} }For any estimator \(\hat\beta\) for \(\beta\),
+
+\[
+\begin{aligned}
+  MSE(\hat\beta) & = \Big( E\hat\beta - \beta \Big)^2 + E(\hat\beta - E\hat\beta)^2 \\
+  & = bias(\hat\beta)^2 + Var(\hat\beta)
+\end{aligned}
+\]
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Plus and minus \(E\hat\beta\).
+
+\begin{equation}
+  \begin{split}
+    MSE (\hat\beta) & = E (\hat\beta - \beta)^2 \\
+    & = E (\hat\beta - E\hat\beta + E\hat\beta - \beta )^2 \\
+    & = E \Big[ \underset{\text{r.v.}}{\underline{( \hat\beta - E\hat\beta )^2}} + (E\hat\beta - \beta )^2 + 2 \underset{\text{r.v.}}{\underline{( \hat\beta - E\hat\beta )}} (E\hat\beta - \beta ) \Big] \\
+    & = E(\hat\beta - E\hat\beta)^2 + (E\hat\beta - \beta)^2 + 2 (E\hat\beta - \beta ) \underset{= 0}{\underline{(E\hat\beta - E\hat\beta)}} \\
+    & = Var(\hat\beta) + bias(\hat\beta)^2
+  \end{split}
+\end{equation}
+\EndKnitrBlock{proof}
+
+We now apply this lemma to each model. Note that \(\hat\beta_{F,1}\) of the full model \eqref{eq:truefull} is unbiased, i.e.
+
+\[E\hat\beta_{F,1} = \beta_1\]
+
+Then from Equation \eqref{eq:fullbetavar},
+
+\begin{equation}
+  \begin{split}
+    MSE(\hat\beta_{F,1}) & = Var(\hat\beta_{F,1}) \\
+    & = \frac{\sigma^2}{1 - r_{12}^2}
+  \end{split}
+  \label{eq:truefullmse}
+\end{equation}
+
+On the other hand, \(\hat\beta_{S, 1}\) of the subset model \eqref{eq:truefull2} is biased. Then from Equations \eqref{eq:subsetbiased} and \eqref{eq:subsetvariance},
+
+\begin{equation}
+  \begin{split}
+    MSE(\hat\beta_{S,1}) & = Var(\hat\beta_{S,1}) + \Big( E\hat\beta_{S,1} - \beta_1 \Big)^2 \\
+    & = \sigma^2 + (r_{12} \beta_2)^2
+  \end{split}
+  \label{eq:truefullmse2}
+\end{equation}
+
+The less \(MSE\) is, the better. If
+
+\begin{equation}
+  1 + \frac{\lvert \beta_2 \rvert}{\sigma} < \frac{1}{\sqrt{1 - r_{12}^2}}
+  \label{eq:fullmsecomp}
+\end{equation}
+
+then the subset model will estimate more precisely. Note that
+
+\[\frac{1}{\sqrt{1 - r_{12}^2}} > 1\]
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}We can divide in two case for \(\beta_2\).
+
+\begin{enumerate}
+  \item If $\lvert \beta_2 \rvert = 0$, then the subset model is understood as the true model so that it is preferred.
+  \item Even if $\beta_2 \neq 0$, $r_{12}^2 \approx 1$ (multicollinearity) results in the superiority of the subset model over the full model.
+\end{enumerate}
+\EndKnitrBlock{remark}
+
+Sometimes we try to remove some variables. If the \(\beta_j\)s and \(\sigma^2\) were known, deletion of variables with small \(\lvert \beta_j \rvert\) compared to \(\sigma\), i.e.~\(\frac{\lvert \beta_j \rvert}{\sigma}\) would be desirable.
+
+\hypertarget{modsel}{%
+\section{Criteria for Selecting Subsets}\label{modsel}}
+
+From now on, we subset variables using various criteria. This requires procedures deciding if subset is better than another, and some criteria are implemented. This is often called \textbf{model selection}. These criteria helps to choose the optimal subset size.
+
+A general approach is to implement assumed Gaussian likelihood \citep{Hastie:2013aa}.
+
+\[\text{likelihood} + \text{penalty for the number of parameters}\]
+
+The following correspond to likelihood term.
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}Likelihood means training error based on normal distribution error.
+
+\begin{itemize}
+  \item Coefficient of determination $R^2 := \frac{SSR}{SST} = 1 - \frac{SSE}{SST}$
+  \item Residual sum of squares $SSE := \sum (y_i - \hat{y}_i)^2$
+  \item Deviance $-2 l(\boldsymbol{\hat\beta}, \hat\sigma^2)$
+\end{itemize}
+\EndKnitrBlock{remark}
+
+\hypertarget{adjusted-r2}{%
+\subsection{\texorpdfstring{Adjusted \(R^2\)}{Adjusted R\^{}2}}\label{adjusted-r2}}
+
+First consider \(R^2\).
+
+\hypertarget{the-lasso}{%
+\chapter{The LASSO}\label{the-lasso}}
 
 \bibliography{book.bib,packages.bib}
 
