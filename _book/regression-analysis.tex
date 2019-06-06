@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fcb562fe4d8>}
+\CommentTok{#> <bytecode: 0x7fd56104e390>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -10409,10 +10409,315 @@ The following correspond to likelihood term.
 \end{itemize}
 \EndKnitrBlock{remark}
 
+As the numerber of parameters grows, each error
+
+\begin{itemize}
+\tightlist
+\item
+  \(1 - R^2\)
+\item
+  \(SSE\)
+\item
+  \(-2 l(\boldsymbol{\hat\beta}, \hat\sigma^2)\)
+\end{itemize}
+
+becomes smaller, i.e.~we can regard the model better than before. However, previous section has shown that this is not the case, so we add or multiply a penalty for the number.
+
+The following is the example dataset from \citet{Chatterjee:2015aa}. The reference had studied relation between total mortality (\texttt{MORT}) and climate, socioeconomic, and pollution variables (other 15 predictors). Response is total age-adjusted mortality from all causes. There are quite many predictors.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(death <-}\StringTok{ }\NormalTok{bestglm}\OperatorTok{::}\NormalTok{mcdonald }\OperatorTok{%>%}\StringTok{ }\KeywordTok{as_tibble}\NormalTok{())}
+\CommentTok{#> # A tibble: 60 x 16}
+\CommentTok{#>    PREC  JANT  JULT OVR65  POPN  EDUC  HOUS  DENS  NONW WWDRK  POOR    HC}
+\CommentTok{#>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>}
+\CommentTok{#> 1    36    27    71   8.1  3.34  11.4  81.5  3243   8.8  42.6  11.7    21}
+\CommentTok{#> 2    35    23    72  11.1  3.14  11    78.8  4281   3.5  50.7  14.4     8}
+\CommentTok{#> 3    44    29    74  10.4  3.21   9.8  81.6  4260   0.8  39.4  12.4     6}
+\CommentTok{#> 4    47    45    79   6.5  3.41  11.1  77.5  3125  27.1  50.2  20.6    18}
+\CommentTok{#> 5    43    35    77   7.6  3.44   9.6  84.6  6441  24.4  43.7  14.3    43}
+\CommentTok{#> 6    53    45    80   7.7  3.45  10.2  66.8  3325  38.5  43.1  25.5    30}
+\CommentTok{#> # ... with 54 more rows, and 4 more variables: NOX <dbl>, SOx <dbl>,}
+\CommentTok{#> #   HUMID <dbl>, MORT <dbl>}
+\end{Highlighting}
+\end{Shaded}
+
+For each predictor, see the below description. 60 observations indicate 60 SMSAs.
+
+\begin{longtable}[]{@{}cc@{}}
+\toprule
+predictors & description\tabularnewline
+\midrule
+\endhead
+\texttt{PREC} & mean annual precipitation, in inches\tabularnewline
+\texttt{JANT} & mean January temperature, degrees Farenheit\tabularnewline
+\texttt{JULT} & mean July temperature, degrees Fareheit\tabularnewline
+\texttt{OVR65} & percent of population aged 65 or older than 65\tabularnewline
+\texttt{POPN} & population per household\tabularnewline
+\texttt{EDUC} & median school years completed\tabularnewline
+\texttt{HOUS} & percent of housing units that are sound\tabularnewline
+\texttt{DENS} & population per square mile\tabularnewline
+\texttt{NONW} & percent of non-white population\tabularnewline
+\texttt{WWDRK} & percent employment of white-collor job\tabularnewline
+\texttt{POOR} & percent of families with income less than \$3000\tabularnewline
+\texttt{HC} & relative pollution potential of hydrocarbon\tabularnewline
+\texttt{NOX} & of nitric oxides\tabularnewline
+\texttt{SOx} & of sulphur dioxide\tabularnewline
+\texttt{HUMID} & percent relative humidity\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(death_fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(MORT }\OperatorTok{~}\StringTok{ }\NormalTok{., }\DataTypeTok{data =}\NormalTok{ death)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summary}\NormalTok{()}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = MORT ~ ., data = death)}
+\CommentTok{#> }
+\CommentTok{#> Residuals:}
+\CommentTok{#>    Min     1Q Median     3Q    Max }
+\CommentTok{#> -68.07 -18.02   0.91  19.22  86.96 }
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#>              Estimate Std. Error t value Pr(>|t|)    }
+\CommentTok{#> (Intercept)  1.76e+03   4.37e+02    4.03  0.00022 ***}
+\CommentTok{#> PREC         1.91e+00   9.24e-01    2.06  0.04507 *  }
+\CommentTok{#> JANT        -1.94e+00   1.11e+00   -1.75  0.08741 .  }
+\CommentTok{#> JULT        -3.10e+00   1.90e+00   -1.63  0.11016    }
+\CommentTok{#> OVR65       -9.07e+00   8.49e+00   -1.07  0.29123    }
+\CommentTok{#> POPN        -1.07e+02   6.98e+01   -1.53  0.13295    }
+\CommentTok{#> EDUC        -1.72e+01   1.19e+01   -1.45  0.15508    }
+\CommentTok{#> HOUS        -6.51e-01   1.77e+00   -0.37  0.71439    }
+\CommentTok{#> DENS         3.60e-03   4.03e-03    0.89  0.37615    }
+\CommentTok{#> NONW         4.46e+00   1.33e+00    3.36  0.00162 ** }
+\CommentTok{#> WWDRK       -1.87e-01   1.66e+00   -0.11  0.91088    }
+\CommentTok{#> POOR        -1.68e-01   3.23e+00   -0.05  0.95881    }
+\CommentTok{#> HC          -6.72e-01   4.91e-01   -1.37  0.17799    }
+\CommentTok{#> NOX          1.34e+00   1.01e+00    1.33  0.18951    }
+\CommentTok{#> SOx          8.62e-02   1.48e-01    0.58  0.56175    }
+\CommentTok{#> HUMID        1.07e-01   1.17e+00    0.09  0.92764    }
+\CommentTok{#> ---}
+\CommentTok{#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
+\CommentTok{#> }
+\CommentTok{#> Residual standard error: 34.9 on 44 degrees of freedom}
+\CommentTok{#> Multiple R-squared:  0.765,  Adjusted R-squared:  0.685 }
+\CommentTok{#> F-statistic: 9.54 on 15 and 44 DF,  p-value: 2.19e-09}
+\end{Highlighting}
+\end{Shaded}
+
+As we can see, some standard errors are very large.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{car}\OperatorTok{::}\KeywordTok{vif}\NormalTok{(death_fit)}
+\CommentTok{#>   PREC   JANT   JULT  OVR65   POPN   EDUC   HOUS   DENS   NONW  WWDRK }
+\CommentTok{#>   4.11   6.14   3.97   7.47   4.31   4.86   3.99   1.66   6.78   2.84 }
+\CommentTok{#>   POOR     HC    NOX    SOx  HUMID }
+\CommentTok{#>   8.72  98.64 104.98   4.23   1.91}
+\end{Highlighting}
+\end{Shaded}
+
+We can observe multicollinearity by \(VIF_j > 1\).
+
 \hypertarget{adjusted-r2}{%
 \subsection{\texorpdfstring{Adjusted \(R^2\)}{Adjusted R\^{}2}}\label{adjusted-r2}}
 
-First consider \(R^2\).
+First consider \(R^2 = \frac{SSR}{SST}\). Denote that this is \emph{nondecreasing as a new predictor enters the model}. It it just matter of how it increases.
+
+We want to select a subset \(S\) of the index set \(\{ 1, \ldots p \}\). Write \(\lvert S \rvert\) as the cardinality of the set and set \(q\) by the number of regression coeffcients.
+
+\[q := \lvert S \rvert + 1\]
+
+Let \(SSE(S)\) and \(R^2 (S)\) be residual sum of squares and coefficient of determination corresponding to the model \(Y\) regressed on \(\{ x_j : j \in S \}\) including intercept term. Recall that
+
+\[R^2(S) = \frac{SSR(S)}{SST} = 1 - \frac{SSE(S)}{SST}\]
+
+Just compute adjusted \(R^2\) for this \(S\) using Definition \ref{def:ra}.
+
+\BeginKnitrBlock{definition}[Adjusted $R^2$]
+\protect\hypertarget{def:adjr2}{}{\label{def:adjr2} \iffalse (Adjusted \(R^2\)) \fi{} }Let \(S\) be a subset of variables and let \(R^2\) be corresponding \(R^2\). Then the adjusted \(R^2\) for \(S\) is
+
+\[R_a^2(S) := 1 - \bigg( \frac{n - 1}{n - q} \bigg) (1 - R^2(S)) = 1 - \frac{SSE / (n - q)}{SST / (n - 1)}\]
+\EndKnitrBlock{definition}
+
+Different with \(R^2(S)\), \(R_a^2(S)\) increases and decreases at some point as \(\lvert S \rvert\) increases. The point that maximizes \(R_a^2(S)\) can be said to be an optimal subset.
+
+\BeginKnitrBlock{conjecture}[Optimal number of variables w.r.t. $R_a^2(S)$]
+\protect\hypertarget{cnj:raopt}{}{\label{cnj:raopt} \iffalse (Optimal number of variables w.r.t. \(R_a^2(S)\)) \fi{} }Choose \(S\) that maximizes \(R_a^2(S)\).
+\EndKnitrBlock{conjecture}
+
+\hypertarget{residual-mean-square}{%
+\subsection{Residual mean square}\label{residual-mean-square}}
+
+Residual mean square \(MSE(S)\) is related to \(R_a^2(S)\).
+
+\BeginKnitrBlock{definition}[Residual mean square]
+\protect\hypertarget{def:mses}{}{\label{def:mses} \iffalse (Residual mean square) \fi{} }Let \(S\) be a subset of variables and let \(q = \lvert S \rvert + 1\) be the degrees of freedom of \(SSE(S)\). Then the residual mean square according to \(S\) is
+
+\[MSE(S) := \frac{SSE(S)}{n - q}\]
+\EndKnitrBlock{definition}
+
+By construction, \(R_a^2(S)\) can be re-expressed by \(MSE(S)\).
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}From Definition \ref{def:mses},
+
+\[R_a^2(S) = 1 - \frac{MSE(S)}{SST / (n - 1)}\]
+\EndKnitrBlock{remark}
+
+Since \(\frac{SST}{n - 1}\) is constant, maximimizing \(R_a^2(S)\) as in Conjecture \ref{cnj:raopt} is equivalent to minimizing \(MSE(S)\).
+
+\BeginKnitrBlock{conjecture}[Optimal number of variables w.r.t. $MSE(S)$]
+\protect\hypertarget{cnj:mseopt}{}{\label{cnj:mseopt} \iffalse (Optimal number of variables w.r.t. \(MSE(S)\)) \fi{} }Choose \(S\) that minimizes \(MSE(S)\).
+\EndKnitrBlock{conjecture}
+
+\hypertarget{mallows-c_p}{%
+\subsection{\texorpdfstring{Mallow's \(C_p\)}{Mallow's C\_p}}\label{mallows-c_p}}
+
+Previously, we multiplied penalty. From now on, we add it. Consider \(SSE(S)\).
+
+\BeginKnitrBlock{definition}[Mallow's $C_p$]
+\protect\hypertarget{def:mcp}{}{\label{def:mcp} \iffalse (Mallow's \(C_p\)) \fi{} }Let \(F = \{ 1, \ldots, p \}\) be a full set of variables, let \(S\) be a subset of variables, and let \(q = \lvert S \rvert + 1\). Then the Mallow's \(C_p\) for \(S\) is
+
+\[C_p(S) := \frac{SSE(S)}{\hat\sigma^2} + (2q - n)\]
+
+where \(\hat\sigma^2 = MSE(F) = \frac{SSE(F)}{n - p - 1}\), i.e.~\(MSE\) obtained from the full model.
+\EndKnitrBlock{definition}
+
+\(\frac{SSE(S)}{\hat\sigma^2}\) measures \(SSE(S)\) compared to \(MSE\) of full model. When the model becomes closed to the full model, \(SSE(S)\) gets smaller and goes to \(SSE(F)\). In the full model,
+
+\[\frac{SSE(F)}{\hat\sigma^2} = n - p - 1\]
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}Suppose that the fitted values of subset model are unbiased. Then
+
+\[E(C_p(S)) = q\]
+\EndKnitrBlock{remark}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}From Lemma \ref{lem:bvtd}, mean squared error can be decomposed into bias and variance.
+
+\[\sum_i E(\hat{Y}_{S, i} - \mu_{S, i}) = \sum_i \Big( E \hat{Y}_{S, i} - \mu_{S, i} \Big)^2 + \sum_i E(\hat{Y}_{S, i} - E \hat{Y}_{S, i})^2\]
+
+Note that the left hand side is constant. If there is no bias in the model, we have
+
+\[MSE(F) = MSE(S)\]
+
+Thus,
+
+\[C_p = \frac{(n - q) MSE(S)}{MSE(F)} + 2q - n = q\]
+\EndKnitrBlock{proof}
+
+This remark implies that the good model has
+
+\[C_p(S) \approx q\]
+
+We need to find this model.
+
+\BeginKnitrBlock{conjecture}[Optimal number of variables w.r.t. $C_p$]
+\protect\hypertarget{cnj:cpopt}{}{\label{cnj:cpopt} \iffalse (Optimal number of variables w.r.t. \(C_p\)) \fi{} }Choose \(S\) with \(q = \lvert S \rvert + 1\) that has \(C_p(S) \approx q\).
+\EndKnitrBlock{conjecture}
+
+\hypertarget{akaike-information-criterion}{%
+\subsection{Akaike Information criterion}\label{akaike-information-criterion}}
+
+Information criteria implements deviance \(-2 \text{log-likelihood}\). There are two popular criteria called \textbf{Akaike information criterion (AIC)} and \textbf{Bayesian information criterion (BIC)}. Each adds penalty of form
+
+\[-2l(\boldsymbol{\hat\beta}, \hat\sigma^2) + \text{constant} \times q\]
+
+AIC gives \(2\) as a penalty factor.
+
+\BeginKnitrBlock{definition}[Akaike information criterion]
+\protect\hypertarget{def:aics}{}{\label{def:aics} \iffalse (Akaike information criterion) \fi{} }Let \(S\) be a subset of variables and let \(q = \lvert S \rvert + 1\) be the number of parameters. Then AIC for S is
+
+\[AIC(S) := -\frac{2}{n} l(\boldsymbol{\hat\beta}_{S}, \hat\sigma_S^2) + \frac{2}{n} q\]
+\EndKnitrBlock{definition}
+
+This definition is actually quite general formulation. In case of OLS, Gaussian error term is given. Since the form of \(l(\boldsymbol{\hat\beta}_{S}, \hat\sigma^2)\) is known, we can compute it.
+
+\BeginKnitrBlock{corollary}[AIC for OLS with Gaussian error]
+\protect\hypertarget{cor:aicols}{}{\label{cor:aicols} \iffalse (AIC for OLS with Gaussian error) \fi{} }Suppose that \(\epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\). Then
+
+\[AIC(S) = \ln SSE(S) + \frac{2 \lvert S \rvert}{n}\]
+\EndKnitrBlock{corollary}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Let
+
+\[\hat\sigma_S^2 = \frac{1}{n} \lVert \mathbf{Y} - X \boldsymbol{\hat\beta}_{S} \rVert^2\]
+
+be the MLE of \(\sigma^2\). Then we now have
+
+\begin{equation}
+  \begin{split}
+    l(\boldsymbol{\hat\beta}_{S}, \hat\sigma_S^2) & = - \frac{n}{2} \ln (2 \pi \hat\sigma_S^2) - \frac{1}{2 \hat\sigma_S^2} \lVert \mathbf{Y} - X \boldsymbol{\hat\beta}_{S} \rVert^2 \\
+    & = - \frac{n}{2} \ln(2 \pi) + \frac{n}{2} \ln n - \frac{n}{2} \ln SSE(S) - \frac{n}{2}
+  \end{split}
+\end{equation}
+
+Thus,
+
+\begin{equation}
+  \begin{split}
+    AIC(S) & = \ln SSE(S) + \ln(2\pi) - \ln n + 1 + \frac{2 \lvert S \rvert}{n} + \frac{2}{n} \\
+    & \propto \ln SSE(S) + \frac{2 \lvert S \rvert}{n} \quad \leftarrow \text{ignore constants}
+  \end{split}
+\end{equation}
+
+and so \(AIC(S)\) is equivalent to
+
+\[\ln SSE(S) + \frac{2 \lvert S \rvert}{n}\]
+\EndKnitrBlock{proof}
+
+\(SSE\) is involved in OLS, so smaller \(AIC\) is preferred.
+
+\BeginKnitrBlock{conjecture}[Optimal number of variables w.r.t. AIC]
+\protect\hypertarget{cnj:aicopt}{}{\label{cnj:aicopt} \iffalse (Optimal number of variables w.r.t. AIC) \fi{} }Choose \(S\) that minimizes \(AIC(S)\).
+\EndKnitrBlock{conjecture}
+
+\hypertarget{bayesian-information-criterion}{%
+\subsection{Bayesian information criterion}\label{bayesian-information-criterion}}
+
+Instead of \(2\), Bayesian information criterion (BIC) uses \(\ln n\).
+
+\BeginKnitrBlock{definition}[Bayesian information criterion]
+\protect\hypertarget{def:bics}{}{\label{def:bics} \iffalse (Bayesian information criterion) \fi{} }Let \(S\) be a subset of variables and let \(q = \lvert S \rvert + 1\) be the number of parameters. Then BIC for S is
+
+\[BIC(S) := -\frac{2}{n} l(\boldsymbol{\hat\beta}_{S}, \hat\sigma_S^2) + \frac{\ln n}{n} q\]
+\EndKnitrBlock{definition}
+
+One proceeds in a similar way for OLS likelihood.
+
+\BeginKnitrBlock{corollary}[BIC for OLS with Gaussian error]
+\protect\hypertarget{cor:bicols}{}{\label{cor:bicols} \iffalse (BIC for OLS with Gaussian error) \fi{} }Suppose that \(\epsilon_i \stackrel{iid}{\sim}N(0, \sigma^2)\). Then
+
+\[BIC(S) = \ln SSE(S) + \frac{\lvert S \rvert \ln n}{n}\]
+\EndKnitrBlock{corollary}
+
+Of course it is the same form, so we might choose the small one.
+
+\BeginKnitrBlock{conjecture}[Optimal number of variables w.r.t. BIC]
+\protect\hypertarget{cnj:bicopt}{}{\label{cnj:bicopt} \iffalse (Optimal number of variables w.r.t. BIC) \fi{} }Choose \(S\) that minimizes \(BIC(S)\).
+\EndKnitrBlock{conjecture}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/aicbic-1} 
+
+}
+
+\caption{Penalties of AIC and BIC}\label{fig:aicbic}
+\end{figure}
+
+Figure \ref{fig:aicbic} presents the difference between AIC and BIC, \(2\) and \(\ln n\). In the most of the domain,
+
+\[\ln n > 2\]
+
+In this case, BIC penalizes larger models more heavily than AIC. In turn, it prefers \emph{smaller models in comparison with AIC}.
+
+\hypertarget{computational-techniques}{%
+\section{Computational Techniques}\label{computational-techniques}}
 
 \hypertarget{the-lasso}{%
 \chapter{The LASSO}\label{the-lasso}}

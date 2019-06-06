@@ -181,9 +181,275 @@ Likelihood means training error based on normal distribution error.
 \end{itemize}
 ```
 
+As the numerber of parameters grows, each error
+
+- $1 - R^2$
+- $SSE$
+- $-2 l(\hb, \hat\sigma^2)$
+
+becomes smaller, i.e. we can regard the model better than before. However, previous section has shown that this is not the case, so we add or multiply a penalty for the number.
+
+The following is the example dataset from @Chatterjee:2015aa. The reference had studied relation between total mortality (`MORT`) and climate, socioeconomic, and pollution variables (other 15 predictors). Response is total age-adjusted mortality from all causes. There are quite many predictors.
+
+```{r, message=FALSE}
+(death <- bestglm::mcdonald %>% as_tibble())
+```
+
+For each predictor, see the below description. 60 observations indicate 60 SMSAs.
+
+| predictors | description |  
+|:----------:|:-----------:|  
+| `PREC` | mean annual precipitation, in inches |  
+| `JANT` | mean January temperature, degrees Farenheit |  
+| `JULT` | mean July temperature, degrees Fareheit |  
+| `OVR65` | percent of population aged 65 or older than 65 |  
+| `POPN` | population per household |  
+| `EDUC` | median school years completed |  
+| `HOUS` | percent of housing units that are sound |  
+| `DENS` | population per square mile |  
+| `NONW` | percent of non-white population |  
+| `WWDRK` | percent employment of white-collor job |  
+| `POOR` | percent of families with income less than \$3000 |  
+| `HC` | relative pollution potential of hydrocarbon |  
+| `NOX` | of nitric oxides |  
+| `SOx` | of sulphur dioxide |  
+| `HUMID` | percent relative humidity |  
+
+```{r}
+(death_fit <- lm(MORT ~ ., data = death)) %>% 
+  summary()
+```
+
+As we can see, some standard errors are very large.
+
+```{r}
+car::vif(death_fit)
+```
+
+We can observe multicollinearity by $VIF_j > 1$.
+
 ### Adjusted $R^2$
 
-First consider $R^2$.
+First consider $R^2 = \frac{SSR}{SST}$. Denote that this is *nondecreasing as a new predictor enters the model*. It it just matter of how it increases.
+
+We want to select a subset $S$ of the index set $\{ 1, \ldots p \}$. Write $\lvert S \rvert$ as the cardinality of the set and set $q$ by the number of regression coeffcients.
+
+$$q := \lvert S \rvert + 1$$
+
+Let $SSE(S)$ and $R^2 (S)$ be residual sum of squares and coefficient of determination corresponding to the model $Y$ regressed on $\{ x_j : j \in S \}$ including intercept term. Recall that
+
+$$R^2(S) = \frac{SSR(S)}{SST} = 1 - \frac{SSE(S)}{SST}$$
+
+Just compute adjusted $R^2$ for this $S$ using Definition \@ref(def:ra).
+
+```{definition, adjr2, name = "Adjusted $R^2$"}
+Let $S$ be a subset of variables and let $R^2$ be corresponding $R^2$. Then the adjusted $R^2$ for $S$ is
+
+$$R_a^2(S) := 1 - \bigg( \frac{n - 1}{n - q} \bigg) (1 - R^2(S)) = 1 - \frac{SSE / (n - q)}{SST / (n - 1)}$$
+```
+
+Different with $R^2(S)$, $R_a^2(S)$ increases and decreases at some point as $\lvert S \rvert$ increases. The point that maximizes $R_a^2(S)$ can be said to be an optimal subset.
+
+```{conjecture, raopt, name = "Optimal number of variables w.r.t. $R_a^2(S)$"}
+Choose $S$ that maximizes $R_a^2(S)$.
+```
+
+### Residual mean square
+
+Residual mean square $MSE(S)$ is related to $R_a^2(S)$.
+
+```{definition, mses, name = "Residual mean square"}
+Let $S$ be a subset of variables and let $q = \lvert S \rvert + 1$ be the degrees of freedom of $SSE(S)$. Then the residual mean square according to $S$ is
+
+$$MSE(S) := \frac{SSE(S)}{n - q}$$
+```
+
+By construction, $R_a^2(S)$ can be re-expressed by $MSE(S)$.
+
+```{remark}
+From Definition \@ref(def:mses),
+
+$$R_a^2(S) = 1 - \frac{MSE(S)}{SST / (n - 1)}$$
+```
+
+Since $\frac{SST}{n - 1}$ is constant, maximimizing $R_a^2(S)$ as in Conjecture \@ref(cnj:raopt) is equivalent to minimizing $MSE(S)$.
+
+```{conjecture, mseopt, name = "Optimal number of variables w.r.t. $MSE(S)$"}
+Choose $S$ that minimizes $MSE(S)$.
+```
+
+### Mallow's $C_p$
+
+Previously, we multiplied penalty. From now on, we add it. Consider $SSE(S)$.
+
+```{definition, mcp, name = "Mallow's $C_p$"}
+Let $F = \{ 1, \ldots, p \}$ be a full set of variables, let $S$ be a subset of variables, and let $q = \lvert S \rvert + 1$. Then the Mallow's $C_p$ for $S$ is
+
+$$C_p(S) := \frac{SSE(S)}{\hat\sigma^2} + (2q - n)$$
+
+where $\hat\sigma^2 = MSE(F) = \frac{SSE(F)}{n - p - 1}$, i.e. $MSE$ obtained from the full model.
+```
+
+$\frac{SSE(S)}{\hat\sigma^2}$ measures $SSE(S)$ compared to $MSE$ of full model. When the model becomes closed to the full model, $SSE(S)$ gets smaller and goes to $SSE(F)$. In the full model,
+
+$$\frac{SSE(F)}{\hat\sigma^2} = n - p - 1$$
+
+```{remark}
+Suppose that the fitted values of subset model are unbiased. Then
+
+$$E(C_p(S)) = q$$
+```
+
+```{proof}
+From Lemma \@ref(lem:bvtd), mean squared error can be decomposed into bias and variance.
+
+$$\sum_i E(\hat{Y}_{S, i} - \mu_{S, i}) = \sum_i \Big( E \hat{Y}_{S, i} - \mu_{S, i} \Big)^2 + \sum_i E(\hat{Y}_{S, i} - E \hat{Y}_{S, i})^2$$
+
+Note that the left hand side is constant. If there is no bias in the model, we have
+
+$$MSE(F) = MSE(S)$$
+
+Thus,
+
+$$C_p = \frac{(n - q) MSE(S)}{MSE(F)} + 2q - n = q$$
+```
+
+<!-- From Proposition \@ref(prp:ssdist), -->
+
+<!-- $$\frac{SSE(S)}{\sigma^2} \sim \chi^2(n - q)$$ -->
+
+<!-- for each $q = 2, \ldots, p + 1$. Then -->
+
+<!-- $$\frac{SSE(S)}{\hat\sigma^2} / (n - q) = \frac{\frac{SSE(S)}{\sigma^2} / (n - q)}{\frac{SSE(F)}{\sigma^2} / (n - p - 1)} \sim F(n - q, n - p - 1)$$ -->
+
+<!-- It follows that -->
+
+<!-- \begin{equation} -->
+<!--   \begin{split} -->
+<!--     E(C_p(S)) & = E\bigg[ \frac{SSE(S)}{\hat\sigma^2} \bigg] + (2q - n) \\ -->
+<!--     & = (n - q) \frac{n - p - 1}{n - p - 3} + 2q - n \\ -->
+<!--     & = \frac{n(n - p - 1) - q(n - p - 1) + 2q(n - p - 3) - n(n - p - 3)}{n - p - 3} \\ -->
+<!--     & = \frac{2n + q(n - p - 5)}{n - p - 3} -->
+<!--   \end{split} -->
+<!-- \end{equation} -->
+
+This remark implies that the good model has
+
+$$C_p(S) \approx q$$
+
+We need to find this model.
+
+```{conjecture, cpopt, name = "Optimal number of variables w.r.t. $C_p$"}
+Choose $S$ with $q = \lvert S \rvert + 1$ that has $C_p(S) \approx q$.
+```
+
+### Akaike Information criterion
+
+Information criteria implements deviance $-2 \text{log-likelihood}$. There are two popular criteria called **Akaike information criterion (AIC)** and **Bayesian information criterion (BIC)**. Each adds penalty of form
+
+$$-2l(\hb, \hat\sigma^2) + \text{constant} \times q$$
+
+AIC gives $2$ as a penalty factor.
+
+```{definition, aics, name = "Akaike information criterion"}
+Let $S$ be a subset of variables and let $q = \lvert S \rvert + 1$ be the number of parameters. Then AIC for S is
+
+$$AIC(S) := -\frac{2}{n} l(\hb_{S}, \hat\sigma_S^2) + \frac{2}{n} q$$
+```
+
+This definition is actually quite general formulation. In case of OLS, Gaussian error term is given. Since the form of $l(\hb_{S}, \hat\sigma^2)$ is known, we can compute it.
+
+```{corollary, aicols, name = "AIC for OLS with Gaussian error"}
+Suppose that $\epsilon_i \iid N(0, \sigma^2)$. Then
+
+$$AIC(S) = \ln SSE(S) + \frac{2 \lvert S \rvert}{n}$$
+```
+
+```{proof}
+Let
+
+$$\hat\sigma_S^2 = \frac{1}{n} \lVert \mathbf{Y} - X \hb_{S} \rVert^2$$
+
+be the MLE of $\sigma^2$. Then we now have
+
+\begin{equation}
+  \begin{split}
+    l(\hb_{S}, \hat\sigma_S^2) & = - \frac{n}{2} \ln (2 \pi \hat\sigma_S^2) - \frac{1}{2 \hat\sigma_S^2} \lVert \mathbf{Y} - X \hb_{S} \rVert^2 \\
+    & = - \frac{n}{2} \ln(2 \pi) + \frac{n}{2} \ln n - \frac{n}{2} \ln SSE(S) - \frac{n}{2}
+  \end{split}
+\end{equation}
+
+Thus,
+
+\begin{equation}
+  \begin{split}
+    AIC(S) & = \ln SSE(S) + \ln(2\pi) - \ln n + 1 + \frac{2 \lvert S \rvert}{n} + \frac{2}{n} \\
+    & \propto \ln SSE(S) + \frac{2 \lvert S \rvert}{n} \quad \leftarrow \text{ignore constants}
+  \end{split}
+\end{equation}
+
+and so $AIC(S)$ is equivalent to
+
+$$\ln SSE(S) + \frac{2 \lvert S \rvert}{n}$$
+```
+
+$SSE$ is involved in OLS, so smaller $AIC$ is preferred.
+
+```{conjecture, aicopt, name = "Optimal number of variables w.r.t. AIC"}
+Choose $S$ that minimizes $AIC(S)$.
+```
+
+### Bayesian information criterion
+
+Instead of $2$, Bayesian information criterion (BIC) uses $\ln n$.
+
+```{definition, bics, name = "Bayesian information criterion"}
+Let $S$ be a subset of variables and let $q = \lvert S \rvert + 1$ be the number of parameters. Then BIC for S is
+
+$$BIC(S) := -\frac{2}{n} l(\hb_{S}, \hat\sigma_S^2) + \frac{\ln n}{n} q$$
+```
+
+One proceeds in a similar way for OLS likelihood.
+
+```{corollary, bicols, name = "BIC for OLS with Gaussian error"}
+Suppose that $\epsilon_i \iid N(0, \sigma^2)$. Then
+
+$$BIC(S) = \ln SSE(S) + \frac{\lvert S \rvert \ln n}{n}$$
+```
+
+Of course it is the same form, so we might choose the small one.
+
+```{conjecture, bicopt, name = "Optimal number of variables w.r.t. BIC"}
+Choose $S$ that minimizes $BIC(S)$.
+```
+
+```{r aicbic, echo=FALSE, fig.cap="Penalties of AIC and BIC"}
+tibble(x = seq_len(100)) %>% 
+  mutate_at(.vars = vars(x), .funs = list(aic = function(x) 2, bic = log)) %>% 
+  gather(-x, key = "penalty", value = "value") %>% 
+  ggplot(aes(x = x, y = value, colour = penalty)) +
+  geom_path() +
+  labs(
+    x = "n",
+    y = "Factor value",
+    colour = "Factor"
+  )
+```
+
+Figure \@ref(fig:aicbic) presents the difference between AIC and BIC, $2$ and $\ln n$. In the most of the domain,
+
+$$\ln n > 2$$
+
+In this case, BIC penalizes larger models more heavily than AIC. In turn, it prefers *smaller models in comparison with AIC*.
+
+
+## Computational Techniques
+
+
+
+
+
+
 
 
 
