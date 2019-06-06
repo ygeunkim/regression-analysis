@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{06 Jun, 2019}
+    \date{07 Jun, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -153,6 +153,20 @@
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -6688,7 +6702,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f9df6cc1770>}
+\CommentTok{#> <bytecode: 0x7fe4495a5998>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -9695,7 +9709,7 @@ Nowadays, ridge estimator is defined to be the minimizer of penalized least squa
 \end{itemize}
 \EndKnitrBlock{remark}
 
-In ridge regression, \(L_2\) penalty is used.
+In ridge regression, \(l_2\) penalty is used.
 
 \BeginKnitrBlock{definition}[Ridge penalty]
 \protect\hypertarget{def:l2p}{}{\label{def:l2p} \iffalse (Ridge penalty) \fi{} }Let \(\beta_1, \ldots, \beta_p\) be the regression coefficients. Then \textbf{\textit{ridge penalty}} is squared \(l_2\) norm compted by
@@ -9706,7 +9720,7 @@ In ridge regression, \(L_2\) penalty is used.
 Thus, ridge estimator becomes
 
 \begin{equation}
-  \boldsymbol\beta_{A, R} = \argmin_{\boldsymbol\beta_A} \bigg\{ (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) + \kappa \boldsymbol\beta_A^T \boldsymbol\beta_A \bigg\}
+  \boldsymbol{\hat\beta}_{A, R} = \argmin_{\boldsymbol\beta_A} \bigg\{ (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) + \kappa \boldsymbol\beta_A^T \boldsymbol\beta_A \bigg\}
   \label{eq:ridgeargmin}
 \end{equation}
 
@@ -9919,7 +9933,7 @@ Hence,
 Refer to \(L_2\) penalization \eqref{eq:ridgeargmin}.
 
 \begin{equation}
-  \boldsymbol\beta_{A, R} = \argmin_{\boldsymbol\beta_A} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + \kappa \lVert \boldsymbol\beta_A \rVert^2 \bigg\}
+  \boldsymbol{\hat\beta}_{A, R} = \argmin_{\boldsymbol\beta_A} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + \kappa \lVert \boldsymbol\beta_A \rVert^2 \bigg\}
   \label{eq:ridgetikhonov}
 \end{equation}
 
@@ -9929,7 +9943,7 @@ This form of regularization is called \emph{Tikhonov regularization}. Recall tha
 \iffalse{} {Remark (Ivavnov regularization). } \fi{}An equivalent way to write the ridge problem is
 
 \begin{equation}
-  \boldsymbol\beta_{A, R} = \argmin_{\boldsymbol\beta_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 \le d
+  \boldsymbol{\hat\beta}_{A, R} = \argmin_{\boldsymbol\beta_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 \le d
   \label{eq:ridgeivanov}
 \end{equation}
 
@@ -9977,7 +9991,7 @@ then
 
 \begin{equation*}
   \begin{split}
-    \boldsymbol\beta_{A, R} & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 \le d \\
+    \boldsymbol{\hat\beta}_{A, R} & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 \le d \\
     & = \argmin_{\boldsymbol\beta_A \in \Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2
   \end{split}
 \end{equation*}
@@ -9990,7 +10004,7 @@ by construction. It follows that
 
 \begin{equation}
   \begin{split}
-    \boldsymbol\beta_{A, R} & = \argmin_{\boldsymbol\beta_A \in {\color{blue}{\partial}}\Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \\
+    \boldsymbol{\hat\beta}_{A, R} & = \argmin_{\boldsymbol\beta_A \in {\color{blue}{\partial}}\Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \\
     & = \argmin_{\boldsymbol\beta_A \in \mathbb{R}^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert^2 {\color{blue}{=}} d
   \end{split}
   \label{eq:ivanovbeta}
@@ -10154,7 +10168,7 @@ Think about smaller and smaller \(d\). Then we get smaller size of \(\boldsymbol
 \hypertarget{ridge-regression-in-r}{%
 \subsection{\texorpdfstring{Ridge regression in \texttt{R}}{Ridge regression in R}}\label{ridge-regression-in-r}}
 
-In general, we use \texttt{glmnet} package to fit ridge regression. In fact this implements maximum likelihood, not least squares. \texttt{glmnet::glmnet()} can fit a penalization model called \emph{elasticnet} which has both \(L_2\) penalty and \(L_1\) penalty (of LASSO). The penalty weight is controlled by \texttt{alpha\ =\ 1}. Here, we use ridge regression, so we should change it to \texttt{alpha\ =\ 0}. Furthermore, this function does not accept \texttt{data.frame} as input. We should give \texttt{matrix} to \texttt{x} and \texttt{y}. In \texttt{lambda}, \(\kappa\) can be specified.
+In general, we use \texttt{glmnet} package to fit ridge regression. In fact this implements maximum likelihood, not least squares. \texttt{glmnet::glmnet()} can fit a penalization model called \emph{elasticnet} which has both \(l_2\) penalty and \(l_1\) penalty (of LASSO). The penalty weight is controlled by \texttt{alpha\ =\ 1}. Here, we use ridge regression, so we should change it to \texttt{alpha\ =\ 0}. Furthermore, this function does not accept \texttt{data.frame} as input. We should give \texttt{matrix} to \texttt{x} and \texttt{y}. In \texttt{lambda}, \(\kappa\) can be specified.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -10649,21 +10663,21 @@ This definition is actually quite general formulation. In case of OLS, Gaussian 
 
 be the MLE of \(\sigma^2\). Then we now have
 
-\begin{equation}
+\begin{equation*}
   \begin{split}
     l(\boldsymbol{\hat\beta}_{S}, \hat\sigma_S^2) & = - \frac{n}{2} \ln (2 \pi \hat\sigma_S^2) - \frac{1}{2 \hat\sigma_S^2} \lVert \mathbf{Y} - X \boldsymbol{\hat\beta}_{S} \rVert^2 \\
     & = - \frac{n}{2} \ln(2 \pi) + \frac{n}{2} \ln n - \frac{n}{2} \ln SSE(S) - \frac{n}{2}
   \end{split}
-\end{equation}
+\end{equation*}
 
 Thus,
 
-\begin{equation}
+\begin{equation*}
   \begin{split}
     AIC(S) & = \ln SSE(S) + \ln(2\pi) - \ln n + 1 + \frac{2 \lvert S \rvert}{n} + \frac{2}{n} \\
     & \propto \ln SSE(S) + \frac{2 \lvert S \rvert}{n} \quad \leftarrow \text{ignore constants}
   \end{split}
-\end{equation}
+\end{equation*}
 
 and so \(AIC(S)\) is equivalent to
 
@@ -10759,7 +10773,7 @@ For each submodel, compute one of \(R_a^2\), \(C_p\), \(AIC\), and \(BIC\). Subm
   \SetAlgoLined
   \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-  \Input{Every predictor $x_{i1}, \ldots x_{ip}$}
+  \KwData{$Y_i$ and every predictor $x_{i1}, \ldots x_{ip}$}
   Initialize null model $\mathcal{M}_0$ by $$Y_i = \beta_0 + \epsilon_i$$\;
   \For{$k \leftarrow 1$ \KwTo $p$}{
     Fit all $\binom{p}{k}$ models with $k$ predictors $$Y_i = \beta_0 + \sum_{j \in S} \beta_j x_{ij} + \epsilon_i$$ with $\lvert S \rvert = k$\;
@@ -10777,8 +10791,321 @@ However, as the full number of variables \(p\) increases, the number of submodel
 
 Beginning with the null model, forward selection \emph{adds predictors one-at-a-time}. We might add the most important predictor at each step by a settled condition.
 
+\begin{longtable}{c|c|c}
+\caption{\label{tab:fstab}Illustration of Forward selection}\\
+\hline
+x1 & x2 & x3\\
+\hline
+\textcolor{black}{0} & \textcolor{black}{0} & \textcolor{black}{0}\\
+\hline
+\multicolumn{3}{l}{\textbf{p=1}}\\
+\hline
+\hspace{1em}\textcolor{black}{1} & \textcolor{black}{0} & \textcolor{black}{0}\\
+\hline
+\hspace{1em}\textcolor{red}{0} & \textcolor{red}{1} & \textcolor{red}{0}\\
+\hline
+\hspace{1em}\textcolor{black}{0} & \textcolor{black}{0} & \textcolor{black}{1}\\
+\hline
+\multicolumn{3}{l}{\textbf{p=2}}\\
+\hline
+\hspace{1em}\textcolor{black}{2} & \textcolor{black}{1} & \textcolor{black}{0}\\
+\hline
+\hspace{1em}\textcolor{red}{0} & \textcolor{red}{1} & \textcolor{red}{2}\\
+\hline
+\multicolumn{3}{l}{\textbf{p=3}}\\
+\hline
+\hspace{1em}\textcolor{red}{3} & \textcolor{red}{1} & \textcolor{red}{1}\\
+\hline
+\end{longtable}
+
+See Table \ref{tab:fstab}. In each step, i.e.~\(p = k\), the most relavant variable is added to the model. It is remained to the end. Next, we find the most relavant variables given the previously chosen variables already in the model.
+
+Here we need to decide some measures.
+
+\begin{itemize}
+\tightlist
+\item
+  that finds the most relavant variables among the remains
+\item
+  that determines stopping rules of the algorithm
+\end{itemize}
+
+The algorithm starts with null model, which has no predictors. Set
+
+\[S_0 = \varnothing \quad \text{and} \quad C_0 = Col(\mathbf{1}) = \{ \beta_0 \mathbf{1} : \beta_0 \in \mathbb{R}\}\]
+
+Next for each step \(k = 1, 2, \ldots\), let \(C_{k - 1}\) be the design space in the previous step. We now add to the given model the predictor that has \emph{the highest size of sample partial correlation} with the response. Recall that from Theorem \ref{thm:corrangle}, sample correlation between \(\mathbf{x}_j\) and \(\mathbf{Y}\) is same as cosine of the angle between the two centered vectors, i.e.
+
+\[r_j = \frac{(\mathbf{x}_j - \overline{x}_j \mathbf{1})^T (\mathbf{Y} - \overline{Y} \mathbf{1})}{\lVert \mathbf{x}_j - \overline{x}_j \mathbf{1} \rVert \lVert \mathbf{Y} - \overline{Y} \mathbf{1} \rVert}\]
+
+In fact, each \(\overline{x}_j \mathbf{1}\) and \(\overline{Y} \mathbf{1}\) indicates \(\Pi(\mathbf{x}_j \mid \mathbf{1}) = \Pi(\mathbf{x}_j \mid C_0)\) and \(\Pi(\mathbf{Y} \mid \mathbf{1}) = \Pi(\mathbf{Y} \mid C_0)\). In step \(k = 1\), we might find the variable that maximizes the size of correlation. However, in the other step, the former variables are already in the model. Variables would be compared with respect to partial correlation, not correlation. Thus, each \(\mathbf{x}_j\) and \(\mathbf{Y}\) is projected to \(C_{k - 1}\).
+
+\begin{equation}
+  r_{k, j} = \frac{\Big(\mathbf{x}_j - \Pi(\mathbf{x}_j \mid C_{k - 1})\Big)^T \Big(\mathbf{Y} - \Pi(\mathbf{Y} \mid C_{k - 1})\Big)}{\lVert \mathbf{x}_j - \Pi(\mathbf{x}_j \mid C_{k - 1}) \rVert \lVert \mathbf{Y} - \Pi(\mathbf{Y} \mid C_{k - 1}) \rVert}
+  \label{eq:parcor}
+\end{equation}
+
+Find the variable with an index \(j = j_k\) that maximizes \(r_{k, j}^2\) and update the subset
+
+\[S_k = S_{k - 1} \cup \{ j_k \}\]
+
+and the column space
+
+\[C_k = Col(\mathbf{1}, \mathbf{x}_l : l \in S_k)\]
+
+This procedure continues until it stops by our rule. For instance,
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \(\lvert S_k \rvert\) exceeds a predetermined size \(p^{\ast}\).
+\item
+  Partial \(F\)-statistic \(F_{k,j}\) testing \(H_0: \beta_{j,k} = 0\) versus predetermined number \(F_{IN}\) called \emph{F-to-enter}.
+\end{enumerate}
+
+See the second one. From the chosen \(k\)-th submodel, saying \(\mathcal{M}_k\), we can compute partial \(F\)-statistic.
+
+\begin{equation}
+  F_{k,j} = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(X_l : l \in S_k) / (n - k - 1)} < F_{IN}
+  \label{eq:fsstop}
+\end{equation}
+
+Should we compute both \(r_{k,j}\) and \(F_{k,j}\) in each step?
+
+\BeginKnitrBlock{remark}
+\iffalse{} {Remark. } \fi{}\(F_{k,j}\) is a monotonic function of \(r_{k,j}^2\), that is,
+
+\[F_{k,j} = (n - k - 1) \frac{r_{k,j}^2}{1 - r_{k,j}^2}\]
+
+with \(0 \le r_{k,j}^2 \le 1\)
+\EndKnitrBlock{remark}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}Consider the model with \(S_k\).
+
+\begin{equation*}
+  \begin{split}
+   F_{k,j} & = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(S_k) / (n - k - 1)} \\
+   & = (n - k - 1) \frac{SSR(X_j \mid X_l : l \in S_{k - 1}) / SST}{SSE(S_k) / SST} \\
+   & = (n - k - 1) \frac{R_j^2(S_{k - 1})}{1 - R_j^2(S_{k - 1})} \\
+   & = (n - k - 1) \frac{r_{k, j}^2}{1 - r_{k,j}^2}
+  \end{split}
+\end{equation*}
+\EndKnitrBlock{proof}
+
+Thus, choosing \(j\) that maximizes \(r_{k,j}^2\) is equivalent to that maximizes \(F_{k,j}\). It also equivalent to choosing \(j\) maximizing the coefficient of determination \(R^2\) when the variable \(X_j\) is added to the existing group \(S_{k - 1}\). The procedure is enough to use only \(F_{k,j}\) in each step.
+
+\begin{algorithm}[H] \label{alg:fwsel}
+  \SetAlgoLined
+  \SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+  \KwData{$Y_i$ and every predictor $x_{i1}, \ldots x_{ip}$}
+  \Input{F-to-enter $F_{IN}$}
+  Initialize subset of variables $S_0 = \varnothing$\;
+  Initialize design column space $C_0 = Col(\mathbf{1})$\;
+  Initialize null model $\mathcal{M}_0$ by $Y_i = \beta_0 + \epsilon_i$\;
+  \For{$k \leftarrow 1$ \KwTo $p$}{
+    For remained $(p - k + 1)$ predictors, compute partial $F$-statistic $$F_{k,j} = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(X_l : l \in S_k) / (n - k - 1)}$$\;
+    $j_k = \argmax_j F_{k,j}$\;
+    \eIf{$F_{k, j_k} \ge F_{IN}$}{
+      Update the subset $S_k = S_{k - 1} \cup \{ j_k \}$\;
+      Update the column space $C_k = Col(\mathbf{1}, \mathbf{x}_l : l \in S_k)$\;
+    }{
+      Stop the procedure\;
+    }
+  }
+  \Output{$\mathcal{M}_k$ corresponding to selected variables $S_k$}
+  \caption{Forward Selection}
+\end{algorithm}
+
+Even if Algorithm \(\ref{alg:fwse}\) goes to the end \(p\), the number of models reviewed is less than of all possible regressions.
+
+\begin{equation*}
+  \begin{split}
+    \underset{\mathcal{M}_0}{\underline{1}} + p + (p - 1) + \cdots + (p - (p - 1) + 1) + (p - p + 1) & = 1 + \sum_{k = 1}^p p \\
+    & = 1 + \frac{p (p + 1)}{2} \\
+    & \color{red}{\le 2^p}
+  \end{split}
+\end{equation*}
+
+Thus, it has computational advantage over all possible regressions. Moreover, this method is even possible for high-dimensional setting \(n < p\). Even though OLS cannot be computed in full model, forward selection procedure can goes on until \(n - 1\) variable-subset model.
+
+Since this does not look at the whole models but \emph{nested models}, it is not guaranteed to find the best model which comes from all possible regressions.
+
+\hypertarget{backward-elimination}{%
+\subsection{Backward elimination}\label{backward-elimination}}
+
+Backward elimination is just the reverse of forward selection. Beginning with the full model, it iteratively removes the least relevant predictor one-at-a-time.
+
+\begin{longtable}{c|c|c}
+\caption{\label{tab:bwtab}Illustration of Backward elimination}\\
+\hline
+x1 & x2 & x3\\
+\hline
+\textcolor{black}{3} & \textcolor{black}{3} & \textcolor{black}{3}\\
+\hline
+\multicolumn{3}{l}{\textbf{p=2}}\\
+\hline
+\hspace{1em}\textcolor{black}{2} & \textcolor{black}{3} & \textcolor{black}{3}\\
+\hline
+\hspace{1em}\textcolor{red}{3} & \textcolor{red}{2} & \textcolor{red}{3}\\
+\hline
+\hspace{1em}\textcolor{black}{3} & \textcolor{black}{3} & \textcolor{black}{2}\\
+\hline
+\multicolumn{3}{l}{\textbf{p=1}}\\
+\hline
+\hspace{1em}\textcolor{black}{1} & \textcolor{black}{2} & \textcolor{black}{3}\\
+\hline
+\hspace{1em}\textcolor{red}{3} & \textcolor{red}{2} & \textcolor{red}{1}\\
+\hline
+\multicolumn{3}{l}{\textbf{p=0}}\\
+\hline
+\hspace{1em}\textcolor{red}{0} & \textcolor{red}{2} & \textcolor{red}{1}\\
+\hline
+\end{longtable}
+
+Similarly, we use partial correlation \(r_{k,j}\) or equivalent partial \(F\)-statistic \(F_{k,j}\). Since we are looking for the least important one, we find the smallest value. We can remove the variable with the smallest changes in \(R^2\). Stopping rules are also similar.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Stop when \(\lvert S_k \rvert\) get to a predetermined size \(p^{\ast}\).
+\item
+  Partial \(F\)-statistic \(F_{k,j}\) is larger than or equal to predetermined \(F_{OUT}\) called \emph{F-to-leave}.
+\end{enumerate}
+
+We have stopped if \(F_{k,j} < F_{IN}\) in forward selection \(\ref{alg:fwsel}\). On the other hand, backward selection stops if \(F_{k,j} \ge F_{OUT}\).
+
+\begin{algorithm}[H] \label{alg:backsel}
+  \SetAlgoLined
+  \SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+  \KwData{$Y_i$ and every predictor $x_{i1}, \ldots x_{ip}$}
+  \Input{F-to-leave $F_{OUT}$}
+  Initialize subset of variables $S_0 = \varnothing$\;
+  Initialize design column space $C_0 = Col(\mathbf{1})$\;
+  Initialize null model $\mathcal{M}_0$ by $Y_i = \beta_0 + \epsilon_i$\;
+  \For{$k \leftarrow 1$ \KwTo $p$}{
+    For non-removed $(p - k + 1)$ predictors, compute partial $F$-statistic $$F_{k,j} = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(X_l : l \in S_k) / (n - k - 1)}$$\;
+    $j_k = \argmin_j F_{k,j}$\;
+    \eIf{$F_{k, j_k} < F_{IN}$}{
+      Update the subset $S_k = S_{k - 1} - \{ j_k \}$\;
+      Update the column space $C_k = Col(\mathbf{1}, \mathbf{x}_l : l \in S_k)$\;
+    }{
+      Stop the procedure\;
+    }
+  }
+  \Output{$\mathcal{M}_k$ corresponding to selected variables $S_k$}
+  \caption{Backward elimination}
+\end{algorithm}
+
+As forward selection, backward elimination \(\ref{alg:backsel}\) investigates \(1 + \frac{p(p + 1)}{2}\) models. It has computational advantages, but does not guarantee the best model among every model. Since this procedure starts from the full model, it is not available when \(n < p\), while forward selection is.
+
+\hypertarget{stepwise-regression}{%
+\subsection{Stepwise regression}\label{stepwise-regression}}
+
+Since each forward and backward method has own problem, a hybrid approach has been made. Beginning with null model, add one predictor as in forward selection, and remove any predictor that is useless in that step after adding one predictor.
+
+\begin{algorithm}[H] \label{alg:hybrid}
+  \SetAlgoLined
+  \SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+  \KwData{$Y_i$ and every predictor $x_{i1}, \ldots x_{ip}$}
+  \Input{F-to-enter $F_{IN}$ and F-to-leave $F_{OUT}$}
+  Initialize subset of variables $S_0 = \varnothing$\;
+  Initialize design column space $C_0 = Col(\mathbf{1})$\;
+  Initialize null model $\mathcal{M}_0$ by $Y_i = \beta_0 + \epsilon_i$\;
+  \For{$k \leftarrow 1$ \KwTo $p$}{
+    For each remained predictor, compute partial $F$-statistic $$F_{k,j} = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(X_l : l \in S_k) / (n - k - 1)}$$\;
+    $j_k = \argmax_j F_{k,j}$\;
+    \eIf{$F_{k, j_k} \ge F_{IN}$}{
+      Compute partial $F$-statistic including the new variable $$F_{k,i}^{\ast} = \frac{SSR(X_i \mid (X_l : l \in S_{k - 1}, l \neq i), X_{j_k})}{SSE((X_l : l \in S_k), X_{jk}) / (n - k - 1)}$$\;
+      Identify a set of $i \in S_{k - 1}$ denoted by $D_{k - 1}$ s.t. $$F_{k,i}^{\ast} < F_{OUT}$$\;
+      Update the subset $S_k = S_{k - 1} \cup \{ j_k \} - D_{k - 1}$\;
+      Update the column space $C_k = Col(\mathbf{1}, \mathbf{x}_l : l \in S_k)$\;
+    }{
+      Stop the procedure\;
+    }
+  }
+  \Output{$\mathcal{M}_k$ corresponding to selected variables $S_k$}
+  \caption{Stepwise regression}
+\end{algorithm}
+
+In this process, adding and removal can happen simultaneously. This makes iteration more complex than forward or backward method.
+
 \hypertarget{the-lasso}{%
 \chapter{The LASSO}\label{the-lasso}}
+
+Consider centered model as in Equation \eqref{eq:pcrmeanres} or ridge regression.
+
+\begin{equation}
+  X \boldsymbol\beta= \mathbf{1} \beta_0^{\ast} + \widetilde{\mathbb{X}}_A \boldsymbol\beta_{A}
+  \label{eq:lasscen}
+\end{equation}
+
+with \(\widetilde{\mathbb{X}}_A = \mathbb{X}_{A,\perp}\) and \(\boldsymbol\beta= (\beta_0, \boldsymbol\beta_{A}^T)^T\). Recall that \(\hat\beta_0^{\ast} = \overline{Y}\).
+
+\hypertarget{lasso-estimator}{%
+\section{LASSO Estimator}\label{lasso-estimator}}
+
+\textbf{Least Absolute Shrinkage Selection Operator (LASSO)} adds \(l_1\) penalty to sum of squares in OLS problem.
+
+\BeginKnitrBlock{definition}[LASSO penalty]
+\protect\hypertarget{def:l1p}{}{\label{def:l1p} \iffalse (LASSO penalty) \fi{} }Let \(\beta_1, \ldots, \beta_p\) be the regression coefficients. Then \textbf{\textit{LASSO penalty}} is \(l_1\) norm compted by
+
+\[\lVert \boldsymbol\beta_A \rVert_1 = \sum_{j = 1}^p \lvert \beta_j \rvert\]
+\EndKnitrBlock{definition}
+
+Then LASSO estimator \(\boldsymbol{\hat\beta}_{A, L}\) becomes
+
+\begin{equation}
+  \boldsymbol{\hat\beta}_{A, L} \equiv \boldsymbol{\hat\beta}_{A, L}(\lambda) = \argmin_{\boldsymbol\beta_A} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 + \lambda \lVert \boldsymbol\beta_A \rVert_1 \bigg\}
+  \label{eq:lassoargmin}
+\end{equation}
+
+for some \(\lambda > 0\). It is written as \(\boldsymbol{\hat\beta}_{A, L}(\lambda)\) in that it changes along \(\lambda\) values. Obviously, \(\lambda = 0\) produces OLS estimator. Choosing \(\lambda = \infty\) would give \(\boldsymbol{\hat\beta}_{A, L} = \mathbf{0}\), i.e.~exact 0's. This is the difference with ridge regression.
+
+LASSO estimator has equivalent Ivanov regularization.
+
+\BeginKnitrBlock{remark}[Ivavnov regularization]
+\iffalse{} {Remark (Ivavnov regularization). } \fi{}An equivalent way to write the lasso problem is
+
+\begin{equation}
+  \boldsymbol{\hat\beta}_{A, L} = \argmin_{\boldsymbol\beta_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A \rVert^2 \quad \text{subject to} \: \lVert \boldsymbol\beta_{A} \rVert_1 \le d
+  \label{eq:lassoivanov}
+\end{equation}
+
+where \(d = \lVert \boldsymbol{\hat\beta}_{A,L}(\lambda) \rVert_1\).
+\EndKnitrBlock{remark}
+
+As in ridge regression, OLS \(\boldsymbol{\hat\beta}_{A}\) is out of the constraint region
+
+\[\Omega_d = \{ \boldsymbol\beta_A : \lVert \boldsymbol\beta_A \rVert_1 \le d \}\]
+
+i.e.
+
+\[\lVert \boldsymbol{\hat\beta}_{A} \rVert_1 > \lVert \boldsymbol{\hat\beta}_{A, L}(\lambda) \rVert_1 = d\]
+
+\hypertarget{geometry-of-lasso}{%
+\section{Geometry of LASSO}\label{geometry-of-lasso}}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/lassopen-1} 
+
+}
+
+\caption{Contours of the error and constraint function for LASSO}\label{fig:lassopen}
+\end{figure}
+
+See Figure \ref{fig:lassopen}. This shows the two properties of LASSO. \emph{shrinkage and selection}. The principle is same. As \(\lambda\) becomes smaller, \(\boldsymbol{\hat\beta}_{A,L}\) shrinks toward \(\mathbf{0}\). However, the shape of \(\Omega_d\) is different. Ridge regression with \(l_2\) penalty does not meet exactly zero, while LASSO with \(l_1\) penalty does. Moreover, as the number of variables is large, there are more sharp corners. So it is highly possible to meet \(\hat\beta_{j, L} = 0\).
+
+In this sense, \emph{LASSO can perform both the model selection and estimation of the regression parameters in one step}.
+
+\hypertarget{lasso-for-orthogonal-design}{%
+\section{LASSO for Orthogonal Design}\label{lasso-for-orthogonal-design}}
 
 \bibliography{book.bib,packages.bib}
 

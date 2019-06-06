@@ -1522,7 +1522,7 @@ Let $\kappa$ be a tuning parameter for penalty, which controls complexity of the
 \end{itemize}
 ```
 
-In ridge regression, $L_2$ penalty is used.
+In ridge regression, $l_2$ penalty is used.
 
 ```{definition, l2p, name = "Ridge penalty"}
 Let $\beta_1, \ldots, \beta_p$ be the regression coefficients. Then \textbf{\textit{ridge penalty}} is squared $l_2$ norm compted by
@@ -1533,7 +1533,7 @@ $$\lVert \B_A \rVert^2 = \sum_{j = 1}^p \beta_j^2$$
 Thus, ridge estimator becomes
 
 \begin{equation}
-  \B_{A, R} = \argmin_{\B_A} \bigg\{ (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A) + \kappa \B_A^T \B_A \bigg\}
+  \hb_{A, R} = \argmin_{\B_A} \bigg\{ (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A) + \kappa \B_A^T \B_A \bigg\}
   (\#eq:ridgeargmin)
 \end{equation}
 
@@ -1739,7 +1739,7 @@ $$\sum_j Var(\hat\beta_j) > \sum_j Var(\hat\beta_{j, R})$$
 Refer to $L_2$ penalization \@ref(eq:ridgeargmin).
 
 \begin{equation}
-  \B_{A, R} = \argmin_{\B_A} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 + \kappa \lVert \B_A \rVert^2 \bigg\}
+  \hb_{A, R} = \argmin_{\B_A} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 + \kappa \lVert \B_A \rVert^2 \bigg\}
   (\#eq:ridgetikhonov)
 \end{equation}
 
@@ -1749,7 +1749,7 @@ This form of regularization is called *Tikhonov regularization*. Recall that thi
 An equivalent way to write the ridge problem is
 
 \begin{equation}
-  \B_{A, R} = \argmin_{\B_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 \le d
+  \hb_{A, R} = \argmin_{\B_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 \le d
   (\#eq:ridgeivanov)
 \end{equation}
 
@@ -1797,7 +1797,7 @@ Consider Ivanov regularization.
 
 \begin{equation*}
   \begin{split}
-    \B_{A, R} & = \argmin_{\B_A \in \R^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 \le d \\
+    \hb_{A, R} & = \argmin_{\B_A \in \R^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 \le d \\
     & = \argmin_{\B_A \in \Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2
   \end{split}
 \end{equation*}
@@ -1810,7 +1810,7 @@ by construction. It follows that
 
 \begin{equation}
   \begin{split}
-    \B_{A, R} & = \argmin_{\B_A \in {\color{blue}{\partial}}\Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \\
+    \hb_{A, R} & = \argmin_{\B_A \in {\color{blue}{\partial}}\Omega_d} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \\
     & = \argmin_{\B_A \in \R^p} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert^2 {\color{blue}{=}} d
   \end{split}
   (\#eq:ivanovbeta)
@@ -2041,7 +2041,7 @@ Think about smaller and smaller $d$. Then we get smaller size of $\hb_{A, R}$. T
 
 ### Ridge regression in `R`
 
-In general, we use `glmnet` package to fit ridge regression. In fact this implements maximum likelihood, not least squares. `glmnet::glmnet()` can fit a penalization model called *elasticnet* which has both $L_2$ penalty and $L_1$ penalty (of LASSO). The penalty weight is controlled by `alpha = 1`. Here, we use ridge regression, so we should change it to `alpha = 0`. Furthermore, this function does not accept `data.frame` as input. We should give `matrix` to `x` and `y`. In `lambda`, $\kappa$ can be specified.
+In general, we use `glmnet` package to fit ridge regression. In fact this implements maximum likelihood, not least squares. `glmnet::glmnet()` can fit a penalization model called *elasticnet* which has both $l_2$ penalty and $l_1$ penalty (of LASSO). The penalty weight is controlled by `alpha = 1`. Here, we use ridge regression, so we should change it to `alpha = 0`. Furthermore, this function does not accept `data.frame` as input. We should give `matrix` to `x` and `y`. In `lambda`, $\kappa$ can be specified.
 
 ```{r}
 eeo_mat <- 

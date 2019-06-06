@@ -1,1 +1,137 @@
 # The LASSO
+
+Consider centered model as in Equation \@ref(eq:pcrmeanres) or ridge regression.
+
+\begin{equation}
+  X \B = \mathbf{1} \beta_0^{\ast} + \widetilde{\mathbb{X}}_A \B_{A}
+  (\#eq:lasscen)
+\end{equation}
+
+with $\widetilde{\mathbb{X}}_A = \mathbb{X}_{A,\perp}$ and $\B = (\beta_0, \B_{A}^T)^T$. Recall that $\hat\beta_0^{\ast} = \overline{Y}$.
+
+## LASSO Estimator
+
+**Least Absolute Shrinkage Selection Operator (LASSO)** adds $l_1$ penalty to sum of squares in OLS problem.
+
+```{definition, l1p, name = "LASSO penalty"}
+Let $\beta_1, \ldots, \beta_p$ be the regression coefficients. Then \textbf{\textit{LASSO penalty}} is $l_1$ norm compted by
+
+$$\lVert \B_A \rVert_1 = \sum_{j = 1}^p \lvert \beta_j \rvert$$
+```
+
+Then LASSO estimator $\hb_{A, L}$ becomes
+
+\begin{equation}
+  \hb_{A, L} \equiv \hb_{A, L}(\lambda) = \argmin_{\B_A} \bigg\{ \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 + \lambda \lVert \B_A \rVert_1 \bigg\}
+  (\#eq:lassoargmin)
+\end{equation}
+
+for some $\lambda > 0$. It is written as $\hb_{A, L}(\lambda)$ in that it changes along $\lambda$ values. Obviously, $\lambda = 0$ produces OLS estimator. Choosing $\lambda = \infty$ would give $\hb_{A, L} = \mathbf{0}$, i.e. exact 0's. This is the difference with ridge regression.
+
+LASSO estimator has equivalent Ivanov regularization.
+
+```{remark, name = "Ivavnov regularization"}
+An equivalent way to write the lasso problem is
+
+\begin{equation}
+  \hb_{A, L} = \argmin_{\B_A} \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A \rVert^2 \quad \text{subject to} \: \lVert \B_{A} \rVert_1 \le d
+  (\#eq:lassoivanov)
+\end{equation}
+
+where $d = \lVert \hb_{A,L}(\lambda) \rVert_1$.
+```
+
+As in ridge regression, OLS $\hb_{A}$ is out of the constraint region
+
+$$\Omega_d = \{ \B_A : \lVert \B_A \rVert_1 \le d \}$$
+
+i.e.
+
+$$\lVert \hb_{A} \rVert_1 > \lVert \hb_{A, L}(\lambda) \rVert_1 = d$$
+
+## Geometry of LASSO
+
+```{r lassopen, echo=FALSE, message=FALSE, fig.cap="Contours of the error and constraint function for LASSO"}
+gen_ellipse <- function(cen = c(0, 0), major = 1, minor = 1, npoints = 100, rot = 0) {
+  polar <- 
+    tibble(idx = seq(0, 2 * pi, length.out = npoints)) %>% 
+    mutate(r = (major * minor) / sqrt((minor * cos(idx))^2 + (major * sin(idx))^2))
+  polar %>% 
+    mutate_at(
+      .vars = vars("idx"),
+      .funs = list(
+        x = ~cos(idx) * r,
+        y = ~sin(idx) * r
+      )
+    ) %>% 
+    mutate(
+      rot_x = cos(rot) * x + sin(rot) * y + cen[1],
+      rot_y = -sin(rot) * x + cos(rot) * y + cen[2]
+    ) %>% 
+    select(x = rot_x, y = rot_y)
+}
+#------------------------------------
+library(foreach)
+elip_dat <-
+  foreach(i = 1:5, major = 1:5, minor = c(.2, .4, .6, .8, 1), .combine = bind_rows) %do% {
+    gen_ellipse(cen = c(5 / sqrt(2) + 1, 5 / sqrt(2)), major = major, minor = minor, npoints = 500, rot = - pi / 4) %>% 
+      mutate(cr = paste0("el", i))
+  }
+#-----------------------------------
+elip_label <- 
+  tibble(
+    x = c(1, 5 / sqrt(2) + 1),
+    y = c(0, 5 / sqrt(2)),
+    b = c("hat(beta)[AL]", "hat(beta)[A]"),
+    cr = c("cir", "el1")
+  )
+#-----------------------------------
+elip_dat %>% 
+  ggplot(aes(x, y, colour = cr)) +
+  geom_path() +
+  geom_point(
+    data = elip_label,
+    aes(x = x, y = y),
+    size = 3
+  ) +
+  geom_polygon(
+    data = tibble(
+      x = c(1, 0, -1, 0),
+      y = c(0, 1, 0, -1)
+    ),
+    aes(x, y),
+    inherit.aes = FALSE,
+    fill = NA,
+    col = gg_hcl(1)
+  ) +
+  ggrepel::geom_label_repel(
+    data = elip_label,
+    aes(x = x, y = y, label = b, fill = cr),
+    size = 3.5,
+    col = I("white"),
+    segment.colour = I("black"),
+    box.padding = unit(0.35, "lines"),
+    point.padding = unit(0.5, "lines"),
+    inherit.aes = FALSE,
+    parse = TRUE
+  ) +
+  labs(
+    x = expression(beta[1]),
+    y = expression(beta[2])
+  ) +
+  theme(
+    legend.position = "none",
+    axis.ticks = element_blank(),
+    axis.text = element_blank()
+  )
+```
+
+See Figure \@ref(fig:lassopen). This shows the two properties of LASSO. *shrinkage and selection*. The principle is same. As $\lambda$ becomes smaller, $\hb_{A,L}$ shrinks toward $\mathbf{0}$. However, the shape of $\Omega_d$ is different. Ridge regression with $l_2$ penalty does not meet exactly zero, while LASSO with $l_1$ penalty does. Moreover, as the number of variables is large, there are more sharp corners. So it is highly possible to meet $\hat\beta_{j, L} = 0$.
+
+In this sense, *LASSO can perform both the model selection and estimation of the regression parameters in one step*.
+
+## LASSO for Orthogonal Design
+
+
+
+
