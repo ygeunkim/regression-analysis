@@ -622,7 +622,7 @@ Thus, choosing $j$ that maximizes $r_{k,j}^2$ is equivalent to that maximizes $F
   \caption{Forward Selection}
 \end{algorithm}
 
-Even if Algorithm $\ref{alg:fwse}$ goes to the end $p$, the number of models reviewed is less than of all possible regressions.
+Even if Algorithm $\ref{alg:fwsel}$ goes to the end $p$, the number of models reviewed is less than of all possible regressions.
 
 \begin{equation*}
   \begin{split}
