@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fe05dc0bee0>}
+\CommentTok{#> <bytecode: 0x7fe6dca29f78>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -10116,7 +10116,7 @@ See Figure \ref{fig:ridgepen}. In two dimensional situation, the constraint spac
 
 the closed ball \(\Omega_d\) becomes a circle. It can be shown that OLS \(\boldsymbol{\hat\beta}_{A}\) is outside of \(\Omega_d\), i.e.
 
-\[\boldsymbol{\hat\beta}_{A} > d\]
+\[\lVert \boldsymbol{\hat\beta}_{A} \rVert^2 > d\]
 
 Equation \eqref{eq:ridgelagrange} implies that \(\boldsymbol{\hat\beta}_{A, R}\) is the minimizer of
 
@@ -11092,6 +11092,284 @@ In this sense, \emph{LASSO can perform both the model selection and estimation o
 
 \hypertarget{lasso-for-orthogonal-design}{%
 \section{LASSO for Orthogonal Design}\label{lasso-for-orthogonal-design}}
+
+\(l_1\) Penalty \ref{def:l1p} restricts the size of \(\hat\beta_j\) like ridge regression. However, it is non-linear, so the estimator does not have a closed form. It requires numerical methods. In some special case, we can get an analytical solution.
+
+Consider design matrix \(\mathbb{X}_{A,\perp} = \widetilde{\mathbb{X}}_A\). When \emph{every column of design matrix is orthogonal}, i.e.
+
+\[\forall j \neq k : \quad \sum_{i = 1}^n (x_{ij} - \overline{x}_j)(x_{ik} - \overline{x}_k) = 0\]
+
+\citet{Hastie:2013aa} shows that \emph{the LASSO estimator has the explicit solution}.
+
+\BeginKnitrBlock{theorem}[Explicit solutions in orthogonal design]
+\protect\hypertarget{thm:orthlasso}{}{\label{thm:orthlasso} \iffalse (Explicit solutions in orthogonal design) \fi{} }Suppose that the design matrix \(\mathbb{X}_{A,\perp} = \widetilde{\mathbb{X}}_A\) has orthogonal columns. Set
+
+\[\kappa_j := \sum_{i = 1}^n (x_{ij} - \overline{x}_j)^2\]
+
+Then
+
+\begin{center}
+  \begin{tabular}{c c}
+  \hline
+    Estimator & Formula \\
+    \hline
+      Best subset of size $k$ & $\hat\beta_j I(\lvert \hat\beta_j \rvert \ge \lvert \hat\beta_{k,j} \rvert)$ \\
+      Ridge regression & $\frac{\kappa_j \hat\beta_j}{\kappa_j + \lambda}$ \\
+      LASSO & $sgn(\hat\beta_j)\Big( \lvert \hat\beta_j \rvert - \frac{\lambda}{2 \kappa_j} \Big)_{+}$ \\
+      \hline
+  \end{tabular}
+\end{center}
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}[LASSO for orthogonal design]
+\iffalse{} {Proof (LASSO for orthogonal design). } \fi{}Write the length of each column vector by
+
+\[\kappa_j := \mathbf{x}_{j, A, \perp}^T \mathbf{x}_{j, A, \perp} = \sum_{i = 1}^n (x_{ij} - \overline{x}_j)^2\]
+
+so that
+
+\[\mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} = diag(\kappa_1, \ldots, \kappa_p)\]
+
+Let \(\boldsymbol{\hat\beta}_{A} = (\hat\beta_1, \ldots, \hat\beta_p)^T\) be the OLS. Recall that from Equation \eqref{eq:olsfn}, the loss function for OLS becomes
+
+\begin{equation}
+  \begin{split}
+    f(\boldsymbol\beta_A) & = (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})^T \mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A}) \\
+    & = (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A})^T diag(\kappa_1, \ldots, \kappa_p) (\boldsymbol\beta_A - \boldsymbol{\hat\beta}_{A}) \\
+    & = \sum_{j = 1}^p \kappa_j (\beta_j - \hat\beta_j)^2
+  \end{split}
+  \label{eq:ortholsfn}
+\end{equation}
+
+It follows that LASSO objective function becomes
+
+\begin{equation}
+  \begin{split}
+    L(\boldsymbol\beta_A) & = \underset{\text{LS criterion}}{\bigg( \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \rVert^2 + f(\boldsymbol\beta_A) \bigg)} + \lambda \sum_{j = 1}^p \lvert \beta_j \rvert \\
+    & = \underset{\text{constant term}}{\underline{\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \rVert^2}} + \sum_{j = 1}^p \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda \sum_{j = 1}^p \lvert \beta_j \rvert \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \rVert^2 + \sum_{j = 1}^p \Big( \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert \Big) \\
+    & \propto \sum_{j = 1}^p \Big( \color{blue}{\kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert} \Big)
+  \end{split}
+  \label{eq:lassoobj}
+\end{equation}
+
+Therefore the minimization of the above LASSO objective function \eqref{eq:lassoobj} can be done by componentwise minimization of
+
+\begin{equation}
+  \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert
+  \label{eq:lassomin}
+\end{equation}
+
+What \(\beta_j\) does minimize the componentwise objective \eqref{eq:lassomin}? Note that
+
+\begin{equation*}
+  \begin{split}
+    \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert & = \kappa_j \bigg( (\beta_j - \hat\beta_j)^2 + \frac{\lambda}{\kappa_j} \lvert \beta_j \rvert \bigg) \\
+    & = \kappa_j \bigg[ \hat\beta_j^2 - 2 \hat\beta_j \beta_j + \beta_j^2 + \frac{\lambda}{\kappa_j} {\color{red}{sgn(\beta_j) \beta_j}} \bigg] \quad \leftarrow \lvert \beta_j \rvert = sgn(\beta_j) \beta_j \\
+    & = \kappa_j \bigg[ \beta_j^2 - 2 \Big(\hat\beta_j - \frac{\lambda}{2\kappa_j} sgn(\beta_j) \Big) \beta_j + \hat\beta_j^2 \bigg] \\
+    & = \kappa_j \bigg[ \bigg( \beta_j - \Big(\hat\beta_j - \frac{\lambda}{2\kappa_j} sgn(\beta_j) \Big) \bigg)^2 + \text{constant} \bigg] \\
+    & \propto \begin{cases}
+      \bigg( \beta_j - \Big(\hat\beta_j {\color{blue}{-}} \frac{\lambda}{2\kappa_j} \Big) \bigg)^2 & \beta_j \ge 0 \\
+      \bigg( \beta_j - \Big(\hat\beta_j {\color{blue}{+}} \frac{\lambda}{2\kappa_j} \Big) \bigg)^2 & \beta_j < 0
+    \end{cases}
+  \end{split}
+\end{equation*}
+
+Hence, the objective function is minimized at
+
+\[
+\beta_j = \begin{cases}
+  \hat\beta_j - sgn(\beta_j) \frac{\lambda}{2 \kappa_j} & \lvert \hat\beta_j \rvert > \frac{\lambda}{2 \kappa_j} \\
+  0 & \lvert \hat\beta_j \rvert \le \frac{\lambda}{2 \kappa_j}
+\end{cases}
+\]
+\EndKnitrBlock{proof}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/compcase1-1} 
+
+}
+
+\caption{$\hat\beta_j > \frac{\lambda}{2 \kappa_j}$}\label{fig:compcase1}
+\end{figure}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/compcase2-1} 
+
+}
+
+\caption{$\hat\beta_j < - \frac{\lambda}{2 \kappa_j}$}\label{fig:compcase2}
+\end{figure}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/compcase3-1} 
+
+}
+
+\caption{$- \frac{\lambda}{2 \kappa_j} < \hat\beta_j < \frac{\lambda}{2 \kappa_j}$}\label{fig:compcase3}
+\end{figure}
+
+Look at the above three Figures \ref{fig:compcase1} to \ref{fig:compcase3}. First two figures are the case when \(\lvert \hat\beta_j \rvert > \frac{\lambda}{2 \kappa_j}\). Minimum occurs at each \(\hat\beta_j \pm \frac{\lambda}{2 \kappa_j}\). The last figure is the case of \(\lvert \hat\beta_j \rvert \le \frac{\lambda}{2 \kappa_j}\) so that it is minimized by \(\beta_j = 0\).
+
+\BeginKnitrBlock{proof}[Ridge regression for orthogonal design]
+\iffalse{} {Proof (Ridge regression for orthogonal design). } \fi{}Since ridge regression has analytical solution, we can prove its part of \ref{thm:orthlasso} more easily. Recall that
+
+\[\boldsymbol{\hat\beta}_{A, R} = (\mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} + \lambda I)^{-1} \mathbb{X}_{A, \perp}^T \mathbf{Y}\]
+
+Since \(\mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} = diag(\kappa_1, \ldots, \kappa_p)\),
+
+\[\boldsymbol{\hat\beta}_{A} = diag \bigg(\frac{1}{\kappa_j} \bigg) \mathbb{X}_{A,\perp}^T \mathbf{Y}\]
+
+and
+
+\[\boldsymbol{\hat\beta}_{A,R} = diag \bigg(\frac{1}{\kappa_j + \lambda} \bigg) \mathbb{X}_{A,\perp}^T \mathbf{Y}\]
+
+Hence,
+
+\[\hat\beta_{j, R} = \frac{\kappa_j \hat\beta_j}{\kappa_j + \lambda}\]
+\EndKnitrBlock{proof}
+
+In sum, we can see the relationship between OLS and each shrinked estimator.
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/shrinkest-1} 
+
+}
+
+\caption{OLS and the other estimators}\label{fig:shrinkest}
+\end{figure}
+
+See Figure \ref{fig:shrinkest}. Green line indicates OLS. As we can see, the other ridge estimator and lasso estimator is shrinking it. In case of ridge regression, it shrinks OLS proportionally by \(\frac{\kappa_j}{\kappa_j + \lambda}\). This is why we cannot see exact zero. LASSO, on the other hand, moves the line up and down by \(\frac{\lambda}{2 \kappa_j}\). We can see entire zeros near \(\hat\beta_j \approx 0\). LASSO is doing feature selection. This is called \emph{soft-thresholding}.
+
+\hypertarget{numerical-methods}{%
+\section{Numerical Methods}\label{numerical-methods}}
+
+Contrary to ridge estimation, the LASSO estimator does not have a closed form except in the orthogonal design case. So we should get the solution numerically. However, most of the numerical methods give unstable one. Some algorithm have overcome this problem and is widely used, e.g.~\emph{LARS} and \emph{glmnet}.
+
+\hypertarget{least-angle-regression}{%
+\subsection{Least Angle Regression}\label{least-angle-regression}}
+
+The \textbf{Least Angle Regression (LAR)} algorithm \citep{Hastie:2013aa} give the complete set of the LASSO estimates for all \(0 < \lambda < \infty\). In \texttt{R}, \texttt{lars::lars(x,\ y)} can perform this algorithm.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{death_mat <-}\StringTok{ }
+\StringTok{  }\NormalTok{death }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{scale}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{model.matrix}\NormalTok{(MORT }\OperatorTok{~}\StringTok{ }\NormalTok{.}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .)}
+\CommentTok{#-------------}
+\NormalTok{death_lars <-}\StringTok{ }\NormalTok{lars}\OperatorTok{::}\KeywordTok{lars}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ death_mat, }\DataTypeTok{y =}\NormalTok{ death}\OperatorTok{$}\NormalTok{MORT, }\DataTypeTok{type =} \StringTok{"lasso"}\NormalTok{, }\DataTypeTok{normalize =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+There exists \texttt{plot} method, but we try \texttt{ggplot2}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{l1 <-}\StringTok{ }
+\StringTok{  }\KeywordTok{apply}\NormalTok{(death_lars}\OperatorTok{$}\NormalTok{beta, }\DecValTok{1}\NormalTok{, }\ControlFlowTok{function}\NormalTok{(x) \{}
+    \KeywordTok{sum}\NormalTok{(}\KeywordTok{abs}\NormalTok{(x))}
+\NormalTok{  \})}
+\CommentTok{#-------------------}
+\NormalTok{death_lars}\OperatorTok{$}\NormalTok{beta }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
+    \DataTypeTok{l1 =}\NormalTok{ l1,}
+    \DataTypeTok{l1 =}\NormalTok{ l1 }\OperatorTok{/}\StringTok{ }\KeywordTok{max}\NormalTok{(l1) }\CommentTok{# normalize}
+\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\OperatorTok{-}\NormalTok{l1, }\DataTypeTok{key =} \StringTok{"var"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"value"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{label =} \KeywordTok{ifelse}\NormalTok{(l1 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{, var, }\OtherTok{NA_character_}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ l1, }\DataTypeTok{y =}\NormalTok{ value, }\DataTypeTok{colour =}\NormalTok{ var)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =}\NormalTok{ l1), }\DataTypeTok{col =} \StringTok{"grey70"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{shape =} \DecValTok{4}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_path}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\NormalTok{ggrepel}\OperatorTok{::}\KeywordTok{geom_label_repel}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{label =}\NormalTok{ label),}
+    \DataTypeTok{nudge_x =} \FloatTok{.1}\NormalTok{,}
+    \DataTypeTok{na.rm =} \OtherTok{TRUE}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \KeywordTok{expression}\NormalTok{(l[}\DecValTok{1}\NormalTok{] }\OperatorTok{/}\StringTok{ }\KeywordTok{max}\NormalTok{(l[}\DecValTok{1}\NormalTok{])),}
+    \DataTypeTok{y =} \KeywordTok{expression}\NormalTok{(beta[jL])}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/larplot-1} 
+
+}
+
+\caption{Shrinkage in LASSO fitted by LARS}\label{fig:larplot}
+\end{figure}
+
+\hypertarget{glmnet}{%
+\subsection{glmnet}\label{glmnet}}
+
+Actually, \texttt{glmnet::glmnet()} is more widely used in \texttt{R}. This algorithm enables to fit \(l_1\) and \(l_2\) penalty model very fast.
+
+\[\lambda \sum_{j = 1}^p \bigg( (1 - \alpha) \beta_j^2 + \alpha \lvert \beta_j \rvert \bigg)\]
+
+with \(\alpha \in [0,1]\). Setting \(\alpha = 1\) and \(\alpha = 0\) each, LASSO and ridge regression can be solved.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{death_lasso <-}\StringTok{ }\NormalTok{glmnet}\OperatorTok{::}\KeywordTok{glmnet}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ death_mat, }\DataTypeTok{y =}\NormalTok{ death}\OperatorTok{$}\NormalTok{MORT, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+As \(\lambda\) grows, each coefficient shrinks.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(death_lasso) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{Matrix}\OperatorTok{::}\KeywordTok{t}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as.matrix}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{add_column}\NormalTok{(}\DataTypeTok{s =}\NormalTok{ death_lasso}\OperatorTok{$}\NormalTok{lambda) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_all}\NormalTok{(}\DataTypeTok{.funs =} \KeywordTok{list}\NormalTok{(}\OperatorTok{~}\KeywordTok{str_remove_all}\NormalTok{(., }\DataTypeTok{pattern =} \StringTok{"}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{(|}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{)"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# (Intercept) to Intercept}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{Intercept) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# Intercept = average of y}
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\OperatorTok{-}\NormalTok{s, }\DataTypeTok{key =} \StringTok{"coeff"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"b"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{label =} \KeywordTok{ifelse}\NormalTok{(s }\OperatorTok{==}\StringTok{ }\KeywordTok{min}\NormalTok{(s), coeff, }\OtherTok{NA_character_}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ s, }\DataTypeTok{y =}\NormalTok{ b, }\DataTypeTok{colour =}\NormalTok{ coeff)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_ref_line}\NormalTok{(}\DataTypeTok{h =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_path}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\NormalTok{ggrepel}\OperatorTok{::}\KeywordTok{geom_label_repel}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{label =}\NormalTok{ label),}
+    \DataTypeTok{nudge_x =} \FloatTok{-.1}\NormalTok{,}
+    \DataTypeTok{na.rm =} \OtherTok{TRUE}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_log10}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \KeywordTok{expression}\NormalTok{(Log }\OperatorTok{~}\StringTok{ }\NormalTok{lambda),}
+    \DataTypeTok{y =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{hat}\NormalTok{(beta)[AL])}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/lassopath-1} 
+
+}
+
+\caption{LASSO path along $\log \lambda$}\label{fig:lassopath}
+\end{figure}
+
+\hypertarget{lasso-for-high-dimensional-data}{%
+\subsection{LASSO for high-dimensional data}\label{lasso-for-high-dimensional-data}}
+
+In ordinary linear regression problem, it is assumed that \(n > p\). However, sometimes \(p\) becomes too large and even \(n < p\). This is called \textbf{high-dimensionality}. This kind of problems occurs in the field of gene expression data and econometrics, et cetera.
+
+If the number of variables, i.e.~the number of columns is larger than the number of rows, then OLS method breaks down. LASSO is very useful here. It can give a solution, and also conduct variable selection. See Figure \ref{fig:lassopath}. It is considered as \emph{continuous subset selection}.
 
 \bibliography{book.bib,packages.bib}
 

@@ -2004,7 +2004,7 @@ $$\Omega_d = \{ \B_A : \beta_1^2 + \beta_2^2 \le d \}$$
 
 the closed ball $\Omega_d$ becomes a circle. It can be shown that OLS $\hb_{A}$ is outside of $\Omega_d$, i.e.
 
-$$\hb_{A} > d$$
+$$\lVert \hb_{A} \rVert^2 > d$$
 
 Equation \@ref(eq:ridgelagrange) implies that $\hb_{A, R}$ is the minimizer of
 

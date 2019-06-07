@@ -132,6 +132,318 @@ In this sense, *LASSO can perform both the model selection and estimation of the
 
 ## LASSO for Orthogonal Design
 
+$l_1$ Penalty \@ref(def:l1p) restricts the size of $\hat\beta_j$ like ridge regression. However, it is non-linear, so the estimator does not have a closed form. It requires numerical methods. In some special case, we can get an analytical solution.
+
+Consider design matrix $\mathbb{X}_{A,\perp} = \widetilde{\mathbb{X}}_A$. When *every column of design matrix is orthogonal*, i.e.
+
+$$\forall j \neq k : \quad \sum_{i = 1}^n (x_{ij} - \overline{x}_j)(x_{ik} - \overline{x}_k) = 0$$
+
+@Hastie:2013aa shows that *the LASSO estimator has the explicit solution*.
+
+```{theorem, orthlasso, name = "Explicit solutions in orthogonal design"}
+Suppose that the design matrix $\mathbb{X}_{A,\perp} = \widetilde{\mathbb{X}}_A$ has orthogonal columns. Set
+
+$$\kappa_j := \sum_{i = 1}^n (x_{ij} - \overline{x}_j)^2$$
+
+Then
+
+\begin{center}
+  \begin{tabular}{c c}
+  \hline
+    Estimator & Formula \\
+    \hline
+      Best subset of size $k$ & $\hat\beta_j I(\lvert \hat\beta_j \rvert \ge \lvert \hat\beta_{k,j} \rvert)$ \\
+      Ridge regression & $\frac{\kappa_j \hat\beta_j}{\kappa_j + \lambda}$ \\
+      LASSO & $sgn(\hat\beta_j)\Big( \lvert \hat\beta_j \rvert - \frac{\lambda}{2 \kappa_j} \Big)_{+}$ \\
+      \hline
+  \end{tabular}
+\end{center}
+```
+
+```{proof, name = "LASSO for orthogonal design"}
+Write the length of each column vector by
+
+$$\kappa_j := \mathbf{x}_{j, A, \perp}^T \mathbf{x}_{j, A, \perp} = \sum_{i = 1}^n (x_{ij} - \overline{x}_j)^2$$
+
+so that
+
+$$\mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} = diag(\kappa_1, \ldots, \kappa_p)$$
+
+Let $\hb_{A} = (\hat\beta_1, \ldots, \hat\beta_p)^T$ be the OLS. Recall that from Equation \@ref(eq:olsfn), the loss function for OLS becomes
+
+\begin{equation}
+  \begin{split}
+    f(\B_A) & = (\B_A - \hb_{A})^T \mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} (\B_A - \hb_{A}) \\
+    & = (\B_A - \hb_{A})^T diag(\kappa_1, \ldots, \kappa_p) (\B_A - \hb_{A}) \\
+    & = \sum_{j = 1}^p \kappa_j (\beta_j - \hat\beta_j)^2
+  \end{split}
+  (\#eq:ortholsfn)
+\end{equation}
+
+It follows that LASSO objective function becomes
+
+\begin{equation}
+  \begin{split}
+    L(\B_A) & = \underset{\text{LS criterion}}{\bigg( \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \hb_{A} \rVert^2 + f(\B_A) \bigg)} + \lambda \sum_{j = 1}^p \lvert \beta_j \rvert \\
+    & = \underset{\text{constant term}}{\underline{\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \hb_{A} \rVert^2}} + \sum_{j = 1}^p \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda \sum_{j = 1}^p \lvert \beta_j \rvert \\
+    & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \hb_{A} \rVert^2 + \sum_{j = 1}^p \Big( \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert \Big) \\
+    & \propto \sum_{j = 1}^p \Big( \color{blue}{\kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert} \Big)
+  \end{split}
+  (\#eq:lassoobj)
+\end{equation}
+
+Therefore the minimization of the above LASSO objective function \@ref(eq:lassoobj) can be done by componentwise minimization of
+
+\begin{equation}
+  \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert
+  (\#eq:lassomin)
+\end{equation}
+
+What $\beta_j$ does minimize the componentwise objective \@ref(eq:lassomin)? Note that
+
+\begin{equation*}
+  \begin{split}
+    \kappa_j (\beta_j - \hat\beta_j)^2 + \lambda  \lvert \beta_j \rvert & = \kappa_j \bigg( (\beta_j - \hat\beta_j)^2 + \frac{\lambda}{\kappa_j} \lvert \beta_j \rvert \bigg) \\
+    & = \kappa_j \bigg[ \hat\beta_j^2 - 2 \hat\beta_j \beta_j + \beta_j^2 + \frac{\lambda}{\kappa_j} {\color{red}{sgn(\beta_j) \beta_j}} \bigg] \quad \leftarrow \lvert \beta_j \rvert = sgn(\beta_j) \beta_j \\
+    & = \kappa_j \bigg[ \beta_j^2 - 2 \Big(\hat\beta_j - \frac{\lambda}{2\kappa_j} sgn(\beta_j) \Big) \beta_j + \hat\beta_j^2 \bigg] \\
+    & = \kappa_j \bigg[ \bigg( \beta_j - \Big(\hat\beta_j - \frac{\lambda}{2\kappa_j} sgn(\beta_j) \Big) \bigg)^2 + \text{constant} \bigg] \\
+    & \propto \begin{cases}
+      \bigg( \beta_j - \Big(\hat\beta_j {\color{blue}{-}} \frac{\lambda}{2\kappa_j} \Big) \bigg)^2 & \beta_j \ge 0 \\
+      \bigg( \beta_j - \Big(\hat\beta_j {\color{blue}{+}} \frac{\lambda}{2\kappa_j} \Big) \bigg)^2 & \beta_j < 0
+    \end{cases}
+  \end{split}
+\end{equation*}
+
+Hence, the objective function is minimized at
+
+$$
+\beta_j = \begin{cases}
+  \hat\beta_j - sgn(\beta_j) \frac{\lambda}{2 \kappa_j} & \lvert \hat\beta_j \rvert > \frac{\lambda}{2 \kappa_j} \\
+  0 & \lvert \hat\beta_j \rvert \le \frac{\lambda}{2 \kappa_j}
+\end{cases}
+$$
+```
+
+```{r compcase1, echo=FALSE, fig.cap="$\\hat\\beta_j > \\frac{\\lambda}{2 \\kappa_j}$"}
+las_obj <- function(x, bh, lam) {
+  ifelse(
+    x >= 0,
+    (x - (bh - lam))^2 + bh - (bh - lam)^2,
+    (x - (bh + lam))^2 + bh - (bh + lam)^2
+  )
+}
+#------------------------------
+tibble(
+  x = seq(-5, 5, by = .01)
+) %>% 
+  mutate(
+    sgn = x >= 0,
+    fn = las_obj(x, bh = 2, lam = 1)
+  ) %>% 
+  ggplot(aes(x = x, y = fn, colour = sgn)) +
+  geom_path() +
+  scale_x_continuous(breaks = 0) +
+  labs(
+    y = "Componentwise objective",
+    x = expression(beta[j])
+  )
+```
+
+```{r compcase2, echo=FALSE, fig.cap="$\\hat\\beta_j < - \\frac{\\lambda}{2 \\kappa_j}$"}
+tibble(
+  x = seq(-5, 5, by = .01)
+) %>% 
+  mutate(
+    sgn = x >= 0,
+    fn = las_obj(x, bh = -2, lam = 1)
+  ) %>% 
+  ggplot(aes(x = x, y = fn, colour = sgn)) +
+  geom_path() +
+  scale_x_continuous(breaks = 0) +
+  labs(
+    y = "Componentwise objective",
+    x = expression(beta[j])
+  )
+```
+
+```{r compcase3, echo=FALSE, fig.cap="$- \\frac{\\lambda}{2 \\kappa_j} < \\hat\\beta_j < \\frac{\\lambda}{2 \\kappa_j}$"}
+tibble(
+  x = seq(-5, 5, by = .01)
+) %>% 
+  mutate(
+    sgn = x >= 0,
+    fn = las_obj(x, bh = .5, lam = 1)
+  ) %>% 
+  ggplot(aes(x = x, y = fn, colour = sgn)) +
+  geom_path() +
+  scale_x_continuous(breaks = 0) +
+  labs(
+    y = "Componentwise objective",
+    x = expression(beta[j])
+  )
+```
+
+Look at the above three Figures \@ref(fig:compcase1) to \@ref(fig:compcase3). First two figures are the case when $\lvert \hat\beta_j \rvert > \frac{\lambda}{2 \kappa_j}$. Minimum occurs at each $\hat\beta_j \pm \frac{\lambda}{2 \kappa_j}$. The last figure is the case of $\lvert \hat\beta_j \rvert \le \frac{\lambda}{2 \kappa_j}$ so that it is minimized by $\beta_j = 0$.
+
+```{proof, name = "Ridge regression for orthogonal design"}
+Since ridge regression has analytical solution, we can prove its part of \@ref(thm:orthlasso) more easily. Recall that
+
+$$\hb_{A, R} = (\mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} + \lambda I)^{-1} \mathbb{X}_{A, \perp}^T \mathbf{Y}$$
+
+Since $\mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} = diag(\kappa_1, \ldots, \kappa_p)$,
+
+$$\hb_{A} = diag \bigg(\frac{1}{\kappa_j} \bigg) \mathbb{X}_{A,\perp}^T \mathbf{Y}$$
+
+and
+
+$$\hb_{A,R} = diag \bigg(\frac{1}{\kappa_j + \lambda} \bigg) \mathbb{X}_{A,\perp}^T \mathbf{Y}$$
+
+Hence,
+
+$$\hat\beta_{j, R} = \frac{\kappa_j \hat\beta_j}{\kappa_j + \lambda}$$
+```
+
+In sum, we can see the relationship between OLS and each shrinked estimator.
+
+```{r shrinkest, echo=FALSE, fig.cap="OLS and the other estimators"}
+rid_line <- function(x) {
+  3 * x / (3 + 2)
+}
+#------------------------
+las_line <- function(x) {
+  y <- abs(x) - 2 / (2 * 3)
+  sign(x) * y * (y > 0)
+}
+#--------------
+tibble(x = seq(-2, 2, by = .01)) %>% 
+  mutate_all(
+    .funs = list(
+      ols = function(x) x,
+      ridge = rid_line,
+      lasso = las_line
+    )
+  ) %>% 
+  gather(-x, key = "Estimators", value = "value") %>% 
+  ggplot(aes(x = x, y = value, colour = Estimators)) +
+  geom_path() +
+  labs(
+    x = expression(hat(beta)[j]),
+    y = expression(hat(beta)[jS])
+  ) +
+  theme(
+    axis.ticks = element_blank(),
+    axis.text = element_blank()
+  )
+```
+
+See Figure \@ref(fig:shrinkest). Green line indicates OLS. As we can see, the other ridge estimator and lasso estimator is shrinking it. In case of ridge regression, it shrinks OLS proportionally by $\frac{\kappa_j}{\kappa_j + \lambda}$. This is why we cannot see exact zero. LASSO, on the other hand, moves the line up and down by $\frac{\lambda}{2 \kappa_j}$. We can see entire zeros near $\hat\beta_j \approx 0$. LASSO is doing feature selection. This is called *soft-thresholding*.
+
+## Numerical Methods
+
+Contrary to ridge estimation, the LASSO estimator does not have a closed form except in the orthogonal design case. So we should get the solution numerically. However, most of the numerical methods give unstable one. Some algorithm have overcome this problem and is widely used, e.g. *LARS* and *glmnet*.
+
+### Least Angle Regression
+
+The **Least Angle Regression (LAR)** algorithm [@Hastie:2013aa] give the complete set of the LASSO estimates for all $0 < \lambda < \infty$. In `R`, `lars::lars(x, y)` can perform this algorithm.
+
+```{r, include=FALSE}
+death <- bestglm::mcdonald %>% as_tibble()
+```
+
+```{r}
+death_mat <- 
+  death %>% 
+  scale() %>%
+  as_tibble() %>%
+  model.matrix(MORT ~ .-1, data = .)
+#-------------
+death_lars <- lars::lars(x = death_mat, y = death$MORT, type = "lasso", normalize = TRUE)
+```
+
+There exists `plot` method, but we try `ggplot2`.
+
+```{r larplot, fig.cap="Shrinkage in LASSO fitted by LARS"}
+l1 <- 
+  apply(death_lars$beta, 1, function(x) {
+    sum(abs(x))
+  })
+#-------------------
+death_lars$beta %>% 
+  as_tibble() %>% 
+  mutate(
+    l1 = l1,
+    l1 = l1 / max(l1) # normalize
+  ) %>% 
+  gather(-l1, key = "var", value = "value") %>% 
+  mutate(label = ifelse(l1 == 1, var, NA_character_)) %>% 
+  ggplot(aes(x = l1, y = value, colour = var)) +
+  geom_vline(aes(xintercept = l1), col = "grey70", alpha = .5) +
+  geom_point(shape = 4, alpha = .5) +
+  geom_path() +
+  ggrepel::geom_label_repel(
+    aes(label = label),
+    nudge_x = .1,
+    na.rm = TRUE
+  ) +
+  labs(
+    x = expression(l[1] / max(l[1])),
+    y = expression(beta[jL])
+  ) +
+  theme(legend.position = "none")
+```
+
+### glmnet
+
+Actually, `glmnet::glmnet()` is more widely used in `R`. This algorithm enables to fit $l_1$ and $l_2$ penalty model very fast.
+
+$$\lambda \sum_{j = 1}^p \bigg( (1 - \alpha) \beta_j^2 + \alpha \lvert \beta_j \rvert \bigg)$$
+
+with $\alpha \in [0,1]$. Setting $\alpha = 1$ and $\alpha = 0$ each, LASSO and ridge regression can be solved.
+
+```{r}
+death_lasso <- glmnet::glmnet(x = death_mat, y = death$MORT, alpha = 1)
+```
+
+As $\lambda$ grows, each coefficient shrinks.
+
+```{r lassopath, fig.cap="LASSO path along $\\log \\lambda$"}
+coef(death_lasso) %>% 
+  Matrix::t() %>% 
+  as.matrix() %>% 
+  as_tibble() %>% 
+  add_column(s = death_lasso$lambda) %>% 
+  rename_all(.funs = list(~str_remove_all(., pattern = "\\(|\\)"))) %>% # (Intercept) to Intercept
+  select(-Intercept) %>% # Intercept = average of y
+  gather(-s, key = "coeff", value = "b") %>% 
+  mutate(label = ifelse(s == min(s), coeff, NA_character_)) %>% 
+  ggplot(aes(x = s, y = b, colour = coeff)) +
+  geom_ref_line(h = 0) +
+  geom_path() +
+  ggrepel::geom_label_repel(
+    aes(label = label),
+    nudge_x = -.1,
+    na.rm = TRUE
+  ) +
+  scale_x_log10() +
+  labs(
+    x = expression(Log ~ lambda),
+    y = expression(hat(beta)[AL])
+  ) +
+  theme(legend.position = "none")
+```
+
+### LASSO for high-dimensional data
+
+In ordinary linear regression problem, it is assumed that $n > p$. However, sometimes $p$ becomes too large and even $n < p$. This is called **high-dimensionality**. This kind of problems occurs in the field of gene expression data and econometrics, et cetera.
+
+If the number of variables, i.e. the number of columns is larger than the number of rows, then OLS method breaks down. LASSO is very useful here. It can give a solution, and also conduct variable selection. See Figure \@ref(fig:lassopath). It is considered as *continuous subset selection*.
+
+
+
+
+
+
+
 
 
 
