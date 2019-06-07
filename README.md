@@ -6,6 +6,8 @@ This is `bookdown` of **regression analysis**. Many parts are involved in theore
 2. Multiple linear regression
 3. Regression diagnostics and remedies
 4. Multicollinearity
+5. Variable selection
+6. Lasso
 
 ***
 
