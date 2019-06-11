@@ -152,13 +152,14 @@ Then
   \hline
     Estimator & Formula \\
     \hline
-      Best subset of size $k$ & $\hat\beta_j I(\lvert \hat\beta_j \rvert \ge \lvert \hat\beta_{k,j} \rvert)$ \\
+      Best subset of size $k$ & $\hat\beta_j I(\lvert \hat\beta_j \rvert \ge \lvert \hat\beta_{k,j} \rvert)$ when orthonormal \\
       Ridge regression & $\frac{\kappa_j \hat\beta_j}{\kappa_j + \lambda}$ \\
       LASSO & $sgn(\hat\beta_j)\Big( \lvert \hat\beta_j \rvert - \frac{\lambda}{2 \kappa_j} \Big)_{+}$ \\
       \hline
   \end{tabular}
 \end{center}
 ```
+
 
 ```{proof, name = "LASSO for orthogonal design"}
 Write the length of each column vector by
@@ -337,6 +338,65 @@ tibble(x = seq(-2, 2, by = .01)) %>%
 ```
 
 See Figure \@ref(fig:shrinkest). Green line indicates OLS. As we can see, the other ridge estimator and lasso estimator is shrinking it. In case of ridge regression, it shrinks OLS proportionally by $\frac{\kappa_j}{\kappa_j + \lambda}$. This is why we cannot see exact zero. LASSO, on the other hand, moves the line up and down by $\frac{\lambda}{2 \kappa_j}$. We can see entire zeros near $\hat\beta_j \approx 0$. LASSO is doing feature selection. This is called *soft-thresholding*.
+
+On the other hand, the best subset regression conduct *hard-thresholding*. This is because model selection criteria are related to $l_0$ penalty
+
+$$\lVert \B_A \rVert_0 = \sum_{j = 1}^p I(\beta_j \neq 0)$$
+
+```{r bestl0, echo=FALSE, fig.cap="OLS and the best subset estimator"}
+all_line <- function(x) {
+  ifelse(x <= .5 & x >= -.5, 0, x)
+}
+#--------------
+tibble(x = seq(-2, 2, by = .01)) %>% 
+  mutate_all(
+    .funs = list(
+      ols = function(x) x,
+      best = all_line
+    )
+  ) %>% 
+  gather(-x, key = "Estimators", value = "value") %>% 
+  ggplot(aes(x = x, y = value, colour = Estimators)) +
+  geom_path(aes(linetype = Estimators)) +
+  labs(
+    x = expression(hat(beta)[j]),
+    y = expression(hat(beta)[jS])
+  ) +
+  theme(
+    axis.ticks = element_blank(),
+    axis.text = element_blank()
+  )
+```
+
+In Figure \@ref(fig:bestl0), we can see that the best subset regression is finding estimators larger than some threshold in orthonormal setting.
+
+<!-- Recall that the best subset regression finds the one optimizing $C_p$, or information criteria, et cetera among every possible model $S$. Consider $C_p(S)$. Note that -->
+
+<!-- \begin{equation} -->
+<!--   \begin{split} -->
+<!--     C_p & = (n - p - 1) \frac{\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{S, \perp} \B_S \rVert^2}{\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{A, \perp} \B_A \rVert^2} + 2 \sum_{j = 1}^p I(\hat\beta_j \neq 0) - n \\ -->
+<!--     & = (n - p - 1) \frac{\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{S, \perp} \B_S \rVert^2}{\lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{A, \perp} \B_A \rVert^2} + 2 \lVert \B \rVert_0 - n \\ -->
+<!--     & \propto \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{S, \perp} \B_S \rVert^2 + 2 \lVert \B \rVert_0 -->
+<!--   \end{split} -->
+<!--   (\#eq:cpl0) -->
+<!-- \end{equation} -->
+
+<!-- Observe that $C_p$ is using $l_0$ penalty. We try to minimize the last line of Equation \@ref(eq:cpl0). Now suppose that $\mathbb{X}_{A, \perp}$ has orthogonal columns, i.e. -->
+
+<!-- $$\mathbb{X}_{A, \perp}^T \mathbb{X}_{A, \perp} = diag(\kappa_1, \ldots, \kappa_p)$$ -->
+
+<!-- One proceeds in a similar way to Equation \@ref(eq:lassoobj). -->
+
+<!-- $$ -->
+<!-- \begin{equation*} -->
+<!--   \begin{split} -->
+<!--     L(\B_A) & = \bigg( \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{S, \perp} \B_S \rVert^2 + f(\B_A) \bigg) + 2 \lVert \B \rVert_0 \\ -->
+<!--     & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{S, \perp} \B_S \rVert^2 + \sum_{j = 1}^p \kappa_j (\beta_j - \hat\beta_j)^2 + 2 \sum_{j = 1}^p I(\hat\beta_j \neq 0) \\ -->
+<!--     & = \lVert \mathbf{Y} - \mathbf{1} \overline{Y} - \mathbb{X}_{S, \perp} \B_S \rVert^2 + \sum_{j = 1}^p \bigg( \kappa_j (\beta_j - \hat\beta_j)^2 + 2 I(\hat\beta_j \neq 0) \bigg) -->
+<!--   \end{split} -->
+<!-- \end{equation*} -->
+<!-- $$ -->
+
 
 ## Numerical Methods
 

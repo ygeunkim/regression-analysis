@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{07 Jun, 2019}
+    \date{11 Jun, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fe6dca29f78>}
+\CommentTok{#> <bytecode: 0x7fadd7cbece8>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -11113,7 +11113,7 @@ Then
   \hline
     Estimator & Formula \\
     \hline
-      Best subset of size $k$ & $\hat\beta_j I(\lvert \hat\beta_j \rvert \ge \lvert \hat\beta_{k,j} \rvert)$ \\
+      Best subset of size $k$ & $\hat\beta_j I(\lvert \hat\beta_j \rvert \ge \lvert \hat\beta_{k,j} \rvert)$ when orthonormal \\
       Ridge regression & $\frac{\kappa_j \hat\beta_j}{\kappa_j + \lambda}$ \\
       LASSO & $sgn(\hat\beta_j)\Big( \lvert \hat\beta_j \rvert - \frac{\lambda}{2 \kappa_j} \Big)_{+}$ \\
       \hline
@@ -11244,6 +11244,21 @@ In sum, we can see the relationship between OLS and each shrinked estimator.
 \end{figure}
 
 See Figure \ref{fig:shrinkest}. Green line indicates OLS. As we can see, the other ridge estimator and lasso estimator is shrinking it. In case of ridge regression, it shrinks OLS proportionally by \(\frac{\kappa_j}{\kappa_j + \lambda}\). This is why we cannot see exact zero. LASSO, on the other hand, moves the line up and down by \(\frac{\lambda}{2 \kappa_j}\). We can see entire zeros near \(\hat\beta_j \approx 0\). LASSO is doing feature selection. This is called \emph{soft-thresholding}.
+
+On the other hand, the best subset regression conduct \emph{hard-thresholding}. This is because model selection criteria are related to \(l_0\) penalty
+
+\[\lVert \boldsymbol\beta_A \rVert_0 = \sum_{j = 1}^p I(\beta_j \neq 0)\]
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/bestl0-1} 
+
+}
+
+\caption{OLS and the best subset estimator}\label{fig:bestl0}
+\end{figure}
+
+In Figure \ref{fig:bestl0}, we can see that the best subset regression is finding estimators larger than some threshold in orthonormal setting.
 
 \hypertarget{numerical-methods}{%
 \section{Numerical Methods}\label{numerical-methods}}
