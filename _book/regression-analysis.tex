@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{11 Jun, 2019}
+    \date{12 Jun, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fadd7cbece8>}
+\CommentTok{#> <bytecode: 0x7f7f61b2e8a8>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -10409,7 +10409,7 @@ The following correspond to likelihood term.
 \end{itemize}
 \EndKnitrBlock{remark}
 
-As the numerber of parameters grows, each error
+As the number of parameters grows, each error
 
 \begin{itemize}
 \tightlist
@@ -10589,6 +10589,12 @@ where \(\hat\sigma^2 = MSE(F) = \frac{SSE(F)}{n - p - 1}\), i.e.~\(MSE\) obtaine
 
 \[\frac{SSE(F)}{\hat\sigma^2} = n - p - 1\]
 
+Since \(q = p + 1\) in this model, we have
+
+\[C_p(F) = n - p - 1 + 2 (p + 1) - n = p + 1\]
+
+i.e.~same value as \(q\). In fact, this occurs when the model is unbiased.
+
 \BeginKnitrBlock{remark}
 \iffalse{} {Remark. } \fi{}Suppose that the fitted values of subset model are unbiased. Then
 
@@ -10609,14 +10615,14 @@ Thus,
 \[C_p = \frac{(n - q) MSE(S)}{MSE(F)} + 2q - n = q\]
 \EndKnitrBlock{proof}
 
-This remark implies that the good model has
+This remark implies that the good model has small value of
 
 \[C_p(S) \approx q\]
 
 We need to find this model.
 
 \BeginKnitrBlock{conjecture}[Optimal number of variables w.r.t. $C_p$]
-\protect\hypertarget{cnj:cpopt}{}{\label{cnj:cpopt} \iffalse (Optimal number of variables w.r.t. \(C_p\)) \fi{} }Choose \(S\) with \(q = \lvert S \rvert + 1\) that has \(C_p(S) \approx q\).
+\protect\hypertarget{cnj:cpopt}{}{\label{cnj:cpopt} \iffalse (Optimal number of variables w.r.t. \(C_p\)) \fi{} }Choose \(S\) with the smallest \(q = \lvert S \rvert + 1\) that has \(C_p(S) \approx q\).
 \EndKnitrBlock{conjecture}
 
 \hypertarget{akaike-information-criterion}{%
@@ -10770,7 +10776,7 @@ For each submodel, compute one of \(R_a^2\), \(C_p\), \(AIC\), and \(BIC\). Subm
   \caption{All possible regressions}
 \end{algorithm}
 
-However, as the full number of variables \(p\) increases, the number of submodels to be conducted \(2^p\) increases rapidly. It is computationaly burden. Against this, some simpler methods are developed.
+However, as the full number of variables \(p\) increases, the number of submodels to be conducted \(2^p\) increases rapidly. It is computational burden. Against this kind of efficiency problem, some simpler methods are developed.
 
 \hypertarget{forward-selection}{%
 \subsection{Forward selection}\label{forward-selection}}
@@ -10915,7 +10921,7 @@ Even if Algorithm \(\ref{alg:fwsel}\) goes to the end \(p\), the number of model
   \end{split}
 \end{equation*}
 
-Thus, it has computational advantage over all possible regressions. Moreover, this method is even possible for high-dimensional setting \(n < p\). Even though OLS cannot be computed in full model, forward selection procedure can goes on until \(n - 1\) variable-subset model.
+Thus, it has computational advantage over all possible regressions. Moreover, this method is even possible for high-dimensional setting \(n < p\). Even though OLS cannot be computed in full model, forward selection procedure is able to go on until \(n - 1\) variable-subset model.
 
 Since this does not look at the whole models but \emph{nested models}, it is not guaranteed to find the best model which comes from all possible regressions.
 
@@ -10976,7 +10982,7 @@ We have stopped if \(F_{k,j} < F_{IN}\) in forward selection \(\ref{alg:fwsel}\)
   \For{$k \leftarrow 1$ \KwTo $p$}{
     For non-removed $(p - k + 1)$ predictors, compute partial $F$-statistic $$F_{k,j} = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(X_l : l \in S_k) / (n - k - 1)}$$\;
     $j_k = \argmin_j F_{k,j}$\;
-    \eIf{$F_{k, j_k} < F_{IN}$}{
+    \eIf{$F_{k, j_k} < F_{OUT}$}{
       Update the subset $S_k = S_{k - 1} - \{ j_k \}$\;
       Update the column space $C_k = Col(\mathbf{1}, \mathbf{x}_l : l \in S_k)$\;
     }{

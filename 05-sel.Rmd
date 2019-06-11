@@ -181,7 +181,7 @@ Likelihood means training error based on normal distribution error.
 \end{itemize}
 ```
 
-As the numerber of parameters grows, each error
+As the number of parameters grows, each error
 
 - $1 - R^2$
 - $SSE$
@@ -294,6 +294,12 @@ $\frac{SSE(S)}{\hat\sigma^2}$ measures $SSE(S)$ compared to $MSE$ of full model.
 
 $$\frac{SSE(F)}{\hat\sigma^2} = n - p - 1$$
 
+Since $q = p + 1$ in this model, we have
+
+$$C_p(F) = n - p - 1 + 2 (p + 1) - n = p + 1$$
+
+i.e. same value as $q$. In fact, this occurs when the model is unbiased.
+
 ```{remark}
 Suppose that the fitted values of subset model are unbiased. Then
 
@@ -333,14 +339,14 @@ $$C_p = \frac{(n - q) MSE(S)}{MSE(F)} + 2q - n = q$$
 <!--   \end{split} -->
 <!-- \end{equation} -->
 
-This remark implies that the good model has
+This remark implies that the good model has small value of
 
 $$C_p(S) \approx q$$
 
 We need to find this model.
 
 ```{conjecture, cpopt, name = "Optimal number of variables w.r.t. $C_p$"}
-Choose $S$ with $q = \lvert S \rvert + 1$ that has $C_p(S) \approx q$.
+Choose $S$ with the smallest $q = \lvert S \rvert + 1$ that has $C_p(S) \approx q$.
 ```
 
 ### Akaike Information criterion
@@ -490,7 +496,7 @@ $$\binom{p}{0} + \binom{p}{1} + \cdots \binom{p}{p} = 2^p$$
   \caption{All possible regressions}
 \end{algorithm}
 
-However, as the full number of variables $p$ increases, the number of submodels to be conducted $2^p$ increases rapidly. It is computationaly burden. Against this, some simpler methods are developed.
+However, as the full number of variables $p$ increases, the number of submodels to be conducted $2^p$ increases rapidly. It is computational burden. Against this kind of efficiency problem, some simpler methods are developed.
 
 ### Forward selection
 
@@ -632,7 +638,7 @@ Even if Algorithm $\ref{alg:fwsel}$ goes to the end $p$, the number of models re
   \end{split}
 \end{equation*}
 
-Thus, it has computational advantage over all possible regressions. Moreover, this method is even possible for high-dimensional setting $n < p$. Even though OLS cannot be computed in full model, forward selection procedure can goes on until $n - 1$ variable-subset model.
+Thus, it has computational advantage over all possible regressions. Moreover, this method is even possible for high-dimensional setting $n < p$. Even though OLS cannot be computed in full model, forward selection procedure is able to go on until $n - 1$ variable-subset model.
 
 Since this does not look at the whole models but *nested models*, it is not guaranteed to find the best model which comes from all possible regressions.
 
@@ -695,7 +701,7 @@ We have stopped if $F_{k,j} < F_{IN}$ in forward selection $\ref{alg:fwsel}$. On
   \For{$k \leftarrow 1$ \KwTo $p$}{
     For non-removed $(p - k + 1)$ predictors, compute partial $F$-statistic $$F_{k,j} = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(X_l : l \in S_k) / (n - k - 1)}$$\;
     $j_k = \argmin_j F_{k,j}$\;
-    \eIf{$F_{k, j_k} < F_{IN}$}{
+    \eIf{$F_{k, j_k} < F_{OUT}$}{
       Update the subset $S_k = S_{k - 1} - \{ j_k \}$\;
       Update the column space $C_k = Col(\mathbf{1}, \mathbf{x}_l : l \in S_k)$\;
     }{
