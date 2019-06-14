@@ -8,7 +8,8 @@ This is `bookdown` of **regression analysis**. Many parts are involved in theore
 4. Multicollinearity
 5. Variable selection
 6. Lasso
+7. Further issues
 
 ***
 
-> open repository, but book contents not yet finished
+See [`_book/regression-analysis.pdf`](https://github.com/ygeunkim/regression-analysis/blob/master/_book/regression-analysis.pdf)
