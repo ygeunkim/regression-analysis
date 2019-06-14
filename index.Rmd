@@ -19,6 +19,8 @@ cover-image: cover.png
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
+nocite: |
+  @R-base, @R-bookdown, @R-datatable, @R-foreach, @R-knitr, @R-modelr, @R-rmarkdown, @R-tidyverse
 biblio-style: apalike
 link-citations: yes
 description: "This aims at covering materials of regression analysis with R programming."

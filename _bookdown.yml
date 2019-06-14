@@ -8,7 +8,9 @@ rmd_files: [
   "03-diagnostics.rmd",
   "04-multicollinearity.rmd",
   "05-sel.rmd",
-  "06-lasso.rmd"
+  "06-lasso.rmd",
+  "07-issue.rmd",
+  "08-refer.rmd"
 ]
 before_chapter_script: "_common.R"
 language:

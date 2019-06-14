@@ -1,0 +1,210 @@
+# Further Issues in Parametric Regression {#further}
+
+## Non-linear Relationship
+
+### Tensile strength of kraft paper
+
+The data set is an excerpt from @Ekstrom:2014aa.
+
+```{r}
+data(paperstr, package = "isdals")
+(paperstr <- as_tibble(paperstr))
+```
+
+- `hardwood`: amounts of hardwood contents in the paper pulp
+- `strength`: tensile strength of kraft paper (in pound-force per square inch)
+
+```{r paperfig, fig.cap="Tensile strength of kraft paper"}
+paperstr %>% 
+  ggplot(aes(x = hardwood, y = strength)) +
+  geom_smooth(method = "lm") +
+  geom_point()
+```
+
+In Figure \@ref(fig:paperfig), it seems that two variables have *non-linear relationship*. Linear regression model
+
+$$Y_i = \beta_0 + \beta_1 x_i + \epsilon_i$$
+
+might not explain the data well. Instead of linear model, we should find some other function $f$ such that
+
+\begin{equation}
+  Y_i = f(x_i) + \epsilon_i
+  (\#eq:nonlin)
+\end{equation}
+
+### Polynomial regression model
+
+A real-valued function $f$ is called *analytic* on $(a, b)$ if and only if there exists $\{ a_k \}_{0}^{\infty}$
+
+$$f(x) = \sum_{k = 0}^{\infty} a_k (x - x_0)^k$$
+
+For more detailed definition, see @Wade:2017aa. It can be shown that if $f \in C^{\infty}(a, b)$, then $f$ is analytic and its coefficients are defined by Talyor expansion.
+
+```{theorem, taylor, name = "Taylor expansion"}
+Let $f \in C^{\infty}(a, b)$. Suppose that
+
+$$\forall x \in (a, b) \quad \forall n \in \mathbb{N} \quad \exists M > 0 : \lvert f^{(n)} \rvert \le M^n$$
+
+Then $f$ is analytic on $(a, b)$. In fact, for each $x_0 \in (a, b)$,
+
+\begin{equation}
+  f(x) = \sum_{k = 0}^{\infty} \frac{f^{(k)}(x_0)}{k !} (x - x_0)^k
+  (\#eq:taylorexp)
+\end{equation}
+
+for every $x \in (a, b)$.
+```
+
+This Theorem suggests a lot in regression context. Rewrite Equation \@ref(eq:taylorexp).
+
+\begin{equation}
+  \begin{split}
+    f(x) & = E(Y \mid x) \\
+    & = \underbrace{\underbrace{f(x_0) + f^{(1)}(x_0)(x - x_0)}_{\text{linearity assumption}} + \frac{f^{(2)}(x_0)}{2 !} (x - x_0)^2 + \frac{f^{(3)}(x_0)}{3 !} (x - x_0)^3}_{\text{cubic model}} + \cdots
+  \end{split}
+  (\#eq:polymod)
+\end{equation}
+
+In the taylor expansion, we have used only first order part. It is often good enough and gives interpretability. However, as we can see in Figure \@ref(fig:paperfig), sometimes this kind of approximation cannot be made. In this case, we should add terms, i.e. *polynomial function*. In case of single variable, we can construct $k$-th order polynomial model as follows.
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_k x_i^k + \epsilon_i
+  (\#eq:polyreg)
+\end{equation}
+
+If we have several variables, e.g. two, the second-order polynomial model can be constructed as follows.
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2}^2 + \beta_{11} x_{i1}^2 + \beta_{22} x_{i2}^2 + \beta_{12} x_{i1} x_{i2} + \epsilon_i
+  (\#eq:polyreg2)
+\end{equation}
+
+As we can see, the model is built by *transformation* of the original predictors. It is called **linear basis expansion**. For examle,
+
+```{r}
+(cubic_trans <- 
+  paperstr %>% 
+  transmute(
+    x = hardwood,
+    x2 = hardwood^2,
+    x3 = hardwood^3
+  ))
+```
+
+However, this kind of transformation carries multicollinearity problems.
+
+```{r}
+cor(cubic_trans)
+```
+
+Thus in general, we orthogonalize these bases. Refer to Gram-Schmidt process \@ref(thm:gs). This can be applied to any Hilbert space, for instance, $L^2$ space [@Kreyszig:2007aa].
+
+```{lemma, l2gs, name = "Legendre polynomial"}
+Let $L^2[-1, 1]$ be the completion of the innter product space $X$ of all continuous real-valued functions on $[-1, 1]$ with inner product defined by
+
+$$<x, y> = \int_{-1}^1 x(t) y(t) dt$$
+
+Then there is a total orthonormal set $\{ e_k \}$ in $L^2[-1, 1]$. Furthermore,
+
+$$e_n(t) = \sqrt{2n + 1}{2} P_n(t), \quad n = 0, 1, \ldots$$
+
+where
+
+$$P_n(t) = \frac{1}{2^n n !} \frac{d^n}{dt^n}(t^2 - 1)^n$$
+```
+
+By applying the binomial theorem to $(t^2 - 1)^n$, we obtain the result of differentiation.
+
+```{corollary, l2gs2}
+$P_0, P_1, P_2 \ldots$ are orthogonal.
+
+$$P_n(t) = \sum_{j = 0}^N (-1)^j \frac{(2n - 2j) !}{2^n j ! (n - 2j) !} t^{n - 2j}$$
+
+with $\begin{cases} N = \frac{n}{2} & n \: \text{is even} \\ N = \frac{n - 1}{2} & n \: \text{is odd} \end{cases}$
+```
+
+Similarly, we can apply G-S process to our expanded bases $\{ 1, x, x^2, x^3 \ldots \}$ using $L_2$ norm defined above.
+
+\begin{equation*}
+  \begin{split}
+    & P_0(x) = 1 \\
+    & P_1(x) = x - \frac{\int x dx}{\int 1^2 dx} 1 \\
+    & P_2(x) = x^2 - \frac{\int x^2 dx}{\int 1^2 dx} 1 - \frac{\int x^2 P_1(x) dx}{\int P_1^2(x) dx} P_1(x) \\
+    & P_3(x) = x^3 - \frac{\int x^3 dx}{\int 1^2 dx} 1 - \frac{\int x^3 P_1(x) dx}{\int P_1^2(x) dx} P_1(x) - \frac{\int x^3 P_2(x) dx}{\int P_2^2(x) dx} P_2(x) \\
+    & \vdots
+  \end{split}
+\end{equation*}
+
+and hence,
+
+$$\int P_j(x) P_k(x) dx = 0 \quad \forall j \neq k \quad \Leftrightarrow P_j \perp P_k$$
+
+In `R`, `poly()` function makes orthogonal polynomials with `degree` by default otherwise we specify `simple = TRUE`. If we provide this as predictor in `lm()`, polynomial fit is estimated.
+
+```{r}
+(hardwood_fit <- lm(strength ~ poly(hardwood, degree = 2), data = paperstr))
+```
+
+See the difference between Figure \@ref(fig:paperfig) and Figure \@ref(fig:paperpoly). We can see how polynomial regression improve approximation in the eye.
+
+```{r paperpoly, fig.cap="Quadratic regression to the hardwood data set"}
+paperstr %>% 
+  ggplot(aes(x = hardwood, y = strength)) +
+  geom_smooth(formula = y ~ poly(x, degree = 2), method = "lm") +
+  geom_point()
+```
+
+
+## Variable Selection Issue
+
+We have covered variable selection topic. This is important in that it affects stable estimation. It is related to the complexity of the model.
+
+- Underfit: miss one of the important variables
+- Correct fit: include all the necessary variables exactly
+- Overfit: include all the necessary variables and some of unnecessary variables
+
+Among the above three concept, we should find *correct fit*. If the model is too complex, the model overfit the data.
+
+### Simulated example
+
+First consider true mode
+
+$$Y = -2 + 3 X - 2 X^2$$
+
+```{r quadsimul, fig.cap="Simulation - Polynomial orders"}
+simul_quad <- 
+  tibble(
+    x = runif(20, -2, 4),
+    y = -2 + 3 * x - 2 * x^2 + rnorm(20, sd = 2)
+  )
+#-----------------------
+underfit <- lm(y ~ x, data = simul_quad)
+correctfit <- lm(y ~ poly(x, 2), data = simul_quad)
+overfit <- lm(y ~ poly(x, 12), data = simul_quad)
+simul_quad %>% 
+  gather_predictions(underfit, correctfit, overfit) %>% 
+  ggplot(aes(x = x)) +
+  geom_line(aes(y = pred, colour = model)) +
+  geom_point(aes(y = y))
+```
+
+See Figure \@ref(fig:quadsimul). If we choose too large order for polynomial regression, we would get wiggly fit.
+
+### Penalization
+
+To solve this kind of overfitting issues, we implement penalization method, like **ridge regression and lasso**. Adding $l_1$ penalty, we have seen that we can perform both variable selection and estimation.
+
+
+## Moving Beyond Linearity
+
+When using non-linear model, polynomial model is not enough, sometimes. Moreover, polynomial regression gives unstable estimator near boundary. There are many other non-linear models such as local regression, splines et cetera.
+
+```{r paperloess, fig.cap="Local polynomial to the hardwood data set"}
+paperstr %>% 
+  ggplot(aes(x = hardwood, y = strength)) +
+  geom_smooth(method = "loess") +
+  geom_point()
+```
+
+
+

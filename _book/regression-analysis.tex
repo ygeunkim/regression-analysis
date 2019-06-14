@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{12 Jun, 2019}
+    \date{14 Jun, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f7f61b2e8a8>}
+\CommentTok{#> <bytecode: 0x7f8d59936858>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -8132,7 +8132,7 @@ Orthogonalize \(\mathbf{x}_1\) by projecting onto \(X_B\) as before.
 
 \[\mathbf{x}_{1, \perp} := \mathbf{x}_1 - \Pi_B \mathbf{x}_1\]
 
-where \(\Pi_1 = X_B (X_B^T X_B)^{-1} X_B^T\). It follows that
+where \(\Pi_B = X_B (X_B^T X_B)^{-1} X_B^T\). It follows that
 
 \begin{equation*}
   \begin{split}
@@ -8173,7 +8173,7 @@ From Equation \eqref{eq:s11r},
 One proceeds in a similary way for the other \(j\).
 
 \begin{equation}
-  \mathbf{x}_{j, \perp}^T \mathbf{x}_{j, \perp} = s_{j} (1 - R_j^2)
+  \mathbf{x}_{j, \perp}^T \mathbf{x}_{j, \perp} = s_{jj} (1 - R_j^2)
   \label{eq:sjjr}
 \end{equation}
 \EndKnitrBlock{proof}
@@ -11391,6 +11391,316 @@ As \(\lambda\) grows, each coefficient shrinks.
 In ordinary linear regression problem, it is assumed that \(n > p\). However, sometimes \(p\) becomes too large and even \(n < p\). This is called \textbf{high-dimensionality}. This kind of problems occurs in the field of gene expression data and econometrics, et cetera.
 
 If the number of variables, i.e.~the number of columns is larger than the number of rows, then OLS method breaks down. LASSO is very useful here. It can give a solution, and also conduct variable selection. See Figure \ref{fig:lassopath}. It is considered as \emph{continuous subset selection}.
+
+\hypertarget{further}{%
+\chapter{Further Issues in Parametric Regression}\label{further}}
+
+\hypertarget{non-linear-relationship}{%
+\section{Non-linear Relationship}\label{non-linear-relationship}}
+
+\hypertarget{tensile-strength-of-kraft-paper}{%
+\subsection{Tensile strength of kraft paper}\label{tensile-strength-of-kraft-paper}}
+
+The data set is an excerpt from \citet{Ekstrom:2014aa}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data}\NormalTok{(paperstr, }\DataTypeTok{package =} \StringTok{"isdals"}\NormalTok{)}
+\NormalTok{(paperstr <-}\StringTok{ }\KeywordTok{as_tibble}\NormalTok{(paperstr))}
+\CommentTok{#> # A tibble: 19 x 2}
+\CommentTok{#>   hardwood strength}
+\CommentTok{#>      <dbl>    <dbl>}
+\CommentTok{#> 1      1        6.3}
+\CommentTok{#> 2      1.5     11.1}
+\CommentTok{#> 3      2       20  }
+\CommentTok{#> 4      3       24  }
+\CommentTok{#> 5      4       26.1}
+\CommentTok{#> 6      4.5     30  }
+\CommentTok{#> # ... with 13 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{hardwood}: amounts of hardwood contents in the paper pulp
+\item
+  \texttt{strength}: tensile strength of kraft paper (in pound-force per square inch)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{paperstr }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hardwood, }\DataTypeTok{y =}\NormalTok{ strength)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/paperfig-1} 
+
+}
+
+\caption{Tensile strength of kraft paper}\label{fig:paperfig}
+\end{figure}
+
+In Figure \ref{fig:paperfig}, it seems that two variables have \emph{non-linear relationship}. Linear regression model
+
+\[Y_i = \beta_0 + \beta_1 x_i + \epsilon_i\]
+
+might not explain the data well. Instead of linear model, we should find some other function \(f\) such that
+
+\begin{equation}
+  Y_i = f(x_i) + \epsilon_i
+  \label{eq:nonlin}
+\end{equation}
+
+\hypertarget{polynomial-regression-model}{%
+\subsection{Polynomial regression model}\label{polynomial-regression-model}}
+
+A real-valued function \(f\) is called \emph{analytic} on \((a, b)\) if and only if there exists \(\{ a_k \}_{0}^{\infty}\)
+
+\[f(x) = \sum_{k = 0}^{\infty} a_k (x - x_0)^k\]
+
+For more detailed definition, see \citet{Wade:2017aa}. It can be shown that if \(f \in C^{\infty}(a, b)\), then \(f\) is analytic and its coefficients are defined by Talyor expansion.
+
+\BeginKnitrBlock{theorem}[Taylor expansion]
+\protect\hypertarget{thm:taylor}{}{\label{thm:taylor} \iffalse (Taylor expansion) \fi{} }Let \(f \in C^{\infty}(a, b)\). Suppose that
+
+\[\forall x \in (a, b) \quad \forall n \in \mathbb{N} \quad \exists M > 0 : \lvert f^{(n)} \rvert \le M^n\]
+
+Then \(f\) is analytic on \((a, b)\). In fact, for each \(x_0 \in (a, b)\),
+
+\begin{equation}
+  f(x) = \sum_{k = 0}^{\infty} \frac{f^{(k)}(x_0)}{k !} (x - x_0)^k
+  \label{eq:taylorexp}
+\end{equation}
+
+for every \(x \in (a, b)\).
+\EndKnitrBlock{theorem}
+
+This Theorem suggests a lot in regression context. Rewrite Equation \eqref{eq:taylorexp}.
+
+\begin{equation}
+  \begin{split}
+    f(x) & = E(Y \mid x) \\
+    & = \underbrace{\underbrace{f(x_0) + f^{(1)}(x_0)(x - x_0)}_{\text{linearity assumption}} + \frac{f^{(2)}(x_0)}{2 !} (x - x_0)^2 + \frac{f^{(3)}(x_0)}{3 !} (x - x_0)^3}_{\text{cubic model}} + \cdots
+  \end{split}
+  \label{eq:polymod}
+\end{equation}
+
+In the taylor expansion, we have used only first order part. It is often good enough and gives interpretability. However, as we can see in Figure \ref{fig:paperfig}, sometimes this kind of approximation cannot be made. In this case, we should add terms, i.e.~\emph{polynomial function}. In case of single variable, we can construct \(k\)-th order polynomial model as follows.
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_k x_i^k + \epsilon_i
+  \label{eq:polyreg}
+\end{equation}
+
+If we have several variables, e.g.~two, the second-order polynomial model can be constructed as follows.
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2}^2 + \beta_{11} x_{i1}^2 + \beta_{22} x_{i2}^2 + \beta_{12} x_{i1} x_{i2} + \epsilon_i
+  \label{eq:polyreg2}
+\end{equation}
+
+As we can see, the model is built by \emph{transformation} of the original predictors. It is called \textbf{linear basis expansion}. For examle,
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(cubic_trans <-}\StringTok{ }
+\StringTok{  }\NormalTok{paperstr }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{transmute}\NormalTok{(}
+    \DataTypeTok{x =}\NormalTok{ hardwood,}
+    \DataTypeTok{x2 =}\NormalTok{ hardwood}\OperatorTok{^}\DecValTok{2}\NormalTok{,}
+    \DataTypeTok{x3 =}\NormalTok{ hardwood}\OperatorTok{^}\DecValTok{3}
+\NormalTok{  ))}
+\CommentTok{#> # A tibble: 19 x 3}
+\CommentTok{#>       x    x2    x3}
+\CommentTok{#>   <dbl> <dbl> <dbl>}
+\CommentTok{#> 1   1    1     1   }
+\CommentTok{#> 2   1.5  2.25  3.38}
+\CommentTok{#> 3   2    4     8   }
+\CommentTok{#> 4   3    9    27   }
+\CommentTok{#> 5   4   16    64   }
+\CommentTok{#> 6   4.5 20.2  91.1 }
+\CommentTok{#> # ... with 13 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+However, this kind of transformation carries multicollinearity problems.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cor}\NormalTok{(cubic_trans)}
+\CommentTok{#>        x    x2    x3}
+\CommentTok{#> x  1.000 0.970 0.921}
+\CommentTok{#> x2 0.970 1.000 0.987}
+\CommentTok{#> x3 0.921 0.987 1.000}
+\end{Highlighting}
+\end{Shaded}
+
+Thus in general, we orthogonalize these bases. Refer to Gram-Schmidt process \ref{thm:gs}. This can be applied to any Hilbert space, for instance, \(L^2\) space \citep{Kreyszig:2007aa}.
+
+\BeginKnitrBlock{lemma}[Legendre polynomial]
+\protect\hypertarget{lem:l2gs}{}{\label{lem:l2gs} \iffalse (Legendre polynomial) \fi{} }Let \(L^2[-1, 1]\) be the completion of the innter product space \(X\) of all continuous real-valued functions on \([-1, 1]\) with inner product defined by
+
+\[<x, y> = \int_{-1}^1 x(t) y(t) dt\]
+
+Then there is a total orthonormal set \(\{ e_k \}\) in \(L^2[-1, 1]\). Furthermore,
+
+\[e_n(t) = \sqrt{2n + 1}{2} P_n(t), \quad n = 0, 1, \ldots\]
+
+where
+
+\[P_n(t) = \frac{1}{2^n n !} \frac{d^n}{dt^n}(t^2 - 1)^n\]
+\EndKnitrBlock{lemma}
+
+By applying the binomial theorem to \((t^2 - 1)^n\), we obtain the result of differentiation.
+
+\BeginKnitrBlock{corollary}
+\protect\hypertarget{cor:l2gs2}{}{\label{cor:l2gs2} }\(P_0, P_1, P_2 \ldots\) are orthogonal.
+
+\[P_n(t) = \sum_{j = 0}^N (-1)^j \frac{(2n - 2j) !}{2^n j ! (n - 2j) !} t^{n - 2j}\]
+
+with \(\begin{cases} N = \frac{n}{2} & n \: \text{is even} \\ N = \frac{n - 1}{2} & n \: \text{is odd} \end{cases}\)
+\EndKnitrBlock{corollary}
+
+Similarly, we can apply G-S process to our expanded bases \(\{ 1, x, x^2, x^3 \ldots \}\) using \(L_2\) norm defined above.
+
+\begin{equation*}
+  \begin{split}
+    & P_0(x) = 1 \\
+    & P_1(x) = x - \frac{\int x dx}{\int 1^2 dx} 1 \\
+    & P_2(x) = x^2 - \frac{\int x^2 dx}{\int 1^2 dx} 1 - \frac{\int x^2 P_1(x) dx}{\int P_1^2(x) dx} P_1(x) \\
+    & P_3(x) = x^3 - \frac{\int x^3 dx}{\int 1^2 dx} 1 - \frac{\int x^3 P_1(x) dx}{\int P_1^2(x) dx} P_1(x) - \frac{\int x^3 P_2(x) dx}{\int P_2^2(x) dx} P_2(x) \\
+    & \vdots
+  \end{split}
+\end{equation*}
+
+and hence,
+
+\[\int P_j(x) P_k(x) dx = 0 \quad \forall j \neq k \quad \Leftrightarrow P_j \perp P_k\]
+
+In \texttt{R}, \texttt{poly()} function makes orthogonal polynomials with \texttt{degree} by default otherwise we specify \texttt{simple\ =\ TRUE}. If we provide this as predictor in \texttt{lm()}, polynomial fit is estimated.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(hardwood_fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(strength }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(hardwood, }\DataTypeTok{degree =} \DecValTok{2}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ paperstr))}
+\CommentTok{#> }
+\CommentTok{#> Call:}
+\CommentTok{#> lm(formula = strength ~ poly(hardwood, degree = 2), data = paperstr)}
+\CommentTok{#> }
+\CommentTok{#> Coefficients:}
+\CommentTok{#>                 (Intercept)  poly(hardwood, degree = 2)1  }
+\CommentTok{#>                        34.2                         32.3  }
+\CommentTok{#> poly(hardwood, degree = 2)2  }
+\CommentTok{#>                       -45.4}
+\end{Highlighting}
+\end{Shaded}
+
+See the difference between Figure \ref{fig:paperfig} and Figure \ref{fig:paperpoly}. We can see how polynomial regression improve approximation in the eye.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{paperstr }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hardwood, }\DataTypeTok{y =}\NormalTok{ strength)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(x, }\DataTypeTok{degree =} \DecValTok{2}\NormalTok{), }\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/paperpoly-1} 
+
+}
+
+\caption{Quadratic regression to the hardwood data set}\label{fig:paperpoly}
+\end{figure}
+
+\hypertarget{variable-selection-issue}{%
+\section{Variable Selection Issue}\label{variable-selection-issue}}
+
+We have covered variable selection topic. This is important in that it affects stable estimation. It is related to the complexity of the model.
+
+\begin{itemize}
+\tightlist
+\item
+  Underfit: miss one of the important variables
+\item
+  Correct fit: include all the necessary variables exactly
+\item
+  Overfit: include all the necessary variables and some of unnecessary variables
+\end{itemize}
+
+Among the above three concept, we should find \emph{correct fit}. If the model is too complex, the model overfit the data.
+
+\hypertarget{simulated-example}{%
+\subsection{Simulated example}\label{simulated-example}}
+
+First consider true mode
+
+\[Y = -2 + 3 X - 2 X^2\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{simul_quad <-}\StringTok{ }
+\StringTok{  }\KeywordTok{tibble}\NormalTok{(}
+    \DataTypeTok{x =} \KeywordTok{runif}\NormalTok{(}\DecValTok{20}\NormalTok{, }\DecValTok{-2}\NormalTok{, }\DecValTok{4}\NormalTok{),}
+    \DataTypeTok{y =} \DecValTok{-2} \OperatorTok{+}\StringTok{ }\DecValTok{3} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{x}\OperatorTok{^}\DecValTok{2} \OperatorTok{+}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{20}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{2}\NormalTok{)}
+\NormalTok{  )}
+\CommentTok{#-----------------------}
+\NormalTok{underfit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x, }\DataTypeTok{data =}\NormalTok{ simul_quad)}
+\NormalTok{correctfit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(x, }\DecValTok{2}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ simul_quad)}
+\NormalTok{overfit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(x, }\DecValTok{12}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ simul_quad)}
+\NormalTok{simul_quad }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather_predictions}\NormalTok{(underfit, correctfit, overfit) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ x)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ pred, }\DataTypeTok{colour =}\NormalTok{ model)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ y))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/quadsimul-1} 
+
+}
+
+\caption{Simulation - Polynomial orders}\label{fig:quadsimul}
+\end{figure}
+
+See Figure \ref{fig:quadsimul}. If we choose too large order for polynomial regression, we would get wiggly fit.
+
+\hypertarget{penalization}{%
+\subsection{Penalization}\label{penalization}}
+
+To solve this kind of overfitting issues, we implement penalization method, like \textbf{ridge regression and lasso}. Adding \(l_1\) penalty, we have seen that we can perform both variable selection and estimation.
+
+\hypertarget{moving-beyond-linearity}{%
+\section{Moving Beyond Linearity}\label{moving-beyond-linearity}}
+
+When using non-linear model, polynomial model is not enough, sometimes. Moreover, polynomial regression gives unstable estimator near boundary. There are many other non-linear models such as local regression, splines et cetera.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{paperstr }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hardwood, }\DataTypeTok{y =}\NormalTok{ strength)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"loess"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=0.7\linewidth]{regression-analysis_files/figure-latex/paperloess-1} 
+
+}
+
+\caption{Local polynomial to the hardwood data set}\label{fig:paperloess}
+\end{figure}
 
 \bibliography{book.bib,packages.bib}
 
