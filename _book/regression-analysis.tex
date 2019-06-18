@@ -5994,47 +5994,65 @@ with
 
 \[\beta_0 = \mu, \quad \beta_j = \tau_j\]
 
-Write \(X^{\ast} = \begin{bmatrix} \mathbf{1} \mid \mathbb{X}_A \end{bmatrix}\). Define \(\mathbf{1}_{\perp}\) by
+Denote that
 
-\[\mathbf{1}_{\perp} := \mathbf{1} - \Pi_{\mathbb{X}_1}\mathbf{1}\]
+\[
+X^{\ast T} X^{\ast} = \begin{bmatrix}
+  \sum n_j & n_1 & n_2 & \cdots & n_{k - 1} \\
+  n_1 & n_1 & 0 & \cdots & 0 \\
+  n_2 & 0 & n_2 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots \\
+  n_{k - 1} & 0 & 0 & \cdots & n_{k - 1}
+\end{bmatrix}
+\]
 
-so that \(\mathbf{1}_{\perp} \perp \mathbb{X}_A\). Since each pair of column in \(\mathbb{X}_A\) is orthogonal, we can make
+If follows that
 
-\[\mathbb{X}_A = QR\]
+\begin{equation*}
+  \begin{split}
+   & X^{\ast T} X^{\ast} \boldsymbol\beta= X^{\ast T} \mathbf{Y} \\
+   & \Leftrightarrow \begin{bmatrix}
+    \sum n_j & n_1 & n_2 & \cdots & n_{k - 1} \\
+    n_1 & n_1 & 0 & \cdots & 0 \\
+    n_2 & 0 & n_2 & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots \\
+    n_{k - 1} & 0 & 0 & \cdots & n_{k - 1}
+  \end{bmatrix} \begin{bmatrix}
+    \mu \\
+    \tau_1 \\
+    \vdots \\
+    \tau_{k - 1}
+  \end{bmatrix} = \begin{bmatrix}
+    \sum_{i, j} Y_{ij} \\
+    \sum_i Y_{i1} = n_1 \overline{Y}_1 \\
+    \vdots \\
+    \sum_i Y_{i, k - 1} = n_{k - 1} \overline{Y}_{k - 1}
+  \end{bmatrix}
+  \end{split}
+\end{equation*}
 
-where \(Q\) is orthogonal matrix and \(R = diag(\sqrt{n_1}, \ldots, \sqrt{n_{k - 1}})\). Then
+In the above linear system, subtract every line to the first. Then we can get
 
-\[\Pi_{\mathbb{X}_A} = \mathbb{X}_A (\mathbb{X}_A^T \mathbb{X}_A)^{-1} \mathbb{X}_A^T = QQ^T\]
+\[n_k \mu = \sum_i Y_{ik}\]
 
 and so
 
-\[\mathbf{1}_{\perp} = \mathbf{1} - Q (\sqrt{n_1}, \sqrt{n_2}, \ldots, \sqrt{n_{k - 1}})^T = (0, 0, \ldots, 0 \mid \underset{n_k}{\underline{1, \ldots, 1}})^T\]
+\begin{equation}
+  \hat\mu = \frac{1}{n_k} \sum_i Y_{ik} = \overline{Y}_k
+  \label{eq:dummycodemu}
+\end{equation}
 
-Using these two \(\mathbf{1}_{\perp}\) and \(\mathbb{X}_A\),
+Thus for each line of the system,
 
-\begin{equation*}
-  \begin{split}
-    X^{\ast} \hat{\boldsymbol\theta}^{\ast} & = \hat\mu \mathbf{1}_{\perp} + \mathbb{X}_A \boldsymbol{\tau} \quad \text{where}\: \boldsymbol{\tau} = (\tau_1, \ldots, \tau_{k - 1})^T \\
-    & = \mathbf{1}_{\perp} \Pi(\mathbf{Y} \mid R(\mathbf{1_{\perp}})) + \mathbb{X}_A \Pi(\mathbf{Y} \mid R(\mathbb{X}_A)) \\
-    & = \overline{Y}_{k.}\mathbf{1} + R^{-1}Q^T \mathbf{Y}
-  \end{split}
-\end{equation*}
-
-Hence,
-
-\[\hat\beta_0 = \overline{Y}_{k.}\]
-
-and
-
-\begin{equation*}
-  \begin{split}
-    (\beta_1, \ldots, \beta_{k - 1})^T & = R^{-1}Q^T\mathbf{Y} \\
-    & = R^{-1} \bigg(\frac{1}{\sqrt{n_1}}\sum Y_{i1}, \ldots, \frac{1}{\sqrt{n_{k - 1}}} \sum Y_{i, k - 1} \bigg)^T \\
-    & = (\overline{Y}_{1.}, \ldots, \overline{Y}_{k - 1, .})^T
-  \end{split}
-\end{equation*}
-
-\emph{needs correction}
+\begin{equation}
+  \begin{cases}
+    \hat\tau_1 = \overline{Y}_1 - \overline{Y}_k \\
+    \hat\tau_2 = \overline{Y}_2 - \overline{Y}_k \\
+    \vdots \\
+    \hat\tau_{k - 1} = \overline{Y}_{k - 1} - \overline{Y}_{k - 1}
+  \end{cases}
+  \label{eq:dummycodecoef}
+\end{equation}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6688,7 +6706,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fac6b76e540>}
+\CommentTok{#> <bytecode: 0x7f92f66d4978>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
