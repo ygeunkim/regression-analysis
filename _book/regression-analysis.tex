@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f9a38c72ee8>}
+\CommentTok{#> <bytecode: 0x7ffb2e0d8b68>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -9797,7 +9797,7 @@ In OLS \eqref{eq:svdfit}, \(UU^T\) means projection. However, this is derived on
   \begin{split}
     \hat{\mathbf{Y}}_R & = \mathbf{1} \overline{Y} + U diag\Big( \frac{\sigma_j^2}{\sigma_j + \kappa} \Big) U^T \mathbf{Y} \\
     & = \mathbf{1} \overline{Y} + UD diag\Big( \frac{1}{\sigma_j + \kappa} \Big) D U^T \mathbf{Y} \\
-    & = \mathbf{1} \overline{Y} + \sum_{j = 1}^p \mathbf{z}_j \bigg(\frac{1}{\sigma_j^2 + \kappa} \bigg) \mathbf{z}_j^T \mathbf{Y} \quad \mathbf{z}_j = d_j \mathbf{u}_j = j\text{-th}\: PC \: \text{score}
+    & = \mathbf{1} \overline{Y} + \sum_{j = 1}^p \mathbf{z}_j \bigg(\frac{1}{\sigma_j^2 + \kappa} \bigg) \mathbf{z}_j^T \mathbf{Y} \quad \mathbf{z}_j = \sigma_j \mathbf{u}_j = j\text{-th}\: PC \: \text{score}
   \end{split}
   \label{eq:ridgepc}
 \end{equation}
