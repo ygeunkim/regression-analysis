@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7ffb2e0d8b68>}
+\CommentTok{#> <bytecode: 0x7fbe0b8dd540>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -9721,7 +9721,7 @@ Thus, ridge estimator becomes
 
 \[Q(\kappa) \equiv (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \boldsymbol\beta_A) + \kappa \boldsymbol\beta_A^T \boldsymbol\beta_A\]
 
-Note that
+Recall that \(\overline{Y}\) is an estimate for \(\beta_0\), not just a constant. So it would be removed when differentiating w.r.t. \(\boldsymbol\beta_A\). Then we now have
 
 \[
 \frac{\partial}{\partial \boldsymbol\beta_A} Q(\kappa) = -2 \widetilde{\mathbb{X}}_A \mathbf{Y} + 2 \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol\beta_A + 2 \kappa \boldsymbol\beta_A

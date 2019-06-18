@@ -1548,7 +1548,7 @@ Write
 
 $$Q(\kappa) \equiv (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A)^T (\mathbf{Y} - \mathbf{1} \overline{Y} - \widetilde{\mathbb{X}}_A \B_A) + \kappa \B_A^T \B_A$$
 
-Note that
+Recall that $\overline{Y}$ is an estimate for $\beta_0$, not just a constant. So it would be removed when differentiating w.r.t. $\B_A$. Then we now have
 
 $$
 \frac{\partial}{\partial \B_A} Q(\kappa) = -2 \widetilde{\mathbb{X}}_A \mathbf{Y} + 2 \widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \B_A + 2 \kappa \B_A
