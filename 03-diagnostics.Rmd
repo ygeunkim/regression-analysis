@@ -554,7 +554,7 @@ Left tail is observed heavier than right. This is called *negative skew* or *lef
 
 ## Outliers
 
-An outlier is an extreme observation. Outliers occurr in two direction: $X$ and $Y$. There exist appropriate measures to find outliers in corresponding direction.
+An outlier is an extreme observation. Outliers appear in two direction: $X$ and $Y$. There exist appropriate measures to find outliers in corresponding direction.
 
 ### Leverage
 
@@ -582,7 +582,7 @@ Let us consider the simple linear regression model, $p = 1$. Then we have
 $$
 (X^T X)^{-1} = \frac{1}{\sigma^2} Var(\hb) = \begin{bmatrix}
   \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{xx}}) & - \frac{\overline{x}}{S_{xx}} \\
-  \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
+  - \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
 \end{bmatrix}
 $$
 
@@ -594,7 +594,7 @@ It follows that
       1 & x_i
     \end{bmatrix} \begin{bmatrix}
     \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{xx}}) & - \frac{\overline{x}}{S_{xx}} \\
-    \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
+    - \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
   \end{bmatrix} \begin{bmatrix}
     1 \\
     x_i

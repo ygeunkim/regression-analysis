@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f95790e2dd0>}
+\CommentTok{#> <bytecode: 0x7fcaec948318>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -6983,7 +6983,7 @@ Left tail is observed heavier than right. This is called \emph{negative skew} or
 \hypertarget{outliers}{%
 \section{Outliers}\label{outliers}}
 
-An outlier is an extreme observation. Outliers occurr in two direction: \(X\) and \(Y\). There exist appropriate measures to find outliers in corresponding direction.
+An outlier is an extreme observation. Outliers appear in two direction: \(X\) and \(Y\). There exist appropriate measures to find outliers in corresponding direction.
 
 \hypertarget{leverage}{%
 \subsection{Leverage}\label{leverage}}
@@ -7012,7 +7012,7 @@ Let us consider the simple linear regression model, \(p = 1\). Then we have
 \[
 (X^T X)^{-1} = \frac{1}{\sigma^2} Var(\boldsymbol{\hat\beta}) = \begin{bmatrix}
   \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{xx}}) & - \frac{\overline{x}}{S_{xx}} \\
-  \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
+  - \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
 \end{bmatrix}
 \]
 
@@ -7024,7 +7024,7 @@ It follows that
       1 & x_i
     \end{bmatrix} \begin{bmatrix}
     \bigg(\frac{1}{n} + \frac{\overline{x}^2}{S_{xx}}) & - \frac{\overline{x}}{S_{xx}} \\
-    \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
+    - \frac{\overline{x}}{S_{xx}} & \frac{1}{S_{xx}}
   \end{bmatrix} \begin{bmatrix}
     1 \\
     x_i
