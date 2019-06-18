@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{14 Jun, 2019}
+    \date{18 Jun, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f9c4103e238>}
+\CommentTok{#> <bytecode: 0x7f95790e2dd0>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -9672,13 +9672,13 @@ This is called \emph{biased regression} in that the model has sacrificed biasedn
 \BeginKnitrBlock{theorem}[Expectation of ridge estimator]
 \protect\hypertarget{thm:biasreg}{}{\label{thm:biasreg} \iffalse (Expectation of ridge estimator) \fi{} }The ridge estimator \(\boldsymbol{\hat\beta}_{A, R}\) is biased when \(\kappa > 0\).
 
-\[E \boldsymbol{\hat\beta}_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A} \neq \boldsymbol{\hat\beta}_A\]
+\[E \boldsymbol{\hat\beta}_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol\beta_{A} \neq \boldsymbol\beta_A\]
 \EndKnitrBlock{theorem}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}Note that ridge estimator is linear function of \(\mathbf{Y}\). Since \(E\mathbf{Y} = \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A}\),
+\iffalse{} {Proof. } \fi{}Note that ridge estimator is linear function of \(\mathbf{Y}\). Since \(E\mathbf{Y} = \widetilde{\mathbb{X}}_A \boldsymbol\beta_{A}\),
 
-\[E \boldsymbol{\hat\beta}_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol{\hat\beta}_{A}\]
+\[E \boldsymbol{\hat\beta}_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \boldsymbol\beta_{A}\]
 \EndKnitrBlock{proof}
 
 \hypertarget{ridge-penalty}{%

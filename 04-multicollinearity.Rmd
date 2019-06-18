@@ -1500,13 +1500,13 @@ This is called *biased regression* in that the model has sacrificed biasedness c
 ```{theorem, biasreg, name = "Expectation of ridge estimator"}
 The ridge estimator $\hb_{A, R}$ is biased when $\kappa > 0$.
 
-$$E \hb_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \hb_{A} \neq \hb_A$$
+$$E \hb_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \B_{A} \neq \B_A$$
 ```
 
 ```{proof}
-Note that ridge estimator is linear function of $\mathbf{Y}$. Since $E\mathbf{Y} = \widetilde{\mathbb{X}}_A \hb_{A}$,
+Note that ridge estimator is linear function of $\mathbf{Y}$. Since $E\mathbf{Y} = \widetilde{\mathbb{X}}_A \B_{A}$,
 
-$$E \hb_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \hb_{A}$$
+$$E \hb_{A, R} = (\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A + \kappa I)^{-1}\widetilde{\mathbb{X}}_A^T \widetilde{\mathbb{X}}_A \B_{A}$$
 ```
 
 ### Ridge penalty
