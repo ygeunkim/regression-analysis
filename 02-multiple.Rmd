@@ -2402,7 +2402,7 @@ However,
 
 $$\mathbf{1} = \mathbf{x}_1 + \cdots + \mathbf{x}_k$$
 
-i.e. linearly independent. This design matrix $X$ is of rank deficient. Hence, the normal equation $(X^TX)^{-1}\hb = X^T \mathbf{Y}$ does *not have a unique solution*. This kind of coding is not appropriate. @Rawlings:2006aa provides four ways *reparameterizing* to remove singularities.
+i.e. column vectors are linearly dependent. This design matrix $X$ is of rank deficient. Hence, the normal equation $(X^TX)^{-1}\hb = X^T \mathbf{Y}$ does *not have a unique solution*. This kind of coding is not appropriate. @Rawlings:2006aa provides four ways *reparameterizing* to remove singularities.
 
 ### Means model
 
