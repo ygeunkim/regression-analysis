@@ -1379,7 +1379,7 @@ Note that $\sigma^2 DD^T$ is a non-negative definite matrix. Hence,
 
 $$Var\tilde{\B} - Var\hb_G = \sigma^2 DD^T$$
 
-is non-negative. This completes the proof.
+is non-negative definite. This completes the proof.
 ```
 
 In practice, however, we do not know what $V$ is.

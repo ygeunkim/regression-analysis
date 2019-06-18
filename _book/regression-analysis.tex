@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f953a908dd0>}
+\CommentTok{#> <bytecode: 0x7f9a38c72ee8>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -7956,7 +7956,7 @@ Note that \(\sigma^2 DD^T\) is a non-negative definite matrix. Hence,
 
 \[Var\tilde{\boldsymbol\beta} - Var\boldsymbol{\hat\beta}_G = \sigma^2 DD^T\]
 
-is non-negative. This completes the proof.
+is non-negative definite. This completes the proof.
 \EndKnitrBlock{proof}
 
 In practice, however, we do not know what \(V\) is.
@@ -8107,7 +8107,7 @@ Multicollinearity leads to unstable regression coefficients. From Equation \eqre
 \subsection{Variance inflation factor}\label{variance-inflation-factor}}
 
 \BeginKnitrBlock{lemma}
-\protect\hypertarget{lem:varbr}{}{\label{lem:varbr} }Consider regression model \(j\)-th predictor \(X_j\) on the remaing \(X_k, \: k \neq j\), i.e.
+\protect\hypertarget{lem:varbr}{}{\label{lem:varbr} }Consider regression model \(j\)-th predictor \(X_j\) on the remaining \(X_k, \: k \neq j\), i.e.
 
 \[X_{ij} = \alpha_0 + \alpha_1 x_{i1} + \cdots + \alpha_{j - 1} x_{i, j - 1} + \alpha_{j + 1} x_{i, j + 1} + \cdots + \alpha_p x_{ip} + \epsilon_i\]
 
@@ -8138,7 +8138,7 @@ where \(\Pi_B = X_B (X_B^T X_B)^{-1} X_B^T\). It follows that
   \begin{split}
     X \boldsymbol{\hat\beta}& = \mathbf{x}_1 \boldsymbol{\hat\beta}_1 + X_B \boldsymbol{\hat\beta}_{B} \\
     & = \mathbf{x}_{1, \perp} \boldsymbol{\hat\beta}_1 + X_B \Big( \boldsymbol{\hat\beta}_{B} + (X_B^T X_B)^{-1} X_B^T \mathbf{x}_1 \boldsymbol{\hat\beta}_{1} \Big) \\
-    & = \Pi(\mathbf{x}_1 \mid R(\mathbf{x}_{1, \perp})) + \Pi(\mathbf{x}_1 \mid R(X_B))
+    & = \Pi(\mathbf{Y} \mid R(\mathbf{x}_{1, \perp})) + \Pi(\mathbf{Y} \mid R(X_B))
   \end{split}
 \end{equation*}
 
@@ -8146,7 +8146,7 @@ Thus,
 
 \[
 \begin{cases}
-  \boldsymbol{\hat\beta}_{1, \perp} = (\mathbf{x}_1^T \mathbf{x}_1)^{-1} \mathbf{x}_1^T \mathbf{Y} \\
+  \boldsymbol{\hat\beta}_{1, \perp} = (\mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp})^{-1} \mathbf{x}_{1, \perp}^T \mathbf{Y} \\
   \boldsymbol{\hat\beta}_B = (X_B^T X_B)^{-1} X_B^T (\mathbf{Y} - \mathbf{x}_1 \boldsymbol{\hat\beta}_{1})
 \end{cases}
 \]
@@ -9319,7 +9319,7 @@ Again, \(V_q V_q^T\) is a projection onto \(Col(V_q)\). It is easy to realize th
 
 \[
 \begin{aligned}
-  \widetilde{\mathbb{X}}_A P = UD & = Z \\
+  \widetilde{\mathbb{X}}_A V = UD & = Z \\
   & = \begin{bmatrix}
     \mathbf{z}_1 & \cdots & \mathbf{z}_p
   \end{bmatrix}
