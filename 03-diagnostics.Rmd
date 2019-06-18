@@ -879,8 +879,8 @@ From Theorem \@ref(thm:hbnoithm) ($\hb_{(-i)} = \hb - \frac{1}{1 - h_{ii}} (X^TX
   \begin{split}
     C_i & = \frac{(\hb - \hb_{(-i)})^T X^TX (\hb - \hb_{(-i)})}{\hat\sigma^2 (p + 1)} \\
     & = \frac{\Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]^T X^TX \Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]}{\hat\sigma^2 (p + 1)} \\
-    & = \frac{\frac{e_i^2}{(1 - h_{ii})^2} \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i}{\hat\sigma^2 (p + 1)} \\
-    & = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}} \quad \because \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i = h_{ii} \\
+    & = \frac{\frac{e_i^2}{(1 - h_{ii})^2} \mathbf{x}_i^T (X^TX)^{-1} \mathbf{x}_i}{\hat\sigma^2 (p + 1)} \\
+    & = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}} \quad \because \mathbf{x}_i^T (X^TX)^{-1} \mathbf{x}_i = h_{ii} \\
     & = (\text{internally studentized residual})^2 \times \frac{1}{p + 1} \times \text{leverage measure}
   \end{split}
 \end{equation*}

@@ -6688,7 +6688,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fcaec948318>}
+\CommentTok{#> <bytecode: 0x7f953a908dd0>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -7333,8 +7333,8 @@ Cook's distnace is related to the distance between \(\mathbf{\hat{Y}}\) and \(\m
   \begin{split}
     C_i & = \frac{(\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})^T X^TX (\boldsymbol{\hat\beta}- \boldsymbol{\hat\beta}_{(-i)})}{\hat\sigma^2 (p + 1)} \\
     & = \frac{\Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]^T X^TX \Big[ \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i \Big]}{\hat\sigma^2 (p + 1)} \\
-    & = \frac{\frac{e_i^2}{(1 - h_{ii})^2} \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i}{\hat\sigma^2 (p + 1)} \\
-    & = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}} \quad \because \mathbf{x}_i (X^TX)^{-1} \mathbf{x}_i = h_{ii} \\
+    & = \frac{\frac{e_i^2}{(1 - h_{ii})^2} \mathbf{x}_i^T (X^TX)^{-1} \mathbf{x}_i}{\hat\sigma^2 (p + 1)} \\
+    & = \bigg( \frac{e_i}{\hat\sigma \sqrt{1 - h_{ii}}} \bigg)^2 \times \frac{1}{p + 1} \times \frac{h_{ii}}{1 - h_{ii}} \quad \because \mathbf{x}_i^T (X^TX)^{-1} \mathbf{x}_i = h_{ii} \\
     & = (\text{internally studentized residual})^2 \times \frac{1}{p + 1} \times \text{leverage measure}
   \end{split}
 \end{equation*}
