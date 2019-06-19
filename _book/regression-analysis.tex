@@ -6714,7 +6714,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fb47b4d9b68>}
+\CommentTok{#> <bytecode: 0x7fa09c57b560>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -10900,13 +10900,20 @@ with \(0 \le r_{k,j}^2 \le 1\)
 \EndKnitrBlock{remark}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}Consider the model with \(S_k\).
+\iffalse{} {Proof. } \fi{}Consider the model with \(S_k\) and \(S_{k - 1}\). It can be shown that
+
+\begin{equation}
+  r_{k,j}^2 = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(S_{k - 1})}
+  \label{eq:rkjss}
+\end{equation}
+
+It follows that
 
 \begin{equation*}
   \begin{split}
    F_{k,j} & = \frac{SSR(X_j \mid X_l : l \in S_{k - 1})}{SSE(S_k) / (n - k - 1)} \\
-   & = (n - k - 1) \frac{SSR(X_j \mid X_l : l \in S_{k - 1}) / SST}{SSE(S_k) / SST} \\
-   & = (n - k - 1) \frac{R_j^2(S_{k - 1})}{1 - R_j^2(S_{k - 1})} \\
+   & = (n - k - 1) \frac{SSR(X_j \mid X_l : l \in S_{k - 1}) / SSE(S_{k - 1})}{SSE(S_k) / SSE(S_{k - 1})} \\
+   & = (n - k - 1) \frac{r_{k,j}^2}{(SSE(S_{k - 1}) - SSR(X_j \mid X_l : l \in S_{k - 1})) / SSE(S_{k - 1}))} \\
    & = (n - k - 1) \frac{r_{k, j}^2}{1 - r_{k,j}^2}
   \end{split}
 \end{equation*}
