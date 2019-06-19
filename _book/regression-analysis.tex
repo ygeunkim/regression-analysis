@@ -6580,7 +6580,9 @@ In principle, we need to fit \(n\) different models to get this residuals. In fa
 \BeginKnitrBlock{lemma}
 \protect\hypertarget{lem:studsig}{}{\label{lem:studsig} }\(\hat\sigma_{(-i)}^2\) can be computed from the original \(\hat\sigma^2\).
 
-\[\hat\sigma_{(-i)}^2 = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}}{n - p - 1}\]
+\[\hat\sigma_{(-i)}^2 = \frac{SSE_{(-i)}}{n - p - 2} = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}}{n - p - 2}\]
+
+where \(SSE_{(-i)}\) is the \(SSE\) when fitting the model without \(i\)-th observation.
 \EndKnitrBlock{lemma}
 
 This lemma removes repeating procedure.
@@ -6588,7 +6590,7 @@ This lemma removes repeating procedure.
 \BeginKnitrBlock{corollary}
 \protect\hypertarget{cor:studstandresid}{}{\label{cor:studstandresid} }Studentized residuals and standardized residuals are related by
 
-\[r_i = d_i \frac{n - p - 2}{n - p - 1 - d_i^2}\]
+\[r_i = d_i \sqrt{\frac{n - p - 2}{n - p - 1 - d_i^2}}\]
 
 where \(d_i\) are standardized residuals and \(r_i\) are studentized residuals.
 \EndKnitrBlock{corollary}
@@ -6712,7 +6714,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fe5fcce0eb0>}
+\CommentTok{#> <bytecode: 0x7f813f399b68>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -9552,14 +9554,14 @@ Figure \ref{fig:pcrfig} presents what \(\hat{\boldsymbol\alpha}\) indicates. It 
 \BeginKnitrBlock{remark}
 \iffalse{} {Remark. } \fi{}Let \(\boldsymbol{\hat\beta}_{A}^{PCR}\) be \(\boldsymbol{\hat\beta}_{A}\) in Equation \eqref{eq:pcrmeanres}. If \(q = p\), then
 
-\[\boldsymbol{\hat\beta}_{A}^{PCR} = \boldsymbol{\hat\beta}_{A}^{LSE}\]
+\[\boldsymbol{\hat\beta}_{A}^{PCR} = \boldsymbol{\hat\beta}_{A}^{OLS}\]
 \EndKnitrBlock{remark}
 
 \BeginKnitrBlock{proof}
-\iffalse{} {Proof. } \fi{}From Equation \eqref{eq:pcralpha},
+\iffalse{} {Proof. } \fi{}From Equation \eqref{eq:pcralpha} and Equation \eqref{eq:svdlse},
 
 \begin{equation}
-  \boldsymbol{\hat\beta}_{A} = V \hat{\boldsymbol\alpha} = VD^{-1}U^T \mathbf{Y}
+  \boldsymbol{\hat\beta}_{A}^{PCR} = V \hat{\boldsymbol\alpha} = VD^{-1}U^T \mathbf{Y} = \boldsymbol{\hat\beta}_{A}^{OLS}
   \label{eq:pcrlse}
 \end{equation}
 \EndKnitrBlock{proof}

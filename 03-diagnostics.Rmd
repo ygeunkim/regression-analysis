@@ -221,7 +221,9 @@ In principle, we need to fit $n$ different models to get this residuals. In fact
 ```{lemma, studsig}
 $\hat\sigma_{(-i)}^2$ can be computed from the original $\hat\sigma^2$.
 
-$$\hat\sigma_{(-i)}^2 = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}}{n - p - 1}$$
+$$\hat\sigma_{(-i)}^2 = \frac{SSE_{(-i)}}{n - p - 2} = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}}{n - p - 2}$$
+
+where $SSE_{(-i)}$ is the $SSE$ when fitting the model without $i$-th observation.
 ```
 
 This lemma removes repeating procedure.
@@ -229,7 +231,7 @@ This lemma removes repeating procedure.
 ```{corollary, studstandresid}
 Studentized residuals and standardized residuals are related by
 
-$$r_i = d_i \frac{n - p - 2}{n - p - 1 - d_i^2}$$
+$$r_i = d_i \sqrt{\frac{n - p - 2}{n - p - 1 - d_i^2}}$$
 
 where $d_i$ are standardized residuals and $r_i$ are studentized residuals.
 ```

@@ -1382,14 +1382,14 @@ Figure \@ref(fig:pcrfig) presents what $\hat{\boldsymbol\alpha}$ indicates. It a
 ```{remark}
 Let $\hb_{A}^{PCR}$ be $\hb_{A}$ in Equation \@ref(eq:pcrmeanres). If $q = p$, then
 
-$$\hb_{A}^{PCR} = \hb_{A}^{LSE}$$
+$$\hb_{A}^{PCR} = \hb_{A}^{OLS}$$
 ```
 
 ```{proof}
-From Equation \@ref(eq:pcralpha),
+From Equation \@ref(eq:pcralpha) and Equation \@ref(eq:svdlse),
 
 \begin{equation}
-  \hb_{A} = V \hat{\boldsymbol\alpha} = VD^{-1}U^T \mathbf{Y}
+  \hb_{A}^{PCR} = V \hat{\boldsymbol\alpha} = VD^{-1}U^T \mathbf{Y} = \hb_{A}^{OLS}
   (\#eq:pcrlse)
 \end{equation}
 ```
