@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{18 Jun, 2019}
+    \date{19 Jun, 2019}
 
 \usepackage{booktabs}
 \usepackage{float}
@@ -6031,25 +6031,29 @@ If follows that
   \end{split}
 \end{equation*}
 
-In the above linear system, subtract every line to the first. Then we can get
+In the above linear system, subtract every other line to the first one, i.e.
+
+\[\Big( \sum n_j - n_1 - \cdots n_{k - 1} \Big) \mu + (n_1 - n_1) \tau_1 + \cdots + (n_{k - 1} - n_{k - 1}) \tau_{k - 1} = \sum_{i,j} Y_{ij} - \Big(\sum_i Y_{i1} + \cdots + \sum_i Y_{i, k - 1} \Big)\]
+
+Then we can get
 
 \[n_k \mu = \sum_i Y_{ik}\]
 
-and so
+Therefore,
 
 \begin{equation}
   \hat\mu = \frac{1}{n_k} \sum_i Y_{ik} = \overline{Y}_k
   \label{eq:dummycodemu}
 \end{equation}
 
-Thus for each line of the system,
+Plug-in for each line of the system gives
 
 \begin{equation}
   \begin{cases}
     \hat\tau_1 = \overline{Y}_1 - \overline{Y}_k \\
     \hat\tau_2 = \overline{Y}_2 - \overline{Y}_k \\
     \vdots \\
-    \hat\tau_{k - 1} = \overline{Y}_{k - 1} - \overline{Y}_{k - 1}
+    \hat\tau_{k - 1} = \overline{Y}_{k - 1} - \overline{Y}_k
   \end{cases}
   \label{eq:dummycodecoef}
 \end{equation}
@@ -6706,7 +6710,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7f92f66d4978>}
+\CommentTok{#> <bytecode: 0x7fdbba436c28>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -11044,6 +11048,9 @@ Since each forward and backward method has own problem, a hybrid approach has be
 \end{algorithm}
 
 In this process, adding and removal can happen simultaneously. This makes iteration more complex than forward or backward method.
+
+\hypertarget{computational-techniques-in-r}{%
+\subsection{\texorpdfstring{Computational Techniques in \texttt{R}}{Computational Techniques in R}}\label{computational-techniques-in-r}}
 
 \hypertarget{the-lasso}{%
 \chapter{The LASSO}\label{the-lasso}}

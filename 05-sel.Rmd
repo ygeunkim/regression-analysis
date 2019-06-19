@@ -745,5 +745,7 @@ Since each forward and backward method has own problem, a hybrid approach has be
 
 In this process, adding and removal can happen simultaneously. This makes iteration more complex than forward or backward method.
 
+### Computational Techniques in `R`
+
 
 

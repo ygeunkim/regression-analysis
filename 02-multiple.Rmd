@@ -2785,25 +2785,29 @@ If follows that
   \end{split}
 \end{equation*}
 
-In the above linear system, subtract every line to the first. Then we can get
+In the above linear system, subtract every other line to the first one, i.e.
+
+$$\Big( \sum n_j - n_1 - \cdots n_{k - 1} \Big) \mu + (n_1 - n_1) \tau_1 + \cdots + (n_{k - 1} - n_{k - 1}) \tau_{k - 1} = \sum_{i,j} Y_{ij} - \Big(\sum_i Y_{i1} + \cdots + \sum_i Y_{i, k - 1} \Big)$$
+
+Then we can get
 
 $$n_k \mu = \sum_i Y_{ik}$$
 
-and so
+Therefore,
 
 \begin{equation}
   \hat\mu = \frac{1}{n_k} \sum_i Y_{ik} = \overline{Y}_k
   (\#eq:dummycodemu)
 \end{equation}
 
-Thus for each line of the system,
+Plug-in for each line of the system gives
 
 \begin{equation}
   \begin{cases}
     \hat\tau_1 = \overline{Y}_1 - \overline{Y}_k \\
     \hat\tau_2 = \overline{Y}_2 - \overline{Y}_k \\
     \vdots \\
-    \hat\tau_{k - 1} = \overline{Y}_{k - 1} - \overline{Y}_{k - 1}
+    \hat\tau_{k - 1} = \overline{Y}_{k - 1} - \overline{Y}_k
   \end{cases}
   (\#eq:dummycodecoef)
 \end{equation}
