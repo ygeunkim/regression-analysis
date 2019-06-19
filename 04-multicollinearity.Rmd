@@ -1883,7 +1883,7 @@ $$d_1 - d_2 = \sum_{j = 1}^p \bigg\{ \frac{1}{(\sigma_j^2 + \kappa_1)^2} - \frac
 
 Assuming that
 
-$$\hat\alpha_j = \mathbf{z}_j^T \mathbf{Y} \neq 0$$
+$$\hat\alpha_j = \mathbf{z}_j^T \mathbf{Y} \neq 0 \quad \text{for some} \; j$$
 
 we have
 
