@@ -83,7 +83,7 @@ Assume $j = 1$ without loss of generality. Write
 
 $$X = \begin{bmatrix} \mathbf{x}_1 & X_B \end{bmatrix}$$
 
-Then we have
+Then we have the original regression model for $\mathbf{Y}$ as
 
 \begin{equation}
   X \B = \mathbf{x}_1 \B_{A} + X_{B} \B_{B}
@@ -117,7 +117,7 @@ Note that $\mathbf{x}_{1, \perp}$ is the *residual vector in our previous resgre
 
 $$\mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp} = SSE$$
 
-Since $SST = s_{11}$,
+computed from the model $X_1$ on the other predictors. Since $SST = s_{11}$,
 
 $$R_{1}^2 = \frac{SST - SSE}{SST} = \frac{s_{11} - \mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp}}{s_{11}}$$
 

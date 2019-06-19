@@ -206,7 +206,7 @@ D_{(-i)} := \begin{bmatrix}
 \end{bmatrix}
 $$
 
-compute MSE $\hat\sigma_{(-i)}^2$.
+compute MSE, $\hat\sigma_{(-i)}^2$.
 
 ```{definition, studresid, name = "Studentized residual"}
 The studentized residual is defined by
@@ -226,7 +226,7 @@ $$\hat\sigma_{(-i)}^2 = \frac{(n - p - 1)\hat\sigma^2 - \frac{e_i^2}{1 - h_{ii}}
 
 This lemma removes repeating procedure.
 
-```{corollary}
+```{corollary, studstandresid}
 Studentized residuals and standardized residuals are related by
 
 $$r_i = d_i \frac{n - p - 2}{n - p - 1 - d_i^2}$$
@@ -239,6 +239,8 @@ where $d_i$ are standardized residuals and $r_i$ are studentized residuals.
 ```{r}
 rstudent(delv_fit)
 ```
+
+Check Corollary \@ref(cor:studstandresid) in our example.
 
 ```{r}
 # n = 25
@@ -803,8 +805,8 @@ $$(DFFITS)_i = \frac{e_i}{\hat\sigma_{(-i)\sqrt{h_{ii}}}} \times \sqrt{\frac{h_{
 ```{proof}
 \begin{equation*}
   \begin{split}
-    \hat{Y}_i - \hat{Y}_{i, -i} & = (Y_i - \hat{Y}_i) - (Y_i - \hat{Y}_{i, -i}) \\
-    & = e_{i, -i} - e_i \\
+    \hat{Y}_i - \hat{Y}_{i, -i} & = -\bigg[ (Y_i - \hat{Y}_i) - (Y_i - \hat{Y}_{i, -i}) \bigg] \\
+    & = -e_i + e_{i, -i} \\
     & = \frac{h_{ii}}{1 - h_{ii}} e_i
   \end{split}
 \end{equation*}

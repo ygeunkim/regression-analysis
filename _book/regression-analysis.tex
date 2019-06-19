@@ -6565,7 +6565,7 @@ D_{(-i)} := \begin{bmatrix}
 \end{bmatrix}
 \]
 
-compute MSE \(\hat\sigma_{(-i)}^2\).
+compute MSE, \(\hat\sigma_{(-i)}^2\).
 
 \BeginKnitrBlock{definition}[Studentized residual]
 \protect\hypertarget{def:studresid}{}{\label{def:studresid} \iffalse (Studentized residual) \fi{} }The studentized residual is defined by
@@ -6586,7 +6586,7 @@ In principle, we need to fit \(n\) different models to get this residuals. In fa
 This lemma removes repeating procedure.
 
 \BeginKnitrBlock{corollary}
-\protect\hypertarget{cor:unnamed-chunk-125}{}{\label{cor:unnamed-chunk-125} }Studentized residuals and standardized residuals are related by
+\protect\hypertarget{cor:studstandresid}{}{\label{cor:studstandresid} }Studentized residuals and standardized residuals are related by
 
 \[r_i = d_i \frac{n - p - 2}{n - p - 1 - d_i^2}\]
 
@@ -6606,6 +6606,8 @@ where \(d_i\) are standardized residuals and \(r_i\) are studentized residuals.
 \CommentTok{#> -0.0847 -1.3369 -1.8436 -2.3790 -1.0152 -0.2152 -0.3084}
 \end{Highlighting}
 \end{Shaded}
+
+Check Corollary \ref{cor:studstandresid} in our example.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -6710,7 +6712,7 @@ Since \texttt{gg\_scatter()} is pre-defined function drawing a scatter plot, we 
 \CommentTok{#>         position = position, show.legend = show.legend, inherit.aes = inherit.aes, }
 \CommentTok{#>         params = params)}
 \CommentTok{#> \}}
-\CommentTok{#> <bytecode: 0x7fdbba436c28>}
+\CommentTok{#> <bytecode: 0x7fe5fcce0eb0>}
 \CommentTok{#> <environment: namespace:ggplot2>}
 \end{Highlighting}
 \end{Shaded}
@@ -7269,8 +7271,8 @@ where \(\hat{Y}_i = \mathbf{x}_i^T \boldsymbol{\hat\beta}\) and \(\hat{Y}_{i, -i
 \BeginKnitrBlock{proof}
 \iffalse{} {Proof. } \fi{}\begin{equation*}
   \begin{split}
-    \hat{Y}_i - \hat{Y}_{i, -i} & = (Y_i - \hat{Y}_i) - (Y_i - \hat{Y}_{i, -i}) \\
-    & = e_{i, -i} - e_i \\
+    \hat{Y}_i - \hat{Y}_{i, -i} & = -\bigg[ (Y_i - \hat{Y}_i) - (Y_i - \hat{Y}_{i, -i}) \bigg] \\
+    & = -e_i + e_{i, -i} \\
     & = \frac{h_{ii}}{1 - h_{ii}} e_i
   \end{split}
 \end{equation*}
@@ -8143,7 +8145,7 @@ Let \(s_{jj} = \sum\limits_{i = 1}^n (x_{ij} - \overline{x}_j)^2\) be corrected 
 
 \[X = \begin{bmatrix} \mathbf{x}_1 & X_B \end{bmatrix}\]
 
-Then we have
+Then we have the original regression model for \(\mathbf{Y}\) as
 
 \begin{equation}
   X \boldsymbol\beta= \mathbf{x}_1 \boldsymbol\beta_{A} + X_{B} \boldsymbol\beta_{B}
@@ -8177,7 +8179,7 @@ Note that \(\mathbf{x}_{1, \perp}\) is the \emph{residual vector in our previous
 
 \[\mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp} = SSE\]
 
-Since \(SST = s_{11}\),
+computed from the model \(X_1\) on the other predictors. Since \(SST = s_{11}\),
 
 \[R_{1}^2 = \frac{SST - SSE}{SST} = \frac{s_{11} - \mathbf{x}_{1, \perp}^T \mathbf{x}_{1, \perp}}{s_{11}}\]
 
