@@ -4,14 +4,15 @@ bookdown::gitbook:
     toc:
       collapse: section
       before: |
-        <li><a href="./">R Lab for Regression Analysis</a></li>
+        <li><a href="./">Regression Analysis with R</a></li>
       after: |
         <li><a href="https://github.com/ygeunkim/regression-analysis" target="blank">Published with bookdown</a></li>
-    download: ["pdf", "epub"]
+    download: "pdf"
 bookdown::pdf_book:
   includes:
-    in_header: preamble.tex
-    before_body: frontpage.tex
+    in_header: latex/preamble.tex
+    before_body: latex/frontpage.tex
+    after_body: latex/after_body.tex
   latex_engine: xelatex
   citation_package: natbib
   keep_tex: yes

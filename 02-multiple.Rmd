@@ -263,6 +263,22 @@ is the projection of $\mathbf{x}_{k + 1}$ onto $sp(\{ \mathbf{u}_1, \ldots, \mat
 Hence, we get $\{ \mathbf{u}_1, \ldots, \mathbf{u}_{p + 1} \}$ is an orthonormal basis for $V$.
 ```
 
+
+```{r, include=FALSE}
+alg_num <- 1
+alggs <- alg_num
+alggsstr <- "
+| **INPUT:** $\\{ \\mathbf{x}_0, \\ldots, \\mathbf{x}_p \\}$;
+| Initialize $\\mathbf{v}_0 = \\mathbf{x}_0$;
+| **For** $k \\leftarrow 1$ **to** $p$:
+|   $\\mathbf{u}_{k - 1} = \\frac{\\mathbf{v}_{k - 1}}{\\lVert \\mathbf{v}_{k - 1} \\rVert}$;
+|   $\\mathbf{r}_k^{*} = <\\mathbf{x}_{k + 1}, \\mathbf{u}_0> \\mathbf{u}_0 + <\\mathbf{x}_{k + 1}, \\mathbf{u}_1 > \\mathbf{u}_1 + \\cdots + < \\mathbf{x}_{k + 1}, \\mathbf{u}_k > \\mathbf{u}_k$;
+|   $\\mathbf{v}_{k + 1} = \\mathbf{x}_{k + 1} - \\mathbf{r}_k^{*}$;
+| **end**
+|"
+alggsstr <- paste0("Algorithm", alggs, ": Gram-schmidt process")
+```
+
 \begin{algorithm} \label{alg:alggs}
   \SetAlgoLined
   \SetKwInOut{Input}{input}
@@ -276,6 +292,8 @@ Hence, we get $\{ \mathbf{u}_1, \ldots, \mathbf{u}_{p + 1} \}$ is an orthonormal
   $\mathbf{u}_p = \frac{\mathbf{v}_p}{\lVert \mathbf{v}_p \rVert}$
   \caption{Gram-schmidt process}
 \end{algorithm}
+
+`r if(is_html) alggsstr`
 
 Our interest is $Col(X)$, and we can factorizae this model matrix so that it represents orthonormalization process \@ref(thm:gs).
 
@@ -369,6 +387,22 @@ $$
 
 We can perform $QR$ factorization by following step.
 
+```{r, include=FALSE}
+alg_num <- alg_num + 1
+algqr <- alg_num
+algqrstr <- "
+| **For** $k \\leftarrow 1$ **to** $(p + 1)$:
+|   $r_{kk} = \\lVert \\mathbf{x}_{k} \\rVert$;
+|   $\\mathbf{q}_k = \\frac{\\mathbf{x}_k}{r_{kk}}$;
+|   **For** $j \\leftarrow 1$ **to** $(p + 1)$:
+|      $r_{kj} = \\mathbf{q}_k^T \\mathbf{x}_j$;
+|      $\\mathbf{x}_j = \\mathbf{x}_j - r_{kj} \\mathbf{q}_k$;
+|   **end**
+| **end**
+|"
+algqrstr <- paste0("Algorithm", algqr, ": QR decomposition for modified G-S process")
+```
+
 \begin{algorithm} \label{alg:algqr}
   \SetAlgoLined
   \For{$k \leftarrow 1$ \KwTo $(p + 1)$}{
@@ -382,11 +416,27 @@ We can perform $QR$ factorization by following step.
   \caption{QR decomposition for modified G-S process}
 \end{algorithm}
 
+`r if(is_html) algqrstr`
+
 This *orthonormal basis* gives some useful facts with least squares problem [@Leon:2014aa].
 
 ### Successive orthogonalization
 
-In fact, G-S process $\ref{alg:alggs}$ is equivalent to succesive orthogonalization, i.e. regress(project) $\mathbf{x}_j$ onto the others [@Hastie:2013aa].
+In fact, G-S process `r if (is_latex) {"\\@ref(alg:alggs)"} else alggs` is equivalent to succesive orthogonalization, i.e. regress(project) $\mathbf{x}_j$ onto the others [@Hastie:2013aa].
+
+```{r, include=FALSE}
+alg_num <- alg_num + 1
+algorth <- alg_num
+algorthstr <- "
+| Initialize $\\mathbf{v}_0 = \\mathbf{1}$
+| **For** $k \\leftarrow 1$ **to** $p$:
+|   Regress $\\mathbf{x}_k$ on $\\mathbf{q}_0, \\ldots, \\mathbf{q}_{k - 1}$;
+|   $\\hat{\\beta}_{lk} = \\frac{< \\mathbf{v}_l, \\mathbf{x}_k>}{< \\mathbf{v}_l, \\mathbf{v}_l>}, l = 0, \\ldots, k - 1$;
+|   Residual $\\mathbf{v}_k = \\mathbf{x}_k - \\sum\\limits_{l = 0}^{k - 1} \\hat\\beta_{lk} \\mathbf{v}_k$;
+| **end**
+|"
+algorthstr <- paste0("Algorithm", algorth, ": Successive orthogonalization")
+```
 
 \begin{algorithm} \label{alg:algorth}
   \SetAlgoLined
@@ -399,6 +449,8 @@ In fact, G-S process $\ref{alg:alggs}$ is equivalent to succesive orthogonalizat
   Regress $\mathbf{Y}$ on $\mathbf{v}_p$
   \caption{Successive orthogonalization}
 \end{algorithm}
+
+`r if(is_html) algorthstr`
 
 Now we can solve least squares problem using QR decomposition. Recall that
 
@@ -474,7 +526,6 @@ knitr::include_graphics("images/multiple-qr3.png")
 ```
 
 Regress $\mathbf{x}$ onto $\mathbf{1}$. Its residual can be a new orthogonalized predictor.
-
 
 ### Properties of LSE
 
@@ -639,7 +690,6 @@ Hence,
   \end{split}
 \end{equation*}
 ```
-
 
 In this proposition, we have used model matrix directly. Instead, we can use Equation \@ref(eq:qrhat) for simplicity.
 
@@ -1856,6 +1906,22 @@ Sequential SS satisfies following properties.
 \end{enumerate}
 ```
 
+```{r, include=FALSE}
+alg_num <- alg_num + 1
+algseq <- alg_num
+algseqstr <- "
+| $j \\leftarrow 1$
+| **Repeat**
+|   $FM : Y_i = \\beta_0 + \\cdots + \\beta_j x_{1j} + \\epsilon_i$ vs $RM : Y_i = \\beta_0 + \\ldots + \\beta_{j - 1} x_{1, j - 1} + \\epsilon_i$;
+|   $H_0: \\beta_j = 0 (RM) \\quad \\text{vs} \\quad H_1: \\beta_j \\neq 0 (FM)$;
+|   $F_0 = \\frac{SSR(X_j \\mid X_1, \\ldots, X_{j - 1}) / 1}{SSE(X_1, \\ldots, X_j) / (n - j - 1)}$;
+|   reject $H_0$ if $F_0 > F_{1 - \\alpha}(1, n - j - 3)$;
+|   $j \\leftarrow j + 1$;
+| **until** accept $H_0$
+| **Output**: accepted model, i.e. final $RM$
+|"
+algseqstr <- paste0("Algorithm", algseq, ": Sequential F Test from beginning")
+```
 
 Following Definition \@ref(def:seqs), start from intercept-only model.
 
@@ -1875,7 +1941,10 @@ Following Definition \@ref(def:seqs), start from intercept-only model.
   \caption{Sequential F Test from beginning}
 \end{algorithm}
 
-Algorithm $\ref{alg:algseq}$ shows the logic how to add a variable sequentially. It continues until rejecting $H_0$. In general form, we can test
+`r if(is_html) algseqstr`
+
+
+Algorithm `r if (is_latex) {"\\@ref(alg:algseq)"} else algseq` shows the logic how to add a variable sequentially. It continues until rejecting $H_0$. In general form, we can test
 
 $$H_0: \beta_{q + 1} = \beta_{q + 2} = \cdots = \beta_p = 0 \qquad \text{vs} \qquad H_1: \text{not}\: H_0$$
 

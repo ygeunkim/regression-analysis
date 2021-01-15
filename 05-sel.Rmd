@@ -481,6 +481,22 @@ $$\binom{p}{0} + \binom{p}{1} + \cdots \binom{p}{p} = 2^p$$
 
 @James:2013aa summarizes the procedure as follows.
 
+```{r, include=FALSE}
+alg_num <- alg_num + 1
+bestsubset <- alg_num
+bestsubsetstr <- "
+| **Data**: $Y_i$ and every predictor $x_{i1}, \\ldots x_{ip}$
+| Initialize null model $\\mathcal{M}_0$ by $Y_i = \\beta_0 + \\epsilon_i$;
+| **For** $k \\leftarrow 1$ **to** $p$:
+|   Fit all $\\binom{p}{k}$ models with $k$ predictors $Y_i = \\beta_0 + \\sum_{j \\in S} \\beta_j x_{ij} + \\epsilon_i$ with $\\lvert S \\rvert = k$;
+|   Denote $\\mathcal{M}_k$ a model with the smallest $SSE$;
+| **end**
+| Select a single best among $\\mathcal{M}_0, \\mathcal{M}_1, \\ldots, \\mathcal{M}_p$ using $R_a^2$, $C_p$, $AIC$, or $BIC$;
+| **Output**: $\\mathcal{M}_{k^{\\prime}}$ with the best criterion value
+|"
+bestsubsetstr <- paste0("Algorithm", bestsubset, ": All possible regressions")
+```
+
 \begin{algorithm}[H] \label{alg:bestsubset}
   \SetAlgoLined
   \SetKwInOut{Input}{input}
@@ -495,6 +511,8 @@ $$\binom{p}{0} + \binom{p}{1} + \cdots \binom{p}{p} = 2^p$$
   \Output{$\mathcal{M}_{k^{\prime}}$ with the best criterion value}
   \caption{All possible regressions}
 \end{algorithm}
+
+`r if(is_html) bestsubsetstr`
 
 However, as the full number of variables $p$ increases, the number of submodels to be conducted $2^p$ increases rapidly. It is computational burden. Against this kind of efficiency problem, some simpler methods are developed.
 
@@ -612,6 +630,30 @@ It follows that
 
 Thus, choosing $j$ that maximizes $r_{k,j}^2$ is equivalent to that maximizes $F_{k,j}$. It also equivalent to choosing $j$ maximizing the coefficient of determination $R^2$ when the variable $X_j$ is added to the existing group $S_{k - 1}$. The procedure is enough to use only $F_{k,j}$ in each step.
 
+```{r, include=FALSE}
+alg_num <- alg_num + 1
+fwsel <- alg_num
+fwselstr <- "
+| **Data**: $Y_i$ and every predictor $x_{i1}, \\ldots x_{ip}$
+| **Input**: F-to-enter $F_{IN}$
+| Initialize subset of variables $S_0 = \\varnothing$;
+| Initialize design column space $C_0 = Col(\\mathbf{1})$;
+| Initialize null model $\\mathcal{M}_0$ by $Y_i = \\beta_0 + \\epsilon_i$;
+| **For** $k \\leftarrow 1$ **to** $p$:
+|   For remained $(p - k + 1)$ predictors, compute partial $F$-statistic $F_{k,j} = \\frac{SSR(X_j \\mid X_l : l \\in S_{k - 1})}{SSE(X_l : l \\in S_k) / (n - k - 1)}$;
+|   $j_k = \\argmax_j F_{k,j}$
+|   **If** $F_{k, j_k} \\ge F_{IN}$:
+|      Update the subset $S_k = S_{k - 1} \\cup \\{ j_k \\}$;
+|      Update the column space $C_k = Col( \\mathbf{1}, \\mathbf{x}_l : l \\in S_k)$;
+|   **Else**
+|      Stop the procedure;
+| **end**
+| Select a single best among $\\mathcal{M}_0, \\mathcal{M}_1, \\ldots, \\mathcal{M}_p$ using $R_a^2$, $C_p$, $AIC$, or $BIC$;
+| **Output**: $\\mathcal{M}_{k^{\\prime}}$ with the best criterion value
+|"
+fwselstr <- paste0("Algorithm", fwsel, ": Forward Selection")
+```
+
 \begin{algorithm}[H] \label{alg:fwsel}
   \SetAlgoLined
   \SetKwInOut{Input}{input}
@@ -635,7 +677,9 @@ Thus, choosing $j$ that maximizes $r_{k,j}^2$ is equivalent to that maximizes $F
   \caption{Forward Selection}
 \end{algorithm}
 
-Even if Algorithm $\ref{alg:fwsel}$ goes to the end $p$, the number of models reviewed is less than of all possible regressions.
+`r if (is_html) fwselstr`
+
+Even if Algorithm `r if (is_latex) {"\\@ref(alg:fwsel)"} else fwsel` goes to the end $p$, the number of models reviewed is less than of all possible regressions.
 
 \begin{equation*}
   \begin{split}
@@ -696,6 +740,29 @@ Similarly, we use partial correlation $r_{k,j}$ or equivalent partial $F$-statis
 
 We have stopped if $F_{k,j} < F_{IN}$ in forward selection $\ref{alg:fwsel}$. On the other hand, backward selection stops if $F_{k,j} \ge F_{OUT}$.
 
+```{r, include=FALSE}
+alg_num <- alg_num + 1
+backsel <- alg_num
+backselstr <- "
+| **Data**: $Y_i$ and every predictor $x_{i1}, \\ldots x_{ip}$
+| **Input**: F-to-leave $F_{OUT}$
+| Initialize subset of variables $S_0 = \\varnothing$;
+| Initialize design column space $C_0 = Col(\\mathbf{1})$;
+| Initialize null model $\\mathcal{M}_0$ by $Y_i = \\beta_0 + \\epsilon_i$;
+| **For** $k \\leftarrow 1$ **to** $p$:
+|   For non-removed $(p - k + 1)$ predictors, compute partial $F$-statistic $F_{k,j} = \\frac{SSR(X_j \\mid X_l : l \\in S_{k - 1})}{SSE(X_l : l \\in S_k) / (n - k - 1)}$;
+|   $j_k = \argmin_j F_{k,j}$;
+|   **If** $F_{k, j_k} < F_{OUT}$:
+|      Update the subset $S_k = S_{k - 1} - \\{ j_k \\}$;
+|      Update the column space $C_k = Col( \\mathbf{1}, \\mathbf{x}_l : l \\in S_k)$;
+|   **Else**
+|      Stop the procedure;
+| **end**
+| **Output**: $\\mathcal{M}_k$ corresponding to selected variables $S_k$
+|"
+backselstr <- paste0("Algorithm", backsel, ": Backward elimination")
+```
+
 \begin{algorithm}[H] \label{alg:backsel}
   \SetAlgoLined
   \SetKwInOut{Input}{input}
@@ -719,11 +786,38 @@ We have stopped if $F_{k,j} < F_{IN}$ in forward selection $\ref{alg:fwsel}$. On
   \caption{Backward elimination}
 \end{algorithm}
 
-As forward selection, backward elimination $\ref{alg:backsel}$ investigates $1 + \frac{p(p + 1)}{2}$ models. It has computational advantages, but does not guarantee the best model among every model. Since this procedure starts from the full model, it is not available when $n < p$, while forward selection is.
+`if (is_html) backselstr`
+
+As forward selection, backward elimination `r if (is_latex) {"\\@ref(alg:backsel)"} else backsel` investigates $1 + \frac{p(p + 1)}{2}$ models. It has computational advantages, but does not guarantee the best model among every model. Since this procedure starts from the full model, it is not available when $n < p$, while forward selection is.
 
 ### Stepwise regression
 
 Since each forward and backward method has own problem, a hybrid approach has been made. Beginning with null model, add one predictor as in forward selection, and remove any predictor that is useless in that step after adding one predictor.
+
+```{r, include=FALSE}
+alg_num <- alg_num + 1
+hybrid <- alg_num
+hybridstr <- "
+| **Data**: $Y_i$ and every predictor $x_{i1}, \\ldots x_{ip}$
+| **Input**: F-to-enter $F_{IN}$ and F-to-leave $F_{OUT}$
+| Initialize subset of variables $S_0 = \\varnothing$;
+| Initialize design column space $C_0 = Col(\\mathbf{1})$;
+| Initialize null model $\\mathcal{M}_0$ by $Y_i = \\beta_0 + \\epsilon_i$;
+| **For** $k \\leftarrow 1$ **to** $p$:
+|   For remained $(p - k + 1)$ predictor, compute partial $F$-statistic $F_{k,j} = \\frac{SSR(X_j \\mid X_l : l \\in S_{k - 1})}{SSE(X_l : l \\in S_k) / (n - k - 1)}$;
+|   $j_k = \\argmax_j F_{k,j}$
+|   **If** $F_{k, j_k} \\ge F_{IN}$:
+|      Compute partial $F$-statistic including the new variable $F_{k,i}^{\\ast} = \\frac{SSR(X_i \\mid (X_l : l \\in S_{k - 1}, l \\neq i), X_{j_k})}{SSE((X_l : l \\in S_k), X_{jk}) / (n - k - 1)}$;
+|      Identify a set of $i \\in S_{k - 1}$ denoted by $D_{k - 1}$ s.t. $F_{k,i}^{\\ast} < F_{OUT}$;
+|      Update the subset $S_k = S_{k - 1} \\cup \\{ j_k \\} - D_{k - 1}$;
+|      Update the column space $C_k = Col( \\mathbf{1}, \\mathbf{x}_l : l \\in S_k)$;
+|   **Else**
+|      Stop the procedure;
+| **end**
+| **Output**: $\\mathcal{M}_k$ corresponding to selected variables $S_k$
+|"
+hybridstr <- paste0("Algorithm", hybrid, ": Stepwise regression")
+```
 
 \begin{algorithm}[H] \label{alg:hybrid}
   \SetAlgoLined
@@ -749,6 +843,8 @@ Since each forward and backward method has own problem, a hybrid approach has be
   \Output{$\mathcal{M}_k$ corresponding to selected variables $S_k$}
   \caption{Stepwise regression}
 \end{algorithm}
+
+`if (is_html) hybridstr`
 
 In this process, adding and removal can happen simultaneously. This makes iteration more complex than forward or backward method.
 

@@ -1,5 +1,5 @@
 --- 
-title: "R Lab for Regression Analysis"
+title: "Regression Analysis with R"
 author: |
   | [Young-geun Kim](https://github.com/ygeunkim)
   | [Department of Statistics](https://stat.skku.edu/stat/index.jsp), [SKKU](https://www.skku.edu/skku/index.do)
@@ -30,7 +30,7 @@ eqn_numbering()
 
 # Welcome {-}
 
-<img src="cover.png" width="250" height="375" alt="Cover image" align="right" style="margin: 0 1em 0 1em" /></a> This book aims at covering materials of regression analysis. Also, there will be R programming for regression.
+<img src="cover.png" width="250" height="375" alt="Cover image" align="right" style="margin: 0 1em 0 1em" /></a> This book aims at covering materials of regression analysis based on the regression analysis course in Sungkyunkwan university [@sta5017]. Also, there will be R programming for regression.
 
 ```{r, eval=FALSE}
 library(tidyverse)
@@ -74,8 +74,4 @@ BioOxyDemand %>%
   geom_smooth(method = "lm") +
   geom_point()
 ```
-
-
-
-
 

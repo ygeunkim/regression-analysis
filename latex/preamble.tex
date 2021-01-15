@@ -3,8 +3,9 @@
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{pdfpages}
-\usepackage[linesnumbered, ruled]{algorithm2e}
+\usepackage[linesnumbered, boxruled]{algorithm2e}
 \usepackage[normalem]{ulem}
+\usepackage{makeidx}
 
 \newcommand{\iid}{\stackrel{iid}{\sim}}
 \newcommand{\indep}{\stackrel{indep}{\sim}}
@@ -18,8 +19,8 @@
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator*{\argmax}{argmax}
 
-\setlength{\algoheightrule}{0pt}
-\setlength{\algotitleheightrule}{0pt}
+%\setlength{\algoheightrule}{0pt}
+%\setlength{\algotitleheightrule}{0pt}
 
 \let\oldmaketitle\maketitle
 \AtBeginDocument{\let\maketitle\relax}
