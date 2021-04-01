@@ -7,7 +7,8 @@ knitr::opts_chunk$set(
   fig.align = "center",
   fig.width = 6,
   fig.asp = .618,
-  fig.pos = "H"
+  fig.pos = "H",
+  message = FALSE
  )
 
 knitr::knit_hooks$set(document = function(x) {

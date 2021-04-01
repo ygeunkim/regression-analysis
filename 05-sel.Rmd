@@ -493,8 +493,8 @@ bestsubsetstr <- "
 | **end**
 | Select a single best among $\\mathcal{M}_0, \\mathcal{M}_1, \\ldots, \\mathcal{M}_p$ using $R_a^2$, $C_p$, $AIC$, or $BIC$;
 | **Output**: $\\mathcal{M}_{k^{\\prime}}$ with the best criterion value
-|"
-bestsubsetstr <- paste0("Algorithm", bestsubset, ": All possible regressions")
+| "
+bestsubsetstr <- paste0(bestsubsetstr, "Algorithm", bestsubset, ": All possible regressions")
 ```
 
 \begin{algorithm}[H] \label{alg:bestsubset}
@@ -512,7 +512,7 @@ bestsubsetstr <- paste0("Algorithm", bestsubset, ": All possible regressions")
   \caption{All possible regressions}
 \end{algorithm}
 
-`r if(is_html) bestsubsetstr`
+`r if(!is_latex) bestsubsetstr`
 
 However, as the full number of variables $p$ increases, the number of submodels to be conducted $2^p$ increases rapidly. It is computational burden. Against this kind of efficiency problem, some simpler methods are developed.
 
@@ -650,8 +650,8 @@ fwselstr <- "
 | **end**
 | Select a single best among $\\mathcal{M}_0, \\mathcal{M}_1, \\ldots, \\mathcal{M}_p$ using $R_a^2$, $C_p$, $AIC$, or $BIC$;
 | **Output**: $\\mathcal{M}_{k^{\\prime}}$ with the best criterion value
-|"
-fwselstr <- paste0("Algorithm", fwsel, ": Forward Selection")
+| "
+fwselstr <- paste0(fwselstr, "Algorithm", fwsel, ": Forward Selection")
 ```
 
 \begin{algorithm}[H] \label{alg:fwsel}
@@ -677,7 +677,7 @@ fwselstr <- paste0("Algorithm", fwsel, ": Forward Selection")
   \caption{Forward Selection}
 \end{algorithm}
 
-`r if (is_html) fwselstr`
+`r if (!is_latex) fwselstr`
 
 Even if Algorithm `r if (is_latex) {"\\@ref(alg:fwsel)"} else fwsel` goes to the end $p$, the number of models reviewed is less than of all possible regressions.
 
@@ -759,8 +759,8 @@ backselstr <- "
 |      Stop the procedure;
 | **end**
 | **Output**: $\\mathcal{M}_k$ corresponding to selected variables $S_k$
-|"
-backselstr <- paste0("Algorithm", backsel, ": Backward elimination")
+| "
+backselstr <- paste0(backselstr, "Algorithm", backsel, ": Backward elimination")
 ```
 
 \begin{algorithm}[H] \label{alg:backsel}
@@ -786,7 +786,7 @@ backselstr <- paste0("Algorithm", backsel, ": Backward elimination")
   \caption{Backward elimination}
 \end{algorithm}
 
-`if (is_html) backselstr`
+`if (!is_latex) backselstr`
 
 As forward selection, backward elimination `r if (is_latex) {"\\@ref(alg:backsel)"} else backsel` investigates $1 + \frac{p(p + 1)}{2}$ models. It has computational advantages, but does not guarantee the best model among every model. Since this procedure starts from the full model, it is not available when $n < p$, while forward selection is.
 
@@ -815,8 +815,8 @@ hybridstr <- "
 |      Stop the procedure;
 | **end**
 | **Output**: $\\mathcal{M}_k$ corresponding to selected variables $S_k$
-|"
-hybridstr <- paste0("Algorithm", hybrid, ": Stepwise regression")
+| "
+hybridstr <- paste0(hybridstr, "Algorithm", hybrid, ": Stepwise regression")
 ```
 
 \begin{algorithm}[H] \label{alg:hybrid}
@@ -844,7 +844,7 @@ hybridstr <- paste0("Algorithm", hybrid, ": Stepwise regression")
   \caption{Stepwise regression}
 \end{algorithm}
 
-`if (is_html) hybridstr`
+`if (!is_latex) hybridstr`
 
 In this process, adding and removal can happen simultaneously. This makes iteration more complex than forward or backward method.
 

@@ -132,7 +132,7 @@ Suppose that $X^T X$ is positive definite.
 ```
 
 
-### Orthogonal decomposition
+### Orthogonal decomposition {#orthogonaldecomp}
 
 ```{theorem, orthonormal}
 Let $Col(X)$ be a subspace of $\R^n$, let $\mathbf{Y} \in \R^n$, and let $\{ \mathbf{u}_0, \ldots, \mathbf{u}_{p} \}$ be an orthonormal basis for $Col(X)$. If
@@ -275,8 +275,8 @@ alggsstr <- "
 |   $\\mathbf{r}_k^{*} = <\\mathbf{x}_{k + 1}, \\mathbf{u}_0> \\mathbf{u}_0 + <\\mathbf{x}_{k + 1}, \\mathbf{u}_1 > \\mathbf{u}_1 + \\cdots + < \\mathbf{x}_{k + 1}, \\mathbf{u}_k > \\mathbf{u}_k$;
 |   $\\mathbf{v}_{k + 1} = \\mathbf{x}_{k + 1} - \\mathbf{r}_k^{*}$;
 | **end**
-|"
-alggsstr <- paste0("Algorithm", alggs, ": Gram-schmidt process")
+| "
+alggsstr <- paste0(alggsstr, "Algorithm", alggs, ": Gram-schmidt process")
 ```
 
 \begin{algorithm} \label{alg:alggs}
@@ -293,7 +293,7 @@ alggsstr <- paste0("Algorithm", alggs, ": Gram-schmidt process")
   \caption{Gram-schmidt process}
 \end{algorithm}
 
-`r if(is_html) alggsstr`
+`r if(!is_latex) alggsstr`
 
 Our interest is $Col(X)$, and we can factorizae this model matrix so that it represents orthonormalization process \@ref(thm:gs).
 
@@ -399,8 +399,8 @@ algqrstr <- "
 |      $\\mathbf{x}_j = \\mathbf{x}_j - r_{kj} \\mathbf{q}_k$;
 |   **end**
 | **end**
-|"
-algqrstr <- paste0("Algorithm", algqr, ": QR decomposition for modified G-S process")
+| "
+algqrstr <- paste0(algqrstr, "Algorithm", algqr, ": QR decomposition for modified G-S process")
 ```
 
 \begin{algorithm} \label{alg:algqr}
@@ -416,7 +416,7 @@ algqrstr <- paste0("Algorithm", algqr, ": QR decomposition for modified G-S proc
   \caption{QR decomposition for modified G-S process}
 \end{algorithm}
 
-`r if(is_html) algqrstr`
+`r if(!is_latex) algqrstr`
 
 This *orthonormal basis* gives some useful facts with least squares problem [@Leon:2014aa].
 
@@ -434,8 +434,8 @@ algorthstr <- "
 |   $\\hat{\\beta}_{lk} = \\frac{< \\mathbf{v}_l, \\mathbf{x}_k>}{< \\mathbf{v}_l, \\mathbf{v}_l>}, l = 0, \\ldots, k - 1$;
 |   Residual $\\mathbf{v}_k = \\mathbf{x}_k - \\sum\\limits_{l = 0}^{k - 1} \\hat\\beta_{lk} \\mathbf{v}_k$;
 | **end**
-|"
-algorthstr <- paste0("Algorithm", algorth, ": Successive orthogonalization")
+| "
+algorthstr <- paste0(algorthstr, "Algorithm", algorth, ": Successive orthogonalization")
 ```
 
 \begin{algorithm} \label{alg:algorth}
@@ -450,7 +450,7 @@ algorthstr <- paste0("Algorithm", algorth, ": Successive orthogonalization")
   \caption{Successive orthogonalization}
 \end{algorithm}
 
-`r if(is_html) algorthstr`
+`r if(!is_latex) algorthstr`
 
 Now we can solve least squares problem using QR decomposition. Recall that
 
@@ -577,7 +577,7 @@ Let $\tilde{\boldsymbol\beta} \in \Omega \equiv \{ \tilde{\boldsymbol\beta} : \t
 
 Claim: $Var(\tilde{\boldsymbol\beta}) - Var(\boldsymbol{\hat\beta})$ is non-negative definite.
 
-Note that $\boldsymbol{\hat\beta}$ is the one with $C = (X^TX)^{-1}X^T$.
+Note that $\boldsymbol{\hat\beta} \in \Omega$ is the one with $C = (X^TX)^{-1}X^T$.
 
 Set $D := C - (X^TX)^{-1}X^T$. From unbiasedness,
 
@@ -1678,7 +1678,7 @@ For each full model and reduced model, compute $SSR$ and $SSE$.
 \end{enumerate}
 ```
 
-By construction, $SST = \sum\limits_{i = 1}^n(Y_i - \overline{Y})^2$ does not depend on model. This measures variability when no predictor is used. It jus the variation of a response itself. So it becomes consistent with given data.
+By construction, $SST = \sum\limits_{i = 1}^n(Y_i - \overline{Y})^2$ does not depend on model. This measures variability when no predictor is used. It is just the variation of a response itself. So it becomes consistent with given data.
 
 ```{remark}
 $$SST = SSR(FM) + SSE(FM) = SSR(RM) + SSE(RM)$$
@@ -1919,8 +1919,8 @@ algseqstr <- "
 |   $j \\leftarrow j + 1$;
 | **until** accept $H_0$
 | **Output**: accepted model, i.e. final $RM$
-|"
-algseqstr <- paste0("Algorithm", algseq, ": Sequential F Test from beginning")
+| "
+algseqstr <- paste0(algseqstr, "Algorithm", algseq, ": Sequential F Test from beginning")
 ```
 
 Following Definition \@ref(def:seqs), start from intercept-only model.
@@ -1941,7 +1941,7 @@ Following Definition \@ref(def:seqs), start from intercept-only model.
   \caption{Sequential F Test from beginning}
 \end{algorithm}
 
-`r if(is_html) algseqstr`
+`r if(!is_latex) algseqstr`
 
 
 Algorithm `r if (is_latex) {"\\@ref(alg:algseq)"} else algseq` shows the logic how to add a variable sequentially. It continues until rejecting $H_0$. In general form, we can test
@@ -2471,7 +2471,7 @@ However,
 
 $$\mathbf{1} = \mathbf{x}_1 + \cdots + \mathbf{x}_k$$
 
-i.e. column vectors are linearly dependent. This design matrix $X$ is of rank deficient. Hence, the normal equation $(X^TX)^{-1}\hb = X^T \mathbf{Y}$ does *not have a unique solution*. This kind of coding is not appropriate. @Rawlings:2006aa provides four ways *reparameterizing* to remove singularities.
+i.e. column vectors are linearly dependent. This design matrix $X$ is of rank deficient. Hence, the normal equation $(X^TX)^{-1}\hb = X^T \mathbf{Y}$ does *not have a unique solution*. This kind of coding is not appropriate. There are four ways of *reparameterizations* to remove singularities [@Rawlings:2006aa].
 
 ### Means model
 

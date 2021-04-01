@@ -401,7 +401,7 @@ hetero_fit <- lm(y ~ x, data = hetero)
 residplot(hetero, hetero_fit)
 ```
 
-As $i$ grows, variance becomes larger. Constant variance assumption is violated.
+See Figure \@ref(fig:heteropt). As $i$ grows, variance becomes larger. Constant variance assumption is violated.
 
 ```{r, include=FALSE}
 cubic <- 
@@ -435,7 +435,7 @@ residplot(outlier, outlier_fit) +
   scale_colour_manual(values = c("TRUE" = "red", "FALSE" = NA))
 ```
 
-Large values of residuals implies they are outliers.
+Large values of residuals in Figure \@ref(fig:outpt) implies they are outliers.
 
 ### Normal quantile-quantile plot
 
@@ -507,6 +507,7 @@ draw_qq(fat, fat_fit, col = I("white"), size = 2)
 ```
 
 Recall that the $x$-axis is *theoretical* normal quantile and $y$-axis is the *observed* ordered studentized residuals. In case of small values of $r_i$, i.e. *left tail*, observed values indicating empirical quantiles are less than theoretical quantiles. *Smaller quantiles at left tail means heavier left tail*. At *right tail*, on the other hand, observed values indicating empirical quantiles are larger than theoretical quantiles. *Larger quantiles at right tail means heavier right tail*. In sum, Figure \@ref(fig:qqt) form is of heavy-tailed distribution.
+(Flipped axes lead to the opposite interpretation.)
 
 ```{r, include=FALSE}
 thin <- 
@@ -521,7 +522,7 @@ thin_fit <- lm(y ~ x, data = thin)
 draw_qq(thin, thin_fit, col = I("white"), size = 2)
 ```
 
-This is exactly opposite result with Figure \@ref(fig:qqt). Larger empirical quantiles at left tail implies light left tail. Smaller empirical quantiles at right tail implies light right tail. This is the form of light-tailed distribution.
+Figure \@ref(fig:qqunif) is exactly opposite result with Figure \@ref(fig:qqt). Larger empirical quantiles at left tail implies light left tail. Smaller empirical quantiles at right tail implies light right tail. This is the form of light-tailed distribution.
 
 ```{r, include=FALSE}
 right <- 
@@ -536,7 +537,7 @@ right_fit <- lm(y ~ x, data = right)
 draw_qq(right, right_fit, col = I("white"), size = 2)
 ```
 
-In this case, $r_i$ is observed as heavier right tail than left. This is called *positive skew* or *right skew*, i.e. its mass leans to the left.
+In this case of Figure \@ref(fig:qqchisq), $r_i$ is observed as heavier right tail than left. This is called *positive skew* or *right skew*, i.e. its mass leans to the left.
 
 ```{r, include=FALSE}
 left <- 
@@ -551,7 +552,7 @@ left_fit <- lm(y ~ x, data = left)
 draw_qq(left, left_fit, col = I("white"), size = 2)
 ```
 
-Left tail is observed heavier than right. This is called *negative skew* or *left skew*. Its mass leans to the right.
+See Figure \@ref(fig:qqskewn). Left tail is observed heavier than right. This is called *negative skew* or *left skew*. Its mass leans to the right.
 
 ### Partial residual plots
 
@@ -738,7 +739,7 @@ Thus,
 \end{equation*}
 
 ```{theorem, hbnoithm}
-Regression coefficient without $i$-th observation can come from the original desing matrix. Also, it is affected by $i$-th residual.
+Regression coefficient without $i$-th observation can come from the original design matrix. Also, it is affected by $i$-th residual.
 
 $$\hb_{(-i)} = \hb - \frac{1}{1 - h_{ii}} (X^TX)^{-1} \mathbf{x}_i e_i$$
 ```
@@ -850,10 +851,10 @@ $$C_i := \frac{\sum\limits_{j = 1}^n (\hat{Y}_j - \hat{Y}_{j, -i})^2}{\hat\sigma
 where $\hat{Y}_{j, -i} = \mathbf{x}_j^T \hb_{(-i)}$.
 ```
 
-Cook's distnace is related to the distance between $\mathbf{\hat{Y}}$ and $\mathbf{\hat{Y}}_{(-i)}$.
+Cook's distance is related to the distance between $\mathbf{\hat{Y}}$ and $\mathbf{\hat{Y}}_{(-i)}$.
 
 ```{corollary, cookrepresent}
-Cooks's distance is related to the distance between $\hb$ and $\hb_{(-i)}$.
+Cook's distance is related to the distance between $\hb$ and $\hb_{(-i)}$.
 
 $$C_i = \frac{(\hb - \hb_{(-i)})^T X^T X (\hb - \hb_{(-i)})}{\hat\sigma (p + 1)}$$
 ```

@@ -3,7 +3,7 @@
 ## Model
 
 ```{r}
-delv <- MPV::p2.9 %>% tbl_df()
+delv <- MPV::p2.9 %>% tibble()
 ```
 
 ```{r delivery, fig.cap="The Delivery Time Data"}
@@ -58,7 +58,7 @@ We try to find $\beta_0$ and $\beta_1$ that minimize the sum of squares of the v
 
 ### Normal equations
 
-Denote that Equation \@ref(eq:ssq) is quadratic. Then we can find its minimum by find the zero point of the first derivative. Set
+Denote that Equation \@ref(eq:ssq) is quadratic. Then we can catch its minimum by finding the zero point of the first derivative. Set
 
 $$Q(\beta_0, \beta_1) := \sum_{i = 1}^n (Y_i - \beta_0 - \beta_1 x_i)^2$$
 
@@ -143,7 +143,7 @@ Recall that we have assumed the **linear assumption** between the predictor and 
 $$E(Y \mid X = x) = \beta_0 + \beta_1 x$$
 ```
 
-We can estimate this mean resonse by
+We can estimate this mean response by
 
 \begin{equation}
   \widehat{E(Y \mid x)} = \hat\beta_0 + \hat\beta_1 x
@@ -232,6 +232,8 @@ It gives that
 \end{equation*}
 ```
 
+The final forms are quite complicated to understand and memorize. In fact, this has some geometric meaning. Linear algebra might be more helpful, so Chapter \@ref(orthogonaldecomp) will cover this in multiple variable setting.
+
 ```{proposition, ue, name = "Unbiasedness"}
 Both coefficients are unbiased.
 
@@ -281,7 +283,7 @@ Variances and covariance of coefficients
 ```{proof}
 Proving is just arithmetic.
 
-$\ref{itm:vbone}$
+\@ref(itm:vbone)
 
 \begin{equation*}
   \begin{split}
@@ -562,7 +564,7 @@ $$\hat\beta_0^{MLE} = \hat\beta_0^{LSE}, \quad \hat\beta_1^{MLE} = \hat\beta_1^{
 
 From Equation \@ref(eq:mlsig),
 
-$$\hat\sigma^{2MLE} = \frac{1}{n}\sum_{i = 1}^n(Y_i - \beta_0 - \beta_1 x_i)^2 = \frac{n - 2}{n} \hat\sigma^{2LSE}$$
+$$\hat\sigma^{2MLE} = \frac{1}{n}\sum_{i = 1}^n(Y_i - \hat\beta_0 - \hat\beta_1 x_i)^2 = \frac{n - 2}{n} \hat\sigma^{2LSE}$$
 
 While $\hat\sigma^{2LSE}$ is an unbiased, above *MLE is not an unbiased estimator*. Since $\hat\sigma^{2MLE} \approx \hat\sigma^{2LSE}$ for large $n$, howerver, it is *asymptotically unbiased*.
 
@@ -873,7 +875,7 @@ Then we can get only one normal equation
 
 $$\sum (Y_i - \hat\beta_0) = 0$$
 
-Hence,
+and hence,
 
 $$\hat\beta_0 = \frac{1}{n} \sum_{i = 1}^n Y_i \equiv \overline{Y}$$
 
@@ -889,7 +891,7 @@ This $SSR$ compares $\hat{Y_i}$ versus $\overline{Y}$, computing the sum of squa
 
 ### Residual sum of squares
 
-Now consider the *residual sum of squares* $SSE$ in the definition \@ref(def:sse). As mentioned, this is related to the *prediction errors*, which the regression model could not explain the data.
+Now consider the *residual sum of squares* $SSE = \sum (Y_i - \hat{Y_i})^2$ in the definition \@ref(def:sse). As mentioned, this is related to the *prediction errors*, which the regression model could not explain the data.
 
 ### Decomposition of total sum of squares {#decompsst}
 

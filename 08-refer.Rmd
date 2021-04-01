@@ -1,6 +1,1 @@
 `r if (knitr::is_html_output()) '# Bibliography {-}'`
-
----
-nocite: |
-  @R-base, @R-bookdown, @R-data.table, @R-foreach, @R-knitr, @R-modelr, @R-rmarkdown, @R-tidyverse
-...

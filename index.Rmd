@@ -2,8 +2,7 @@
 title: "Regression Analysis with R"
 author: |
   | [Young-geun Kim](https://github.com/ygeunkim)
-  | [Department of Statistics](https://stat.skku.edu/stat/index.jsp), [SKKU](https://www.skku.edu/skku/index.do)
-  | [dudrms33@g.skku.edu](mailto:dudrms33@g.skku.edu)
+  | [Department of Statistics](https://stat.skku.edu/stat/index.jsp), [SKKU](https://www.skku.edu/eng/)
 date: "`r format(Sys.time(), '%d %b, %Y')`"
 include-before:
   - \newcommand{\iid}{\stackrel{iid}{\sim}}
@@ -12,6 +11,7 @@ include-before:
   - \newcommand{\ind}{\perp\!\!\!\perp}
   - \newcommand{\R}{\mathbb{R}}
   - \newcommand{\B}{\boldsymbol\beta}
+  - \newcommand{\E}{\boldsymbol\epsilon}
   - \newcommand{\hb}{\boldsymbol{\hat\beta}}
   - $\DeclareMathOperator*{\argmin}{argmin}$
   - $\DeclareMathOperator*{\argmax}{argmax}$
@@ -21,6 +21,8 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
+# nocite: |
+#   @rbase, @rbookdown, @rdatatable, @rforeach, @rknitr, @rmodelr, @rrmarkdown, @rtidyverse
 description: "This aims at covering materials of regression analysis with R programming."
 ---
 
@@ -44,7 +46,7 @@ library(tidyverse)
 data(BioOxyDemand, package = "MPV")
 (BioOxyDemand <-
   BioOxyDemand %>% 
-  tbl_df())
+  tibble())
 ```
 
 ### Relation {-}
